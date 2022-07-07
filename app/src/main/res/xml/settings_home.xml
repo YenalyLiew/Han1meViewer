@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/preference">
+
+        <rikka.preference.SimpleMenuPreference
+            app:defaultValue="zh-CHT"
+            app:entries="@array/entries_video_language"
+            app:entryValues="@array/entries_value_video_language"
+            app:icon="@drawable/ic_baseline_language_24"
+            app:key="video_language"
+            app:summary="%s"
+            app:title="@string/video_language" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/other">
+
+        <Preference
+            app:key="update"
+            app:title="@string/check_update" />
+
+        <Preference
+            app:icon="@drawable/ic_baseline_info_24"
+            app:key="about"
+            app:summary="@string/hanime_app_name"
+            app:title="@string/about" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
