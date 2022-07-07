@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:foreground="?selectableItemBackground"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        tools:ignore="UseCompoundDrawables">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/cover"
+            android:layout_width="@dimen/video_cover_simplified_width"
+            android:layout_height="@dimen/video_cover_simplified_height"
+            android:contentDescription="@null"
+            app:shapeAppearanceOverlay="@style/RoundCornerImageView" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="@dimen/video_cover_simplified_width"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:singleLine="true"
+            tools:text="123123123abc, abc, abc" />
+
+    </LinearLayout>
+
+</layout>

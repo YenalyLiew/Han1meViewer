@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nv_home_page"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="@string/home_page" />
+        <item
+            android:id="@+id/nv_settings"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/settings" />
+    </group>
+
+    <item android:title="@string/my_list">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nv_watch_later"
+                    android:icon="@drawable/ic_baseline_watch_later_24"
+                    android:title="@string/watch_later" />
+                <item
+                    android:id="@+id/nv_fav_video"
+                    android:icon="@drawable/ic_baseline_favorite_24"
+                    android:title="@string/fav_video" />
+                <item
+                    android:id="@+id/nv_play_list"
+                    android:icon="@drawable/ic_baseline_list_24"
+                    android:title="@string/play_list" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/video">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nv_watch_history"
+                    android:icon="@drawable/ic_baseline_history_24"
+                    android:title="@string/watch_history" />
+                <item
+                    android:id="@+id/nv_download"
+                    android:icon="@drawable/ic_baseline_download_24"
+                    android:title="@string/download" />
+            </group>
+        </menu>
+    </item>
+</menu>

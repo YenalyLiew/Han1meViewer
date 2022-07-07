@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_settings"
+    app:startDestination="@id/homeSettingsFragment">
+
+    <fragment
+        android:id="@+id/homeSettingsFragment"
+        android:name="com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment" />
+
+</navigation>

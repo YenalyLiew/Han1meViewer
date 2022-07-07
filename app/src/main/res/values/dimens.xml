@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="video_cover_height">108dp</dimen>
+    <dimen name="video_cover_width">192dp</dimen>
+    <dimen name="video_cover_simplified_width">150dp</dimen>
+    <dimen name="video_cover_simplified_height">220dp</dimen>
+    <dimen name="video_cover_height_small">72dp</dimen>
+    <dimen name="video_cover_weight_small">128dp</dimen>
+    <dimen name="hanime_preview_news_pic_width">120dp</dimen>
+    <dimen name="hanime_preview_news_pic_height">90dp</dimen>
+    <dimen name="avatar_size">50dp</dimen>
+    <dimen name="view_view_and_time_icon_size">14dp</dimen>
+
+    <dimen name="video_view_and_time_and_duration">12sp</dimen>
+    <dimen name="err_tip_text_size">24sp</dimen>
+</resources>

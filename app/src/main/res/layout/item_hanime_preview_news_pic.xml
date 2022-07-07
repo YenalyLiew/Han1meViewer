@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.imageview.ShapeableImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/iv_preview_news_pic"
+    android:layout_width="@dimen/hanime_preview_news_pic_width"
+    android:layout_height="@dimen/hanime_preview_news_pic_height"
+    android:layout_margin="4dp"
+    android:contentDescription="@null"
+    app:shapeAppearanceOverlay="@style/RoundCornerImageView">
+
+</com.google.android.material.imageview.ShapeableImageView>

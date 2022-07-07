@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/nv_home_page">
+
+    <fragment
+        android:id="@id/nv_home_page"
+        android:name="com.yenaly.han1meviewer.ui.fragment.home.HomePageFragment" />
+    <fragment
+        android:id="@id/nv_watch_history"
+        android:name="com.yenaly.han1meviewer.ui.fragment.home.WatchHistoryFragment" />
+    <fragment
+        android:id="@id/nv_fav_video"
+        android:name="com.yenaly.han1meviewer.ui.fragment.home.MyFavVideoFragment" />
+    <fragment
+        android:id="@id/nv_play_list"
+        android:name="com.yenaly.han1meviewer.ui.fragment.home.MyPlayListFragment" />
+    <fragment
+        android:id="@id/nv_watch_later"
+        android:name="com.yenaly.han1meviewer.ui.fragment.home.MyWatchLaterFragment" />
+
+</navigation>

@@ -1,0 +1,85 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="hanime_app_name" tools:ignore="Typos">Han1meViewer</string>
+    <string name="home_page">主頁</string>
+
+    <string name="h_anime">H動漫</string>
+    <string name="latest_hanime">最新裏番</string>
+    <string name="fresh">新鮮</string>
+    <string name="latest_upload">最新上傳</string>
+    <string name="this_month">本月</string>
+    <string name="hot_video">發燒影片</string>
+    <string name="current">當下</string>
+    <string name="hot_video_2">熱門影片</string>
+    <string name="trends">動態</string>
+    <string name="they_watched">他們在看</string>
+    <string name="search">搜索</string>
+    <string name="advanced_search">高級搜索</string>
+    <string name="back">返回</string>
+    <string name="input_keyword">請輸入關鍵詞</string>
+
+    <string name="type">類型</string>
+    <string name="tag">標籖</string>
+    <string name="sort_option">排序方式</string>
+    <string name="brand">品牌</string>
+    <string name="release_date">發佈日期</string>
+    <string name="duration">片長</string>
+    <string name="duration_able_reset">片長（復選可取消）</string>
+    <string name="type_able_reset">類型（復選可取消）</string>
+    <string name="sort_option_able_reset">排序方式（復選可取消）</string>
+    <string name="cancel_all_tags">取消所有tag</string>
+    <string name="alert">提示</string>
+    <string name="alert_cancel_all_tags">確認將會取消你所選的所有tag，並且會重新觸發搜索</string>
+    <string name="confirm">確認</string>
+    <string name="cancel">取消</string>
+    <string name="content_tag">內容標籤</string>
+    <string name="pair_widely">廣泛配對</string>
+    <string name="pair_widely_alert">較多結果，較不精準。配對所有包含任何一個選擇的標籤的影片，而非全部標籤。</string>
+    <string name="reset">重置</string>
+    <string name="save">保存</string>
+    <string name="save_and_search">保存並搜索</string>
+
+    <string name="video_attr">影片屬性</string>
+    <string name="relationship">人物關係</string>
+    <string name="character_setting">角色設定</string>
+    <string name="appearance_and_figure">外貌身材</string>
+    <string name="story_plot">故事劇情</string>
+    <string name="sex_position">性交體位</string>
+
+    <string name="reset_date">重置日期</string>
+    <string name="copy_to_clipboard">已複製到剪貼簿</string>
+    <string name="introduction">簡介</string>
+    <string name="comment">評論</string>
+    <string name="collapse">收起</string>
+    <string name="expand">展開</string>
+    <string name="series_video">系列影片</string>
+    <string name="related_video">相關影片</string>
+    <string name="is_playing">現正播放</string>
+    <string name="view_more_replies">查看更多回覆</string>
+    <string name="comment_not_found">未發現評論</string>
+    <string name="hanime_list">新番列表</string>
+    <string name="latest_hanime_tour">新番導覽</string>
+    <string name="latest_hanime_list_monthly">%s 裏番新番列表</string>
+    <string name="latest_hanime_news">新番資訊</string>
+    <string name="latest_hanime_comment">%s 新番評論區</string>
+    <string name="my_list">我的清單</string>
+    <string name="watch_later">稍後觀看</string>
+    <string name="fav_video">喜歡的影片</string>
+    <string name="settings">設置</string>
+    <string name="video">影片</string>
+    <string name="download">下載</string>
+    <string name="watch_history">觀看歷史</string>
+    <string name="login">登入</string>
+    <string name="delete">刪除</string>
+    <string name="here_is_empty">這裏是空空的…</string>
+    <string name="play_list">播放清單</string>
+    <string name="add_to_fav">加入喜愛</string>
+    <string name="share">分享</string>
+    <string name="add_to_watch_later">加入待看</string>
+    <string name="video_language">影片語言</string>
+    <string name="preference">偏好</string>
+    <string name="other">其他</string>
+    <string name="about">關於</string>
+    <string name="check_update">檢查更新</string>
+
+</resources>
