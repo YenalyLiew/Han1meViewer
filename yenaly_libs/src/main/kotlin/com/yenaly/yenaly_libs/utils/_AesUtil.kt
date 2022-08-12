@@ -21,7 +21,8 @@ import javax.crypto.spec.SecretKeySpec
 
 private const val KEY_ALGORITHM = "AES"
 private const val CIPHER_ALGORITHM_DEFAULT = "AES"
-private const val AES_CFB_NOPADDING = "AES/CFB/NoPadding"
+const val AES_CFB_NOPADDING = "AES/CFB/NoPadding"
+const val AES_ECB_NOPADDING = "AES/ECB/NoPadding"
 
 /**
  * Aes encrypt byte array
@@ -31,7 +32,7 @@ private const val AES_CFB_NOPADDING = "AES/CFB/NoPadding"
  */
 fun ByteArray.aesEncrypt(
     key: ByteArray,
-    iv: ByteArray? = null,
+    iv: ByteArray = ByteArray(16),
     algorithm: String = AES_CFB_NOPADDING
 ): ByteArray {
     val cipher = initCipher(Cipher.ENCRYPT_MODE, key, iv, algorithm)
@@ -46,7 +47,7 @@ fun ByteArray.aesEncrypt(
  */
 fun ByteArray.aesDecrypt(
     key: ByteArray,
-    iv: ByteArray? = null,
+    iv: ByteArray = ByteArray(16),
     algorithm: String = AES_CFB_NOPADDING
 ): ByteArray {
     val cipher = initCipher(Cipher.DECRYPT_MODE, key, iv, algorithm)
@@ -103,7 +104,12 @@ private fun toKey(key: ByteArray): Key = SecretKeySpec(key, KEY_ALGORITHM)
  * @param iv the IV
  * @param algorithm the algorithm parameters
  */
-fun initCipher(mode: Int, key: ByteArray, iv: ByteArray? = null, algorithm: String): Cipher {
+fun initCipher(
+    mode: Int,
+    key: ByteArray,
+    iv: ByteArray = ByteArray(16),
+    algorithm: String
+): Cipher {
     val k = toKey(key)
     val cipher = Cipher.getInstance(algorithm)
     val cipherAlgorithm = algorithm.uppercase(Locale.getDefault())

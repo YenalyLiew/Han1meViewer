@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment.home
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -100,6 +101,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
         }).attachToRecyclerView(binding.rvPageList)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun liveDataObserve() {
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {

@@ -24,6 +24,9 @@ abstract class SearchHistoryDao {
     @Query("SELECT * FROM SearchHistoryEntity WHERE (`query` = :query) LIMIT 1")
     abstract suspend fun loadSearchHistory(query: String): SearchHistoryEntity?
 
+    @Query("DELETE FROM SearchHistoryEntity WHERE (`query` = :query)")
+    abstract suspend fun deleteSearchHistoryByKeyword(query: String)
+
     @Transaction
     open suspend fun insertOrUpdateSearchHistory(entity: SearchHistoryEntity) {
         val dbEntity = loadSearchHistory(entity.query)

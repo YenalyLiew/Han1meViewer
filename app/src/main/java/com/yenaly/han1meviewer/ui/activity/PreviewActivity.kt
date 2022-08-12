@@ -9,6 +9,7 @@ import androidx.core.view.isInvisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.android.material.appbar.AppBarLayout
 import com.yenaly.han1meviewer.DATE_CODE
@@ -31,8 +32,7 @@ import java.util.*
  * @author Yenaly Liew
  * @time 2022/06/23 023 16:46
  */
-class PreviewActivity :
-    YenalyActivity<ActivityPreviewBinding, PreviewViewModel>() {
+class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>() {
 
     private val dateUtils by unsafeLazy { DateUtils() }
 
@@ -71,8 +71,30 @@ class PreviewActivity :
         })
 
         binding.latestHanimeTour.rv.apply {
-            layoutManager =
-                LinearLayoutManager(this@PreviewActivity, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = object : LinearLayoutManager(this@PreviewActivity) {
+
+                init {
+                    orientation = HORIZONTAL
+                    reverseLayout = false
+                }
+
+                override fun scrollVerticallyBy(
+                    dy: Int,
+                    recycler: RecyclerView.Recycler?,
+                    state: RecyclerView.State?
+                ): Int {
+                    if (!binding.latestHanimeNews.rv.isInTouchMode) {
+                        onScrollWhenInNonTouchMode(dy)
+                    }
+                    return super.scrollVerticallyBy(dy, recycler, state)
+                }
+
+                private fun onScrollWhenInNonTouchMode(dy: Int) {
+                    if (dy > 0) {
+                        binding.appBar.setExpanded(false, true)
+                    } else binding.appBar.setExpanded(true, true)
+                }
+            }
             adapter = tourAdapter
         }
         binding.latestHanimeNews.rv.apply {
@@ -82,6 +104,7 @@ class PreviewActivity :
         tourAdapter.setOnItemClickListener { _, _, position ->
             val y = binding.latestHanimeNews.rv.getChildAt(position).y
             binding.nsvPreview.fling(0)
+            binding.appBar.setExpanded(false, true)
             binding.nsvPreview.smoothScrollTo(0, y.toInt())
         }
 

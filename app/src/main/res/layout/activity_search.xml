@@ -12,126 +12,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/black"
-                app:layout_scrollFlags="scroll|enterAlways">
-
-                <AutoCompleteTextView
-                    android:id="@+id/et_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/search_bar"
-                    android:drawableStart="@drawable/ic_baseline_search_24"
-                    android:drawablePadding="8dp"
-                    android:dropDownWidth="wrap_content"
-                    android:dropDownHeight="wrap_content"
-                    android:hint="@string/input_keyword"
-                    android:imeOptions="actionSearch"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:singleLine="true"
-                    android:textSize="16sp" />
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-                app:layout_scrollFlags="scroll|enterAlways">
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chip_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:singleLine="true">
-
-                    <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
-                        android:id="@+id/type"
-                        style="@style/Widget.Material3.Chip.Filter.Elevated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="false"
-                        android:text="@string/type" />
-
-                    <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
-                        android:id="@+id/tag"
-                        style="@style/Widget.Material3.Chip.Filter.Elevated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="false"
-                        android:text="@string/tag" />
-
-                    <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
-                        android:id="@+id/sort_option"
-                        style="@style/Widget.Material3.Chip.Filter.Elevated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="false"
-                        android:text="@string/sort_option" />
-
-                    <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
-                        android:id="@+id/brand"
-                        style="@style/Widget.Material3.Chip.Filter.Elevated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="false"
-                        android:text="@string/brand" />
-
-                    <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
-                        android:id="@+id/release_date"
-                        style="@style/Widget.Material3.Chip.Filter.Elevated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="false"
-                        android:text="@string/release_date" />
-
-                    <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
-                        android:id="@+id/duration"
-                        style="@style/Widget.Material3.Chip.Filter.Elevated"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="false"
-                        android:text="@string/duration" />
-
-                </com.google.android.material.chip.ChipGroup>
-
-            </HorizontalScrollView>
-
-        </com.google.android.material.appbar.AppBarLayout>
+        <include
+            android:id="@+id/search_bar"
+            layout="@layout/layout_search_bar" />
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/search_srl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:clipToPadding="false"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="64dp"
+            android:paddingBottom="8dp">
 
             <com.scwang.smart.refresh.header.MaterialHeader
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="64dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/search_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:padding="8dp" />
+                android:clipToPadding="false" />
 
             <com.scwang.smart.refresh.footer.ClassicsFooter
                 android:layout_width="match_parent"

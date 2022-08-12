@@ -65,9 +65,10 @@ public class ActivitiesManager {
      * 结束当前Activity
      */
     public static void finishCurrentActivity() {
-        if (getCurrentActivity() != null) {
-            getCurrentActivity().finish();
-            Log.i(TAG, getCurrentActivity().getClass().getName() + " has finished.");
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity != null) {
+            currentActivity.finish();
+            Log.i(TAG, currentActivity.getClass().getName() + " has finished.");
         }
     }
 

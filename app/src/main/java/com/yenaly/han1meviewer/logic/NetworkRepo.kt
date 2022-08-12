@@ -6,17 +6,22 @@ import com.yenaly.han1meviewer.FavStatus
 import com.yenaly.han1meviewer.MyListType
 import com.yenaly.han1meviewer.logic.model.*
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
+import com.yenaly.han1meviewer.logic.network.ServiceCreator
+import com.yenaly.han1meviewer.logic.state.DownloadState
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.isInt
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
+import okhttp3.Request
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import retrofit2.Response
+import java.io.File
 
 /**
  * @project Hanime1
@@ -709,18 +714,21 @@ object NetworkRepo {
         request: suspend () -> Response<ResponseBody>,
         action: (String) -> WebsiteState<T>,
     ) = flow {
-        try {
-            emit(WebsiteState.Loading())
-            val requestResult = request.invoke()
-            val resultBody = requestResult.body()?.string()
-            if (resultBody != null) {
-                emit(action.invoke(resultBody))
-            } else {
-                emit(WebsiteState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
+        emit(WebsiteState.Loading())
+        val requestResult = request.invoke()
+        val resultBody = requestResult.body()?.string()
+        if (resultBody != null) {
+            emit(action.invoke(resultBody))
+        } else {
+            emit(WebsiteState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
+        }
+    }.catch { e ->
+        when (e) {
+            is CancellationException -> throw e
+            else -> {
+                e.printStackTrace()
+                emit(WebsiteState.Error(e))
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(WebsiteState.Error(e))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -728,18 +736,20 @@ object NetworkRepo {
         request: suspend () -> Response<ResponseBody>,
         action: (String) -> PageLoadingState<T>,
     ) = flow {
-        try {
-            emit(PageLoadingState.Loading())
-            val requestResult = request.invoke()
-            val resultBody = requestResult.body()?.string()
-            if (resultBody != null) {
-                emit(action.invoke(resultBody))
-            } else {
-                emit(PageLoadingState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
+        val requestResult = request.invoke()
+        val resultBody = requestResult.body()?.string()
+        if (resultBody != null) {
+            emit(action.invoke(resultBody))
+        } else {
+            emit(PageLoadingState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
+        }
+    }.catch { e ->
+        when (e) {
+            is CancellationException -> throw e
+            else -> {
+                e.printStackTrace()
+                emit(PageLoadingState.Error(e))
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(PageLoadingState.Error(e))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -747,25 +757,60 @@ object NetworkRepo {
         request: suspend () -> Response<ResponseBody>,
         action: (String) -> VideoLoadingState<T>,
     ) = flow {
-        try {
-            emit(VideoLoadingState.Loading())
-            val requestResult = request.invoke()
-            val resultBody = requestResult.body()?.string()
-            if (resultBody != null) {
-                emit(action.invoke(resultBody))
+        val requestResult = request.invoke()
+        val resultBody = requestResult.body()?.string()
+        if (resultBody != null) {
+            emit(action.invoke(resultBody))
+        } else {
+            if (requestResult.code() == 403) {
+                emit(VideoLoadingState.NoContent())
             } else {
-                if (requestResult.code() == 403) {
-                    emit(VideoLoadingState.NoContent())
-                } else {
-                    emit(VideoLoadingState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
-                }
+                emit(VideoLoadingState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
             }
-        } catch (e: IndexOutOfBoundsException) {
-            e.printStackTrace()
-            emit(VideoLoadingState.Error(IndexOutOfBoundsException("可能這個網址解析起來不大一樣...")))
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(VideoLoadingState.Error(e))
+        }
+    }.catch { e ->
+        when (e) {
+            is CancellationException -> throw e
+            is IndexOutOfBoundsException -> {
+                e.printStackTrace()
+                emit(VideoLoadingState.Error(IndexOutOfBoundsException("可能這個網址解析起來不大一樣...")))
+            }
+            is Exception -> {
+                e.printStackTrace()
+                emit(VideoLoadingState.Error(e))
+            }
         }
     }.flowOn(Dispatchers.IO)
+
+    fun downloadHanime(url: String, fileName: String): Flow<DownloadState> {
+        val file = File(applicationContext.filesDir, fileName)
+        return flow {
+            val request = Request.Builder().url(url).get().build()
+            val response = ServiceCreator.okHttpClient.newCall(request).execute()
+            if (response.isSuccessful) {
+                response.body!!.let { responseBody ->
+                    val total = responseBody.contentLength()
+                    file.outputStream().use { output ->
+                        var emittedProgress = 0L
+                        responseBody.byteStream().use { input ->
+                            val bytesCopied = input.copyTo(output)
+                            val progress = bytesCopied * 100 / total
+                            if (progress - emittedProgress > 5) {
+                                emit(DownloadState.Progress(progress.toInt()))
+                                emittedProgress = progress
+                            }
+                        }
+                    }
+                    emit(DownloadState.Done(file))
+                }
+            } else {
+                emit(DownloadState.Error(IllegalStateException("response is not successful!")))
+            }
+        }.catch { e ->
+            when (e) {
+                is CancellationException -> throw e
+                else -> emit(DownloadState.Error(e))
+            }
+        }.conflate().flowOn(Dispatchers.IO)
+    }
 }

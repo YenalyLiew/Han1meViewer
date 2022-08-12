@@ -34,6 +34,7 @@ import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
+import com.yenaly.yenaly_libs.utils.view.BottomNavViewMediator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -65,14 +66,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
-        /*
-        val mediator = BottomNavigationViewMediator(
-            binding.mainBnv, binding.mainVp,
-            listOf(R.id.bnv_home to HomePageFragment()),
-            slide = false
-        ).attach()
-         */
-
         setSupportActionBar(binding.toolbar)
         supportActionBar?.let {
             it.title = spannable {
@@ -112,16 +105,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             binding.dlMain.closeDrawers()
             return@setOnMenuItemClickListener false
         }
-
-        /*
-        mediator.setOnFragmentChangedListener { currentFragment ->
-            when (currentFragment) {
-                is HomePageFragment -> {
-                    binding.mainBnv.toggleBottomNavBehavior(binding.mainVp, true)
-                }
-            }
-        }
-         */
     }
 
     override fun liveDataObserve() {

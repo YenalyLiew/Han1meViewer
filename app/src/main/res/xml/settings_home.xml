@@ -10,8 +10,8 @@
             app:entryValues="@array/entries_value_video_language"
             app:icon="@drawable/ic_baseline_language_24"
             app:key="video_language"
-            app:summary="%s"
-            app:title="@string/video_language" />
+            app:title="@string/video_language"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 

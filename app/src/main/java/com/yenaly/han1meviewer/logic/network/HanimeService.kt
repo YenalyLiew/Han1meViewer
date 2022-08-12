@@ -12,7 +12,7 @@ import retrofit2.http.*
  */
 interface HanimeService {
 
-    @GET(".")
+    @GET("/")
     suspend fun getHomePage(): Response<ResponseBody>
 
     @GET("search")

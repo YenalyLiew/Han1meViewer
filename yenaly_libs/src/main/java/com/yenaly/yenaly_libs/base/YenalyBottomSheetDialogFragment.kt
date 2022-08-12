@@ -18,9 +18,7 @@ import java.lang.reflect.ParameterizedType
  * @Time : 2022/05/04 004 14:46
  * @Description : Description...
  */
-abstract class YenalyBottomSheetDialogFragment<DB : ViewDataBinding>(
-    private val attachToRoot: Boolean = false
-) : BottomSheetDialogFragment() {
+abstract class YenalyBottomSheetDialogFragment<DB : ViewDataBinding> : BottomSheetDialogFragment() {
 
     protected lateinit var binding: DB
 
@@ -32,7 +30,7 @@ abstract class YenalyBottomSheetDialogFragment<DB : ViewDataBinding>(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         val layoutInflater = LayoutInflater.from(context)
-        binding = getViewBinding(layoutInflater, attachToRoot)
+        binding = getViewBinding(layoutInflater)
         dialog.setContentView(binding.root)
         initData(savedInstanceState, dialog)
         return dialog
@@ -75,8 +73,7 @@ abstract class YenalyBottomSheetDialogFragment<DB : ViewDataBinding>(
 
     @Suppress("unchecked_cast")
     private fun <DB : ViewDataBinding> getViewBinding(
-        inflater: LayoutInflater,
-        attachToRoot: Boolean
+        inflater: LayoutInflater
     ): DB {
         val dbClass =
             (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<DB>
@@ -86,6 +83,6 @@ abstract class YenalyBottomSheetDialogFragment<DB : ViewDataBinding>(
             ViewGroup::class.java,
             Boolean::class.java
         )
-        return inflate.invoke(null, inflater, null, attachToRoot) as DB
+        return inflate.invoke(null, inflater, null, false) as DB
     }
 }

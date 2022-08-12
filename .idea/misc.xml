@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/wrzg8/.gradle/caches/transforms-3/5289e4e06c8c1345f256b44f2a8bf24b/transformed/jetified-about-2.5.1/res/layout/about_page_main_activity.xml" value="0.268" />
+        <entry key="..\:/Users/wrzg8/.gradle/caches/transforms-3/87e9ff2b1f11a88e5e2d5c256d23de02/transformed/jetified-MaterialSearchBar-0.8.5/res/drawable-mdpi-v4/ic_menu_animated.xml" value="0.2455" />
+        <entry key="..\:/Users/wrzg8/.gradle/caches/transforms-3/87e9ff2b1f11a88e5e2d5c256d23de02/transformed/jetified-MaterialSearchBar-0.8.5/res/layout/item_last_request.xml" value="0.36" />
+        <entry key="..\:/Users/wrzg8/.gradle/caches/transforms-3/87e9ff2b1f11a88e5e2d5c256d23de02/transformed/jetified-MaterialSearchBar-0.8.5/res/layout/searchbar.xml" value="0.3" />
         <entry key="..\:/Users/wrzg8/.gradle/caches/transforms-3/bc7aadf64a90ff594b2f090b0cdd700e/transformed/jetified-jiaozivideoplayer-7.7.0/res/drawable/jz_bottom_progress.xml" value="0.139" />
         <entry key="..\:/Users/wrzg8/.gradle/caches/transforms-3/bc7aadf64a90ff594b2f090b0cdd700e/transformed/jetified-jiaozivideoplayer-7.7.0/res/drawable/jz_click_back_tiny_selector.xml" value="0.107" />
         <entry key="..\:/Users/wrzg8/.gradle/caches/transforms-3/bc7aadf64a90ff594b2f090b0cdd700e/transformed/jetified-jiaozivideoplayer-7.7.0/res/layout/jz_dialog_brightness.xml" value="0.275" />
@@ -27,25 +31,36 @@
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/activity_main.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/activity_preview.xml" value="0.20172257479601088" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/activity_preview_comment.xml" value="0.22488242838820008" />
-        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/activity_search.xml" value="0.10560068405301411" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/activity_search.xml" value="0.268" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/activity_settings.xml" value="0.22573749465583584" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/activity_video.xml" value="0.10560068405301411" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_comment.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_comment_reply.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_home_page.xml" value="0.10389055151774262" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_list_only.xml" value="0.1564102564102564" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_page_list.xml" value="0.22488242838820008" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_tab_view_pager_only.xml" value="0.1" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_tag_selector.xml" value="0.2606837606837607" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_video_introduction.xml" value="0.36" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_watch_history.xml" value="0.3" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_download.xml" value="0.36" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_downloaded.xml" value="0.3" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_preview_news.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_preview_news_pic.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_video.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_video_simplified.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_tag_chip.xml" value="0.10389055151774262" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_tag_chip_group.xml" value="0.22573749465583584" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_tag_selector.xml" value="0.1" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_video_comment.xml" value="0.44000000000000006" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_video_tag_chip.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_watch_history.xml" value="0.44000000000000006" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/layout_custom_search_bar.xml" value="0.44000000000000006" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/layout_empty_view.xml" value="0.132" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/layout_search_bar.xml" value="0.44000000000000006" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/nav_header_ability.xml" value="0.22573749465583584" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/pop_up_hanime_search_tag.xml" value="0.10389055151774262" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/widget_search_bar.xml" value="0.4378947368421053" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_main_bnv.xml" value="0.22573749465583584" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_main_nv.xml" value="0.4" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_main_toolbar.xml" value="0.22573749465583584" />

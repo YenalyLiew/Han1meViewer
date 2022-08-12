@@ -19,5 +19,7 @@
     <fragment
         android:id="@id/nv_watch_later"
         android:name="com.yenaly.han1meviewer.ui.fragment.home.MyWatchLaterFragment" />
-
+    <fragment
+        android:id="@id/nv_downloaded"
+        android:name="com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment" />
 </navigation>

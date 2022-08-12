@@ -1,6 +1,5 @@
 package com.yenaly.han1meviewer.ui.adapter
 
-import android.app.Activity
 import android.view.View
 import coil.load
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -11,10 +10,7 @@ import com.yenaly.han1meviewer.databinding.ItemWatchHistoryBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.toVideoCode
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
-import com.yenaly.yenaly_libs.utils.TimeUtil
-import com.yenaly.yenaly_libs.utils.copyTextToClipboard
-import com.yenaly.yenaly_libs.utils.showShortToast
-import com.yenaly.yenaly_libs.utils.startActivity
+import com.yenaly.yenaly_libs.utils.*
 
 /**
  * @project Han1meViewer
@@ -41,7 +37,7 @@ class WatchHistoryRvAdapter :
                 val position = viewHolder.bindingAdapterPosition
                 val item = getItem(position)
                 val videoCode = item.redirectLink.toVideoCode()
-                (context as Activity).startActivity<VideoActivity>(VIDEO_CODE to videoCode)
+                context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
             }
             setOnLongClickListener {
                 val position = viewHolder.bindingAdapterPosition

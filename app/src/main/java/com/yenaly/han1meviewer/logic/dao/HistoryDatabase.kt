@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
+import com.yenaly.yenaly_libs.utils.applicationContext
 
 /**
  * @project Hanime1
@@ -23,16 +24,12 @@ abstract class HistoryDatabase : RoomDatabase() {
     abstract val watchHistory: WatchHistoryDao
 
     companion object {
-        private var historyDatabase: HistoryDatabase? = null
-        fun getInstance(context: Context): HistoryDatabase {
-            return historyDatabase ?: synchronized(HistoryDatabase::class.java) {
-                historyDatabase = Room.databaseBuilder(
-                    context,
-                    HistoryDatabase::class.java,
-                    "history.db"
-                ).build()
-                historyDatabase!!
-            }
+        val instance by lazy {
+            Room.databaseBuilder(
+                applicationContext,
+                HistoryDatabase::class.java,
+                "history.db"
+            ).build()
         }
     }
 }

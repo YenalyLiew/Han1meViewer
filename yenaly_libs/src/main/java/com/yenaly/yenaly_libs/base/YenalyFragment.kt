@@ -21,8 +21,7 @@ import java.lang.reflect.ParameterizedType
  */
 abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverloads constructor(
     private val sharedViewModel: Boolean = true,
-    private val viewModelFactory: ViewModelProvider.Factory? = null,
-    private val attachToRoot: Boolean = false
+    private val viewModelFactory: ViewModelProvider.Factory? = null
 ) : FrameFragment() {
 
     lateinit var binding: DB
@@ -54,7 +53,7 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
         inflater: LayoutInflater,
         container: ViewGroup?
     ) {
-        binding = getViewBinding(inflater, container, attachToRoot)
+        binding = getViewBinding(inflater, container)
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = if (sharedViewModel) {
@@ -78,8 +77,7 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
     @Suppress("unchecked_cast")
     private fun <DB : ViewDataBinding> getViewBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        attachToRoot: Boolean
+        container: ViewGroup?
     ): DB {
         val dbClass =
             (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<DB>
@@ -89,7 +87,7 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
             ViewGroup::class.java,
             Boolean::class.java
         )
-        return inflate.invoke(null, inflater, container, attachToRoot) as DB
+        return inflate.invoke(null, inflater, container, false) as DB
     }
 
     @Suppress("unchecked_cast")

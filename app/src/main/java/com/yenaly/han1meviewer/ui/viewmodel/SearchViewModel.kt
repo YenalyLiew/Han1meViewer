@@ -84,4 +84,11 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
         DatabaseRepo.loadAllSearchHistories()
             .catch { e -> e.printStackTrace() }
             .flowOn(Dispatchers.IO)
+
+    fun deleteSearchHistoryByKeyword(query: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            DatabaseRepo.deleteSearchHistoryByKeyword(query)
+            Log.d("delete_search_hty", "$query DONE!")
+        }
+    }
 }

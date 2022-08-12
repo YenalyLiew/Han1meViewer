@@ -1,6 +1,5 @@
 package com.yenaly.han1meviewer.ui.adapter
 
-import android.app.Activity
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +16,7 @@ import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
-import com.yenaly.yenaly_libs.utils.copyTextToClipboard
-import com.yenaly.yenaly_libs.utils.dp
-import com.yenaly.yenaly_libs.utils.showShortToast
-import com.yenaly.yenaly_libs.utils.startActivity
+import com.yenaly.yenaly_libs.utils.*
 
 /**
  * @project Hanime1
@@ -144,7 +140,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
                         showShortToast("當前正在觀看該影片哦~")
                     } else {
                         val videoCode = item.redirectLink.toVideoCode()
-                        (context as Activity).startActivity<VideoActivity>(VIDEO_CODE to videoCode)
+                        context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
                     }
                 }
                 setOnLongClickListener {

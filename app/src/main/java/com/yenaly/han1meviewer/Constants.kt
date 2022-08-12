@@ -6,6 +6,10 @@ import com.yenaly.yenaly_libs.utils.applicationContext
 
 const val EMPTY_STRING = ""
 
+// 网络基本设置
+
+const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+
 // 動態設置影片卡片長寬
 
 @JvmField
@@ -90,3 +94,7 @@ enum class FavStatus(val value: String) {
     ADD_FAV(EMPTY_STRING),
     CANCEL_FAV("1")
 }
+
+// Notification
+
+const val DOWNLOAD_NOTIFICATION_CHANNEL = "download_channel"

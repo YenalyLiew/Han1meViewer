@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenCreated
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -77,7 +78,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         binding.homePageSrl.apply {
             setOnRefreshListener {
                 // will enter here firstly. cuz the flow's def value is Loading.
-                getHomePage()
+                viewModel.getHomePage()
             }
             setEnableLoadMore(false)
         }
@@ -86,7 +87,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     @SuppressLint("SetTextI18n")
     override fun liveDataObserve() {
         lifecycleScope.launch {
-            whenStarted {
+            whenCreated {
                 viewModel.homePageFlow.collect { state ->
                     binding.homePageNsv.isGone = state !is WebsiteState.Success
                     binding.errorTip.isVisible = state is WebsiteState.Error
@@ -146,6 +147,4 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         binding.hanimeTheyWatched.title.setText(R.string.they_watched)
         binding.hanimeTheyWatched.subTitle.setText(R.string.trends)
     }
-
-    private fun getHomePage() = viewModel.getHomePage()
 }
