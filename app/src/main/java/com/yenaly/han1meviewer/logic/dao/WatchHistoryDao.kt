@@ -25,7 +25,7 @@ abstract class WatchHistoryDao {
     abstract suspend fun insertWatchHistory(history: WatchHistoryEntity)
 
     @Query("SELECT * FROM WatchHistoryEntity WHERE (`title` = :title) LIMIT 1")
-    abstract suspend fun loadWatchHistory(title: String): WatchHistoryEntity?
+    abstract fun loadWatchHistory(title: String): WatchHistoryEntity?
 
     @Transaction
     open suspend fun insertOrUpdateSearchHistory(history: WatchHistoryEntity) {

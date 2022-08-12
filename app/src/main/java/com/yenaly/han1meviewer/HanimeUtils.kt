@@ -1,17 +1,23 @@
 package com.yenaly.han1meviewer
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.os.Environment
 import android.view.LayoutInflater
 import android.webkit.CookieManager
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
-import com.yenaly.yenaly_libs.utils.copyToClipboard
-import com.yenaly.yenaly_libs.utils.showShortToast
-import com.yenaly.yenaly_libs.utils.startActivity
+import com.yenaly.yenaly_libs.utils.*
 import okhttp3.Cookie
+import java.io.File
 
-// Utils Only For This App!!!
+// Utils Only For This App!!! //
 
 /**
  * dynamically create tag chips.
@@ -34,7 +40,41 @@ internal fun ChipGroup.createTags(tags: List<String>) {
     }
 }
 
+// base
+
+internal val notificationManager by unsafeLazy { NotificationManagerCompat.from(applicationContext) }
+
 internal fun getHanimeVideoLink(videoCode: String) = HANIME_BASE_URL + "watch?v=" + videoCode
+
+// file
+
+internal val hanimeVideoLocalFolder get() = applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+
+internal fun createDownloadName(title: String, quality: String) = "${title}_${quality}.mp4"
+
+internal fun getDownloadedHanimeFile(title: String, quality: String): File {
+    return File(hanimeVideoLocalFolder, createDownloadName(title, quality))
+}
+
+internal fun checkDownloadedHanimeFile(startsWith: String): Boolean {
+    return hanimeVideoLocalFolder?.let { folder ->
+        folder.listFiles()?.firstOrNull { it.name.startsWith(startsWith) } != null
+    } ?: false
+}
+
+/**
+ * Must be Activity Context!
+ */
+internal fun Context.openDownloadedHanimeVideoLocally(uri: String) {
+    val videoFile = uri.toUri().toFile()
+    val fileUri = FileProvider.getUriForFile(
+        this, "com.yenaly.han1meviewer.fileProvider", videoFile
+    )
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.setDataAndType(fileUri, "video/*")
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    startActivity(intent)
+}
 
 // 務必保證v=後面都是數字！！一般在程式内特定環境使用，分析剪貼簿時不要用！！
 internal fun String.toVideoCode() = substringAfter("watch?v=")
@@ -52,7 +92,6 @@ internal fun login(cookie: CookieString) {
     alreadyLogin = true
     loginCookie = cookie
 }
-
 
 // cookie!!
 
@@ -95,7 +134,9 @@ internal fun CookieString.toCookieList(domain: String): List<Cookie> {
  */
 private fun preferencesCookieList(domain: String): List<Cookie> {
     val videoLanguage = preferenceSp.getString("video_language", "zh-CHT") ?: "zh-CHT"
-    val videoLanguageCookie =
-        Cookie.Builder().domain(domain).name("user_lang").value(videoLanguage).build()
+    val videoLanguageCookie = Cookie.Builder().domain(domain)
+        .name("user_lang")
+        .value(videoLanguage)
+        .build()
     return listOf(videoLanguageCookie)
 }

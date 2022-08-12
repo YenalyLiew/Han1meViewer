@@ -1,22 +1,21 @@
 package com.yenaly.han1meviewer.ui.activity
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import android.widget.CompoundButton
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.TextView
-import androidx.lifecycle.flowWithLifecycle
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
@@ -24,23 +23,21 @@ import com.lxj.xpopup.impl.CenterListPopupView
 import com.lxj.xpopup.interfaces.SimpleCallback
 import com.lxj.xpopupext.listener.TimePickerListener
 import com.lxj.xpopupext.popup.TimePickerPopup
+import com.mancj.materialsearchbar.MaterialSearchBar
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.databinding.ActivitySearchBinding
-import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
+import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
-import com.yenaly.han1meviewer.ui.adapter.SearchHistoryArrayAdapter
+import com.yenaly.han1meviewer.ui.adapter.SearchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.popup.HanimeSearchTagCenterPopup
 import com.yenaly.han1meviewer.ui.viewmodel.SearchViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.intentExtra
 import com.yenaly.yenaly_libs.utils.isOrientationLandscape
-import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
-import com.yenaly.yenaly_libs.utils.view.AppBarLayoutStateChangeListener
 import com.yenaly.yenaly_libs.utils.view.hideIme
-import com.yenaly.yenaly_libs.utils.view.textString
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -283,34 +280,40 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     private val fromVideoTag by intentExtra<String>(FROM_VIDEO_TAG)
 
     // 下面兩個直接show，因爲已經被builder構建好了
+    @UsingCautiously
     private lateinit var brandPopup: BasePopupView
+
+    @UsingCautiously
     private lateinit var tagPopup: BasePopupView
 
     // 這個需要用XPopup的asCustom構建一下，不能直接show
+    @UsingCautiously
     private lateinit var timePickerPopup: TimePickerPopup
+
+    override fun setUiStyle() {
+        // SystemStatusUtil.fullScreen(window, true)
+    }
 
     /**
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.let {
-            it.title = null
-            it.setDisplayHomeAsUpEnabled(true)
-            it.setHomeActionContentDescription(R.string.back)
-        }
         fromVideoTag?.let {
-            binding.etSearch.setText(it)
+            binding.searchBar.searchBar.text = it
             viewModel.query = it
         }
 
         initSearchBar()
 
+        /*
         binding.appBar.addOnOffsetChangedListener(object : AppBarLayoutStateChangeListener() {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
-                if (state != State.EXPANDED) binding.etSearch.hideIme(window)
+                if (state != State.EXPANDED) {
+                    binding.searchBar.searchBar.searchEditText.hideIme(window)
+                }
             }
         })
+         */
 
         initChip()
 
@@ -378,51 +381,6 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_search_toolbar, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
-            R.id.tb_cancel_all_tags -> {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.alert)
-                    .setMessage(R.string.alert_cancel_all_tags)
-                    .setPositiveButton(R.string.confirm) { _, _ ->
-                        typePosition = null
-                        durationPosition = null
-                        sortOptionPosition = null
-
-                        viewModel.genre = null
-                        viewModel.brandSet.clear()
-                        viewModel.tagSet.clear()
-                        viewModel.year = null
-                        viewModel.month = null
-                        viewModel.duration = null
-                        viewModel.sort = null
-
-                        binding.type.isChecked = false
-                        binding.brand.isChecked = false
-                        binding.duration.isChecked = false
-                        binding.releaseDate.isChecked = false
-                        binding.sortOption.isChecked = false
-                        binding.tag.isChecked = false
-
-                        getNewHanimeSearchResult()
-                    }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         when (newConfig.orientation) {
@@ -449,6 +407,14 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         }
     }
 
+    override fun onBackPressed() {
+        if (binding.searchBar.groupTag.isVisible) {
+            binding.searchBar.groupTag.animateGone()
+            return
+        }
+        super.onBackPressed()
+    }
+
     private fun getHanimeSearchResult() {
         viewModel.getHanimeSearchResult(
             viewModel.page,
@@ -468,55 +434,67 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     }
 
     private fun initSearchBar() {
+        val searchHistoryRvAdapter = SearchHistoryRvAdapter(LayoutInflater.from(this)).apply {
+            setListener(object : SearchHistoryRvAdapter.OnItemViewClickListener {
+                override fun onItemClickListener(suggestion: String, v: View?) {
+                    binding.searchBar.searchBar.searchEditText.setText(suggestion)
+                }
+
+                override fun onItemDeleteListener(suggestion: String, v: View?) {
+                    if (suggestions.size == 1) {
+                        binding.searchBar.searchBar.hideSuggestionsList()
+                    }
+                    viewModel.deleteSearchHistoryByKeyword(suggestion)
+                    suggestions.remove(suggestion)
+                    binding.searchBar.searchBar.updateLastSuggestions(suggestions)
+                }
+            })
+        }
+        binding.searchBar.searchBar.setCustomSuggestionAdapter(searchHistoryRvAdapter)
+        binding.searchBar.btnBack.setOnClickListener { finish() }
+        binding.searchBar.btnTag.setOnClickListener {
+            if (binding.searchBar.searchBar.isSuggestionsVisible) {
+                binding.searchBar.searchBar.hideSuggestionsList()
+            }
+            if (binding.searchBar.groupTag.isGone) {
+                binding.searchBar.groupTag.animateShow()
+            } else binding.searchBar.groupTag.animateGone()
+        }
+
         lifecycleScope.launch {
-            viewModel.loadAllSearchHistories().flowWithLifecycle(lifecycle).collect { entity ->
-                val searchHistoryList = entity.asSequence().map { it.query }.toMutableList()
-                SearchHistoryArrayAdapter(this@SearchActivity, searchHistoryList).apply {
-                    setOnItemClickListener { _, position ->
-                        viewModel.query = getItem(position) as String
-                        binding.etSearch.setText(getItem(position) as String)
-                        binding.etSearch.hideIme(window)
-                        getNewHanimeSearchResult()
-                    }
-                    setOnItemLongClickListener { _, position ->
-                        viewModel.deleteSearchHistory(entity[position])
-                        list.remove(getItem(position) as String)
-                        notifyDataSetChanged()
-                        showShortToast("已經刪除該歷史記錄") // todo: strings.xml
-                        return@setOnItemLongClickListener true
-                    }
-                    binding.etSearch.setAdapter(this)
+            whenStarted {
+                viewModel.loadAllSearchHistories().collect { entities ->
+                    binding.searchBar.searchBar.lastSuggestions = entities.map { it.query }
                 }
             }
         }
 
-        binding.etSearch.threshold = 0
-        binding.etSearch.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.etSearch.showDropDown()
-            }
-        }
-
-        /*
-        binding.etSearch.setOnItemClickListener { adapter, _, position, _ ->
-            val query = adapter.getItemAtPosition(position) as String
-            viewModel.query = query
-            binding.etSearch.hideIme(window)
-            getNewHanimeSearchResult()
-        }
-         */
-
-        binding.etSearch.setOnEditorActionListener { _, _, _ ->
-            binding.etSearch.hideIme(window)
-            binding.etSearch.textString().let {
-                viewModel.query = it.ifBlank { null }
-                if (it.isNotBlank()) {
-                    viewModel.insertSearchHistory(SearchHistoryEntity(query = it))
+        binding.searchBar.searchBar.setOnSearchActionListener(
+            object : MaterialSearchBar.OnSearchActionListener {
+                override fun onSearchStateChanged(enabled: Boolean) {
+                    if (enabled) {
+                        if (binding.searchBar.groupTag.isVisible) {
+                            binding.searchBar.groupTag.animateGone()
+                        }
+                    }
                 }
+
+                override fun onSearchConfirmed(text: CharSequence?) {
+                    binding.searchBar.searchBar.searchEditText.hideIme(window)
+                    text?.toString()?.let {
+                        viewModel.query = it.ifBlank { null }.also { query ->
+                            query?.let { nonNullQuery ->
+                                viewModel.insertSearchHistory(SearchHistoryEntity(query = nonNullQuery))
+                            }
+                        }
+                    }
+                    // getNewHanimeSearchResult() 下面那個方法自動幫你執行這個方法了
+                    binding.searchSrl.autoRefresh()
+                }
+
+                override fun onButtonClicked(buttonCode: Int) = Unit
             }
-            getNewHanimeSearchResult()
-            return@setOnEditorActionListener true
-        }
+        )
     }
 
     private fun initChip() {
@@ -525,39 +503,77 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         initTagPopup()
         initTimePickerPopup()
 
-        binding.type.setOnClickListener {
-            binding.type.isChecked = true
-            makeCenterListPopup(
-                getString(R.string.type_able_reset), typeArray, typePosition,
-                beforeDismiss = { binding.type.isChecked = typePosition != null }
-            ) { position, text ->
-                viewModel.genre = if (typePosition != position) text else null
-                typePosition = if (typePosition != position) position else null
-                getNewHanimeSearchResult()
-            }.show()
-        }
-        binding.sortOption.setOnClickListener {
-            binding.sortOption.isChecked = true
-            makeCenterListPopup(
-                getString(R.string.sort_option_able_reset), sortOptionArray, sortOptionPosition,
-                beforeDismiss = { binding.sortOption.isChecked = sortOptionPosition != null }
-            ) { position, text ->
-                viewModel.sort = if (sortOptionPosition != position) text else null
-                sortOptionPosition = if (sortOptionPosition != position) position else null
-                getNewHanimeSearchResult()
-            }.show()
-        }
-        binding.brand.setOnClickListener {
-            binding.brand.isChecked = true
-            brandPopup.show()
-        }
-        binding.tag.setOnClickListener {
-            binding.tag.isChecked = true
-            tagPopup.show()
-        }
-        binding.releaseDate.apply {
+        binding.searchBar.type.apply {
             setOnClickListener {
-                binding.releaseDate.isChecked = true
+                binding.searchBar.type.isChecked = true
+                makeCenterListPopup(
+                    getString(R.string.type_able_reset), typeArray, typePosition,
+                    beforeDismiss = { binding.searchBar.type.isChecked = typePosition != null }
+                ) { position, text ->
+                    viewModel.genre = if (typePosition != position) text else null
+                    typePosition = if (typePosition != position) position else null
+                }.show()
+            }
+            setOnLongClickListener {
+                showClearAllTagsDialog {
+                    typePosition = null
+                    viewModel.genre = null
+                    binding.searchBar.type.isChecked = false
+                }
+                return@setOnLongClickListener true
+            }
+        }
+        binding.searchBar.sortOption.apply {
+            setOnClickListener {
+                binding.searchBar.sortOption.isChecked = true
+                makeCenterListPopup(
+                    getString(R.string.sort_option_able_reset), sortOptionArray, sortOptionPosition,
+                    beforeDismiss = {
+                        binding.searchBar.sortOption.isChecked = sortOptionPosition != null
+                    }
+                ) { position, text ->
+                    viewModel.sort = if (sortOptionPosition != position) text else null
+                    sortOptionPosition = if (sortOptionPosition != position) position else null
+                }.show()
+            }
+            setOnLongClickListener {
+                showClearAllTagsDialog {
+                    sortOptionPosition = null
+                    viewModel.sort = null
+                    binding.searchBar.sortOption.isChecked = false
+                }
+                return@setOnLongClickListener true
+            }
+        }
+        binding.searchBar.brand.apply {
+            setOnClickListener {
+                binding.searchBar.brand.isChecked = true
+                brandPopup.show()
+            }
+            setOnLongClickListener {
+                showClearAllTagsDialog {
+                    viewModel.brandSet.clear()
+                    binding.searchBar.brand.isChecked = false
+                }
+                return@setOnLongClickListener true
+            }
+        }
+        binding.searchBar.tag.apply {
+            setOnClickListener {
+                binding.searchBar.tag.isChecked = true
+                tagPopup.show()
+            }
+            setOnLongClickListener {
+                showClearAllTagsDialog {
+                    viewModel.tagSet.clear()
+                    binding.searchBar.tag.isChecked = false
+                }
+                return@setOnLongClickListener true
+            }
+        }
+        binding.searchBar.releaseDate.apply {
+            setOnClickListener {
+                binding.searchBar.releaseDate.isChecked = true
                 if (viewModel.year != null && viewModel.month != null) {
                     val calendar = Calendar.getInstance()
                     calendar.set(viewModel.year!!, viewModel.month!!, 0)
@@ -566,47 +582,56 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 XPopup.Builder(this@SearchActivity)
                     .setPopupCallback(object : SimpleCallback() {
                         override fun beforeDismiss(popupView: BasePopupView?) {
-                            binding.releaseDate.isChecked =
+                            binding.searchBar.releaseDate.isChecked =
                                 viewModel.year != null || viewModel.month != null
                         }
                     })
                     .isDarkTheme(true).asCustom(timePickerPopup).show()
             }
             setOnLongClickListener {
-                if (this.isChecked) {
-                    Snackbar.make(binding.coordinator, R.string.reset_date, Snackbar.LENGTH_SHORT)
-                        .setAction(R.string.reset) {
-                            binding.releaseDate.isChecked = false
-                            viewModel.year = null
-                            viewModel.month = null
-                            getNewHanimeSearchResult()
-                        }.show()
+                showClearAllTagsDialog {
+                    binding.searchBar.releaseDate.isChecked = false
+                    viewModel.year = null
+                    viewModel.month = null
                 }
                 return@setOnLongClickListener true
             }
         }
-        binding.duration.setOnClickListener {
-            binding.duration.isChecked = true
-            makeCenterListPopup(
-                getString(R.string.duration_able_reset),
-                durationMap.map { it.key }.toTypedArray(),
-                durationPosition,
-                beforeDismiss = { binding.duration.isChecked = durationPosition != null }
-            ) { position, text ->
-                viewModel.duration = if (durationPosition != position) durationMap[text] else null
-                durationPosition = if (durationPosition != position) position else null
-                getNewHanimeSearchResult()
-            }.show()
+        binding.searchBar.duration.apply {
+            setOnClickListener {
+                binding.searchBar.duration.isChecked = true
+                makeCenterListPopup(
+                    getString(R.string.duration_able_reset),
+                    durationMap.keys.toTypedArray(),
+                    durationPosition,
+                    beforeDismiss = {
+                        binding.searchBar.duration.isChecked = durationPosition != null
+                    }
+                ) { position, text ->
+                    viewModel.duration =
+                        if (durationPosition != position) durationMap[text] else null
+                    durationPosition = if (durationPosition != position) position else null
+                    getNewHanimeSearchResult()
+                }.show()
+            }
+            setOnLongClickListener {
+                showClearAllTagsDialog {
+                    durationPosition = null
+                    viewModel.duration = null
+                    binding.searchBar.duration.isChecked = false
+                }
+                return@setOnLongClickListener true
+            }
         }
     }
 
     // base
-    private inline fun makeCenterListPopup(
+    private fun makeCenterListPopup(
         title: String,
         list: Array<String>,
         position: Int?,
-        crossinline beforeDismiss: (BasePopupView) -> Unit,
-        noinline action: (position: Int, text: String) -> Unit
+        beforeDismiss: (BasePopupView) -> Unit,
+        action: (position: Int, text: String) -> Unit
     ): CenterListPopupView {
         val simpleCallback = object : SimpleCallback() {
             override fun beforeDismiss(popupView: BasePopupView) {
@@ -625,9 +650,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     }
 
     // base
-    private inline fun makeCenterTagPopup(
-        crossinline beforeShow: (BasePopupView, SwitchMaterial, List<Chip>) -> Unit,
-        crossinline beforeDismiss: (BasePopupView) -> Unit,
+    private fun makeCenterTagPopup(
+        beforeShow: (BasePopupView, SwitchMaterial, List<Chip>) -> Unit,
+        beforeDismiss: (BasePopupView) -> Unit,
         action: HanimeSearchTagCenterPopup.() -> Unit
     ): BasePopupView {
         val popup = HanimeSearchTagCenterPopup(this)
@@ -651,15 +676,12 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                     chip.isChecked = chip.text in viewModel.brandSet
                 }
             },
-            beforeDismiss = { binding.brand.isChecked = viewModel.brandSet.isNotEmpty() }
+            beforeDismiss = { binding.searchBar.brand.isChecked = viewModel.brandSet.isNotEmpty() }
         ) {
             setTitle(getString(R.string.brand))
             showPairWidelyLayout(false)
             addTagsScope {
-                addTagGroup(null, brandArray) { _, text, isChecked ->
-                    if (isChecked) viewModel.brandSet.add(text.toString())
-                    else viewModel.brandSet.remove(text.toString())
-                }
+                addTagGroup(null, brandArray, null)
             }
             setOnResetClickListener {
                 chipList.forEach { tag ->
@@ -667,8 +689,11 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 }
             }
             setOnSaveClickListener {
+                viewModel.brandSet.clear()
+                chipList.forEach { tag ->
+                    viewModel.brandSet += tag.text.toString()
+                }
                 dismiss()
-                getNewHanimeSearchResult()
             }
         }
     }
@@ -681,26 +706,24 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                     chip.isChecked = chip.text in viewModel.tagSet
                 }
             },
-            beforeDismiss = { binding.tag.isChecked = viewModel.tagSet.isNotEmpty() }
+            beforeDismiss = { binding.searchBar.tag.isChecked = viewModel.tagSet.isNotEmpty() }
         ) {
             // kotlin-dsl style
             setTitle(getString(R.string.tag))
             showPairWidelyLayout(true)
+
+            var broad: String? = null
             setOnPairWidelySwitchCheckedListener { _, isChecked ->
-                viewModel.broad = if (isChecked) "on" else null
+                broad = if (isChecked) "on" else null
             }
+
             addTagsScope {
-                val action: (CompoundButton, CharSequence, Boolean) -> Unit =
-                    { _, text, isChecked ->
-                        if (isChecked) viewModel.tagSet.add(text.toString())
-                        else viewModel.tagSet.remove(text.toString())
-                    }
-                addTagGroup(getString(R.string.video_attr), videoAttrTagArray, action)
-                addTagGroup(getString(R.string.relationship), relationshipTagArray, action)
-                addTagGroup(getString(R.string.character_setting), characterSettingTagArray, action)
-                addTagGroup(getString(R.string.appearance_and_figure), appearanceTagArray, action)
-                addTagGroup(getString(R.string.story_plot), storyPlotTagArray, action)
-                addTagGroup(getString(R.string.sex_position), sexPositionTagArray, action)
+                addTagGroup(getString(R.string.video_attr), videoAttrTagArray, null)
+                addTagGroup(getString(R.string.relationship), relationshipTagArray, null)
+                addTagGroup(getString(R.string.character_setting), characterSettingTagArray, null)
+                addTagGroup(getString(R.string.appearance_and_figure), appearanceTagArray, null)
+                addTagGroup(getString(R.string.story_plot), storyPlotTagArray, null)
+                addTagGroup(getString(R.string.sex_position), sexPositionTagArray, null)
             }
             setOnResetClickListener {
                 pairWidely.isChecked = false
@@ -709,27 +732,63 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 }
             }
             setOnSaveClickListener {
+                viewModel.broad = broad
+                viewModel.tagSet.clear()
+                chipList.forEach { tag ->
+                    viewModel.tagSet += tag.text.toString()
+                }
                 dismiss()
-                getNewHanimeSearchResult()
             }
         }
     }
+
 
     private fun initTimePickerPopup() {
         timePickerPopup = TimePickerPopup(this)
             .setMode(TimePickerPopup.Mode.YM)
             .setYearRange(SEARCH_YEAR_RANGE_START, SEARCH_YEAR_RANGE_END)
             .setTimePickerListener(object : TimePickerListener {
-                override fun onTimeChanged(date: Date) {
-                }
+                override fun onTimeChanged(date: Date) = Unit
 
                 override fun onTimeConfirm(date: Date, view: View) {
                     val calendar = Calendar.getInstance()
                     calendar.time = date
                     viewModel.year = calendar.get(Calendar.YEAR)
                     viewModel.month = calendar.get(Calendar.MONTH) + 1
-                    getNewHanimeSearchResult()
                 }
             })
+    }
+
+    private fun Chip.showClearAllTagsDialog(action: () -> Unit) {
+        if (isChecked) {
+            MaterialAlertDialogBuilder(this.context)
+                .setTitle(R.string.alert)
+                .setMessage(R.string.alert_cancel_all_tags)
+                .setPositiveButton(R.string.confirm) { _, _ -> action.invoke() }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        }
+    }
+
+    private val defaultInterpolator = AccelerateDecelerateInterpolator()
+
+    private fun View.animateShow() {
+        alpha = 0f
+        isVisible = true
+        animate().alpha(1f).setDuration(500).setInterpolator(defaultInterpolator)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    isVisible = true
+                }
+            }).start()
+    }
+
+    private fun View.animateGone() {
+        animate().alpha(0f).setDuration(500).setInterpolator(defaultInterpolator)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    isVisible = false
+                }
+            }).start()
     }
 }

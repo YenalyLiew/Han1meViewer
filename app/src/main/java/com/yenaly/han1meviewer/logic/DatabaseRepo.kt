@@ -1,9 +1,11 @@
 package com.yenaly.han1meviewer.logic
 
+import com.yenaly.han1meviewer.logic.dao.DownloadDatabase
 import com.yenaly.han1meviewer.logic.dao.HistoryDatabase
+import com.yenaly.han1meviewer.logic.entity.HanimeDownloadedEntity
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
-import com.yenaly.yenaly_libs.utils.applicationContext
+import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 
 /**
  * @project Hanime1
@@ -11,8 +13,7 @@ import com.yenaly.yenaly_libs.utils.applicationContext
  * @time 2022/06/22 022 23:00
  */
 object DatabaseRepo {
-    private val searchHistoryDao =
-        HistoryDatabase.getInstance(applicationContext).searchHistory
+    private val searchHistoryDao = HistoryDatabase.instance.searchHistory
 
     fun loadAllSearchHistories() =
         searchHistoryDao.loadAllSearchHistories()
@@ -23,8 +24,10 @@ object DatabaseRepo {
     suspend fun insertSearchHistory(history: SearchHistoryEntity) =
         searchHistoryDao.insertOrUpdateSearchHistory(history)
 
-    private val watchHistoryDao =
-        HistoryDatabase.getInstance(applicationContext).watchHistory
+    suspend fun deleteSearchHistoryByKeyword(query: String) =
+        searchHistoryDao.deleteSearchHistoryByKeyword(query)
+
+    private val watchHistoryDao = HistoryDatabase.instance.watchHistory
 
     fun loadAllWatchHistories() =
         watchHistoryDao.loadAllWatchHistories()
@@ -37,4 +40,21 @@ object DatabaseRepo {
 
     suspend fun insertWatchHistory(history: WatchHistoryEntity) =
         watchHistoryDao.insertOrUpdateSearchHistory(history)
+
+    private val hanimeDownloadedDao = DownloadDatabase.instance.hanimeDownloadedDao
+
+    fun loadAllDownloadedHanime() =
+        hanimeDownloadedDao.loadAllDownloadedHanime()
+
+    suspend fun deleteDownloadedHanimeByVideoCode(videoCode: String) =
+        hanimeDownloadedDao.deleteDownloadedHanimeByVideoCode(videoCode)
+
+    suspend fun insertDownloadedHanime(entity: HanimeDownloadedEntity) =
+        hanimeDownloadedDao.insertDownloadedHanime(entity)
+
+    suspend fun loadDownloadedHanimeByVideoCode(videoCode: String) =
+        hanimeDownloadedDao.loadDownloadedHanimeByVideoCode(videoCode)
+
+    suspend fun updateDownloadedHanime(entity: HanimeDownloadedEntity) =
+        hanimeDownloadedDao.updateDownloadedHanime(entity)
 }

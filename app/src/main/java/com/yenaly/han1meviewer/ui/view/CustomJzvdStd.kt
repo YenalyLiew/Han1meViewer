@@ -1,6 +1,5 @@
 package com.yenaly.han1meviewer.ui.view
 
-import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -10,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import cn.jzvd.JZDataSource
 import cn.jzvd.JzvdStd
+import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.dp
 
 /**
@@ -53,7 +53,7 @@ class CustomJzvdStd @JvmOverloads constructor(
                 CURRENT_JZVD.clearFloatScreen()
             }
             else -> { //剩餘情況直接退出
-                if (context is Activity) (context as Activity).finish()
+                context.activity?.finish()
             }
         }
     }

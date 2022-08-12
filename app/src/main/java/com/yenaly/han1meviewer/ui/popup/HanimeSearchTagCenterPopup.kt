@@ -20,6 +20,7 @@ import com.yenaly.han1meviewer.R
  * @author Yenaly Liew
  * @time 2022/06/16 016 15:05
  */
+@HanimeSearchTagCenterPopupDsl
 class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
 
     val chipList = mutableListOf<Chip>()
@@ -87,7 +88,7 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
     fun LinearLayout.addTagGroup(
         subtitle: CharSequence?,
         tagTextList: Array<out CharSequence>,
-        action: (CompoundButton, text: CharSequence, isChecked: Boolean) -> Unit
+        action: ((CompoundButton, text: CharSequence, isChecked: Boolean) -> Unit)? = null
     ) {
         val viewGroup = LayoutInflater.from(context)
             .inflate(R.layout.item_tag_chip_group, this, false) as LinearLayout
@@ -101,15 +102,17 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
         addView(viewGroup)
     }
 
-    private inline fun ChipGroup.addTag(
+    private fun ChipGroup.addTag(
         text: CharSequence,
-        crossinline action: (CompoundButton, text: CharSequence, isChecked: Boolean) -> Unit
+        action: ((CompoundButton, text: CharSequence, isChecked: Boolean) -> Unit)? = null
     ) {
         val tag = LayoutInflater.from(context)
             .inflate(R.layout.item_tag_chip, this, false) as Chip
         tag.text = text
-        tag.setOnCheckedChangeListener { buttonView, isChecked ->
-            action.invoke(buttonView, text, isChecked)
+        action?.let {
+            tag.setOnCheckedChangeListener { buttonView, isChecked ->
+                action.invoke(buttonView, text, isChecked)
+            }
         }
         chipList.add(tag)
         addView(tag)
@@ -123,3 +126,6 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
         }
     }
 }
+
+@DslMarker
+annotation class HanimeSearchTagCenterPopupDsl

@@ -32,7 +32,7 @@ class ExampleUnitTest {
         val playCount1 = 785L
         val playCount2 = 5678L
         val playCount3 = 46463L
-        val format3 = playCount3.toPlayCountCase()
+        val format3 = playCount3.formatPlayCount()
         println(format3)
     }
 

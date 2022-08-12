@@ -10,17 +10,18 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import coil.load
-import com.google.android.material.tabs.TabLayoutMediator
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.databinding.ActivityVideoBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
-import com.yenaly.han1meviewer.ui.fragment.VideoIntroductionFragment
 import com.yenaly.han1meviewer.ui.fragment.CommentFragment
+import com.yenaly.han1meviewer.ui.fragment.VideoIntroductionFragment
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
+import com.yenaly.yenaly_libs.utils.view.attach
+import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
 import kotlinx.coroutines.launch
 
 class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
@@ -30,6 +31,8 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
     private val videoCode by intentExtra<String>(VIDEO_CODE)
     private var videoCodeByWebsite: String? = null
+
+    private val tabNameArray = intArrayOf(R.string.introduction, R.string.comment)
 
     override fun initData(savedInstanceState: Bundle?) {
         if (intent.action == Intent.ACTION_VIEW) {
@@ -162,22 +165,16 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
     private fun initViewPager() {
 
-        val tabArray = intArrayOf(R.string.introduction, R.string.comment)
-
-        binding.videoVp.adapter = object : FragmentStateAdapter(this) {
-            override fun getItemCount() = tabArray.size
-
-            override fun createFragment(position: Int): Fragment {
-                return when (position) {
-                    0 -> VideoIntroductionFragment()
-                    1 -> CommentFragment().makeBundle(COMMENT_TYPE to VIDEO_COMMENT_PREFIX)
-                    else -> Fragment()
-                }
+        binding.videoVp.setUpFragmentStateAdapter(this, 2) { position ->
+            when (position) {
+                0 -> VideoIntroductionFragment()
+                1 -> CommentFragment().makeBundle(COMMENT_TYPE to VIDEO_COMMENT_PREFIX)
+                else -> null
             }
         }
 
-        TabLayoutMediator(binding.videoTl, binding.videoVp) { tab, position ->
-            tab.setText(tabArray[position])
-        }.attach()
+        binding.videoTl.attach(binding.videoVp) { tab, position ->
+            tab.setText(tabNameArray[position])
+        }
     }
 }

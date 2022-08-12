@@ -1,5 +1,8 @@
 package com.yenaly.han1meviewer
 
+import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.getSystemService
 import com.google.android.material.color.DynamicColors
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
@@ -27,5 +30,11 @@ class HanimeApplication : YenalyApplication() {
     override fun onCreate() {
         super.onCreate()
         DynamicColors.applyToActivitiesIfAvailable(this)
+
+        val channel = NotificationChannelCompat.Builder(
+            DOWNLOAD_NOTIFICATION_CHANNEL,
+            NotificationManagerCompat.IMPORTANCE_HIGH
+        ).setName("Hanime Download").build()
+        notificationManager.createNotificationChannel(channel)
     }
 }

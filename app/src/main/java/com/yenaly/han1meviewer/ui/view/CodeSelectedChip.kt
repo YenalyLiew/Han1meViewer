@@ -21,15 +21,17 @@ class CodeSelectedChip @JvmOverloads constructor(
         this.isCheckable = false
     }
 
+    private val drawable =
+        javaClass.superclass.getDeclaredField("chipDrawable").also {
+            it.isAccessible = true
+        }.get(this) as? ChipDrawable
+
     override fun setCheckable(checkable: Boolean) {
         super.setCheckable(false)
     }
 
     @Suppress("unchecked_cast")
     override fun setChecked(checked: Boolean) {
-        val drawableField = javaClass.superclass.getDeclaredField("chipDrawable")
-        drawableField.isAccessible = true
-        val drawable = drawableField.get(this) as? ChipDrawable
         drawable?.isCheckable = true
         super.setChecked(checked)
         drawable?.isCheckable = false

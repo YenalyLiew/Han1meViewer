@@ -29,7 +29,7 @@
     <string name="sort_option_able_reset">排序方式（復選可取消）</string>
     <string name="cancel_all_tags">取消所有tag</string>
     <string name="alert">提示</string>
-    <string name="alert_cancel_all_tags">確認將會取消你所選的所有tag，並且會重新觸發搜索</string>
+    <string name="alert_cancel_all_tags">確認將會取消你所選的所有tag</string>
     <string name="confirm">確認</string>
     <string name="cancel">取消</string>
     <string name="content_tag">內容標籤</string>
@@ -81,5 +81,12 @@
     <string name="other">其他</string>
     <string name="about">關於</string>
     <string name="check_update">檢查更新</string>
+    <string name="app_slogan">第三方 Hanime1.me 客戶端</string>
+    <string name="search_placeholder">今天想看點什麽呢</string>
 
+    <string name="downloading">正在下載</string>
+    <string name="downloaded">已下載</string>
+    <string name="start_download">開始下載</string>
+    <string name="cancel_download">取消下載</string>
+    <string name="local_playback">本地觀看</string>
 </resources>

@@ -2,6 +2,7 @@
 
 package com.yenaly.yenaly_libs.utils
 
+import android.text.format.Formatter
 import java.util.*
 
 /**
@@ -32,7 +33,7 @@ fun Long.secondToTimeCase(): String {
  *
  * @author Yenaly Liew
  */
-fun Long.toPlayCountCase(): String {
+fun Long.formatPlayCount(): String {
     return when {
         this < 0 -> "0"
         this < 1_0000 -> this.toString()
@@ -49,6 +50,13 @@ fun Long.toPlayCountCase(): String {
             this % 1_0000_0000 / 100_0000
         )
     }
+}
+
+fun Long.formatFileSize(short: Boolean = true): String {
+    if (short) {
+        return Formatter.formatShortFileSize(applicationContext, this)
+    }
+    return Formatter.formatFileSize(applicationContext, this)
 }
 
 fun String?.isInt(): Boolean {

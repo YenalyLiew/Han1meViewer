@@ -1,5 +1,4 @@
 @file:JvmName("ViewPagerUtil")
-@file:Suppress("deprecation")
 
 package com.yenaly.yenaly_libs.utils.view
 
@@ -8,60 +7,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.bottomnavigation.BottomNavigationView
-
-/**
- * [ViewPager2]与[BottomNavigationView]配合使用来实现页面切换。
- *
- * @param bnv BottomNavigationView
- * @param fragmentActivity fragmentActivity
- * @param itemIdWithFragmentList item id with fragment list
- * @param listener listen current fragment
- *
- * @author Yenaly Liew
- */
-@Deprecated("use BottomNavigationViewMediator instead.")
-@JvmOverloads
-fun ViewPager2.setUpWithBottomNavigationView(
-    bnv: BottomNavigationView,
-    fragmentActivity: FragmentActivity,
-    itemIdWithFragmentList: List<Pair<Int, Fragment>>,
-    listener: OnFragmentSelectedListener? = null
-) {
-    // 将list存到map里，方便后续直接通过itemId拿Fragment
-    val itemIdWithIndexMap = hashMapOf<Int, Int>()
-    itemIdWithFragmentList.forEachIndexed { index, pair ->
-        itemIdWithIndexMap[pair.first] = index
-    }
-
-    this.adapter = object : FragmentStateAdapter(fragmentActivity) {
-        override fun getItemCount(): Int {
-            return itemIdWithFragmentList.size
-        }
-
-        override fun createFragment(position: Int): Fragment {
-            return itemIdWithFragmentList[position].second
-        }
-    }
-
-    bnv.setOnItemSelectedListener {
-        val currentItem = itemIdWithIndexMap[it.itemId]!!
-        this.currentItem = currentItem
-        listener?.onFragmentSelected(itemIdWithFragmentList[currentItem].second)
-        true
-    }
-
-    this.registerOnPageChangeCallback(
-        object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                val currentItem = itemIdWithFragmentList[position]
-                bnv.selectedItemId = currentItem.first
-                listener?.onFragmentSelected(currentItem.second)
-            }
-        }
-    )
-}
 
 /**
  * 如果直接给ViewPager2设置overScrollMode会无效，
@@ -83,7 +28,36 @@ inline var ViewPager2.realOverScrollMode: Int
         }
     }
 
-@Deprecated("use BottomNavigationViewMediator instead.")
-interface OnFragmentSelectedListener {
-    fun onFragmentSelected(currentFragment: Fragment)
+/**
+ * ViewPager2快速設置FragmentStateAdapter，這裏作用域為FragmentActivity
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun ViewPager2.setUpFragmentStateAdapter(
+    fragmentActivity: FragmentActivity,
+    itemCount: Int,
+    crossinline init: (position: Int) -> Fragment?
+) {
+    adapter = object : FragmentStateAdapter(fragmentActivity) {
+        override fun getItemCount() = itemCount
+
+        override fun createFragment(position: Int): Fragment =
+            init.invoke(position) ?: throw IllegalStateException("WTF? Fragment is null?")
+    }
+}
+
+/**
+ * ViewPager2快速設置FragmentStateAdapter，這裏作用域為Fragment
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun ViewPager2.setUpFragmentStateAdapter(
+    fragment: Fragment,
+    itemCount: Int,
+    crossinline init: (position: Int) -> Fragment?
+) {
+    adapter = object : FragmentStateAdapter(fragment) {
+        override fun getItemCount() = itemCount
+
+        override fun createFragment(position: Int) =
+            init.invoke(position) ?: throw IllegalStateException("WTF? Fragment is null?")
+    }
 }

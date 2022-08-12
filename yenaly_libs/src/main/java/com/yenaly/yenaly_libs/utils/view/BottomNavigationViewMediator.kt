@@ -2,6 +2,7 @@ package com.yenaly.yenaly_libs.utils.view
 
 import android.util.SparseIntArray
 import androidx.annotation.IdRes
+import androidx.core.util.set
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -9,9 +10,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import com.yenaly.yenaly_libs.utils.activity
 
 /**
- * A mediator to link a BottomNavigationView with a ViewPager2.
+ * A mediator to link a BottomNavigationView with a ViewPager2. For FragmentActivity only!
  *
  * Instantiating a BottomNavigationViewMediator will only create the mediator object,
  * you must call [attach] on it first to link the BottomNavigationView and the ViewPager2 together.
@@ -42,8 +44,14 @@ class BottomNavigationViewMediator @JvmOverloads constructor(
 
     private var listener: OnFragmentChangedListener? = null
 
+    private val fragmentList = itemIdWithFragmentList.map { it.second }
+
     // 将list存到SparseArray里，方便后续直接通过itemId拿Fragment
-    private val itemIdWithIndexMap = SparseIntArray()
+    private val itemIdWithIndexMap = SparseIntArray().also { map ->
+        itemIdWithFragmentList.forEachIndexed { index, pair ->
+            map[pair.first] = index
+        }
+    }
 
     private var attached = false
     private var viewPager2Adapter: RecyclerView.Adapter<*>? = null
@@ -59,7 +67,7 @@ class BottomNavigationViewMediator @JvmOverloads constructor(
         slide: Boolean = true,
         smoothScroll: Boolean = true
     ) : this(
-        viewPager2.context as? FragmentActivity
+        viewPager2.context.activity as? FragmentActivity
             ?: throw IllegalStateException("context cannot be cast to FragmentActivity!"),
         bottomNavigationView,
         viewPager2,
@@ -72,23 +80,20 @@ class BottomNavigationViewMediator @JvmOverloads constructor(
         if (attached) {
             throw IllegalStateException("${javaClass.simpleName} is already attached")
         }
+        if (itemIdWithFragmentList.isEmpty()) {
+            throw IllegalStateException("fragment list could not be empty!")
+        }
         viewPager2Adapter = object : FragmentStateAdapter(fragmentActivity) {
             override fun getItemCount(): Int {
                 return itemIdWithFragmentList.size
             }
 
             override fun createFragment(position: Int): Fragment {
-                return itemIdWithFragmentList[position].second
+                val softCopyFragmentList: MutableList<Fragment> = ArrayList(fragmentList)
+                return softCopyFragmentList[position]
             }
         }
         attached = true
-
-        if (itemIdWithFragmentList.isEmpty()) {
-            throw IllegalStateException("fragment list could not be empty!")
-        }
-        itemIdWithFragmentList.forEachIndexed { index, pair ->
-            itemIdWithIndexMap.put(pair.first, index)
-        }
 
         onItemSelectedListener = NavigationBarView.OnItemSelectedListener { item ->
             val currentItem = itemIdWithIndexMap[item.itemId]
