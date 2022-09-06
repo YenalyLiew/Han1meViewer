@@ -3,6 +3,8 @@ package com.yenaly.han1meviewer.ui.fragment.home
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.ui.activity.MainActivity
@@ -27,6 +29,20 @@ class MyPlayListFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_my_list_toolbar, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.tb_help -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("使用注意！")
+                    .setMessage("我還沒做這塊，如果有想幫忙的非常歡迎！")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

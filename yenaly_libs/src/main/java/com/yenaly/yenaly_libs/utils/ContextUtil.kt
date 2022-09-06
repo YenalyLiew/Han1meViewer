@@ -8,8 +8,8 @@ import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 
+@set:JvmSynthetic
 lateinit var applicationContext: Context
-    @JvmSynthetic
     internal set
 
 val application get() = applicationContext as Application

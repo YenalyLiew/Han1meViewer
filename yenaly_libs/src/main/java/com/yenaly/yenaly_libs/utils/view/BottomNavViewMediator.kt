@@ -74,7 +74,7 @@ class BottomNavViewMediator(
     }
 
     fun toFragment(@IdRes fragmentItemId: Int, smoothScroll: Boolean = false) {
-        if (!attached) throw IllegalStateException("must call attach() first!")
+        check(attached) { "must call attach() first!" }
         val fragmentIndex = itemIdsSparseArray[fragmentItemId]
         viewPager2.setCurrentItem(fragmentIndex, smoothScroll)
         bottomNavigationView.selectedItemId = fragmentItemId

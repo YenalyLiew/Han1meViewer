@@ -21,9 +21,10 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_cover"
                 android:layout_width="@dimen/video_cover_weight_small"
-                android:layout_height="@dimen/video_cover_height_small"
+                android:layout_height="@dimen/video_cover_height_medium"
                 android:layout_marginBottom="8dp"
                 android:contentDescription="@null"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="@id/barrier"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

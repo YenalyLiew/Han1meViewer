@@ -409,7 +409,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
 
     override fun onBackPressed() {
         if (binding.searchBar.groupTag.isVisible) {
-            binding.searchBar.groupTag.animateGone()
+            binding.searchBar.groupTag.fadeGone()
             return
         }
         super.onBackPressed()
@@ -457,8 +457,8 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 binding.searchBar.searchBar.hideSuggestionsList()
             }
             if (binding.searchBar.groupTag.isGone) {
-                binding.searchBar.groupTag.animateShow()
-            } else binding.searchBar.groupTag.animateGone()
+                binding.searchBar.groupTag.fadeShow()
+            } else binding.searchBar.groupTag.fadeGone()
         }
 
         lifecycleScope.launch {
@@ -474,18 +474,19 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 override fun onSearchStateChanged(enabled: Boolean) {
                     if (enabled) {
                         if (binding.searchBar.groupTag.isVisible) {
-                            binding.searchBar.groupTag.animateGone()
+                            binding.searchBar.groupTag.fadeGone()
                         }
                     }
                 }
 
                 override fun onSearchConfirmed(text: CharSequence?) {
                     binding.searchBar.searchBar.searchEditText.hideIme(window)
+                    if (binding.searchBar.groupTag.isVisible) {
+                        binding.searchBar.groupTag.fadeGone()
+                    }
                     text?.toString()?.let {
-                        viewModel.query = it.ifBlank { null }.also { query ->
-                            query?.let { nonNullQuery ->
-                                viewModel.insertSearchHistory(SearchHistoryEntity(query = nonNullQuery))
-                            }
+                        viewModel.query = it.ifBlank { null }?.also { query ->
+                            viewModel.insertSearchHistory(SearchHistoryEntity(query))
                         }
                     }
                     // getNewHanimeSearchResult() 下面那個方法自動幫你執行這個方法了
@@ -772,7 +773,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
 
     private val defaultInterpolator = AccelerateDecelerateInterpolator()
 
-    private fun View.animateShow() {
+    private fun View.fadeShow() {
         alpha = 0f
         isVisible = true
         animate().alpha(1f).setDuration(500).setInterpolator(defaultInterpolator)
@@ -783,7 +784,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
             }).start()
     }
 
-    private fun View.animateGone() {
+    private fun View.fadeGone() {
         animate().alpha(0f).setDuration(500).setInterpolator(defaultInterpolator)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {

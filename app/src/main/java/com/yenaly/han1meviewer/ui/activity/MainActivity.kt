@@ -107,24 +107,22 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
-    override fun liveDataObserve() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                delay(1000)
-                textFromClipboard?.let {
-                    if (it.contains("hanime1.me/watch?v=")) {
-                        val videoCode = it.substringAfter("watch?v=")
-                        if (videoCode.isDigitsOnly()) {
-                            showFindRelatedLinkSnackBar(videoCode)
-                        } else {
-                            val videoCodeReal = buildString {
-                                videoCode.forEach { char ->
-                                    if (char.isDigit()) append(char) else return@buildString
-                                }
+    override fun onStart() {
+        super.onStart()
+        binding.root.post {
+            textFromClipboard?.let {
+                if (it.contains("hanime1.me/watch?v=")) {
+                    val videoCode = it.substringAfter("watch?v=")
+                    if (videoCode.isDigitsOnly()) {
+                        showFindRelatedLinkSnackBar(videoCode)
+                    } else {
+                        val videoCodeReal = buildString {
+                            videoCode.forEach { char ->
+                                if (char.isDigit()) append(char) else return@buildString
                             }
-                            if (videoCodeReal.isNotEmpty()) {
-                                showFindRelatedLinkSnackBar(videoCodeReal)
-                            }
+                        }
+                        if (videoCodeReal.isNotEmpty()) {
+                            showFindRelatedLinkSnackBar(videoCodeReal)
                         }
                     }
                 }

@@ -89,4 +89,6 @@
     <string name="start_download">開始下載</string>
     <string name="cancel_download">取消下載</string>
     <string name="local_playback">本地觀看</string>
+    <string name="download_path">下載路徑</string>
+    <string name="help">幫助</string>
 </resources>

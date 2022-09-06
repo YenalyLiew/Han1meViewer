@@ -1,17 +1,20 @@
 package com.yenaly.han1meviewer.ui.fragment.home
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yenaly.han1meviewer.R
@@ -96,6 +99,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
         }).attachToRecyclerView(binding.rvPageList)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun liveDataObserve() {
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {
@@ -155,7 +159,21 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_my_list_toolbar, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.tb_help -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("使用注意！")
+                    .setMessage("左劃可以取消喜愛！")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

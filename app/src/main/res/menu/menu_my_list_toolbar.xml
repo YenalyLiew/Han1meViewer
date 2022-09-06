@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tb_help"
+        android:icon="@drawable/ic_baseline_help_24"
+        android:showAsAction="ifRoom"
+        android:title="@string/help" />
+</menu>

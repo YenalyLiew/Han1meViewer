@@ -20,6 +20,7 @@
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/drawable/ic_baseline_download_24.xml" value="0.2455" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.139" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/drawable/ic_baseline_favorite_border_24.xml" value="0.139" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/drawable/ic_baseline_help_24.xml" value="0.137" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/drawable/ic_baseline_info_24.xml" value="0.137" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/drawable/ic_baseline_language_24.xml" value="0.137" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.137" />
@@ -45,7 +46,7 @@
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/fragment_watch_history.xml" value="0.3" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_download.xml" value="0.36" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_downloaded.xml" value="0.3" />
-        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_preview_news.xml" value="0.10389055151774262" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_preview_news.xml" value="0.3" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_preview_news_pic.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_video.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/layout/item_hanime_video_simplified.xml" value="0.10389055151774262" />
@@ -64,6 +65,7 @@
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_main_bnv.xml" value="0.22573749465583584" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_main_nv.xml" value="0.4" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_main_toolbar.xml" value="0.22573749465583584" />
+        <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_my_list_toolbar.xml" value="0.268" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_preview_toolbar.xml" value="0.22573749465583584" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_search_toolbar.xml" value="0.10389055151774262" />
         <entry key="..\:/Users/wrzg8/AndroidStudioProjects/Han1meViewer/app/src/main/res/menu/menu_watch_history_toolbar.xml" value="0.4" />

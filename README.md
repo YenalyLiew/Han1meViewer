@@ -37,3 +37,15 @@ Comments and some other functions are not supported TEMPORARILY, and there may b
 4. 暂时无法使用待看列表以及自定义列表。
 
    No watch later list and your own list temporarily.
+
+## 更新内容
+
+### v0.2
+
+实现了下载功能，支持新番导览小图点击后打开大图的功能，支持保存。未测试过能否断点续传，貌似没实现，如果下载一半关闭程序可能会有 bug 产生，所以建议下载完了再关闭。
+
+最低可用安卓版本从 Android 6.0 修改为 Android 7.0。
+
+### v0.1
+
+第一个版本，实现了基本使用，如观看视频，搜索，添加到历史记录等，暂不支持下载功能。

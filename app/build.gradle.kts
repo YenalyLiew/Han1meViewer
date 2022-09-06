@@ -9,10 +9,10 @@ android {
 
     defaultConfig {
         applicationId = "com.yenaly.han1meviewer"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 32
-        versionCode = 1
-        versionName = "0.1"
+        versionCode = 2
+        versionName = "0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,6 +35,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
     }
 }
 
@@ -44,13 +45,13 @@ dependencies {
 
     // android related
     implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.appcompat:appcompat:1.4.2")
+    implementation("androidx.appcompat:appcompat:1.5.0")
     implementation("com.google.android.material:material:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
-    implementation("androidx.fragment:fragment-ktx:1.5.1")
+    implementation("androidx.fragment:fragment-ktx:1.5.2")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.room:room-runtime:2.4.3")
     implementation("androidx.room:room-ktx:2.4.3")

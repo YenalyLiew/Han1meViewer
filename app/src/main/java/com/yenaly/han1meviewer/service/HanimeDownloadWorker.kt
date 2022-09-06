@@ -135,9 +135,9 @@ class HanimeDownloadWorker(
             downloadId,
             NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("正在進行該下載任務")
+                .setContentTitle("正在下載：${hanimeName}")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentText("正在下載：${hanimeName}")
+                .setContentText("$progress%")
                 .setProgress(100, progress, false)
                 .build()
         )

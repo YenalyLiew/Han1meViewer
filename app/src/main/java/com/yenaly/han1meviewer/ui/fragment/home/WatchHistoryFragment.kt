@@ -40,6 +40,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
             layoutManager = LinearLayoutManager(context)
             adapter = historyAdapter
         }
+        historyAdapter.setDiffCallback(WatchHistoryRvAdapter.COMPARATOR)
         historyAdapter.setEmptyView(R.layout.layout_empty_view)
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START) {
 
@@ -75,7 +76,8 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
     override fun liveDataObserve() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllWatchHistories()
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle).collect(historyAdapter::setList)
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .collect(historyAdapter::setDiffNewData)
         }
     }
 
@@ -97,6 +99,13 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
                     .setNegativeButton("算了！", null)
                     .show()
                 return true
+            }
+            R.id.tb_help -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("使用注意！")
+                    .setMessage("左劃可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
+                    .setPositiveButton("OK", null)
+                    .show()
             }
         }
         return super.onOptionsItemSelected(item)

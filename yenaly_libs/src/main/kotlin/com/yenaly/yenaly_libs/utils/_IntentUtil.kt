@@ -9,10 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.provider.Settings
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import java.io.Serializable
 
 /**
  *  快捷启动Activity
@@ -23,7 +22,7 @@ import java.io.Serializable
  *  @param extra  附带的bundle (optional)
  */
 inline fun <reified Ava : Activity> Activity.startActivity(
-    vararg values: Pair<String, Any>,
+    vararg values: Pair<String, Any?>,
     flag: Int? = null,
     extra: Bundle? = null
 ) = startActivity(getIntent<Ava>(flag, extra, *values))
@@ -52,7 +51,7 @@ inline fun <reified Ava : Activity> Activity.startActivity(
  *  @param values 需要传过去的值
  */
 inline fun <reified S : Service> Activity.startService(
-    vararg values: Pair<String, Any>,
+    vararg values: Pair<String, Any?>,
     flag: Int? = null,
     extra: Bundle? = null
 ) = startService(getIntent<S>(flag, extra, *values))
@@ -83,7 +82,7 @@ inline fun <reified S : Service> Activity.startService(
 inline fun <reified Bella : Activity> Fragment.startActivity(
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg values: Pair<String, Any>
+    vararg values: Pair<String, Any?>
 ) = activity?.let {
     startActivity(it.getIntent<Bella>(flag, extra, *values))
 }
@@ -114,7 +113,7 @@ inline fun <reified Bella : Activity> Fragment.startActivity(
  *  @param values 需要传过去的值
  */
 inline fun <reified S : Service> Fragment.startService(
-    vararg values: Pair<String, Any>,
+    vararg values: Pair<String, Any?>,
     flag: Int? = null,
     extra: Bundle? = null
 ) = activity?.let {
@@ -149,7 +148,7 @@ inline fun <reified S : Service> Fragment.startService(
 inline fun <reified Carol : Activity> Context.startActivity(
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg values: Pair<String, Any>
+    vararg values: Pair<String, Any?>
 ) = startActivity(getIntent<Carol>(flag, extra, *values))
 
 /**
@@ -179,7 +178,7 @@ inline fun <reified Carol : Activity> Context.startActivity(
 inline fun <reified S : Service> Context.startService(
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg values: Pair<String, Any>
+    vararg values: Pair<String, Any?>
 ) = startService(getIntent<S>(flag, extra, *values))
 
 /**
@@ -209,40 +208,11 @@ inline fun <reified S : Service> Context.startService(
 inline fun <reified Diana : Context> Context.getIntent(
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg pairs: Pair<String, Any>
+    vararg pairs: Pair<String, Any?>
 ): Intent = Intent(this, Diana::class.java).apply {
     flag?.let { flags = it }
     extra?.let { putExtras(it) }
-    pairs.forEach { pair ->
-        val name = pair.first
-        when (val value = pair.second) {
-            is Int -> putExtra(name, value)
-            is Byte -> putExtra(name, value)
-            is Char -> putExtra(name, value)
-            is Short -> putExtra(name, value)
-            is Boolean -> putExtra(name, value)
-            is Long -> putExtra(name, value)
-            is Float -> putExtra(name, value)
-            is Double -> putExtra(name, value)
-            is String -> putExtra(name, value)
-            is CharSequence -> putExtra(name, value)
-            is Parcelable -> putExtra(name, value)
-            is Array<*> -> putExtra(name, value)
-            is ArrayList<*> -> putExtra(name, value)
-            is Serializable -> putExtra(name, value)
-            is BooleanArray -> putExtra(name, value)
-            is ByteArray -> putExtra(name, value)
-            is ShortArray -> putExtra(name, value)
-            is CharArray -> putExtra(name, value)
-            is IntArray -> putExtra(name, value)
-            is LongArray -> putExtra(name, value)
-            is FloatArray -> putExtra(name, value)
-            is DoubleArray -> putExtra(name, value)
-            is Bundle -> putExtra(name, value)
-            is Intent -> putExtra(name, value)
-            else -> throw IllegalArgumentException("Intent extra ${pair.first} has wrong type ${value.javaClass.name}")
-        }
-    }
+    if (pairs.isNotEmpty()) { putExtras(bundleOf(*pairs)) }
 }
 
 /**
@@ -386,43 +356,9 @@ infix fun Fragment.browse(uri: String) {
  *
  * @return 带值的本身
  */
-fun Fragment.makeBundle(vararg params: Pair<String, Any>): Fragment {
+fun Fragment.makeBundle(vararg params: Pair<String, Any?>): Fragment {
     return this.apply {
-        arguments = Bundle().apply {
-            makeParams(*params)
-        }
-    }
-}
-
-/**
- * 给bundle放参数
- *
- * @param pairs 需要传的值
- */
-fun Bundle.makeParams(vararg pairs: Pair<String, Any>) {
-    pairs.forEach { pair ->
-        when (val value = pair.second) {
-            is Int -> putInt(pair.first, value)
-            is Long -> putLong(pair.first, value)
-            is CharSequence -> putCharSequence(pair.first, value)
-            is String -> putString(pair.first, value)
-            is Float -> putFloat(pair.first, value)
-            is Double -> putDouble(pair.first, value)
-            is Char -> putChar(pair.first, value)
-            is Short -> putShort(pair.first, value)
-            is Boolean -> putBoolean(pair.first, value)
-            is Serializable -> putSerializable(pair.first, value)
-            is Bundle -> putBundle(pair.first, value)
-            is Parcelable -> putParcelable(pair.first, value)
-            is IntArray -> putIntArray(pair.first, value)
-            is LongArray -> putLongArray(pair.first, value)
-            is FloatArray -> putFloatArray(pair.first, value)
-            is DoubleArray -> putDoubleArray(pair.first, value)
-            is CharArray -> putCharArray(pair.first, value)
-            is ShortArray -> putShortArray(pair.first, value)
-            is BooleanArray -> putBooleanArray(pair.first, value)
-            else -> throw IllegalArgumentException("Intent extra ${pair.first} has wrong type ${value.javaClass.name}")
-        }
+        arguments = bundleOf(*params)
     }
 }
 

@@ -6,6 +6,7 @@
     <dimen name="video_cover_simplified_height">220dp</dimen>
     <dimen name="video_cover_height_small">72dp</dimen>
     <dimen name="video_cover_weight_small">128dp</dimen>
+    <dimen name="video_cover_height_medium">96dp</dimen>
     <dimen name="hanime_preview_news_pic_width">120dp</dimen>
     <dimen name="hanime_preview_news_pic_height">90dp</dimen>
     <dimen name="avatar_size">50dp</dimen>
