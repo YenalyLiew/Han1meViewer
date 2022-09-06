@@ -8,25 +8,18 @@ const val EMPTY_STRING = ""
 
 // 网络基本设置
 
-const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+const val USER_AGENT =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
 
 // 動態設置影片卡片長寬
 
-@JvmField
-val VIDEO_IN_ONE_LINE_PORTRAIT =
-    (appScreenWidth / applicationContext.resources.getDimension(R.dimen.video_cover_width)).toInt()
+val VIDEO_IN_ONE_LINE
+    get() =
+        (appScreenWidth / applicationContext.resources.getDimension(R.dimen.video_cover_width)).toInt()
 
-@JvmField
-val VIDEO_IN_ONE_LINE_LANDSCAPE =
-    (appScreenHeight / applicationContext.resources.getDimension(R.dimen.video_cover_width)).toInt()
-
-@JvmField
-val SIMPLIFIED_VIDEO_IN_ONE_LINE_PORTRAIT =
-    (appScreenWidth / applicationContext.resources.getDimension(R.dimen.video_cover_simplified_width)).toInt()
-
-@JvmField
-val SIMPLIFIED_VIDEO_IN_ONE_LINE_LANDSCAPE =
-    (appScreenHeight / applicationContext.resources.getDimension(R.dimen.video_cover_simplified_width)).toInt()
+val SIMPLIFIED_VIDEO_IN_ONE_LINE
+    get() =
+        (appScreenWidth / applicationContext.resources.getDimension(R.dimen.video_cover_simplified_width)).toInt()
 
 // 設置發佈日期年份，在搜索的tag裏
 

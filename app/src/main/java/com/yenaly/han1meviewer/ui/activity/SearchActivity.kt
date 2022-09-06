@@ -35,7 +35,6 @@ import com.yenaly.han1meviewer.ui.popup.HanimeSearchTagCenterPopup
 import com.yenaly.han1meviewer.ui.viewmodel.SearchViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.intentExtra
-import com.yenaly.yenaly_libs.utils.isOrientationLandscape
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.hideIme
 import kotlinx.coroutines.launch
@@ -320,13 +319,8 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         binding.searchRv.apply {
             layoutManager = GridLayoutManager(
                 this@SearchActivity,
-                if (isOrientationLandscape) {
-                    if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
-                        VIDEO_IN_ONE_LINE_LANDSCAPE else SIMPLIFIED_VIDEO_IN_ONE_LINE_LANDSCAPE
-                } else {
-                    if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
-                        VIDEO_IN_ONE_LINE_PORTRAIT else SIMPLIFIED_VIDEO_IN_ONE_LINE_PORTRAIT
-                }
+                if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
+                    VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
             )
             adapter = searchAdapter
         }
@@ -383,28 +377,14 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        when (newConfig.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> {
-                binding.searchRv.layoutManager = GridLayoutManager(
-                    this@SearchActivity,
-                    if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
-                        VIDEO_IN_ONE_LINE_PORTRAIT else SIMPLIFIED_VIDEO_IN_ONE_LINE_PORTRAIT
-                )
-                // re-initial popup to resize height
-                initBrandPopup()
-                initTagPopup()
-            }
-            else -> {
-                binding.searchRv.layoutManager = GridLayoutManager(
-                    this@SearchActivity,
-                    if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
-                        VIDEO_IN_ONE_LINE_LANDSCAPE else SIMPLIFIED_VIDEO_IN_ONE_LINE_LANDSCAPE
-                )
-                // re-initial popup to resize height
-                initBrandPopup()
-                initTagPopup()
-            }
-        }
+        binding.searchRv.layoutManager = GridLayoutManager(
+            this@SearchActivity,
+            if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
+                VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
+        )
+        // re-initial popup to resize height
+        initBrandPopup()
+        initTagPopup()
     }
 
     override fun onBackPressed() {

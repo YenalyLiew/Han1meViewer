@@ -54,10 +54,7 @@ class VideoIntroductionFragment :
         binding.playList.rv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.playList.rv.adapter = playListAdapter
-        binding.relatedHanime.rv.layoutManager = GridLayoutManager(
-            context,
-            if (isOrientationLandscape) VIDEO_IN_ONE_LINE_LANDSCAPE else VIDEO_IN_ONE_LINE_PORTRAIT
-        )
+        binding.relatedHanime.rv.layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
         binding.relatedHanime.rv.adapter = relatedAdapter
     }
 

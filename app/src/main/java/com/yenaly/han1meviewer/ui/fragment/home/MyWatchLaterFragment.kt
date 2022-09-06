@@ -18,8 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE_LANDSCAPE
-import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE_PORTRAIT
+import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -28,7 +27,6 @@ import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
-import com.yenaly.yenaly_libs.utils.isOrientationLandscape
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.showSnackBar
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -52,14 +50,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
         setHasOptionsMenu(true)
 
         binding.rvPageList.apply {
-            layoutManager = GridLayoutManager(
-                context,
-                if (isOrientationLandscape) {
-                    VIDEO_IN_ONE_LINE_LANDSCAPE
-                } else {
-                    VIDEO_IN_ONE_LINE_PORTRAIT
-                }
-            )
+            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
             adapter = this@MyWatchLaterFragment.adapter
         }
 
@@ -181,16 +172,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        when (newConfig.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> {
-                binding.rvPageList.layoutManager =
-                    GridLayoutManager(context, VIDEO_IN_ONE_LINE_PORTRAIT)
-            }
-            else -> {
-                binding.rvPageList.layoutManager =
-                    GridLayoutManager(context, VIDEO_IN_ONE_LINE_LANDSCAPE)
-            }
-        }
+        binding.rvPageList.layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
     }
 
     private fun getMyWatchLater() {
