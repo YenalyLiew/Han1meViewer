@@ -15,6 +15,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/download">
+
+        <com.yenaly.yenaly_libs.base.preference.LongClickablePreference
+            app:icon="@drawable/ic_baseline_download_24"
+            app:key="download_path"
+            app:title="@string/download_path" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/other">
 
         <Preference

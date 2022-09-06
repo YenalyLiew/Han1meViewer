@@ -12,6 +12,7 @@ import android.widget.TextView
  * @author Yenaly Liew
  * @time 2022/06/23 023 13:16
  */
+@Deprecated("deprecated")
 class SearchHistoryArrayAdapter(mContext: Context, val list: MutableList<String>) :
     ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, list) {
 

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class HanimeDownloadedDao {
     @Query("SELECT * FROM HanimeDownloadedEntity ORDER BY id DESC")
-    abstract fun loadAllDownloadedHanime(): Flow<List<HanimeDownloadedEntity>>
+    abstract fun loadAllDownloadedHanime(): Flow<MutableList<HanimeDownloadedEntity>>
 
     @Query("DELETE FROM HanimeDownloadedEntity WHERE (`videoCode` = :videoCode)")
     abstract suspend fun deleteDownloadedHanimeByVideoCode(videoCode: String)

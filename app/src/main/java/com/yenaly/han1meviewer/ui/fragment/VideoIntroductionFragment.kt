@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment
 
+import android.graphics.Typeface
 import android.os.Bundle
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.R
@@ -134,12 +136,25 @@ class VideoIntroductionFragment :
                         if (entity.quality == checkedQuality) {
                             showShortToast("已經下載過咯")
                         } else {
+                            val msg = spannable {
+                                "存在的影片名稱：".text()
+                                newline()
+                                entity.title.span {
+                                    style(Typeface.BOLD)
+                                }
+                                newline()
+                                "存在的影片畫質：".text()
+                                newline()
+                                entity.quality.span {
+                                    style(Typeface.BOLD)
+                                }
+                                newline(2)
+                                "是否覆蓋原畫質進行下載？".text()
+                            }
                             MaterialAlertDialogBuilder(requireContext())
                                 .setTitle("已經存在同名稱但非同畫質的影片")
-                                .setMessage(
-                                    "存在的影片名稱：${entity.title}" + "\n" + "存在的影片畫質：${entity.quality}"
-                                            + "\n" + "是否覆蓋原畫質進行下載？"
-                                ).setPositiveButton("覆蓋") { _, _ ->
+                                .setMessage(msg)
+                                .setPositiveButton("覆蓋") { _, _ ->
                                     enqueueDownloadWork(
                                         videoData.title, checkedQuality,
                                         videoData.videoUrls[checkedQuality]!!,
@@ -182,10 +197,40 @@ class VideoIntroductionFragment :
             XPopup.Builder(context)
                 .atView(it)
                 .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
-                    checkedQuality = key
-                    viewModel.loadDownloadedHanimeByVideoCode(viewModel.videoCode)
+                    notifyDownload(videoData.title, key) {
+                        checkedQuality = key
+                        viewModel.loadDownloadedHanimeByVideoCode(viewModel.videoCode)
+                    }
                 }.show()
         }
+    }
+
+    private fun notifyDownload(title: String, quality: String, action: () -> Unit) {
+        val notifyMsg = spannable {
+            "將要下載的影片詳情如下".text()
+            newline(2)
+            "名稱：".text()
+            newline()
+            title.span {
+                style(Typeface.BOLD)
+            }
+            newline()
+            "畫質：".text()
+            newline()
+            quality.span {
+                style(Typeface.BOLD)
+            }
+            newline(2)
+            "下載完畢後可以在「下載」介面找到下載後的影片，「設置」介面裏有詳細儲存路徑。".text()
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("確定要下載嗎？")
+            .setMessage(notifyMsg)
+            .setPositiveButton("是的") { _, _ ->
+                action.invoke()
+            }
+            .setNegativeButton("算了吧", null)
+            .show()
     }
 
     private fun enqueueDownloadWork(

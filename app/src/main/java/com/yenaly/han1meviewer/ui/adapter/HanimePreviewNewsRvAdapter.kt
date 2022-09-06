@@ -7,6 +7,7 @@ import coil.load
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.createTags
@@ -14,6 +15,7 @@ import com.yenaly.han1meviewer.databinding.ItemHanimePreviewNewsBinding
 import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
+import com.yenaly.han1meviewer.ui.popup.CoilImageLoader
 import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
@@ -47,6 +49,19 @@ class HanimePreviewNewsRvAdapter :
                 override fun convert(holder: BaseViewHolder, item: String) {
                     holder.getView<ImageView>(R.id.iv_preview_news_pic).load(item) {
                         crossfade(true)
+                    }
+                }
+
+                override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
+                    val imageLoader = CoilImageLoader()
+                    viewHolder.itemView.setOnClickListener {
+                        val position = viewHolder.bindingAdapterPosition
+                        XPopup.Builder(context).asImageViewer(
+                            it as? ImageView,
+                            position, item.relatedPicsUrl, { popupView, pos ->
+                                popupView.updateSrcView(recyclerView.getChildAt(pos) as? ImageView)
+                            }, imageLoader
+                        ).show()
                     }
                 }
             }

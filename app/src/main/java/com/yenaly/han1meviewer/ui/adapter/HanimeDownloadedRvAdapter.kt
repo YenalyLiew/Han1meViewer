@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.View
 import androidx.core.net.toFile
 import androidx.core.net.toUri
+import androidx.recyclerview.widget.DiffUtil
 import coil.load
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
@@ -32,6 +33,24 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
 
     inner class ViewHolder(view: View) : BaseDataBindingHolder<ItemHanimeDownloadedBinding>(view) {
         val binding = dataBinding!!
+    }
+
+    companion object {
+        val COMPARATOR = object : DiffUtil.ItemCallback<HanimeDownloadedEntity>() {
+            override fun areContentsTheSame(
+                oldItem: HanimeDownloadedEntity,
+                newItem: HanimeDownloadedEntity
+            ): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areItemsTheSame(
+                oldItem: HanimeDownloadedEntity,
+                newItem: HanimeDownloadedEntity
+            ): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")

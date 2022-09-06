@@ -6,6 +6,7 @@
     android:layout_height="@dimen/hanime_preview_news_pic_height"
     android:layout_margin="4dp"
     android:contentDescription="@null"
+    android:scaleType="centerCrop"
     app:shapeAppearanceOverlay="@style/RoundCornerImageView">
 
 </com.google.android.material.imageview.ShapeableImageView>

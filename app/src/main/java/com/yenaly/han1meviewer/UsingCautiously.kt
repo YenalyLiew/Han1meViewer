@@ -12,5 +12,5 @@ package com.yenaly.han1meviewer
  * @time 2022/08/10 010 19:50
  */
 annotation class UsingCautiously(
-    val message: String = ""
+    val message: String = EMPTY_STRING
 )

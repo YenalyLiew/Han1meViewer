@@ -6,22 +6,19 @@ import com.yenaly.han1meviewer.FavStatus
 import com.yenaly.han1meviewer.MyListType
 import com.yenaly.han1meviewer.logic.model.*
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
-import com.yenaly.han1meviewer.logic.network.ServiceCreator
-import com.yenaly.han1meviewer.logic.state.DownloadState
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.isInt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import okhttp3.Request
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import retrofit2.Response
-import java.io.File
 
 /**
  * @project Hanime1
@@ -781,36 +778,4 @@ object NetworkRepo {
             }
         }
     }.flowOn(Dispatchers.IO)
-
-    fun downloadHanime(url: String, fileName: String): Flow<DownloadState> {
-        val file = File(applicationContext.filesDir, fileName)
-        return flow {
-            val request = Request.Builder().url(url).get().build()
-            val response = ServiceCreator.okHttpClient.newCall(request).execute()
-            if (response.isSuccessful) {
-                response.body!!.let { responseBody ->
-                    val total = responseBody.contentLength()
-                    file.outputStream().use { output ->
-                        var emittedProgress = 0L
-                        responseBody.byteStream().use { input ->
-                            val bytesCopied = input.copyTo(output)
-                            val progress = bytesCopied * 100 / total
-                            if (progress - emittedProgress > 5) {
-                                emit(DownloadState.Progress(progress.toInt()))
-                                emittedProgress = progress
-                            }
-                        }
-                    }
-                    emit(DownloadState.Done(file))
-                }
-            } else {
-                emit(DownloadState.Error(IllegalStateException("response is not successful!")))
-            }
-        }.catch { e ->
-            when (e) {
-                is CancellationException -> throw e
-                else -> emit(DownloadState.Error(e))
-            }
-        }.conflate().flowOn(Dispatchers.IO)
-    }
 }

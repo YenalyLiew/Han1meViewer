@@ -85,6 +85,7 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
         this.callback = action
     }
 
+    @HanimeSearchTagCenterPopupDsl
     fun LinearLayout.addTagGroup(
         subtitle: CharSequence?,
         tagTextList: Array<out CharSequence>,

@@ -1,6 +1,7 @@
 package com.yenaly.han1meviewer.ui.adapter
 
 import android.view.View
+import androidx.recyclerview.widget.DiffUtil
 import coil.load
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
@@ -22,6 +23,24 @@ class WatchHistoryRvAdapter :
 
     inner class ViewHolder(view: View) : BaseDataBindingHolder<ItemWatchHistoryBinding>(view) {
         val binding = dataBinding!!
+    }
+
+    companion object {
+        val COMPARATOR = object : DiffUtil.ItemCallback<WatchHistoryEntity>() {
+            override fun areItemsTheSame(
+                oldItem: WatchHistoryEntity,
+                newItem: WatchHistoryEntity
+            ): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(
+                oldItem: WatchHistoryEntity,
+                newItem: WatchHistoryEntity
+            ): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 
     override fun convert(holder: ViewHolder, item: WatchHistoryEntity) {

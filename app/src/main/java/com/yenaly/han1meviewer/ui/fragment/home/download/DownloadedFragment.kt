@@ -32,6 +32,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
 
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
+        adapter.setDiffCallback(HanimeDownloadedRvAdapter.COMPARATOR)
 
         (activity as? MainActivity)?.setToolbarSubtitle(getString(R.string.downloaded))
     }
@@ -39,7 +40,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
     override fun liveDataObserve() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllDownloadedHanime()
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle).collect(adapter::setList)
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle).collect(adapter::setDiffNewData)
         }
     }
 
