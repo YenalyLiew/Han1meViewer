@@ -42,6 +42,8 @@ Comments and some other functions are not supported TEMPORARILY, and there may b
 
 ### v0.2
 
+修复旋转屏幕列表单列显示错乱的问题。
+
 实现了下载功能，支持新番导览小图点击后打开大图的功能，支持保存。未测试过能否断点续传，貌似没实现，如果下载一半关闭程序可能会有 bug 产生，所以建议下载完了再关闭。
 
 最低可用安卓版本从 Android 6.0 修改为 Android 7.0。

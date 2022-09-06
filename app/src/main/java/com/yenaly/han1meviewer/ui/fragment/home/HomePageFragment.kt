@@ -7,12 +7,10 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenCreated
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE_LANDSCAPE
-import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE_PORTRAIT
+import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.databinding.FragmentHomePageBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.MainActivity
@@ -54,10 +52,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
             adapter = latestHanimeAdapter
         }
         binding.latestUpload.rv.apply {
-            layoutManager = GridLayoutManager(
-                context,
-                if (isOrientationLandscape) VIDEO_IN_ONE_LINE_LANDSCAPE else VIDEO_IN_ONE_LINE_PORTRAIT
-            )
+            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
             adapter = latestUploadAdapter
         }
         binding.hotHanimeMonthly.rv.apply {
@@ -69,10 +64,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
             adapter = hanimeCurrentAdapter
         }
         binding.hanimeTheyWatched.rv.apply {
-            layoutManager = GridLayoutManager(
-                context,
-                if (isOrientationLandscape) VIDEO_IN_ONE_LINE_LANDSCAPE else VIDEO_IN_ONE_LINE_PORTRAIT
-            )
+            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
             adapter = hanimeTheyWatchedAdapter
         }
         binding.homePageSrl.apply {
@@ -115,20 +107,10 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        when (newConfig.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> {
-                binding.latestUpload.rv.layoutManager =
-                    GridLayoutManager(context, VIDEO_IN_ONE_LINE_PORTRAIT)
-                binding.hanimeTheyWatched.rv.layoutManager =
-                    GridLayoutManager(context, VIDEO_IN_ONE_LINE_PORTRAIT)
-            }
-            else -> {
-                binding.latestUpload.rv.layoutManager =
-                    GridLayoutManager(context, VIDEO_IN_ONE_LINE_LANDSCAPE)
-                binding.hanimeTheyWatched.rv.layoutManager =
-                    GridLayoutManager(context, VIDEO_IN_ONE_LINE_LANDSCAPE)
-            }
-        }
+        binding.latestUpload.rv.layoutManager =
+            GridLayoutManager(context, VIDEO_IN_ONE_LINE)
+        binding.hanimeTheyWatched.rv.layoutManager =
+            GridLayoutManager(context, VIDEO_IN_ONE_LINE)
     }
 
     private fun initTitle() {
