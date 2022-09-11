@@ -27,6 +27,7 @@
     <PreferenceCategory app:title="@string/other">
 
         <Preference
+            app:icon="@drawable/ic_baseline_update_24"
             app:key="update"
             app:title="@string/check_update" />
 

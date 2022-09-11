@@ -17,7 +17,7 @@ val appName: String
  *
  * @return 版本号，例如 1.0.0
  */
-val appLocalVersion: String
+val appLocalVersionName: String
     get() {
         return applicationContext.packageManager.getPackageInfo(
             applicationContext.packageName, 0

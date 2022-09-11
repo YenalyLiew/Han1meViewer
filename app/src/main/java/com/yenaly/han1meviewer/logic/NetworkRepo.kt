@@ -705,6 +705,22 @@ object NetworkRepo {
         return@websiteIOFlow WebsiteState.Success(Unit)
     }
 
+    // ------ VERSION ------ //
+
+    fun getLatestVersion() = flow {
+        emit(WebsiteState.Loading())
+        val versionInfo = HanimeNetwork.versionService.getLatestVersion()
+        emit(WebsiteState.Success(versionInfo))
+    }.catch { e ->
+        when (e) {
+            is CancellationException -> throw e
+            else -> {
+                e.printStackTrace()
+                emit(WebsiteState.Error(e))
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
     // ------ BASE ------ //
 
     private fun <T> websiteIOFlow(

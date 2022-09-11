@@ -9,4 +9,5 @@ import com.yenaly.han1meviewer.HANIME_BASE_URL
  */
 object HanimeNetwork {
     val hanimeService = ServiceCreator.create<HanimeService>(HANIME_BASE_URL)
+    val versionService = ServiceCreator.createVersion<VersionService>()
 }

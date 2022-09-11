@@ -1,3 +1,7 @@
+import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.TimeZone
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -11,8 +15,8 @@ android {
         applicationId = "com.yenaly.han1meviewer"
         minSdk = 24
         targetSdk = 32
-        versionCode = 2
-        versionName = "0.2"
+        versionCode = createVersionCode()
+        versionName = createVersionName(major = 0, minor = 3, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -66,6 +70,7 @@ dependencies {
     // network
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("org.jsoup:jsoup:1.14.3")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // pic
     implementation("io.coil-kt:coil:2.1.0")
@@ -101,3 +106,15 @@ dependencies {
 configurations.all {
     exclude(group = "androidx.appcompat", module = "appcompat")
 }
+
+fun createVersionName(major: Int, minor: Int, patch: Int, isPreRelease: Boolean = false): String {
+    val version = if (isPreRelease) {
+        "${major}.${minor}.${patch}-pre+${android.defaultConfig.versionCode}"
+    } else "${major}.${minor}.${patch}+${android.defaultConfig.versionCode}"
+    return version.also { println("Version Name: $it") }
+}
+
+fun createVersionCode() = SimpleDateFormat("yyMMddHH").let {
+    it.timeZone = TimeZone.getTimeZone("UTC")
+    it.format(Date()).toInt()
+}.also { println("Version Code: $it") }

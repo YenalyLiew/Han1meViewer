@@ -17,7 +17,6 @@ import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
-import com.yenaly.yenaly_libs.utils.isOrientationLandscape
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
 
@@ -28,15 +27,35 @@ import kotlinx.coroutines.launch
  */
 class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>() {
 
-    private val latestHanimeAdapter by unsafeLazy { HanimeVideoRvAdapter() }
+    private val latestHanimeAdapter by unsafeLazy {
+        HanimeVideoRvAdapter().apply {
+            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
+        }
+    }
 
-    private val latestUploadAdapter by unsafeLazy { HanimeVideoRvAdapter() }
+    private val latestUploadAdapter by unsafeLazy {
+        HanimeVideoRvAdapter().apply {
+            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
+        }
+    }
 
-    private val hotHanimeMonthlyAdapter by unsafeLazy { HanimeVideoRvAdapter() }
+    private val hotHanimeMonthlyAdapter by unsafeLazy {
+        HanimeVideoRvAdapter().apply {
+            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
+        }
+    }
 
-    private val hanimeCurrentAdapter by unsafeLazy { HanimeVideoRvAdapter() }
+    private val hanimeCurrentAdapter by unsafeLazy {
+        HanimeVideoRvAdapter().apply {
+            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
+        }
+    }
 
-    private val hanimeTheyWatchedAdapter by unsafeLazy { HanimeVideoRvAdapter() }
+    private val hanimeTheyWatchedAdapter by unsafeLazy {
+        HanimeVideoRvAdapter().apply {
+            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
+        }
+    }
 
     /**
      * 初始化数据
@@ -86,14 +105,15 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                     when (state) {
                         is WebsiteState.Loading -> {
                             binding.homePageSrl.autoRefresh()
+                            binding.homePageNsv.isGone = latestHanimeAdapter.data.isEmpty()
                         }
                         is WebsiteState.Success -> {
                             binding.homePageSrl.finishRefresh()
-                            latestHanimeAdapter.setList(state.info.latestHanime)
-                            latestUploadAdapter.setList(state.info.latestUpload)
-                            hotHanimeMonthlyAdapter.setList(state.info.hotHanimeMonthly)
-                            hanimeCurrentAdapter.setList(state.info.hanimeCurrent)
-                            hanimeTheyWatchedAdapter.setList(state.info.hanimeTheyWatched)
+                            latestHanimeAdapter.setDiffNewData(state.info.latestHanime)
+                            latestUploadAdapter.setDiffNewData(state.info.latestUpload)
+                            hotHanimeMonthlyAdapter.setDiffNewData(state.info.hotHanimeMonthly)
+                            hanimeCurrentAdapter.setDiffNewData(state.info.hanimeCurrent)
+                            hanimeTheyWatchedAdapter.setDiffNewData(state.info.hanimeTheyWatched)
                         }
                         is WebsiteState.Error -> {
                             binding.homePageSrl.finishRefresh()
