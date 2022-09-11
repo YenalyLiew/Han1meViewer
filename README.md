@@ -40,6 +40,14 @@ Comments and some other functions are not supported TEMPORARILY, and there may b
 
 ## 更新内容
 
+### v0.3.0
+
+新增更新功能，不过依赖于 Github 的 API，可能有次数限制。
+
+修复搜索时选择 Tag 后保存再打开变成全选的 bug。
+
+优化用户体验。
+
 ### v0.2
 
 修复旋转屏幕列表单列显示错乱的问题。

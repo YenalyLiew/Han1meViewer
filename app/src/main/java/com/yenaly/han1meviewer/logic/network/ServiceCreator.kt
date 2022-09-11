@@ -4,8 +4,10 @@ import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.han1meviewer.cookieMap
 import com.yenaly.han1meviewer.loginCookie
 import com.yenaly.han1meviewer.toCookieList
+import com.yenaly.yenaly_libs.utils.GsonUtil
 import okhttp3.*
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
@@ -17,6 +19,12 @@ object ServiceCreator {
     inline fun <reified T> create(baseUrl: String): T = Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(okHttpClient)
+        .build()
+        .create(T::class.java)
+
+    inline fun <reified T> createVersion(): T = Retrofit.Builder()
+        .baseUrl("https://api.github.com/")
+        .addConverterFactory(GsonConverterFactory.create(GsonUtil.gson))
         .build()
         .create(T::class.java)
 

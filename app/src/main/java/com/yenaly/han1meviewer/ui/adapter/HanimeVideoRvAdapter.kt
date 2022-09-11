@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import coil.load
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -29,6 +30,24 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
     init {
         addItemType(HanimeInfoModel.NORMAL, R.layout.item_hanime_video)
         addItemType(HanimeInfoModel.SIMPLIFIED, R.layout.item_hanime_video_simplified)
+    }
+
+    companion object {
+        val COMPARATOR = object : DiffUtil.ItemCallback<HanimeInfoModel>() {
+            override fun areItemsTheSame(
+                oldItem: HanimeInfoModel,
+                newItem: HanimeInfoModel
+            ): Boolean {
+                return oldItem.redirectLink == newItem.redirectLink
+            }
+
+            override fun areContentsTheSame(
+                oldItem: HanimeInfoModel,
+                newItem: HanimeInfoModel
+            ): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 
     override fun convert(holder: BaseViewHolder, item: HanimeInfoModel) {
@@ -147,7 +166,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
                     val position = viewHolder.bindingAdapterPosition
                     val item = getItem(position)
                     copyTextToClipboard("${item.title}\n${item.redirectLink}")
-                    showShortToast(context.getString(R.string.copy_to_clipboard))
+                    showShortToast(R.string.copy_to_clipboard)
                     return@setOnLongClickListener true
                 }
             }

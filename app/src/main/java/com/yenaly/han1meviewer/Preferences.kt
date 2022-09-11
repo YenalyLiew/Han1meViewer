@@ -14,7 +14,7 @@ internal val preferenceSp get() = PreferenceManager.getDefaultSharedPreferences(
 /**
  * 是否登入，一般跟[loginCookie]一起賦值
  */
-inline var alreadyLogin
+inline var isAlreadyLogin
     get() = getSpValue(ALREADY_LOGIN, false)
     set(value) = putSpValue(ALREADY_LOGIN, value)
 

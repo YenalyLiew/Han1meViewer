@@ -11,9 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.whenStarted
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -25,17 +23,15 @@ import coil.transform.CircleCropTransformation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.VIDEO_CODE
-import com.yenaly.han1meviewer.alreadyLogin
+import com.yenaly.han1meviewer.*
+import com.yenaly.han1meviewer.checkNeedUpdate
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
+import com.yenaly.han1meviewer.logic.model.VersionModel
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
-import com.yenaly.yenaly_libs.utils.view.BottomNavViewMediator
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -130,6 +126,20 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
+    override fun liveDataObserve() {
+        lifecycleScope.launch {
+            whenStarted {
+                viewModel.versionFlow.collect {
+                    if (it is WebsiteState.Success) {
+                        if (checkNeedUpdate(it.info.tagName)) {
+                            showUpdateDialog(it.info)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main_toolbar, menu)
         return super.onCreateOptionsMenu(menu)
@@ -175,12 +185,37 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
+    // todo: 有時間轉移到 strings.xml
+    private fun showUpdateDialog(versionInfo: VersionModel) {
+        val msg = spannable {
+            "檢測到新版本：".text()
+            newline()
+            versionInfo.tagName.span {
+                style(Typeface.BOLD)
+            }
+            newline()
+            "更新内容：".text()
+            newline()
+            versionInfo.body.span {
+                style(Typeface.BOLD)
+            }
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle("檢測到新版本！")
+            .setMessage(msg)
+            .setPositiveButton("去下載！") { _, _ ->
+                browse(versionInfo.assets.first().browserDownloadURL)
+            }
+            .setNeutralButton("忽略", null)
+            .show()
+    }
+
     @SuppressLint("SetTextI18n")
     private fun initHeaderView() {
         binding.nvMain.getHeaderView(0)?.let { view ->
             val headerAvatar = view.findViewById<ImageView>(R.id.header_avatar)
             val headerUsername = view.findViewById<TextView>(R.id.header_username)
-            if (alreadyLogin) {
+            if (isAlreadyLogin) {
                 headerAvatar.setOnClickListener {
                     MaterialAlertDialogBuilder(this)
                         .setTitle("是否要登出")
@@ -226,7 +261,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun initMenu() {
-        if (alreadyLogin) {
+        if (isAlreadyLogin) {
             binding.nvMain.menu.findItem(R.id.nv_fav_video).setOnMenuItemClickListener(null)
             binding.nvMain.menu.findItem(R.id.nv_watch_later).setOnMenuItemClickListener(null)
         } else {

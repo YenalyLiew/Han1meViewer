@@ -14,7 +14,7 @@ import com.drakeet.about.Contributor
 import com.google.android.material.appbar.AppBarLayout
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
-import com.yenaly.yenaly_libs.utils.appLocalVersion
+import com.yenaly.yenaly_libs.utils.appLocalVersionName
 import com.yenaly.yenaly_libs.utils.dp
 
 /**
@@ -47,7 +47,7 @@ class AboutActivity : AbsAboutActivity() {
             transformations(CircleCropTransformation())
         }
         slogan.setText(R.string.app_slogan)
-        version.text = "v$appLocalVersion"
+        version.text = "v$appLocalVersionName"
     }
 
     override fun onItemsCreated(items: MutableList<Any>) {

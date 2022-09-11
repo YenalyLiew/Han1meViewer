@@ -100,8 +100,7 @@ class VideoIntroductionFragment :
                         is WebsiteState.Error -> {
                             showShortToast("喜愛失敗")
                         }
-                        is WebsiteState.Loading -> {
-                        }
+                        is WebsiteState.Loading -> Unit
                         is WebsiteState.Success -> {
                             showShortToast("喜愛成功")
                         }
@@ -168,7 +167,7 @@ class VideoIntroductionFragment :
 
     private fun initFunctionBar() {
         binding.btnAddToFav.clickTrigger(viewLifecycleOwner.lifecycle) {
-            if (alreadyLogin) {
+            if (isAlreadyLogin) {
                 viewModel.addToFavVideo(
                     viewModel.videoCode,
                     videoData.currentUserId,
@@ -180,12 +179,19 @@ class VideoIntroductionFragment :
         }
         binding.btnWatchLater.clickTrigger(viewLifecycleOwner.lifecycle) {
             // todo
+            showShortToast("功能暫未實現！")
         }
     }
 
     private fun initShareButton(title: String) {
+        val shareText = title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -"
         binding.btnShare.setOnClickListener {
-            shareText(title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -")
+            shareText(shareText, "長按分享可以複製到剪貼簿中")
+        }
+        binding.btnShare.setOnLongClickListener {
+            copyTextToClipboard(shareText)
+            showShortToast(R.string.copy_to_clipboard)
+            return@setOnLongClickListener true
         }
     }
 

@@ -8,10 +8,10 @@ package com.yenaly.han1meviewer.logic.model
 data class HomePageModel(
     val avatarUrl: String?,
     val username: String?,
-    val latestHanime: List<HanimeInfoModel>,
-    val latestUpload: List<HanimeInfoModel>,
-    val hotHanimeMonthly: List<HanimeInfoModel>,
-    val hanimeCurrent: List<HanimeInfoModel>,
-    val hanimeTheyWatched: List<HanimeInfoModel>
+    val latestHanime: MutableList<HanimeInfoModel>,
+    val latestUpload: MutableList<HanimeInfoModel>,
+    val hotHanimeMonthly: MutableList<HanimeInfoModel>,
+    val hanimeCurrent: MutableList<HanimeInfoModel>,
+    val hanimeTheyWatched: MutableList<HanimeInfoModel>
     // 首页TAG不想弄
 )

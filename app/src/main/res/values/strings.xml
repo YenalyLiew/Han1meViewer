@@ -81,6 +81,11 @@
     <string name="other">其他</string>
     <string name="about">關於</string>
     <string name="check_update">檢查更新</string>
+    <string name="checking_update">檢查更新中…</string>
+    <string name="check_update_failed">檢查更新失敗，點擊重試</string>
+    <string name="check_update_success">當前有新版本：%s，點擊查看</string>
+    <string name="current_version">當前版本：%s</string>
+    <string name="already_latest_update">已經是最新版本！</string>
     <string name="app_slogan">第三方 Hanime1.me 客戶端</string>
     <string name="search_placeholder">今天想看點什麽呢</string>
 

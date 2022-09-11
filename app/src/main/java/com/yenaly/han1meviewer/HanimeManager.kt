@@ -82,14 +82,14 @@ internal fun String.toVideoCode() = substringAfter("watch?v=")
 // log in and log out
 
 internal fun logout() {
-    alreadyLogin = false
+    isAlreadyLogin = false
     loginCookie = CookieString(EMPTY_STRING)
     cookieMap = null
     CookieManager.getInstance().removeAllCookies(null)
 }
 
 internal fun login(cookie: CookieString) {
-    alreadyLogin = true
+    isAlreadyLogin = true
     loginCookie = cookie
 }
 
@@ -139,4 +139,15 @@ private fun preferencesCookieList(domain: String): List<Cookie> {
         .value(videoLanguage)
         .build()
     return listOf(videoLanguageCookie)
+}
+
+// version
+
+internal fun checkNeedUpdate(versionName: String): Boolean {
+    val latestVersionCode = versionName.substringAfter("+", "0").toInt()
+    return appLocalVersionCode < latestVersionCode
+}
+
+internal fun isPreReleaseVersion(versionName: String): Boolean {
+    return "pre" in versionName
 }

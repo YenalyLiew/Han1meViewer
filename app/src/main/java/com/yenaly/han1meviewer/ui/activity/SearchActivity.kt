@@ -29,6 +29,7 @@ import com.yenaly.han1meviewer.databinding.ActivitySearchBinding
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
+import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.SearchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.popup.HanimeSearchTagCenterPopup
@@ -317,7 +318,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         initChip()
 
         binding.searchRv.apply {
-            layoutManager = GridLayoutManager(
+            layoutManager = FixedGridLayoutManager(
                 this@SearchActivity,
                 if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
                     VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
@@ -672,8 +673,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
             setOnSaveClickListener {
                 viewModel.brandSet.clear()
                 chipList.forEach { tag ->
-                    viewModel.brandSet += tag.text.toString()
+                    if (tag.isChecked) viewModel.brandSet += tag.text.toString()
                 }
+                if (chipList.isEmpty()) binding.searchBar.brand.isChecked = false
                 dismiss()
             }
         }
@@ -716,8 +718,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 viewModel.broad = broad
                 viewModel.tagSet.clear()
                 chipList.forEach { tag ->
-                    viewModel.tagSet += tag.text.toString()
+                    if (tag.isChecked) viewModel.tagSet += tag.text.toString()
                 }
+                if (chipList.isEmpty()) binding.searchBar.tag.isChecked = false
                 dismiss()
             }
         }

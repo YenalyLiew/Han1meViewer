@@ -62,7 +62,7 @@ class WatchHistoryRvAdapter :
                 val position = viewHolder.bindingAdapterPosition
                 val item = getItem(position)
                 copyTextToClipboard("${item.title}\n${item.redirectLink}")
-                showShortToast(context.getString(R.string.copy_to_clipboard))
+                showShortToast(R.string.copy_to_clipboard)
                 return@setOnLongClickListener true
             }
         }
