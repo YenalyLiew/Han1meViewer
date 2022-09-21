@@ -27,6 +27,11 @@
     <PreferenceCategory app:title="@string/other">
 
         <Preference
+            app:icon="@drawable/ic_baseline_clear_all_24"
+            app:key="clear_cache"
+            app:title="@string/clear_cache" />
+
+        <Preference
             app:icon="@drawable/ic_baseline_update_24"
             app:key="update"
             app:title="@string/check_update" />

@@ -298,22 +298,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
-        fromVideoTag?.let {
-            binding.searchBar.searchBar.text = it
-            viewModel.query = it
-        }
-
         initSearchBar()
-
-        /*
-        binding.appBar.addOnOffsetChangedListener(object : AppBarLayoutStateChangeListener() {
-            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
-                if (state != State.EXPANDED) {
-                    binding.searchBar.searchBar.searchEditText.hideIme(window)
-                }
-            }
-        })
-         */
 
         initChip()
 
@@ -415,10 +400,23 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     }
 
     private fun initSearchBar() {
+        binding.searchBar.searchBar.setTextListener { text ->
+            text?.let {
+                binding.searchBar.searchBar.setPlaceHolder(it.ifBlank {
+                    getString(R.string.search_placeholder)
+                })
+            }
+        }
+
+        fromVideoTag?.let {
+            binding.searchBar.searchBar.appendTextWithListener(it)
+            viewModel.query = it
+        }
+
         val searchHistoryRvAdapter = SearchHistoryRvAdapter(LayoutInflater.from(this)).apply {
             setListener(object : SearchHistoryRvAdapter.OnItemViewClickListener {
                 override fun onItemClickListener(suggestion: String, v: View?) {
-                    binding.searchBar.searchBar.searchEditText.setText(suggestion)
+                    binding.searchBar.searchBar.appendText(suggestion)
                 }
 
                 override fun onItemDeleteListener(suggestion: String, v: View?) {
@@ -469,6 +467,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                         viewModel.query = it.ifBlank { null }?.also { query ->
                             viewModel.insertSearchHistory(SearchHistoryEntity(query))
                         }
+                        binding.searchBar.searchBar.setPlaceHolder(it.ifBlank {
+                            getString(R.string.search_placeholder)
+                        })
                     }
                     // getNewHanimeSearchResult() 下面那個方法自動幫你執行這個方法了
                     binding.searchSrl.autoRefresh()
@@ -761,7 +762,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         isVisible = true
         animate().alpha(1f).setDuration(500).setInterpolator(defaultInterpolator)
             .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     isVisible = true
                 }
             }).start()
@@ -770,7 +771,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     private fun View.fadeGone() {
         animate().alpha(0f).setDuration(500).setInterpolator(defaultInterpolator)
             .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     isVisible = false
                 }
             }).start()

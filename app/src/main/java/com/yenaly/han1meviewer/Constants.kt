@@ -45,6 +45,8 @@ const val COMMENT_TYPE = "COMMENT_TYPE"
 
 const val DATE_CODE = "DATE_CODE"
 
+const val CSRF_TOKEN = "CSRF_TOKEN"
+
 // Result Code
 
 const val LOGIN_TO_MAIN_ACTIVITY = 0

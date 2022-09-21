@@ -266,13 +266,13 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             binding.nvMain.menu.findItem(R.id.nv_watch_later).setOnMenuItemClickListener(null)
         } else {
             binding.nvMain.menu.findItem(R.id.nv_fav_video).setOnMenuItemClickListener {
-                showShortToast("請先登入！")
+                showShortToast(R.string.login_first)
                 val intent = Intent(this, LoginActivity::class.java)
                 loginDataLauncher.launch(intent)
                 return@setOnMenuItemClickListener false
             }
             binding.nvMain.menu.findItem(R.id.nv_watch_later).setOnMenuItemClickListener {
-                showShortToast("請先登入！")
+                showShortToast(R.string.login_first)
                 val intent = Intent(this, LoginActivity::class.java)
                 loginDataLauncher.launch(intent)
                 return@setOnMenuItemClickListener false

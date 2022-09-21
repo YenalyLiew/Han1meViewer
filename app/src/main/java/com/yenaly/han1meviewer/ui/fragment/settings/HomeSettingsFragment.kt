@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment.settings
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -7,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.checkNeedUpdate
 import com.yenaly.han1meviewer.hanimeVideoLocalFolder
@@ -20,6 +22,7 @@ import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 import com.yenaly.yenaly_libs.utils.*
 import kotlinx.coroutines.launch
 import rikka.preference.SimpleMenuPreference
+import kotlin.concurrent.thread
 
 /**
  * @project Han1meViewer
@@ -34,6 +37,7 @@ class HomeSettingsFragment : YenalySettingsFragment() {
     private val updatePreference by safePreference<Preference>("update")
     private val aboutPreference by safePreference<Preference>("about")
     private val downloadPath by safePreference<LongClickablePreference>("download_path")
+    private val clearCache by safePreference<Preference>("clear_cache")
 
     override fun initPreferencesResource() = R.xml.settings_home
 
@@ -51,6 +55,11 @@ class HomeSettingsFragment : YenalySettingsFragment() {
             return@setOnPreferenceChangeListener true
         }
         aboutPreference.apply {
+            title = buildString {
+                append(getString(R.string.about))
+                append(" ")
+                append(getString(R.string.hanime_app_name))
+            }
             summary = getString(R.string.current_version, "v${appLocalVersionName}")
             setOnPreferenceClickListener {
                 startActivity<AboutActivity>()
@@ -76,6 +85,39 @@ class HomeSettingsFragment : YenalySettingsFragment() {
                 path.copyToClipboard()
                 showShortToast(R.string.copy_to_clipboard)
                 return@setOnPreferenceLongClickListener true
+            }
+        }
+        clearCache.apply {
+            val cacheDir = context.cacheDir
+            var folderSize = cacheDir?.folderSize ?: 0L
+            summary = generateClearCacheSummary(folderSize)
+            // todo: strings.xml
+            setOnPreferenceClickListener {
+                if (folderSize != 0L) {
+                    MaterialAlertDialogBuilder(context)
+                        .setTitle("請在確認一遍")
+                        .setMessage("確定要清除快取嗎？")
+                        .setPositiveButton(R.string.confirm) { _, _ ->
+                            thread {
+                                if (cacheDir?.deleteRecursively() == true) {
+                                    folderSize = cacheDir.folderSize
+                                    activity?.runOnUiThread {
+                                        showShortToast("清除成功")
+                                        summary = generateClearCacheSummary(folderSize)
+                                    }
+                                } else {
+                                    folderSize = cacheDir.folderSize
+                                    activity?.runOnUiThread {
+                                        showShortToast("清除發生意外")
+                                        summary = generateClearCacheSummary(folderSize)
+                                    }
+                                }
+                            }
+                        }
+                        .setNegativeButton(R.string.cancel, null)
+                        .show()
+                } else showShortToast("當前快取為空，無需清理哦")
+                return@setOnPreferenceClickListener true
             }
         }
     }
@@ -117,6 +159,16 @@ class HomeSettingsFragment : YenalySettingsFragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun generateClearCacheSummary(size: Long): CharSequence {
+        return spannable {
+            size.formatFileSize().span {
+                style(Typeface.BOLD)
+            }
+            " ".text()
+            getString(R.string.cache_occupy).text()
         }
     }
 }

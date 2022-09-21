@@ -20,6 +20,8 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
  * The [CoordinatorLayout.Behavior] for a View within a [CoordinatorLayout] to hide the view off the
  * bottom of the screen when scrolling down, and show it when scrolling up.
  *
+ * SPECIFICALLY FOR [BottomNavigationView][com.google.android.material.bottomnavigation.BottomNavigationView].
+ *
  * @author Yenaly Liew
  * @time 2022/07/19 019 12:18
  */

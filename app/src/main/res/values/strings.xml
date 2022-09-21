@@ -96,4 +96,11 @@
     <string name="local_playback">本地觀看</string>
     <string name="download_path">下載路徑</string>
     <string name="help">幫助</string>
+    <string name="reply">回覆</string>
+    <string name="reply_child_comment">回覆子評論</string>
+    <string name="comment_video">評論本影片</string>
+    <string name="login_first">請先登入</string>
+    <string name="reply_warning">（輸入欄消失後輸入文字也會消失）</string>
+    <string name="clear_cache">清除快取</string>
+    <string name="cache_occupy">快取佔用</string>
 </resources>

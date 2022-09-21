@@ -26,7 +26,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.mancj.materialsearchbar.MaterialSearchBar
+        <com.yenaly.han1meviewer.ui.view.AdvancedMaterialSearchBar
             android:id="@+id/search_bar"
             style="@style/MaterialSearchBarDark"
             android:layout_width="match_parent"

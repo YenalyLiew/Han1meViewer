@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.logic.network
+package com.yenaly.han1meviewer.logic.network.service
 
 import androidx.annotation.IntRange
 import okhttp3.ResponseBody
@@ -10,7 +10,7 @@ import retrofit2.http.*
  * @author Yenaly Liew
  * @time 2022/06/08 008 22:10
  */
-interface HanimeService {
+interface HanimeBaseService {
 
     @GET("/")
     suspend fun getHomePage(): Response<ResponseBody>
@@ -32,17 +32,6 @@ interface HanimeService {
     @GET("watch")
     suspend fun getHanimeVideo(
         @Query("v") videoCode: String
-    ): Response<ResponseBody>
-
-    @GET("loadComment")
-    suspend fun getComment(
-        @Query("type") type: String, // 類似 "video", "preview"
-        @Query("id") code: String
-    ): Response<ResponseBody>
-
-    @GET("loadReplies")
-    suspend fun getCommentReply(
-        @Query("id") commentId: String
     ): Response<ResponseBody>
 
     @GET("previews/{date}")
@@ -70,9 +59,9 @@ interface HanimeService {
     suspend fun addToMyFavVideo(
         @Field("like-foreign-id") videoCode: String,
         @Field("like-status") likeStatus: String,
-        @Header("X-CSRF-TOKEN") csrfToken_1: String?,
-        @Field("_token") csrfToken_2: String?,
+        @Field("_token") csrfToken: String?,
         @Field("like-user-id") userId: String?, // 這網站有點難綳，傳這種參數
-        @Field("like-is-positive") likeIsPositive: Int = 1
+        @Field("like-is-positive") likeIsPositive: Int = 1,
+        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken
     ): Response<ResponseBody>
 }

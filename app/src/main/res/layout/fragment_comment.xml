@@ -57,6 +57,16 @@
 
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_baseline_reply_24"
+            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

@@ -40,7 +40,6 @@ import kotlinx.coroutines.launch
 class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewModel>() {
 
     private var page: Int = 1
-    private var csrfToken: String? = null
 
     private val adapter by unsafeLazy { HanimeVideoRvAdapter() }
 
@@ -84,7 +83,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                             if (event != DISMISS_EVENT_ACTION) {
                                 viewModel.deleteMyFavVideo(
                                     data.redirectLink.toVideoCode(),
-                                    csrfToken
+                                    viewModel.csrfToken
                                 )
                             }
                         }
@@ -126,8 +125,8 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                             page++
                             if (binding.srlPageList.isRefreshing) binding.srlPageList.finishRefresh()
                             binding.srlPageList.finishLoadMore(true)
-                            csrfToken = state.info.csrfToken
-                            Log.d("csrf_token", csrfToken.toString())
+                            viewModel.csrfToken = state.info.csrfToken
+                            Log.d("csrf_token", viewModel.csrfToken.toString())
                             adapter.addData(state.info.hanimeInfo)
                         }
                     }
