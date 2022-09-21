@@ -39,8 +39,14 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
 
     override fun liveDataObserve() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadAllDownloadedHanime()
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle).collect(adapter::setDiffNewData)
+            viewModel.loadAllDownloadedHanime().flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .collect {
+                    if (it.isEmpty()) {
+                        adapter.setEmptyView(R.layout.layout_empty_view)
+                    } else {
+                        adapter.setDiffNewData(it)
+                    }
+                }
         }
     }
 

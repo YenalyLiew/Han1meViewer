@@ -471,86 +471,6 @@ object NetworkRepo {
         )
     }
 
-    fun getHanimeVideoComment(type: String, code: String) = websiteIOFlow(
-        request = { HanimeNetwork.hanimeService.getComment(type, code) }
-    ) { commentRawBody ->
-        val jsonObject = JSONObject(commentRawBody)
-        val commentBody = jsonObject.get("comments").toString()
-        val parseBody = Jsoup.parse(commentBody).body()
-        val commentList = mutableListOf<VideoCommentModel>()
-        val allCommentsClass = parseBody.getElementById("comment-start")
-        allCommentsClass?.let {
-            val avatarClasses = it.select("a > img")
-            val contentClasses = it.getElementsByClass("comment-index-text") // 偶數是日期和作者，奇數是内容
-            val replyClasses = it.select("div[id=comment-like-form-wrapper]")
-            for (i in replyClasses.indices) {
-                val avatarUrl = avatarClasses[i].absUrl("src")
-                val replyClass = replyClasses[i].select("div > div")
-                val thumbUp = try {
-                    val up = replyClass[0].child(1).text()
-                    if (up.isInt()) {
-                        up
-                    } else {
-                        throw IndexOutOfBoundsException("應該throw NumberFormatException，但這樣能統一catch")
-                    }
-                } catch (e: IndexOutOfBoundsException) {
-                    replyClasses[i].select("span[class=comment-like-btn-wrapper] > button > span")[1].text()
-                }
-                val hasMoreReplies =
-                    replyClasses[i].select("div[class~=load-replies-btn]").first() != null
-                val id = replyClasses[i].select("div[id~=reply-section-wrapper]")[0].id()
-                    .substringAfterLast('-')
-                val usernameAndDateClass = contentClasses[i * 2]
-                val username = usernameAndDateClass.select("a")[0].ownText()
-                val date = usernameAndDateClass.select("a > span")[0].ownText()
-                val content = contentClasses[i * 2 + 1].text()
-                commentList.add(
-                    VideoCommentModel(
-                        avatar = avatarUrl, username = username, date = date,
-                        content = content, thumbUp = thumbUp, hasMoreReplies = hasMoreReplies,
-                        id = id
-                    )
-                )
-            }
-        }
-        return@websiteIOFlow WebsiteState.Success(commentList)
-    }
-
-    fun getCommentReply(commentId: String) = websiteIOFlow(
-        request = { HanimeNetwork.hanimeService.getCommentReply(commentId) }
-    ) { replyRawBody ->
-        val jsonObject = JSONObject(replyRawBody)
-        val replyBody = jsonObject.get("replies").toString()
-        val replyList = mutableListOf<VideoCommentModel>()
-        val parseBody = Jsoup.parse(replyBody).body()
-        val replyStart = parseBody.select("div[id*=reply-start]").first()
-        replyStart?.let {
-            val allRepliesClass = it.children()
-            for (i in 0 until (allRepliesClass.size / 2)) {
-                val avatarUrl = allRepliesClass[i * 2].select("img")[0].absUrl("src")
-                val content =
-                    allRepliesClass[i * 2].getElementsByClass("comment-index-text")[1].text()
-                val usernameClass =
-                    allRepliesClass[i * 2].getElementsByClass("comment-index-text")[0]
-                val username = usernameClass.select("div > a")[0].ownText()
-                val date = usernameClass.select("div > a > span")[0].ownText().trim()
-                val thumbAndReplyClass = allRepliesClass[i * 2 + 1]
-                val thumbUp = with(thumbAndReplyClass.select("span")) {
-                    if (get(1).text().isInt()) get(1).text() else get(2).text()
-                }
-
-                replyList.add(
-                    VideoCommentModel(
-                        avatar = avatarUrl, username = username,
-                        date = date, content = content, thumbUp = thumbUp
-                    )
-                )
-            }
-        }
-
-        return@websiteIOFlow WebsiteState.Success(replyList)
-    }
-
     fun getHanimePreview(date: String) = websiteIOFlow(
         request = { HanimeNetwork.hanimeService.getHanimePreview(date) }
     ) { previewBody ->
@@ -697,11 +617,135 @@ object NetworkRepo {
     ) = websiteIOFlow(
         request = {
             HanimeNetwork.hanimeService.addToMyFavVideo(
-                videoCode, likeStatus.value, token, token, currentUserId
+                videoCode, likeStatus.value, token, currentUserId
             )
         }
     ) {
         Log.d("add_to_fav_body", it)
+        return@websiteIOFlow WebsiteState.Success(Unit)
+    }
+
+    // ------ COMMENT ------ //
+
+    fun getComment(type: String, code: String) = websiteIOFlow(
+        request = { HanimeNetwork.commentService.getComment(type, code) }
+    ) { commentRawBody ->
+        val jsonObject = JSONObject(commentRawBody)
+        val commentBody = jsonObject.get("comments").toString()
+        val parseBody = Jsoup.parse(commentBody).body()
+        val csrfToken = parseBody.select("input[name=_token]").first()?.attr("value")
+        val currentUserId = parseBody.select("input[name=comment-user-id]").first()?.attr("value")
+        val commentList = mutableListOf<VideoCommentModel.VideoComment>()
+        val allCommentsClass = parseBody.getElementById("comment-start")
+        allCommentsClass?.let {
+            val avatarClasses = it.select("a > img")
+            val contentClasses = it.getElementsByClass("comment-index-text") // 偶數是日期和作者，奇數是内容
+            val replyClasses = it.select("div[id=comment-like-form-wrapper]")
+            for (i in replyClasses.indices) {
+                val avatarUrl = avatarClasses[i * 2].absUrl("src")
+                val replyClass = replyClasses[i].select("div > div")
+                val thumbUp = try {
+                    val up = replyClass[0].child(1).text()
+                    if (up.isInt()) {
+                        up
+                    } else {
+                        throw IndexOutOfBoundsException("應該throw NumberFormatException，但這樣能統一catch")
+                    }
+                } catch (e: IndexOutOfBoundsException) {
+                    replyClasses[i].select("span[class=comment-like-btn-wrapper] > button > span")[1].text()
+                }
+                val hasMoreReplies =
+                    replyClasses[i].select("div[class~=load-replies-btn]").first() != null
+                val id = replyClasses[i].select("div[id~=reply-section-wrapper]")[0].id()
+                    .substringAfterLast('-')
+                val usernameAndDateClass = contentClasses[i * 2]
+                val username = usernameAndDateClass.select("a")[0].ownText()
+                val date = usernameAndDateClass.select("a > span")[0].ownText()
+                val content = contentClasses[i * 2 + 1].text()
+                commentList.add(
+                    VideoCommentModel.VideoComment(
+                        avatar = avatarUrl, username = username, date = date,
+                        content = content, thumbUp = thumbUp, hasMoreReplies = hasMoreReplies,
+                        id = id, isChildComment = false
+                    )
+                )
+            }
+        }
+        return@websiteIOFlow WebsiteState.Success(
+            VideoCommentModel(
+                commentList,
+                currentUserId,
+                csrfToken
+            )
+        )
+    }
+
+    fun getCommentReply(commentId: String) = websiteIOFlow(
+        request = { HanimeNetwork.commentService.getCommentReply(commentId) }
+    ) { replyRawBody ->
+        val jsonObject = JSONObject(replyRawBody)
+        val replyBody = jsonObject.get("replies").toString()
+        val replyList = mutableListOf<VideoCommentModel.VideoComment>()
+        val parseBody = Jsoup.parse(replyBody).body()
+        val replyStart = parseBody.select("div[id*=reply-start]").first()
+        replyStart?.let {
+            val allRepliesClass = it.children()
+            for (i in 0 until (allRepliesClass.size / 2)) {
+                val avatarUrl = allRepliesClass[i * 2].select("img")[0].absUrl("src")
+                val content =
+                    allRepliesClass[i * 2].getElementsByClass("comment-index-text")[1].text()
+                val usernameClass =
+                    allRepliesClass[i * 2].getElementsByClass("comment-index-text")[0]
+                val username = usernameClass.select("div > a")[0].ownText()
+                val date = usernameClass.select("div > a > span")[0].ownText().trim()
+                val thumbAndReplyClass = allRepliesClass[i * 2 + 1]
+                val thumbUp = with(thumbAndReplyClass.select("span")) {
+                    if (get(1).text().isInt()) get(1).text() else get(2).text()
+                }
+
+                replyList.add(
+                    VideoCommentModel.VideoComment(
+                        avatar = avatarUrl, username = username,
+                        date = date, content = content, thumbUp = thumbUp,
+                        isChildComment = true
+                    )
+                )
+            }
+        }
+
+        return@websiteIOFlow WebsiteState.Success(VideoCommentModel(replyList))
+    }
+
+    fun postComment(
+        csrfToken: String?,
+        currentUserId: String,
+        targetUserId: String,
+        type: String,
+        text: String
+    ) = websiteIOFlow(
+        request = {
+            HanimeNetwork.commentService.postComment(
+                csrfToken, currentUserId,
+                type, targetUserId, text
+            )
+        }
+    ) {
+        Log.d("post_comment_body", it)
+        return@websiteIOFlow WebsiteState.Success(Unit)
+    }
+
+    fun postCommentReply(
+        csrfToken: String?,
+        replyCommentId: String,
+        text: String
+    ) = websiteIOFlow(
+        request = {
+            HanimeNetwork.commentService.postCommentReply(
+                csrfToken, replyCommentId, text
+            )
+        }
+    ) {
+        Log.d("post_comment_reply_body", it)
         return@websiteIOFlow WebsiteState.Success(Unit)
     }
 
@@ -788,7 +832,7 @@ object NetworkRepo {
                 e.printStackTrace()
                 emit(VideoLoadingState.Error(IndexOutOfBoundsException("可能這個網址解析起來不大一樣...")))
             }
-            is Exception -> {
+            else -> {
                 e.printStackTrace()
                 emit(VideoLoadingState.Error(e))
             }

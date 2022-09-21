@@ -44,7 +44,9 @@ class WatchHistoryRvAdapter :
     }
 
     override fun convert(holder: ViewHolder, item: WatchHistoryEntity) {
-        holder.binding.ivCover.load(item.coverUrl)
+        holder.binding.ivCover.load(item.coverUrl) {
+            crossfade(true)
+        }
         holder.binding.tvAddedTime.text = TimeUtil.millis2String(item.watchDate, "yyyy-MM-dd HH:mm")
         holder.binding.tvReleaseDate.text = TimeUtil.millis2String(item.releaseDate, "yyyy-MM-dd")
         holder.binding.tvTitle.text = item.title

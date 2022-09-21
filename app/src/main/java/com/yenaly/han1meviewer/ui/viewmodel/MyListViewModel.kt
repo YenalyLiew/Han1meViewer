@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
  */
 class MyListViewModel(application: Application) : YenalyViewModel(application) {
 
+    var csrfToken: String? = null
+
     private val _watchLaterFlow: MutableStateFlow<PageLoadingState<MyListModel>> =
         MutableStateFlow(PageLoadingState.Loading())
     val watchLaterFlow = _watchLaterFlow.asStateFlow()

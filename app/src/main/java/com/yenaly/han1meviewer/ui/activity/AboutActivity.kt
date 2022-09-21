@@ -95,7 +95,7 @@ class AboutActivity : AbsAboutActivity() {
                         )
                     }
                     newline(2)
-                    "暫不能進行評論回覆、點讚、點踩".span {
+                    "暫不能進行評論點讚、點踩".span {
                         quote(
                             Color.rgb(
                                 (0..255).random(),

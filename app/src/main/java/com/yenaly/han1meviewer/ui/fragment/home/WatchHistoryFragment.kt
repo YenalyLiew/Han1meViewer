@@ -77,7 +77,13 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllWatchHistories()
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle)
-                .collect(historyAdapter::setDiffNewData)
+                .collect {
+                    if (it.isEmpty()) {
+                        historyAdapter.setEmptyView(R.layout.layout_empty_view)
+                    } else {
+                        historyAdapter.setDiffNewData(it)
+                    }
+                }
         }
     }
 

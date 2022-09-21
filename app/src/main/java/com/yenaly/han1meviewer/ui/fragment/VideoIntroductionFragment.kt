@@ -87,7 +87,7 @@ class VideoIntroductionFragment :
                             relatedAdapter.setList(state.info.relatedHanimes)
                             initDownloadButton(state.info)
                         }
-                        is VideoLoadingState.NoContent -> {}
+                        is VideoLoadingState.NoContent -> Unit
                     }
                 }
             }
@@ -174,7 +174,7 @@ class VideoIntroductionFragment :
                     videoData.csrfToken
                 )
             } else {
-                showShortToast("請先登入！")
+                showShortToast(R.string.login_first)
             }
         }
         binding.btnWatchLater.clickTrigger(viewLifecycleOwner.lifecycle) {

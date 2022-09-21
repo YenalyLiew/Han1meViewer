@@ -8,11 +8,11 @@ A Hanime1.me Application for Android.
 
 支持高级查询、观看（可切换分辨率与语言）、下载、历史记录以及收藏等功能。
 
-暂不支持评论等功能，且目前可能会存在一系列bug。
+支持评论但暂不支持评论点赞点踩等功能，且目前可能会存在一系列bug。
 
 Supports advanced query, watch (be able to switch resolution and language), download, history and add to favorite list.
 
-Comments and some other functions are not supported TEMPORARILY, and there may be a series of bugs at present.
+Comment is supported right now but comment like or dislike and some other functions are not supported TEMPORARILY, and there may be a series of bugs at present.
 
 ## 存在问题
 
@@ -39,6 +39,14 @@ Comments and some other functions are not supported TEMPORARILY, and there may b
    No watch later list and your own list temporarily.
 
 ## 更新内容
+
+### v0.4.0
+
+新增评论功能，包括影片评论，评论回复，子评论回复，但暂不支持点赞点踩。
+
+新增清理缓存（快取）功能。
+
+优化搜索体验，修复了一些小问题。
 
 ### v0.3.0
 

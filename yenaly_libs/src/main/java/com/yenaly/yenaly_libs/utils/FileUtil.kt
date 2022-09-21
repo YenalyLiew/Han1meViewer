@@ -2,6 +2,7 @@
 
 package com.yenaly.yenaly_libs.utils
 
+import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -21,3 +22,11 @@ fun InputStream.copyTo(
     }
     return bytesCopied
 }
+
+val File?.folderSize: Long
+    get() {
+        var size = 0L
+        val files = this?.listFiles()
+        files?.forEach { file -> size += if (file.isDirectory) file.folderSize else file.length() }
+        return size
+    }
