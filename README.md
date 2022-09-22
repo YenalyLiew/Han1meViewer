@@ -40,6 +40,10 @@ Comment is supported right now but comment like or dislike and some other functi
 
 ## 更新内容
 
+### v0.4.1
+
+修复未登入前无法查看评论的问题。
+
 ### v0.4.0
 
 新增评论功能，包括影片评论，评论回复，子评论回复，但暂不支持点赞点踩。

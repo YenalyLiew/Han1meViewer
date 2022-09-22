@@ -641,8 +641,10 @@ object NetworkRepo {
             val avatarClasses = it.select("a > img")
             val contentClasses = it.getElementsByClass("comment-index-text") // 偶數是日期和作者，奇數是内容
             val replyClasses = it.select("div[id=comment-like-form-wrapper]")
+            Log.d("avatar", avatarClasses.toString())
             for (i in replyClasses.indices) {
-                val avatarUrl = avatarClasses[i * 2].absUrl("src")
+                val avatarUrl = avatarClasses.getOrNull(i * 2)?.absUrl("src")
+                    ?: avatarClasses[i].absUrl("src")
                 val replyClass = replyClasses[i].select("div > div")
                 val thumbUp = try {
                     val up = replyClass[0].child(1).text()
