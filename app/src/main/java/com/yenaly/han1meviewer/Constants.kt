@@ -1,6 +1,5 @@
 package com.yenaly.han1meviewer
 
-import com.yenaly.yenaly_libs.utils.appScreenHeight
 import com.yenaly.yenaly_libs.utils.appScreenWidth
 import com.yenaly.yenaly_libs.utils.applicationContext
 

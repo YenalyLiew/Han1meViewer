@@ -1,8 +1,8 @@
 # Han1meViewer
 
-这是一个 Hanime1.me Android 平台的浏览器。
+这是一个 Hanime1.me Android 平台的非官方浏览器。
 
-A Hanime1.me Application for Android.
+An unofficial Hanime1.me Application for Android.
 
 ## 功能
 
@@ -10,9 +10,13 @@ A Hanime1.me Application for Android.
 
 支持评论但暂不支持评论点赞点踩等功能，且目前可能会存在一系列bug。
 
+**请允许通知以便能正确收到下载状态通知！**
+
 Supports advanced query, watch (be able to switch resolution and language), download, history and add to favorite list.
 
 Comment is supported right now but comment like or dislike and some other functions are not supported TEMPORARILY, and there may be a series of bugs at present.
+
+**Please allow notification in order to properly receive download status notification!**
 
 ## 存在问题
 
@@ -22,23 +26,33 @@ Comment is supported right now but comment like or dislike and some other functi
 >
 > 最后还是建议跟 E-hentai 学一学。
 
-1. 在全屏模式下观看视频切换分辨率后，退出全屏会导致视频加载重置。
-
-   When you watch video and switch resolution in fullscreen mode, video loading will reset after you quit fullscreen mode.
-
-2. 部分界面优化不足，存在卡顿。
+1. 部分界面优化不足，存在卡顿。
 
    Some user interfaces having insufficient optimization might be laggy.
 
-3. 下载界面暂时只有“已下载”列表，“正在下载”列表暂未实现。
+2. 下载界面暂时只有“已下载”列表，“正在下载”列表暂未实现。
 
    There is only a Downloaded list in Download UI, I have not implemented the Downloading list.
 
-4. 暂时无法使用待看列表以及自定义列表。
+3. 暂时无法使用待看列表以及自定义列表。
 
    No watch later list and your own list temporarily.
 
 ## 更新内容
+
+### v0.5.0
+
+调整部分 UI。适配 Android 13 通知权限。
+
+修复删除下载影片后列表不能及时更新的问题。修复搜索栏部分逻辑。
+
+修复从全屏切换分辨率后再返回正常界面，影片重置的问题。
+
+修复新番导览日期显示错误的问题。
+
+修改分辨率排列顺序，影片从最高画质开始播放，画质从高到低排列。
+
+增加影片滑动阻尼系数，避免滑动过多导致不能微调。
 
 ### v0.4.1
 

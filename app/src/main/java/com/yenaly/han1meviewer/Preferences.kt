@@ -1,6 +1,7 @@
 package com.yenaly.han1meviewer
 
 import androidx.preference.PreferenceManager
+import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.getSpValue
 import com.yenaly.yenaly_libs.utils.putSpValue

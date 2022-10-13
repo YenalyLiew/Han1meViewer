@@ -11,9 +11,12 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -309,6 +312,19 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                     VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
             )
             adapter = searchAdapter
+            addOnScrollListener(object : OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                        if (binding.searchBar.groupTag.isVisible) {
+                            binding.searchBar.groupTag.fadeGone()
+                        }
+                        if (binding.searchBar.searchBar.isSearchOpened) {
+                            binding.searchBar.searchBar.searchEditText.hideIme(window)
+                            binding.searchBar.searchBar.hideSuggestionsList()
+                        }
+                    }
+                }
+            })
         }
         binding.searchSrl.apply {
             setOnLoadMoreListener {
@@ -400,11 +416,22 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     }
 
     private fun initSearchBar() {
+
+        // 设置文字提交监听器，动态修改PlaceHolder，如果搜索栏搜索了东西，则PlaceHolder替换成搜索的内容
         binding.searchBar.searchBar.setTextListener { text ->
             text?.let {
                 binding.searchBar.searchBar.setPlaceHolder(it.ifBlank {
                     getString(R.string.search_placeholder)
                 })
+            }
+        }
+
+        // 当搜索栏文字为空时，显示建议栏
+        binding.searchBar.searchBar.searchEditText.addTextChangedListener { text ->
+            text?.let {
+                if (text.isBlank() && !binding.searchBar.searchBar.isSuggestionsVisible) {
+                    binding.searchBar.searchBar.showSuggestionsList()
+                }
             }
         }
 
@@ -420,6 +447,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 }
 
                 override fun onItemDeleteListener(suggestion: String, v: View?) {
+                    // 这样才能显示正确，不要觉得这个判断代码没用
                     if (suggestions.size == 1) {
                         binding.searchBar.searchBar.hideSuggestionsList()
                     }

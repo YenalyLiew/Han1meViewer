@@ -16,7 +16,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = createVersionCode()
-        versionName = createVersionName(major = 0, minor = 4, patch = 1)
+        versionName = createVersionName(major = 0, minor = 5, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -83,7 +83,7 @@ dependencies {
     implementation("cn.jzvd:jiaozivideoplayer:7.7.0")
 
     // permission
-    implementation("com.guolindev.permissionx:permissionx:1.6.4")
+    implementation("com.guolindev.permissionx:permissionx:1.7.1")
 
     // view
     implementation("io.github.scwang90:refresh-header-material:2.0.5")

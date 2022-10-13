@@ -4,6 +4,7 @@
     package="com.yenaly.han1meviewer">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".HanimeApplication"
@@ -31,7 +32,7 @@
 
         <activity
             android:name=".ui.activity.VideoActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">

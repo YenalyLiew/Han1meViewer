@@ -12,6 +12,7 @@ import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadedEntity
 import com.yenaly.han1meviewer.logic.network.ServiceCreator
 import com.yenaly.han1meviewer.notificationManager
+import com.yenaly.han1meviewer.util.getDownloadedHanimeFile
 import com.yenaly.yenaly_libs.utils.copyTo
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers

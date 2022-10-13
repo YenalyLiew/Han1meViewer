@@ -15,7 +15,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadedBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadedEntity
-import com.yenaly.han1meviewer.openDownloadedHanimeVideoLocally
+import com.yenaly.han1meviewer.util.openDownloadedHanimeVideoLocally
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
 import com.yenaly.yenaly_libs.utils.TimeUtil

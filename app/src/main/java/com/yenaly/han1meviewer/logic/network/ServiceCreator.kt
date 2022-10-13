@@ -3,7 +3,7 @@ package com.yenaly.han1meviewer.logic.network
 import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.han1meviewer.cookieMap
 import com.yenaly.han1meviewer.loginCookie
-import com.yenaly.han1meviewer.toCookieList
+import com.yenaly.han1meviewer.util.toCookieList
 import com.yenaly.yenaly_libs.utils.GsonUtil
 import okhttp3.*
 import retrofit2.Retrofit

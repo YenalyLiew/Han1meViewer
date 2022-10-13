@@ -12,6 +12,7 @@ import androidx.work.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
+import com.permissionx.guolindev.PermissionX
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
@@ -21,6 +22,8 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.service.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
+import com.yenaly.han1meviewer.util.checkDownloadedHanimeFile
+import com.yenaly.han1meviewer.util.createTags
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.*
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
@@ -184,7 +187,8 @@ class VideoIntroductionFragment :
     }
 
     private fun initShareButton(title: String) {
-        val shareText = title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -"
+        val shareText =
+            title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -"
         binding.btnShare.setOnClickListener {
             shareText(shareText, "長按分享可以複製到剪貼簿中")
         }
@@ -196,7 +200,9 @@ class VideoIntroductionFragment :
     }
 
     private fun initDownloadButton(videoData: HanimeVideoModel) {
-        binding.btnDownload.clickTrigger(viewLifecycleOwner.lifecycle) {
+        if (videoData.videoUrls.isEmpty()) {
+            showShortToast(R.string.no_video_links_found)
+        } else binding.btnDownload.clickTrigger(viewLifecycleOwner.lifecycle) {
             XPopup.Builder(context)
                 .atView(it)
                 .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
@@ -236,28 +242,44 @@ class VideoIntroductionFragment :
             .show()
     }
 
+    private inline fun requestNotificationPermission(crossinline then: () -> Unit) {
+        PermissionX.init(this).permissions(PermissionX.permission.POST_NOTIFICATIONS)
+            .onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    getString(R.string.reason_for_download_notification),
+                    getString(R.string.allow), getString(R.string.deny)
+                )
+            }.request { allGranted, _, _ ->
+                if (!allGranted) showShortToast(R.string.msg_deny_download_notification)
+                then.invoke()
+            }
+    }
+
     private fun enqueueDownloadWork(
         title: String, quality: String, relatedUrl: String,
         videoCode: String, coverUrl: String, releaseDate: Long
     ) {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val data = Data.Builder()
-            .putString(HanimeDownloadWorker.QUALITY, quality)
-            .putString(HanimeDownloadWorker.DOWNLOAD_URL, relatedUrl)
-            .putString(HanimeDownloadWorker.HANIME_NAME, title)
-            .putString(HanimeDownloadWorker.VIDEO_CODE, videoCode)
-            .putString(HanimeDownloadWorker.COVER_URL, coverUrl)
-            .putLong(HanimeDownloadWorker.RELEASE_DATE, releaseDate)
-            .build()
-        val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
-            .addTag(HanimeDownloadWorker.TAG)
-            .setConstraints(constraints)
-            .setInputData(data)
-            .build()
-        WorkManager.getInstance(applicationContext)
-            .beginUniqueWork(videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
-            .enqueue()
+        requestNotificationPermission {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+            val data = Data.Builder()
+                .putString(HanimeDownloadWorker.QUALITY, quality)
+                .putString(HanimeDownloadWorker.DOWNLOAD_URL, relatedUrl)
+                .putString(HanimeDownloadWorker.HANIME_NAME, title)
+                .putString(HanimeDownloadWorker.VIDEO_CODE, videoCode)
+                .putString(HanimeDownloadWorker.COVER_URL, coverUrl)
+                .putLong(HanimeDownloadWorker.RELEASE_DATE, releaseDate)
+                .build()
+            val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
+                .addTag(HanimeDownloadWorker.TAG)
+                .setConstraints(constraints)
+                .setInputData(data)
+                .build()
+            WorkManager.getInstance(applicationContext)
+                .beginUniqueWork(videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
+                .enqueue()
+        }
     }
 }
