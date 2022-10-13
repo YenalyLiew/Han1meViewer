@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
@@ -41,10 +40,9 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllDownloadedHanime().flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {
+                    adapter.setDiffNewData(it)
                     if (it.isEmpty()) {
                         adapter.setEmptyView(R.layout.layout_empty_view)
-                    } else {
-                        adapter.setDiffNewData(it)
                     }
                 }
         }

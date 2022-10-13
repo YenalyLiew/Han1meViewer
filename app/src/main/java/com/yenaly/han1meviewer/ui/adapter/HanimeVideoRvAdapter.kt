@@ -17,6 +17,7 @@ import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
+import com.yenaly.han1meviewer.toVideoCode
 import com.yenaly.yenaly_libs.utils.*
 
 /**

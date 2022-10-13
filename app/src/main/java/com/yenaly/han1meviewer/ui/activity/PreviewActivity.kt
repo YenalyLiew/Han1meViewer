@@ -8,6 +8,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -100,6 +101,13 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         binding.latestHanimeNews.rv.apply {
             layoutManager = LinearLayoutManager(this@PreviewActivity)
             adapter = newsAdapter
+            addItemDecoration(
+                DividerItemDecoration(
+                    this@PreviewActivity, DividerItemDecoration.VERTICAL
+                ).apply {
+                    setDrawable(getDrawable(R.drawable.line_divider)!!)
+                }
+            )
         }
         tourAdapter.setOnItemClickListener { _, _, position ->
             val y = binding.latestHanimeNews.rv.getChildAt(position).y
@@ -201,7 +209,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             val month = current.second.substring(4, 6).toInt()
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month - 1)
-            calendar.roll(Calendar.MONTH, -1)
+            calendar.add(Calendar.MONTH, -1)
             val previousYear = calendar.get(Calendar.YEAR)
             val previousMonth = calendar.get(Calendar.MONTH) + 1
             return "${previousYear}/${previousMonth}" to (if (previousMonth < 10) {
@@ -215,7 +223,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             val month = current.second.substring(4, 6).toInt()
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month - 1)
-            calendar.roll(Calendar.MONTH, 1)
+            calendar.add(Calendar.MONTH, 1)
             val nextYear = calendar.get(Calendar.YEAR)
             val nextMonth = calendar.get(Calendar.MONTH) + 1
             return "${nextYear}/${nextMonth}" to (if (nextMonth < 10) {

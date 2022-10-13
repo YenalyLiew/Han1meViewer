@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
-import com.yenaly.han1meviewer.createTags
+import com.yenaly.han1meviewer.util.createTags
 import com.yenaly.han1meviewer.databinding.ItemHanimePreviewNewsBinding
 import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity

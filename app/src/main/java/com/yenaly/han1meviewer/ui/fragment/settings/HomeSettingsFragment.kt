@@ -10,8 +10,8 @@ import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.checkNeedUpdate
-import com.yenaly.han1meviewer.hanimeVideoLocalFolder
+import com.yenaly.han1meviewer.util.checkNeedUpdate
+import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.preferenceSp
 import com.yenaly.han1meviewer.ui.activity.AboutActivity

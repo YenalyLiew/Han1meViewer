@@ -9,6 +9,7 @@ import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.util.HanimeResolution
 import com.yenaly.yenaly_libs.utils.isInt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -450,21 +451,21 @@ object NetworkRepo {
         }
         Log.d("related_anime_list", relatedAnimeList.toString())
 
-        val videoUrlList = linkedMapOf<String, String>()
+        val hanimeResolution = HanimeResolution()
         val videoClass = parseBody.select("video[id=player]")[0]
         val videoCoverUrl = videoClass.absUrl("poster")
         videoClass.children().forEach { source ->
             if (source != null) {
                 val resolution = source.attr("size") + "P"
                 val sourceUrl = source.absUrl("src")
-                videoUrlList[resolution] = sourceUrl
+                hanimeResolution.parseResolution(resolution, sourceUrl)
             } else return@forEach
         }
 
         return@videoIOFlow VideoLoadingState.Success(
             HanimeVideoModel(
                 title = title, coverUrl = videoCoverUrl, uploadTimeWithViews = uploadTimeWithViews,
-                introduction = introduction, videoUrls = videoUrlList,
+                introduction = introduction, videoUrls = hanimeResolution.toLinkedHashMap(),
                 tags = tagList, playList = playList, relatedHanimes = relatedAnimeList,
                 csrfToken = csrfToken, currentUserId = currentUserId
             )

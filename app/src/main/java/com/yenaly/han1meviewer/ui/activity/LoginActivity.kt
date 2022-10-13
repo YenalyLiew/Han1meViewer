@@ -12,10 +12,12 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.databinding.DataBindingUtil
 import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.*
-import com.yenaly.han1meviewer.CookieString
+import com.yenaly.han1meviewer.HANIME_BASE_URL
+import com.yenaly.han1meviewer.HANIME_LOGIN_URL
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ActivityLoginBinding
 import com.yenaly.han1meviewer.login
+import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
 import com.yenaly.yenaly_libs.utils.SystemStatusUtil
 

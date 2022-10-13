@@ -3,10 +3,8 @@ package com.yenaly.han1meviewer.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import coil.load

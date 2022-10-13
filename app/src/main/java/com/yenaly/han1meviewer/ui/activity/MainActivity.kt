@@ -24,7 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.*
-import com.yenaly.han1meviewer.checkNeedUpdate
+import com.yenaly.han1meviewer.util.checkNeedUpdate
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
 import com.yenaly.han1meviewer.logic.model.VersionModel
 import com.yenaly.han1meviewer.logic.state.WebsiteState
