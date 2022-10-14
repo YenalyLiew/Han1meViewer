@@ -40,6 +40,10 @@ Comment is supported right now but comment like or dislike and some other functi
 
 ## 更新内容
 
+### v0.5.1
+
+修复搜索栏逻辑问题。
+
 ### v0.5.0
 
 调整部分 UI。适配 Android 13 通知权限。
