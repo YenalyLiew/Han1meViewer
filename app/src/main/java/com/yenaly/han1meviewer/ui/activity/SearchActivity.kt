@@ -313,14 +313,17 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
             )
             adapter = searchAdapter
             addOnScrollListener(object : OnScrollListener() {
+                val searchBar = binding.searchBar.searchBar
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     if (newState != RecyclerView.SCROLL_STATE_IDLE) {
                         if (binding.searchBar.groupTag.isVisible) {
                             binding.searchBar.groupTag.fadeGone()
                         }
-                        if (binding.searchBar.searchBar.isSearchOpened) {
-                            binding.searchBar.searchBar.searchEditText.hideIme(window)
-                            binding.searchBar.searchBar.hideSuggestionsList()
+                        if (searchBar.isSuggestionsVisible) {
+                            searchBar.hideSuggestionsList()
+                        }
+                        if (searchBar.isSearchOpened) {
+                            searchBar.searchEditText.hideIme(window)
                         }
                     }
                 }
@@ -429,7 +432,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         // 当搜索栏文字为空时，显示建议栏
         binding.searchBar.searchBar.searchEditText.addTextChangedListener { text ->
             text?.let {
-                if (text.isBlank() && !binding.searchBar.searchBar.isSuggestionsVisible) {
+                if (text.isBlank() && !binding.searchBar.searchBar.isSuggestionsVisible && binding.searchBar.searchBar.isSearchOpened) {
                     binding.searchBar.searchBar.showSuggestionsList()
                 }
             }
