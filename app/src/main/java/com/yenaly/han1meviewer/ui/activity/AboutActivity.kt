@@ -114,16 +114,6 @@ class AboutActivity : AbsAboutActivity() {
                             ), gapWidth = 4.dp
                         )
                     }
-                    newline(2)
-                    "切換清晰度退出全屏會導致影片重置".span {
-                        quote(
-                            Color.rgb(
-                                (0..255).random(),
-                                (0..255).random(),
-                                (0..255).random()
-                            ), gapWidth = 4.dp
-                        )
-                    }
                 }
             ))
         }

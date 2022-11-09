@@ -10,6 +10,7 @@ import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.os.BuildCompat.PrereleaseSdkCheck
 import androidx.databinding.DataBindingUtil
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HANIME_BASE_URL
@@ -29,6 +30,7 @@ class LoginActivity : FrameActivity() {
         SystemStatusUtil.fullScreen(window, true)
     }
 
+    @PrereleaseSdkCheck
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
@@ -88,7 +90,7 @@ class LoginActivity : FrameActivity() {
                     view: WebView,
                     request: WebResourceRequest
                 ): Boolean {
-                    if (request.isRedirect && request.url.toString().contains(HANIME_BASE_URL)) {
+                    if (request.isRedirect && request.url.toString() == HANIME_BASE_URL) {
                         val url = request.url
                         val cookieManager = CookieManager.getInstance().getCookie(url.host)
                         Log.d("login_cookie", cookieManager.toString())

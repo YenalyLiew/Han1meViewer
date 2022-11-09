@@ -163,12 +163,9 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
     private fun initViewPager() {
 
-        binding.videoVp.setUpFragmentStateAdapter(this, 2) { position ->
-            when (position) {
-                0 -> VideoIntroductionFragment()
-                1 -> CommentFragment().makeBundle(COMMENT_TYPE to VIDEO_COMMENT_PREFIX)
-                else -> null
-            }
+        binding.videoVp.setUpFragmentStateAdapter(this) {
+            addFragment { VideoIntroductionFragment() }
+            addFragment { CommentFragment().makeBundle(COMMENT_TYPE to VIDEO_COMMENT_PREFIX) }
         }
 
         binding.videoTl.attach(binding.videoVp) { tab, position ->
