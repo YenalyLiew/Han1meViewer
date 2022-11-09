@@ -5,8 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,13 +21,15 @@ import coil.transform.CircleCropTransformation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.*
-import com.yenaly.han1meviewer.util.checkNeedUpdate
+import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
+import com.yenaly.han1meviewer.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.model.VersionModel
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.util.checkNeedUpdate
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
 import kotlinx.coroutines.launch
@@ -63,6 +63,22 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
      */
     override fun initData(savedInstanceState: Bundle?) {
         setSupportActionBar(binding.toolbar)
+
+        // 暂时先这样
+        addMenu(R.menu.menu_main_toolbar) { item ->
+            when (item.itemId) {
+                R.id.tb_search -> {
+                    startActivity<SearchActivity>()
+                    return@addMenu true
+                }
+                R.id.tb_previews -> {
+                    startActivity<PreviewActivity>()
+                    return@addMenu true
+                }
+            }
+            return@addMenu item.onNavDestinationSelected(navController)
+        }
+
         supportActionBar?.let {
             it.title = spannable {
                 "H".span {
@@ -138,25 +154,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                 }
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main_toolbar, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.tb_search -> {
-                startActivity<SearchActivity>()
-                return true
-            }
-            R.id.tb_previews -> {
-                startActivity<PreviewActivity>()
-                return true
-            }
-        }
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
     override fun onSupportNavigateUp(): Boolean {

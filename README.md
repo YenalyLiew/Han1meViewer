@@ -40,6 +40,10 @@ Comment is supported right now but comment like or dislike and some other functi
 
 ## 更新内容
 
+### v0.5.2
+
+修复“没有登录失败的校验”的问题。
+
 ### v0.5.1
 
 修复搜索栏逻辑问题。

@@ -5,9 +5,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
@@ -46,7 +43,20 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
     override fun initData(savedInstanceState: Bundle?) {
 
         (activity as? MainActivity)?.setToolbarSubtitle(getString(R.string.watch_later))
-        setHasOptionsMenu(true)
+
+        addMenu(R.menu.menu_my_list_toolbar, viewLifecycleOwner) { menuItem ->
+            when (menuItem.itemId) {
+                R.id.tb_help -> {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("使用注意！")
+                        .setMessage("左劃可以取消待看！")
+                        .setPositiveButton("OK", null)
+                        .show()
+                    return@addMenu true
+                }
+            }
+            return@addMenu false
+        }
 
         binding.rvPageList.apply {
             layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
@@ -148,25 +158,6 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
                 }
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.menu_my_list_toolbar, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.tb_help -> {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("使用注意！")
-                    .setMessage("左劃可以取消待看！")
-                    .setPositiveButton("OK", null)
-                    .show()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

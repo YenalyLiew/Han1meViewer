@@ -1,7 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentTabViewPagerOnlyBinding
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
@@ -28,12 +27,9 @@ class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, Downloa
 
     private fun initViewPager() {
 
-        binding.viewPager.setUpFragmentStateAdapter(this, 2) { position ->
-            when (position) {
-                0 -> DownloadingFragment()
-                1 -> DownloadedFragment()
-                else -> null
-            }
+        binding.viewPager.setUpFragmentStateAdapter(this) {
+            addFragment { DownloadingFragment() }
+            addFragment { DownloadedFragment() }
         }
 
         binding.tabLayout.attach(binding.viewPager) { tab, position ->

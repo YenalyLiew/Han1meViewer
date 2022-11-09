@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.updateLayoutParams
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -38,3 +39,9 @@ fun BottomNavigationView.toggleBottomNavBehavior(view: View, scrollToHide: Boole
         }
     }
 }
+
+fun BottomNavigationView.attachViewPager2(
+    viewPager2: ViewPager2,
+    smoothScroll: Boolean = true,
+    addAction: SimpleBottomNavViewMediator.() -> Unit
+) = SimpleBottomNavViewMediator(this, viewPager2, smoothScroll).apply(addAction).attach()

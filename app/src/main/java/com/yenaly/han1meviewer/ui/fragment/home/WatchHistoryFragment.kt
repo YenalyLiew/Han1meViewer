@@ -1,9 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment.home
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -35,7 +32,32 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
 
         (activity as? MainActivity)?.setToolbarSubtitle(getString(R.string.watch_history))
 
-        setHasOptionsMenu(true)
+        addMenu(R.menu.menu_watch_history_toolbar, viewLifecycleOwner) { item ->
+            when (item.itemId) {
+                R.id.tb_delete -> {
+                    // todo: strings.xml
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("看這裏！")
+                        .setMessage("是否將影片觀看歷史記錄全部刪除🤔")
+                        .setPositiveButton("是的！") { _, _ ->
+                            viewModel.deleteAllWatchHistories()
+                        }
+                        .setNegativeButton("算了！", null)
+                        .show()
+                    return@addMenu true
+                }
+                R.id.tb_help -> {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("使用注意！")
+                        .setMessage("左劃可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
+                        .setPositiveButton("OK", null)
+                        .show()
+                    return@addMenu true
+                }
+            }
+            return@addMenu false
+        }
+
         binding.rvList.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = historyAdapter
@@ -85,35 +107,5 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
                     }
                 }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.menu_watch_history_toolbar, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.tb_delete -> {
-                // todo: strings.xml
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("看這裏！")
-                    .setMessage("是否將影片觀看歷史記錄全部刪除🤔")
-                    .setPositiveButton("是的！") { _, _ ->
-                        viewModel.deleteAllWatchHistories()
-                    }
-                    .setNegativeButton("算了！", null)
-                    .show()
-                return true
-            }
-            R.id.tb_help -> {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("使用注意！")
-                    .setMessage("左劃可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

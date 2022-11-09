@@ -1,8 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment.home.download
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +25,8 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
     private val adapter by unsafeLazy { HanimeDownloadedRvAdapter(this) }
 
     override fun initData(savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
+
+        clearMenu()
 
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
@@ -46,10 +45,5 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
                     }
                 }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        super.onCreateOptionsMenu(menu, inflater)
     }
 }

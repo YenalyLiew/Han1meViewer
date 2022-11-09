@@ -5,8 +5,9 @@ package com.yenaly.yenaly_libs.utils.view
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+
+typealias NewFragment = () -> Fragment
 
 /**
  * 如果直接给ViewPager2设置overScrollMode会无效，
@@ -34,15 +35,9 @@ inline var ViewPager2.realOverScrollMode: Int
 @Suppress("NOTHING_TO_INLINE")
 inline fun ViewPager2.setUpFragmentStateAdapter(
     fragmentActivity: FragmentActivity,
-    itemCount: Int,
-    crossinline init: (position: Int) -> Fragment?
+    crossinline addAction: SimpleFragmentStateAdapter.() -> Unit
 ) {
-    adapter = object : FragmentStateAdapter(fragmentActivity) {
-        override fun getItemCount() = itemCount
-
-        override fun createFragment(position: Int): Fragment =
-            init.invoke(position) ?: throw IllegalStateException("WTF? Fragment is null?")
-    }
+    adapter = SimpleFragmentStateAdapter(fragmentActivity).apply(addAction)
 }
 
 /**
@@ -51,13 +46,7 @@ inline fun ViewPager2.setUpFragmentStateAdapter(
 @Suppress("NOTHING_TO_INLINE")
 inline fun ViewPager2.setUpFragmentStateAdapter(
     fragment: Fragment,
-    itemCount: Int,
-    crossinline init: (position: Int) -> Fragment?
+    crossinline addAction: SimpleFragmentStateAdapter.() -> Unit
 ) {
-    adapter = object : FragmentStateAdapter(fragment) {
-        override fun getItemCount() = itemCount
-
-        override fun createFragment(position: Int) =
-            init.invoke(position) ?: throw IllegalStateException("WTF? Fragment is null?")
-    }
+    adapter = SimpleFragmentStateAdapter(fragment).apply(addAction)
 }
