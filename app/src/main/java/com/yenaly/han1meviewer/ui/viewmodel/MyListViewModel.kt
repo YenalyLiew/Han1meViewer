@@ -24,11 +24,11 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
     var csrfToken: String? = null
 
     private val _watchLaterFlow: MutableStateFlow<PageLoadingState<MyListModel>> =
-        MutableStateFlow(PageLoadingState.Loading())
+        MutableStateFlow(PageLoadingState.Loading)
     val watchLaterFlow = _watchLaterFlow.asStateFlow()
 
     private val _favVideoFlow: MutableStateFlow<PageLoadingState<MyListModel>> =
-        MutableStateFlow(PageLoadingState.Loading())
+        MutableStateFlow(PageLoadingState.Loading)
     val favVideoFlow = _favVideoFlow.asStateFlow()
 
     fun getMyWatchLater(page: Int) {

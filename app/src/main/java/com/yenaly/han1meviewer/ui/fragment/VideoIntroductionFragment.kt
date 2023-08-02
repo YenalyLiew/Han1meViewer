@@ -22,6 +22,7 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.service.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
+import com.yenaly.han1meviewer.util.HanimeResolution
 import com.yenaly.han1meviewer.util.checkDownloadedHanimeFile
 import com.yenaly.han1meviewer.util.createTags
 import com.yenaly.yenaly_libs.base.YenalyFragment
@@ -206,7 +207,9 @@ class VideoIntroductionFragment :
             XPopup.Builder(context)
                 .atView(it)
                 .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
-                    notifyDownload(videoData.title, key) {
+                    if (key == HanimeResolution.RES_UNKNOWN) {
+                        showShortToast("該影片無法下載")
+                    } else notifyDownload(videoData.title, key) {
                         checkedQuality = key
                         viewModel.loadDownloadedHanimeByVideoCode(viewModel.videoCode)
                     }

@@ -11,7 +11,7 @@ import retrofit2.http.*
  */
 interface HanimeCommentService {
     @GET("loadComment")
-    suspend fun getComment(
+    suspend fun getComments(
         @Query("type") type: String, // 類似 "video", "preview"
         @Query("id") code: String
     ): Response<ResponseBody>

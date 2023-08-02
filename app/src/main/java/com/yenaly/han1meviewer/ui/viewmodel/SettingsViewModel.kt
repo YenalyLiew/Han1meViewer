@@ -19,7 +19,7 @@ class SettingsViewModel(application: Application) : YenalyViewModel(application)
     IVersionViewModel {
 
     private val _versionFlow =
-        MutableStateFlow<WebsiteState<VersionModel>>(WebsiteState.Loading())
+        MutableStateFlow<WebsiteState<VersionModel>>(WebsiteState.Loading)
     val versionFlow = _versionFlow.asStateFlow()
 
     override fun getLatestVersion() {

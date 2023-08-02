@@ -35,11 +35,11 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
 
 
     private val _searchFlow =
-        MutableStateFlow<PageLoadingState<MutableList<HanimeInfoModel>>>(PageLoadingState.Loading())
+        MutableStateFlow<PageLoadingState<MutableList<HanimeInfoModel>>>(PageLoadingState.Loading)
     val searchFlow = _searchFlow.asStateFlow()
 
     private val _searchTagFlow =
-        MutableStateFlow<WebsiteState<SearchTagModel>>(WebsiteState.Loading())
+        MutableStateFlow<WebsiteState<SearchTagModel>>(WebsiteState.Loading)
     val searchTagFlow = _searchTagFlow.asStateFlow()
 
     fun getHanimeSearchResult(

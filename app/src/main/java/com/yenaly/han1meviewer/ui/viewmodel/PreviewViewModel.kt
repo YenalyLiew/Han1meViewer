@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 class PreviewViewModel(application: Application) : YenalyViewModel(application) {
 
     private val _previewFlow =
-        MutableStateFlow<WebsiteState<HanimePreviewModel>>(WebsiteState.Loading())
+        MutableStateFlow<WebsiteState<HanimePreviewModel>>(WebsiteState.Loading)
     val previewFlow = _previewFlow.asStateFlow()
 
     fun getHanimePreview(date: String) {

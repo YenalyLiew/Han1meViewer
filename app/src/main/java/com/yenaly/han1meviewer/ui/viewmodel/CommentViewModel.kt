@@ -25,11 +25,11 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
     var currentUserId: String? = null
 
     private val _videoCommentFlow =
-        MutableStateFlow<WebsiteState<VideoCommentModel>>(WebsiteState.Loading())
+        MutableStateFlow<WebsiteState<VideoCommentModel>>(WebsiteState.Loading)
     val videoCommentFlow = _videoCommentFlow.asStateFlow()
 
     private val _videoReplyFlow =
-        MutableStateFlow<WebsiteState<VideoCommentModel>>(WebsiteState.Loading())
+        MutableStateFlow<WebsiteState<VideoCommentModel>>(WebsiteState.Loading)
     val videoReplyFlow = _videoReplyFlow.asStateFlow()
 
     private val _postCommentFlow =
@@ -42,7 +42,7 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
 
     fun getComment(type: String, code: String) {
         viewModelScope.launch {
-            NetworkRepo.getComment(type, code).collect { comment ->
+            NetworkRepo.getComments(type, code).collect { comment ->
                 _videoCommentFlow.value = comment
             }
         }
