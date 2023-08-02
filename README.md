@@ -1,6 +1,6 @@
 # Han1meViewer
 
-这是一个 Hanime1.me Android 平台的非官方浏览器。
+这是一个 [Hanime1](https://hanime1.me/) Android 平台的非官方浏览器。
 
 An unofficial Hanime1.me Application for Android.
 
@@ -12,33 +12,30 @@ An unofficial Hanime1.me Application for Android.
 
 **请允许通知以便能正确收到下载状态通知！**
 
-Supports advanced query, watch (be able to switch resolution and language), download, history and add to favorite list.
-
-Comment is supported right now but comment like or dislike and some other functions are not supported TEMPORARILY, and there may be a series of bugs at present.
-
-**Please allow notification in order to properly receive download status notification!**
-
 ## 存在问题
 
 > 这网站前端写的是真不行，我已经尽力挖关键信息了，但还是很难实现部分功能。
 >
 > 而且只要该网站大改，该软件可能要推倒重做。
 >
-> 最后还是建议跟 E-hentai 学一学。
+> PS：你还真给我大改了。。
 
 1. 部分界面优化不足，存在卡顿。
 
-   Some user interfaces having insufficient optimization might be laggy.
-
 2. 下载界面暂时只有“已下载”列表，“正在下载”列表暂未实现。
-
-   There is only a Downloaded list in Download UI, I have not implemented the Downloading list.
 
 3. 暂时无法使用待看列表以及自定义列表。
 
-   No watch later list and your own list temporarily.
 
 ## 更新内容
+
+### v0.6.0
+
+修复 bug，增加对部分视频的解析。
+
+但目前有个 bug 没修：日期问题。所以你可能发现不少 1970-01-01，特别是在下载页面，那个我以后再搞，目前能用即可。
+
+PS：一年前加了 CloudFlare 防护，然后又把前端改了，当时太忙就索性不搞了。最近暑假闲来无事，发现 CloudFlare 突然没了，索性重新搞了一遍，不过目前还会有一些 bug，但是基本使用还是可以的。而且他们主页改动巨大，但我还是套用的之前的模板，你可能会发现主页和网页版主页可能对应不上，但是不影响。
 
 ### v0.5.2
 

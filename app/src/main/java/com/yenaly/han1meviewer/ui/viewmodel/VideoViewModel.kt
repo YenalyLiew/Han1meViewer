@@ -29,7 +29,7 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
     lateinit var videoCode: String
 
     private val _hanimeVideoFlow =
-        MutableStateFlow<VideoLoadingState<HanimeVideoModel>>(VideoLoadingState.Loading())
+        MutableStateFlow<VideoLoadingState<HanimeVideoModel>>(VideoLoadingState.Loading)
     val hanimeVideoFlow = _hanimeVideoFlow.asStateFlow()
 
     private val _addToFavVideoFlow = MutableSharedFlow<WebsiteState<Unit>>()

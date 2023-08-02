@@ -11,8 +11,6 @@ import androidx.annotation.MenuRes
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.BuildCompat
-import androidx.core.os.BuildCompat.PrereleaseSdkCheck
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -66,11 +64,11 @@ abstract class FrameActivity : AppCompatActivity() {
     open fun setUiStyle() {
     }
 
-    @PrereleaseSdkCheck
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setUiStyle()
         super.onCreate(savedInstanceState)
-        if (isNeedInterceptBackEvent && BuildCompat.isAtLeastT()) {
+        if (isNeedInterceptBackEvent && Build.VERSION.SDK_INT >= 33) {
             onBackInvokedCallback = OnBackInvokedCallbackInner(this).also {
                 onBackInvokedDispatcher.registerOnBackInvokedCallback(
                     OnBackInvokedDispatcher.PRIORITY_DEFAULT, it
@@ -79,13 +77,13 @@ abstract class FrameActivity : AppCompatActivity() {
         }
     }
 
-    @PrereleaseSdkCheck
+
     override fun onDestroy() {
         super.onDestroy()
         if (this::loadingDialog.isInitialized) {
             loadingDialog.dismiss()
         }
-        if (BuildCompat.isAtLeastT()) {
+        if (Build.VERSION.SDK_INT >= 33) {
             onBackInvokedCallback?.let(onBackInvokedDispatcher::unregisterOnBackInvokedCallback)
         }
     }
@@ -112,7 +110,6 @@ abstract class FrameActivity : AppCompatActivity() {
      * [相关链接](https://juejin.cn/post/7105645114760331300)
      */
     @CallSuper
-    @Suppress("deprecation")
     open fun onBackEvent() {
         onBackPressed()
     }

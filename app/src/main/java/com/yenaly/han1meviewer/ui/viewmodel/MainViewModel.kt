@@ -26,7 +26,7 @@ class MainViewModel(application: Application) : YenalyViewModel(application), IV
     val versionFlow = _versionFlow.asSharedFlow()
 
     private val _homePageFlow =
-        MutableStateFlow<WebsiteState<HomePageModel>>(WebsiteState.Loading())
+        MutableStateFlow<WebsiteState<HomePageModel>>(WebsiteState.Loading)
     val homePageFlow = _homePageFlow.asStateFlow()
 
     fun getHomePage() {

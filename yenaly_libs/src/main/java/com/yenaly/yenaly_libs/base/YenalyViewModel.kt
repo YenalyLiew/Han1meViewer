@@ -19,9 +19,8 @@ open class YenalyViewModel(application: Application) : AndroidViewModel(applicat
     private val singleFlowLaunch = SingleFlowLaunch()
 
     protected fun CoroutineScope.singleLaunch(
-        tag: Any,
         context: CoroutineContext = EmptyCoroutineContext,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
-    ) = singleFlowLaunch.singleLaunch(this, tag, context, start, block)
+    ) = singleFlowLaunch.singleLaunch(this, context, start, block)
 }

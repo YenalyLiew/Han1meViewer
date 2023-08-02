@@ -75,11 +75,11 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
             adapter = latestUploadAdapter
         }
         binding.hotHanimeMonthly.rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
             adapter = hotHanimeMonthlyAdapter
         }
         binding.hanimeCurrent.rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
             adapter = hanimeCurrentAdapter
         }
         binding.hanimeTheyWatched.rv.apply {

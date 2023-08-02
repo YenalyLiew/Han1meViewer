@@ -222,7 +222,7 @@ inline fun <reified Diana : Context> Context.getIntent(
  * @param Eileen 泛型
  * @param name 传值的名字
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Eileen> Activity.intentExtra(name: String) = lazy(LazyThreadSafetyMode.NONE) {
     intent.extras?.get(name) as? Eileen
 }
@@ -234,7 +234,7 @@ fun <Eileen> Activity.intentExtra(name: String) = lazy(LazyThreadSafetyMode.NONE
  * @param name 传值的名字
  * @param default 缺省值
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Eileen> Activity.intentExtra(name: String, default: Eileen) = lazy(LazyThreadSafetyMode.NONE) {
     intent.extras?.get(name) as? Eileen ?: default
 }
@@ -246,7 +246,7 @@ fun <Eileen> Activity.intentExtra(name: String, default: Eileen) = lazy(LazyThre
  * @param Eileen 泛型
  * @param name 传值的名字
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Eileen> Activity.safeIntentExtra(name: String) = lazy(LazyThreadSafetyMode.NONE) {
     val extra = intent.extras?.get(name) as? Eileen
     checkNotNull(extra) { "No intent value for key \"$name\"" }
@@ -259,7 +259,7 @@ fun <Eileen> Activity.safeIntentExtra(name: String) = lazy(LazyThreadSafetyMode.
  * @param Yoyi 泛型
  * @param name 传值的名字
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Yoyi> Fragment.activityIntentExtra(name: String) = lazy(LazyThreadSafetyMode.NONE) {
     activity?.intent?.extras?.get(name) as? Yoyi
 }
@@ -271,7 +271,7 @@ fun <Yoyi> Fragment.activityIntentExtra(name: String) = lazy(LazyThreadSafetyMod
  * @param name 传值的名字
  * @param default 缺省值
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Yoyi> Fragment.activityIntentExtra(name: String, default: Yoyi) =
     lazy(LazyThreadSafetyMode.NONE) {
         activity?.intent?.extras?.get(name) as? Yoyi ?: default
@@ -284,7 +284,7 @@ fun <Yoyi> Fragment.activityIntentExtra(name: String, default: Yoyi) =
  * @param Yoyi 泛型
  * @param name 传值的名字
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Yoyi> Fragment.safeActivityIntentExtra(name: String) = lazy(LazyThreadSafetyMode.NONE) {
     val extra = activity?.intent?.extras?.get(name) as? Yoyi
     checkNotNull(extra) { "No intent value for key \"$name\"" }
@@ -297,7 +297,7 @@ fun <Yoyi> Fragment.safeActivityIntentExtra(name: String) = lazy(LazyThreadSafet
  * @param Bekki 泛型
  * @param name  传值的名字
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Bekki> Fragment.arguments(name: String) = lazy(LazyThreadSafetyMode.NONE) {
     arguments?.get(name) as? Bekki
 }
@@ -309,7 +309,7 @@ fun <Bekki> Fragment.arguments(name: String) = lazy(LazyThreadSafetyMode.NONE) {
  * @param name    传值的名字
  * @param default 缺省值
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Bekki> Fragment.arguments(name: String, default: Bekki) = lazy(LazyThreadSafetyMode.NONE) {
     arguments?.get(name) as? Bekki ?: default
 }
@@ -321,7 +321,7 @@ fun <Bekki> Fragment.arguments(name: String, default: Bekki) = lazy(LazyThreadSa
  * @param Bekki   泛型
  * @param name    传值的名字
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 fun <Bekki> Fragment.safeArguments(name: String) = lazy(LazyThreadSafetyMode.NONE) {
     val argument = arguments?.get(name) as? Bekki
     checkNotNull(argument) { "No argument value for key \"$name\"" }

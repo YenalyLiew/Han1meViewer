@@ -7,7 +7,7 @@ package com.yenaly.han1meviewer.util
  */
 class HanimeResolution {
 
-    private val resArray = arrayOfNulls<Pair<String, String>>(4)
+    private val resArray = arrayOfNulls<Pair<String, String>>(5)
 
     companion object {
 
@@ -17,6 +17,7 @@ class HanimeResolution {
         const val RES_720P = "720P"
         const val RES_480P = "480P"
         const val RES_240P = "240P"
+        const val RES_UNKNOWN = "Unknown P"
     }
 
     /**
@@ -25,12 +26,13 @@ class HanimeResolution {
      * @param resString 分辨率
      * @param resLink 分辨率對應網址
      */
-    fun parseResolution(resString: String, resLink: String) {
+    fun parseResolution(resString: String?, resLink: String) {
         when (resString) {
             RES_1080P -> resArray[0] = RES_1080P to resLink
             RES_720P -> resArray[1] = RES_720P to resLink
             RES_480P -> resArray[2] = RES_480P to resLink
             RES_240P -> resArray[3] = RES_240P to resLink
+            null -> resArray[4] = RES_UNKNOWN to resLink
         }
     }
 

@@ -23,6 +23,7 @@ abstract class YenalyActivity<DB : ViewDataBinding, VM : ViewModel>(
     lateinit var binding: DB
     lateinit var viewModel: VM
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()

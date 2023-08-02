@@ -30,7 +30,6 @@ class CodeSelectedChip @JvmOverloads constructor(
         super.setCheckable(false)
     }
 
-    @Suppress("unchecked_cast")
     override fun setChecked(checked: Boolean) {
         drawable?.isCheckable = true
         super.setChecked(checked)

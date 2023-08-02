@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hanime1"
         tools:replace="android:label"
-        tools:targetApi="31">
+        tools:targetApi="33">
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.yenaly.han1meviewer.fileProvider"

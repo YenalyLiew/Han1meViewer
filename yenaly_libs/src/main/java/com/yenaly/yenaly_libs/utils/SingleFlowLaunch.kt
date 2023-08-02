@@ -29,7 +29,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  */
 class SingleFlowLaunch {
 
-    private val jobMap = mutableMapOf<Any, AtomicInteger>()
+    private val jobMap = mutableMapOf<SuspendCoroutineScopeBlock, AtomicInteger>()
 
     /**
      * Single [CoroutineScope.launch] only for ViewModelScope,
@@ -44,15 +44,14 @@ class SingleFlowLaunch {
      */
     fun singleLaunch(
         viewModelScope: CoroutineScope,
-        tag: Any,
         context: CoroutineContext = EmptyCoroutineContext,
         start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.() -> Unit
+        block: SuspendCoroutineScopeBlock,
     ): Job? {
-        if (jobMap[tag] == null) {
-            jobMap[tag] = AtomicInteger(0)
+        if (jobMap[block] == null) {
+            jobMap[block] = AtomicInteger(0)
         }
-        jobMap[tag]!!.let { int ->
+        jobMap[block]!!.let { int ->
             if (int.getAndIncrement() != 0) {
                 return null
             } else {
@@ -61,3 +60,5 @@ class SingleFlowLaunch {
         }
     }
 }
+
+typealias SuspendCoroutineScopeBlock = suspend CoroutineScope.() -> Unit

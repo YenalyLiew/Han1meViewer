@@ -5,9 +5,9 @@ package com.yenaly.han1meviewer.logic.state
  * @author Yenaly Liew
  * @time 2022/06/18 018 18:14
  */
-sealed class VideoLoadingState<T> {
-    data class Success<T>(val info: T) : VideoLoadingState<T>()
-    data class Error<T>(val throwable: Throwable) : VideoLoadingState<T>()
-    class Loading<T> : VideoLoadingState<T>()
-    class NoContent<T> : VideoLoadingState<T>()
+sealed class VideoLoadingState<out T> {
+    data class Success<out T>(val info: T) : VideoLoadingState<T>()
+    data class Error(val throwable: Throwable) : VideoLoadingState<Nothing>()
+    data object Loading : VideoLoadingState<Nothing>()
+    data object NoContent : VideoLoadingState<Nothing>()
 }

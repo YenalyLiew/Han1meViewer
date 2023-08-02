@@ -68,3 +68,11 @@ fun String?.isInt(): Boolean {
         false
     }
 }
+
+fun String.toIntSafely(): Int? {
+    return try {
+        toInt()
+    } catch (e: NumberFormatException) {
+        null
+    }
+}
