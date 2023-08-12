@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch

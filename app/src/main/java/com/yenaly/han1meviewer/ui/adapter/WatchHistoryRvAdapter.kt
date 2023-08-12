@@ -6,6 +6,8 @@ import coil.load
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.DATE_FORMAT
+import com.yenaly.han1meviewer.DATE_TIME_FORMAT
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemWatchHistoryBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
@@ -47,8 +49,8 @@ class WatchHistoryRvAdapter :
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
         }
-        holder.binding.tvAddedTime.text = TimeUtil.millis2String(item.watchDate, "yyyy-MM-dd HH:mm")
-        holder.binding.tvReleaseDate.text = TimeUtil.millis2String(item.releaseDate, "yyyy-MM-dd")
+        holder.binding.tvAddedTime.text = TimeUtil.millis2String(item.watchDate, DATE_TIME_FORMAT)
+        holder.binding.tvReleaseDate.text = TimeUtil.millis2String(item.releaseDate, DATE_FORMAT)
         holder.binding.tvTitle.text = item.title
     }
 

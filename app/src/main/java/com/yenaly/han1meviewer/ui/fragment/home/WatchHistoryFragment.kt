@@ -11,7 +11,6 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
-import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.WatchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
@@ -30,8 +29,6 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
 
     override fun initData(savedInstanceState: Bundle?) {
 
-        (activity as? MainActivity)?.setToolbarSubtitle(getString(R.string.watch_history))
-
         addMenu(R.menu.menu_watch_history_toolbar, viewLifecycleOwner) { item ->
             when (item.itemId) {
                 R.id.tb_delete -> {
@@ -41,6 +38,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
                         .setMessage("是否將影片觀看歷史記錄全部刪除🤔")
                         .setPositiveButton("是的！") { _, _ ->
                             viewModel.deleteAllWatchHistories()
+                            historyAdapter.setList(null)
                         }
                         .setNegativeButton("算了！", null)
                         .show()

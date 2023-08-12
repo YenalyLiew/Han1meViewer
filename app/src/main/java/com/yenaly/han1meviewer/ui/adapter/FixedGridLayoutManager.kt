@@ -2,7 +2,6 @@ package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 
 /**
  * @project Han1meViewer

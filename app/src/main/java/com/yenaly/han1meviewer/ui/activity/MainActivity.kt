@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.navigation.NavController
@@ -30,6 +29,7 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.han1meviewer.util.checkNeedUpdate
+import com.yenaly.han1meviewer.videoUrlRegex
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
 import kotlinx.coroutines.launch
@@ -44,6 +44,8 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
 
+    val currentFragment get() = navHostFragment.childFragmentManager.fragments.getOrNull(0)
+
     // 登錄完了後讓activity刷新主頁
     private val loginDataLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -53,6 +55,17 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                 initMenu()
             }
         }
+
+    private val navListener = NavController.OnDestinationChangedListener { _, destination, _ ->
+        when (destination.id) {
+            R.id.nv_home_page -> supportActionBar?.subtitle = null
+            R.id.nv_watch_history -> supportActionBar?.setSubtitle(R.string.watch_history)
+            R.id.nv_fav_video -> supportActionBar?.setSubtitle(R.string.fav_video)
+            R.id.nv_play_list -> supportActionBar?.setSubtitle(R.string.play_list)
+            R.id.nv_watch_later -> supportActionBar?.setSubtitle(R.string.watch_later)
+            R.id.nv_downloaded -> supportActionBar?.setSubtitle(R.string.downloaded)
+        }
+    }
 
     override fun setUiStyle() {
         SystemStatusUtil.fullScreen(window, true)
@@ -71,6 +84,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                     startActivity<SearchActivity>()
                     return@addMenu true
                 }
+
                 R.id.tb_previews -> {
                     startActivity<PreviewActivity>()
                     return@addMenu true
@@ -109,6 +123,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         binding.nvMain.setupWithNavController(navController)
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.nv_home_page), binding.dlMain)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
+        navController.addOnDestinationChangedListener(navListener)
 
         binding.nvMain.getHeaderView(0)?.setPaddingRelative(0, window.currentStatusBarHeight, 0, 0)
 
@@ -123,20 +138,8 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         super.onStart()
         binding.root.post {
             textFromClipboard?.let {
-                if (it.contains("hanime1.me/watch?v=")) {
-                    val videoCode = it.substringAfter("watch?v=")
-                    if (videoCode.isDigitsOnly()) {
-                        showFindRelatedLinkSnackBar(videoCode)
-                    } else {
-                        val videoCodeReal = buildString {
-                            videoCode.forEach { char ->
-                                if (char.isDigit()) append(char) else return@buildString
-                            }
-                        }
-                        if (videoCodeReal.isNotEmpty()) {
-                            showFindRelatedLinkSnackBar(videoCodeReal)
-                        }
-                    }
+                videoUrlRegex.find(it)?.groupValues?.get(1)?.let { videoCode ->
+                    showFindRelatedLinkSnackBar(videoCode)
                 }
             }
         }
@@ -275,9 +278,5 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                 return@setOnMenuItemClickListener false
             }
         }
-    }
-
-    fun setToolbarSubtitle(subtitle: CharSequence?) {
-        supportActionBar?.subtitle = subtitle
     }
 }

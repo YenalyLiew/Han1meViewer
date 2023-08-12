@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.fragment
+package com.yenaly.han1meviewer.ui.fragment.hanime
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -17,7 +17,7 @@ import com.yenaly.han1meviewer.databinding.FragmentCommentBinding
 import com.yenaly.han1meviewer.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.adapter.VideoCommentRvAdapter
-import com.yenaly.han1meviewer.ui.popup.CommentPopup
+import com.yenaly.han1meviewer.ui.popup.ReplyPopup
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.arguments
@@ -36,8 +36,8 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
     private val commentAdapter by unsafeLazy {
         VideoCommentRvAdapter(this).apply { setDiffCallback(VideoCommentRvAdapter.COMPARATOR) }
     }
-    private val commentPopup by unsafeLazy {
-        CommentPopup(requireContext()).also { it.hint = getString(R.string.comment) }
+    private val replyPopup by unsafeLazy {
+        ReplyPopup(requireContext()).also { it.hint = getString(R.string.comment) }
     }
 
     override fun initData(savedInstanceState: Bundle?) {
@@ -47,10 +47,10 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
             viewModel.getComment(commentTypePrefix, viewModel.code)
         }
         binding.btnComment.isVisible = isAlreadyLogin
-        commentPopup.setOnSendListener {
+        replyPopup.setOnSendListener {
             viewModel.postComment(
-                viewModel.csrfToken, viewModel.currentUserId!!,
-                viewModel.code, commentTypePrefix, commentPopup.comment
+                viewModel.currentUserId!!,
+                viewModel.code, commentTypePrefix, replyPopup.comment
             )
         }
         binding.btnComment.setOnClickListener {
@@ -63,7 +63,7 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                     override fun onDismiss(popupView: BasePopupView?) {
                         binding.btnComment.show()
                     }
-                }).asCustom(commentPopup).show()
+                }).asCustom(replyPopup).show()
         }
     }
 
@@ -79,9 +79,11 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                             binding.srlComment.finishRefresh()
                             binding.errorTip.text = "🥺\n${state.throwable.message}"
                         }
+
                         is WebsiteState.Loading -> {
                             binding.srlComment.autoRefresh()
                         }
+
                         is WebsiteState.Success -> {
                             binding.srlComment.finishRefresh()
                             viewModel.csrfToken = state.info.csrfToken
@@ -102,13 +104,15 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                         is WebsiteState.Error -> {
                             showShortToast("發送失敗！")
                         }
+
                         is WebsiteState.Loading -> {
                             showShortToast("發表評論中")
                         }
+
                         is WebsiteState.Success -> {
                             showShortToast("發送成功！")
                             viewModel.getComment(commentTypePrefix, viewModel.code)
-                            commentPopup.dismiss()
+                            replyPopup.dismiss()
                         }
                     }
                 }
@@ -122,14 +126,30 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                         is WebsiteState.Error -> {
                             showShortToast("發送失敗！")
                         }
+
                         is WebsiteState.Loading -> {
                             showShortToast("發表回覆中")
                         }
+
                         is WebsiteState.Success -> {
                             showShortToast("發送成功！")
                             viewModel.getComment(commentTypePrefix, viewModel.code)
-                            commentAdapter.commentPopup?.dismiss()
+                            commentAdapter.replyPopup?.dismiss()
                         }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            whenStarted {
+                viewModel.commentLikeFlow.collect { state ->
+                    when (state) {
+                        is WebsiteState.Error -> showShortToast(state.throwable.message)
+                        is WebsiteState.Loading -> Unit
+                        is WebsiteState.Success -> viewModel.handleCommentLike(
+                            state.info, commentAdapter
+                        )
                     }
                 }
             }

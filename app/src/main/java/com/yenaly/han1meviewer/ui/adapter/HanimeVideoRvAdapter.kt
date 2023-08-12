@@ -18,6 +18,8 @@ import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.toVideoCode
+import com.yenaly.han1meviewer.ui.activity.MainActivity
+import com.yenaly.han1meviewer.ui.fragment.home.HomePageFragment
 import com.yenaly.yenaly_libs.utils.*
 
 /**
@@ -37,14 +39,14 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
         val COMPARATOR = object : DiffUtil.ItemCallback<HanimeInfoModel>() {
             override fun areItemsTheSame(
                 oldItem: HanimeInfoModel,
-                newItem: HanimeInfoModel
+                newItem: HanimeInfoModel,
             ): Boolean {
                 return oldItem.redirectLink == newItem.redirectLink
             }
 
             override fun areContentsTheSame(
                 oldItem: HanimeInfoModel,
-                newItem: HanimeInfoModel
+                newItem: HanimeInfoModel,
             ): Boolean {
                 return oldItem == newItem
             }
@@ -59,6 +61,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
                 }
                 holder.getView<TextView>(R.id.title).text = item.title
             }
+
             HanimeInfoModel.NORMAL -> {
                 holder.getView<TextView>(R.id.title).text = item.title
                 holder.getView<ImageView>(R.id.cover).load(item.coverUrl) {
@@ -109,42 +112,33 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
         when (viewType) {
             HanimeInfoModel.SIMPLIFIED -> {
                 when (context) {
-                    is SearchActivity -> viewHolder.getView<View>(R.id.linear).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    }
+                    is SearchActivity -> viewHolder.getView<View>(R.id.linear).widthMatchParent()
+
                     is VideoActivity -> when (videoWidthType) {
-                        VIDEO_LAYOUT_MATCH_PARENT -> viewHolder.getView<View>(R.id.linear).apply {
-                            layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                            )
-                        }
-                        VIDEO_LAYOUT_WRAP_CONTENT -> viewHolder.getView<View>(R.id.linear).apply {
-                            layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                            )
-                        }
+                        VIDEO_LAYOUT_MATCH_PARENT ->
+                            viewHolder.getView<View>(R.id.linear).widthMatchParent()
+
+                        VIDEO_LAYOUT_WRAP_CONTENT ->
+                            viewHolder.getView<View>(R.id.linear).widthWrapContent()
                     }
                 }
             }
+
             HanimeInfoModel.NORMAL -> {
                 when (context) {
                     is VideoActivity -> when (videoWidthType) {
-                        VIDEO_LAYOUT_MATCH_PARENT -> viewHolder.getView<View>(R.id.linear).apply {
-                            layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                            )
-                        }
-                        VIDEO_LAYOUT_WRAP_CONTENT -> viewHolder.getView<View>(R.id.linear).apply {
-                            layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                            )
+                        VIDEO_LAYOUT_MATCH_PARENT ->
+                            viewHolder.getView<View>(R.id.linear).widthMatchParent()
+
+                        VIDEO_LAYOUT_WRAP_CONTENT ->
+                            viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                    }
+
+                    is MainActivity -> {
+                        val activity = context as MainActivity
+                        val fragment = activity.currentFragment
+                        if (fragment is HomePageFragment) {
+                            viewHolder.getView<View>(R.id.linear).widthWrapContent()
                         }
                     }
                 }
@@ -172,5 +166,20 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
                 }
             }
         }
+    }
+
+
+    private fun View.widthMatchParent() = apply {
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
+    private fun View.widthWrapContent() = apply {
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 }

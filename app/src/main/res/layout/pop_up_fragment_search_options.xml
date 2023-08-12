@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_reply_show_bottom_dialog"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
+
+        <View
+            android:layout_width="100dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="#80FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/advanced_search"
+            android:textSize="24sp" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="3"
+            tools:ignore="UselessParent">
+
+            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+                android:id="@+id/type"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_height="60dp"
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="8dp"
+                android:checkable="false"
+                android:text="@string/type"
+                android:textAlignment="center" />
+
+
+            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+                android:id="@+id/sort_option"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_height="60dp"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="8dp"
+                android:checkable="false"
+                android:text="@string/sort_option"
+                android:textAlignment="center" />
+
+            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+                android:id="@+id/tag"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_height="60dp"
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="8dp"
+                android:checkable="false"
+                android:text="@string/tag"
+                android:textAlignment="center" />
+
+            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+                android:id="@+id/brand"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_height="60dp"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="8dp"
+                android:checkable="false"
+                android:text="@string/brand"
+                android:textAlignment="center" />
+
+            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+                android:id="@+id/release_date"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_height="60dp"
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="8dp"
+                android:checkable="false"
+                android:text="@string/release_date"
+                android:textAlignment="center" />
+
+            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+                android:id="@+id/duration"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_height="60dp"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="8dp"
+                android:checkable="false"
+                android:text="@string/duration"
+                android:textAlignment="center" />
+
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/search_options_tips" />
+
+    </LinearLayout>
+</layout>

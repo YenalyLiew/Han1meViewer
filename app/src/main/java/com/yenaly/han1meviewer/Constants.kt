@@ -5,6 +5,12 @@ import com.yenaly.yenaly_libs.utils.applicationContext
 
 const val EMPTY_STRING = ""
 
+// 标准时间格式
+
+const val DATE_FORMAT = "yyyy-MM-dd"
+
+const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
+
 // 网络基本设置
 
 const val USER_AGENT =
@@ -67,8 +73,6 @@ const val PREVIEW_COMMENT_PREFIX = "preview"
 
 const val HANIME_BASE_URL = "https://hanime1.me/"
 
-const val HANIME_DOMAIN = "hanime1.me"
-
 const val HANIME_LOGIN_URL = HANIME_BASE_URL + "login"
 
 // for Shared Preference
@@ -76,18 +80,6 @@ const val HANIME_LOGIN_URL = HANIME_BASE_URL + "login"
 const val LOGIN_COOKIE = "cookie"
 
 const val ALREADY_LOGIN = "already_login"
-
-// for My List
-
-enum class MyListType(val value: String) {
-    FAV_VIDEO("LL"),
-    WATCH_LATER("WL")
-}
-
-enum class FavStatus(val value: String) {
-    ADD_FAV(EMPTY_STRING),
-    CANCEL_FAV("1")
-}
 
 // Notification
 

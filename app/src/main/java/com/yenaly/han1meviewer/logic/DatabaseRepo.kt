@@ -5,7 +5,6 @@ import com.yenaly.han1meviewer.logic.dao.HistoryDatabase
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadedEntity
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
-import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 
 /**
  * @project Hanime1
@@ -15,8 +14,10 @@ import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 object DatabaseRepo {
     private val searchHistoryDao = HistoryDatabase.instance.searchHistory
 
-    fun loadAllSearchHistories() =
-        searchHistoryDao.loadAllSearchHistories()
+    @JvmOverloads
+    fun loadAllSearchHistories(keyword: String? = null) =
+        if (keyword.isNullOrBlank()) searchHistoryDao.loadAllSearchHistories()
+        else searchHistoryDao.loadAllSearchHistories(keyword)
 
     suspend fun deleteSearchHistory(history: SearchHistoryEntity) =
         searchHistoryDao.deleteSearchHistory(history)

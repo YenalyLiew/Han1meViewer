@@ -24,7 +24,7 @@
                 android:layout_height="@dimen/video_cover_simplified_height"
                 android:layout_margin="8dp"
                 android:contentDescription="@null"
-                app:layout_constraintBottom_toTopOf="@id/barrier_1"
+                app:layout_constraintBottom_toTopOf="@id/_BARRIER"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/RoundCornerImageView" />
@@ -41,6 +41,7 @@
                 android:maxLines="2"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 android:textSize="20sp"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -113,51 +114,25 @@
                 tools:text="思春期的性學習 2  劇情續上一話，女主春日為了拓展自己的知識經常泡圖書館思春期的性學習 2  劇情續上一話，女主春日為了拓展自己的知識經常泡圖書館思春期的性學習 2  劇情續上一話，女主春日為了拓展自己的知識經常泡圖書館" />
 
             <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_1"
+                android:id="@+id/_BARRIER"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="iv_cover, tv_introduction" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/tag_card_view"
-                style="@style/Widget.Material3.CardView.Elevated"
+
+            <com.yenaly.han1meviewer.ui.view.CollapsibleTags
+                android:id="@+id/tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toTopOf="@id/rv_preview"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barrier_1">
+                app:layout_constraintTop_toBottomOf="@id/_BARRIER" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingStart="8dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TAG"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                        tools:ignore="HardcodedText" />
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/tag_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:chipSpacingVertical="0dp">
-
-                    </com.google.android.material.chip.ChipGroup>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
 
             <com.yenaly.yenaly_libs.base.view.RecyclerViewAtViewPager2
                 android:id="@+id/rv_preview"
@@ -171,7 +146,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tag_card_view" />
+                app:layout_constraintTop_toBottomOf="@id/tags" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

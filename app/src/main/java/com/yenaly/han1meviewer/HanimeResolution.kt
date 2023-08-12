@@ -1,10 +1,13 @@
-package com.yenaly.han1meviewer.util
+package com.yenaly.han1meviewer
 
 /**
  * @project Han1meViewer
  * @author Yenaly Liew
  * @time 2022/10/11 011 21:19
  */
+
+typealias ResolutionLinkMap = LinkedHashMap<String, String>
+
 class HanimeResolution {
 
     private val resArray = arrayOfNulls<Pair<String, String>>(5)
@@ -17,7 +20,7 @@ class HanimeResolution {
         const val RES_720P = "720P"
         const val RES_480P = "480P"
         const val RES_240P = "240P"
-        const val RES_UNKNOWN = "Unknown P"
+        const val RES_UNKNOWN = "Unknown"
     }
 
     /**
@@ -36,12 +39,10 @@ class HanimeResolution {
         }
     }
 
-    fun toLinkedHashMap(): LinkedHashMap<String, String> {
+    fun toResolutionLinkMap(): ResolutionLinkMap {
         val linkedHashMap = linkedMapOf<String, String>()
         resArray.forEach {
-            if (it != null) {
-                linkedHashMap[it.first] = it.second
-            }
+            if (it != null) linkedHashMap[it.first] = it.second
         }
         return linkedHashMap
     }

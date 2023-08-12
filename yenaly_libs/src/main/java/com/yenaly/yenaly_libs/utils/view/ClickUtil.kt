@@ -1,6 +1,5 @@
 @file:JvmName("ClickUtil")
 @file:Suppress("unused")
-@file:OptIn(ExperimentalCoroutinesApi::class)
 
 package com.yenaly.yenaly_libs.utils.view
 
@@ -8,7 +7,7 @@ import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@OptIn(DelicateCoroutinesApi::class)
 fun <E> SendChannel<E>.safeOffer(value: E) = !isClosedForSend && try {
     trySend(value).isSuccess
 } catch (e: CancellationException) {

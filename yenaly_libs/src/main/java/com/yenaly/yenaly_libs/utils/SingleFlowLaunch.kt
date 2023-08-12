@@ -39,8 +39,6 @@ class SingleFlowLaunch {
      * If you use [SharedFlow][kotlinx.coroutines.flow.SharedFlow] with [singleLaunch],
      * you should set the param `replay` to 1 or higher to cache the latest data.
      * Otherwise, you might not get the data.
-     *
-     * @param tag each job needs to have a UNIQUE tag in its own instance.
      */
     fun singleLaunch(
         viewModelScope: CoroutineScope,

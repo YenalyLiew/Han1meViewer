@@ -20,7 +20,6 @@ import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.toVideoCode
-import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
@@ -41,8 +40,6 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
     private val adapter by unsafeLazy { HanimeVideoRvAdapter() }
 
     override fun initData(savedInstanceState: Bundle?) {
-
-        (activity as? MainActivity)?.setToolbarSubtitle(getString(R.string.watch_later))
 
         addMenu(R.menu.menu_my_list_toolbar, viewLifecycleOwner) { menuItem ->
             when (menuItem.itemId) {
@@ -91,10 +88,9 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
                     addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                             if (event != DISMISS_EVENT_ACTION) {
-                                viewModel.deleteMyFavVideo(
-                                    data.redirectLink.toVideoCode(),
-                                    viewModel.csrfToken
-                                )
+                                data.redirectLink.toVideoCode()?.let { code ->
+                                    viewModel.deleteMyFavVideo(code)
+                                }
                             }
                         }
                     })

@@ -1,7 +1,9 @@
 package com.yenaly.han1meviewer.ui.view
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
 import android.util.AttributeSet
@@ -11,7 +13,9 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import cn.jzvd.JZDataSource
+import cn.jzvd.JZMediaSystem
 import cn.jzvd.JZUtils
+import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.dp
@@ -24,7 +28,7 @@ import kotlin.math.abs
  */
 class CustomJzvdStd @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : JzvdStd(context, attrs) {
 
     companion object {
@@ -37,7 +41,7 @@ class CustomJzvdStd @JvmOverloads constructor(
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
-        super.setUp(jzDataSource, screen)
+        super.setUp(jzDataSource, screen, CustomJZMediaSystem::class.java)
         titleTextView.isInvisible = true
         titleTextView.updatePadding(right = 18.dp)
     }
@@ -63,9 +67,11 @@ class CustomJzvdStd @JvmOverloads constructor(
             CONTAINER_LIST.size != 0 && CURRENT_JZVD != null -> { //判断条件，因为当前所有goBack都是回到普通窗口
                 CURRENT_JZVD.gotoNormalScreen()
             }
+
             CONTAINER_LIST.size == 0 && CURRENT_JZVD != null && CURRENT_JZVD.screen != SCREEN_NORMAL -> { //退出直接进入的全屏
                 CURRENT_JZVD.clearFloatScreen()
             }
+
             else -> { //剩餘情況直接退出
                 context.activity?.finish()
             }
@@ -199,5 +205,17 @@ class CustomJzvdStd @JvmOverloads constructor(
 
     fun setVideoSpeed(speed: Float) {
         mediaInterface.setSpeed(speed)
+    }
+}
+
+class CustomJZMediaSystem(jzvd: Jzvd) : JZMediaSystem(jzvd) {
+    override fun onVideoSizeChanged(mediaPlayer: MediaPlayer?, width: Int, height: Int) {
+        super.onVideoSizeChanged(mediaPlayer, width, height)
+        val ratio = width.toFloat() / height // > 1 橫屏， < 1 竖屏
+        if (ratio > 1) {
+            Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        } else {
+            Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
     }
 }

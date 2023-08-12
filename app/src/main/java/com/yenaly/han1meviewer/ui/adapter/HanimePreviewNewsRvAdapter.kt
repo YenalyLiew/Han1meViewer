@@ -10,7 +10,6 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
-import com.yenaly.han1meviewer.util.createTags
 import com.yenaly.han1meviewer.databinding.ItemHanimePreviewNewsBinding
 import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
@@ -26,6 +25,8 @@ import com.yenaly.yenaly_libs.utils.startActivity
 class HanimePreviewNewsRvAdapter :
     BaseQuickAdapter<HanimePreviewModel.PreviewInfo, HanimePreviewNewsRvAdapter.ViewHolder>(R.layout.item_hanime_preview_news) {
 
+    private val imageLoader = CoilImageLoader()
+
     inner class ViewHolder(view: View) : BaseDataBindingHolder<ItemHanimePreviewNewsBinding>(view) {
         val binding = dataBinding!!
     }
@@ -39,7 +40,7 @@ class HanimePreviewNewsRvAdapter :
         holder.binding.tvBrand.text = item.brand
         holder.binding.tvReleaseDate.text = item.releaseDate
         holder.binding.tvVideoTitle.text = item.videoTitle
-        holder.binding.tagGroup.createTags(item.tags)
+        holder.binding.tags.setTags(item.tags)
         holder.binding.rvPreview.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = object : BaseQuickAdapter<String, BaseViewHolder>(
@@ -53,7 +54,6 @@ class HanimePreviewNewsRvAdapter :
                 }
 
                 override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
-                    val imageLoader = CoilImageLoader()
                     viewHolder.itemView.setOnClickListener {
                         val position = viewHolder.bindingAdapterPosition
                         XPopup.Builder(context).asImageViewer(

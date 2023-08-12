@@ -12,9 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
+        <com.yenaly.han1meviewer.ui.view.HanimeSearchBar
             android:id="@+id/search_bar"
-            layout="@layout/layout_search_bar" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:elevation="16dp" />
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/search_srl"
@@ -22,13 +25,13 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingHorizontal="8dp"
-            android:paddingTop="64dp"
+            android:paddingTop="68dp"
             android:paddingBottom="8dp">
 
             <com.scwang.smart.refresh.header.MaterialHeader
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="64dp" />
+                android:layout_marginTop="68dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/search_rv"
