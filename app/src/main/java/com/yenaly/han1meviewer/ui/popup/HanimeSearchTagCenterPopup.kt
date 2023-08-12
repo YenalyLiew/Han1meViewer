@@ -20,10 +20,7 @@ import com.yenaly.han1meviewer.R
  * @author Yenaly Liew
  * @time 2022/06/16 016 15:05
  */
-@HanimeSearchTagCenterPopupDsl
 class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
-
-    val chipList = mutableListOf<Chip>()
 
     lateinit var pairWidely: SwitchMaterial
     private lateinit var titleView: TextView
@@ -32,8 +29,22 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
     private lateinit var reset: Button
     private lateinit var save: Button
 
-    private var title: CharSequence? = null
-    private var isPairWidelyLayoutShow: Boolean = false
+    /**
+     * 傳入viewModel中存的tags，tags中有的tag會被預先選中
+     */
+    private val _selectedTagSet: MutableSet<String> = mutableSetOf()
+    var selectedTagSet
+        get() = _selectedTagSet.toSet()
+        set(value) {
+            _selectedTagSet.clear()
+            _selectedTagSet += value
+        }
+    var shouldPairWidely: Boolean = false
+
+    private val selectedChipSet = mutableSetOf<Chip>()
+
+    var title: CharSequence? = null
+    var isPairWidelyLayoutShown: Boolean = false
     private var pairWidelySwitchAction: ((CompoundButton, isChecked: Boolean) -> Unit)? = null
     private var saveBtnAction: ((View) -> Unit)? = null
     private var resetBtnAction: ((View) -> Unit)? = null
@@ -52,20 +63,17 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
         save = findViewById(R.id.save)
 
         titleView.text = title
-        pairWidelyLayout.isVisible = isPairWidelyLayoutShow
-        pairWidelySwitchAction?.let { pairWidely.setOnCheckedChangeListener(it) }
+        pairWidelyLayout.isVisible = isPairWidelyLayoutShown
+        if (isPairWidelyLayoutShown) {
+            pairWidely.setOnCheckedChangeListener { btn, isChecked ->
+                shouldPairWidely = isChecked
+                pairWidelySwitchAction?.invoke(btn, isChecked)
+            }
+        }
         reset.setOnClickListener(resetBtnAction)
         save.setOnClickListener(saveBtnAction)
 
         callback?.invoke(tagLayout)
-    }
-
-    fun setTitle(title: CharSequence) {
-        this.title = title
-    }
-
-    fun showPairWidelyLayout(show: Boolean) {
-        this.isPairWidelyLayoutShow = show
     }
 
     fun setOnPairWidelySwitchCheckedListener(action: (CompoundButton, isChecked: Boolean) -> Unit) {
@@ -85,7 +93,14 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
         this.callback = action
     }
 
-    @HanimeSearchTagCenterPopupDsl
+    fun clearAllChecks() {
+        if (isPairWidelyLayoutShown) pairWidely.isChecked = false
+        selectedChipSet.forEach {
+            it.isChecked = false
+        }
+        selectedChipSet.clear()
+    }
+
     fun LinearLayout.addTagGroup(
         subtitle: CharSequence?,
         tagTextList: Array<out CharSequence>,
@@ -110,12 +125,20 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
         val tag = LayoutInflater.from(context)
             .inflate(R.layout.item_tag_chip, this, false) as Chip
         tag.text = text
-        action?.let {
-            tag.setOnCheckedChangeListener { buttonView, isChecked ->
-                action.invoke(buttonView, text, isChecked)
-            }
+        if (text in _selectedTagSet) {
+            tag.isChecked = true
+            selectedChipSet += tag
         }
-        chipList.add(tag)
+        tag.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                _selectedTagSet += text.toString()
+                selectedChipSet += tag
+            } else {
+                _selectedTagSet -= text.toString()
+                selectedChipSet -= tag
+            }
+            action?.invoke(buttonView, text, isChecked)
+        }
         addView(tag)
     }
 
@@ -127,6 +150,3 @@ class HanimeSearchTagCenterPopup(context: Context) : CenterPopupView(context) {
         }
     }
 }
-
-@DslMarker
-annotation class HanimeSearchTagCenterPopupDsl

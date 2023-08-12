@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -74,7 +75,6 @@ class HanimeDownloadWorker(
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun downloadHanime(url: String, name: String, quality: String): Result {
         val file = getDownloadedHanimeFile(name, quality)
         val request = Request.Builder().url(url).get().build()
@@ -144,6 +144,7 @@ class HanimeDownloadWorker(
         )
     }
 
+    @SuppressLint("MissingPermission")
     private fun showSuccessNotification() {
         notificationManager.notify(
             successId, NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
@@ -155,6 +156,7 @@ class HanimeDownloadWorker(
         )
     }
 
+    @SuppressLint("MissingPermission")
     private fun showFileExistsFailureNotification(fileName: String) {
         notificationManager.notify(
             failId, NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
@@ -166,6 +168,7 @@ class HanimeDownloadWorker(
         )
     }
 
+    @SuppressLint("MissingPermission")
     private fun showFailureNotification(errMsg: String) {
         notificationManager.notify(
             failId, NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)

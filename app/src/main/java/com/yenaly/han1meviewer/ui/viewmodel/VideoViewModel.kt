@@ -3,7 +3,6 @@ package com.yenaly.han1meviewer.ui.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.yenaly.han1meviewer.FavStatus
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadedEntity
@@ -28,6 +27,8 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
 
     lateinit var videoCode: String
 
+    var csrfToken: String? = null
+
     private val _hanimeVideoFlow =
         MutableStateFlow<VideoLoadingState<HanimeVideoModel>>(VideoLoadingState.Loading)
     val hanimeVideoFlow = _hanimeVideoFlow.asStateFlow()
@@ -46,18 +47,23 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
-    fun addToFavVideo(videoCode: String, currentUserId: String?, token: String?) {
-        viewModelScope.launch {
-            NetworkRepo.addToMyFavVideo(videoCode, FavStatus.ADD_FAV, currentUserId, token)
-                .collect {
-                    _addToFavVideoFlow.emit(it)
-                }
-        }
-    }
+    fun addToFavVideo(
+        videoCode: String,
+        currentUserId: String?,
+    ) = modifyFavVideoInternal(videoCode, likeStatus = false, currentUserId)
 
-    fun removeFromFavVideo(videoCode: String, currentUserId: String?, token: String?) {
+    fun removeFromFavVideo(
+        videoCode: String,
+        currentUserId: String?,
+    ) = modifyFavVideoInternal(videoCode, likeStatus = true, currentUserId)
+
+    private fun modifyFavVideoInternal(
+        videoCode: String,
+        likeStatus: Boolean,
+        currentUserId: String?,
+    ) {
         viewModelScope.launch {
-            NetworkRepo.addToMyFavVideo(videoCode, FavStatus.CANCEL_FAV, currentUserId, token)
+            NetworkRepo.addToMyFavVideo(videoCode, likeStatus, currentUserId, csrfToken)
                 .collect {
                     _addToFavVideoFlow.emit(it)
                 }

@@ -1,8 +1,15 @@
 package com.yenaly.han1meviewer.logic
 
 import android.util.Log
-import com.yenaly.han1meviewer.FavStatus
-import com.yenaly.han1meviewer.MyListType
+import com.yenaly.han1meviewer.EMPTY_STRING
+import com.yenaly.han1meviewer.logic.exception.CloudFlareBlockedException
+import com.yenaly.han1meviewer.logic.exception.HanimeNotFoundException
+import com.yenaly.han1meviewer.logic.exception.IPBlockedException
+import com.yenaly.han1meviewer.logic.exception.ParseException
+import com.yenaly.han1meviewer.logic.model.CommentPlace
+import com.yenaly.han1meviewer.logic.model.MyListType
+import com.yenaly.han1meviewer.logic.model.VideoCommentArguments
+import com.yenaly.han1meviewer.logic.model.VideoCommentModel
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.network.Parse
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
@@ -36,14 +43,14 @@ object NetworkRepo {
 
     fun getHanimeSearchResult(
         page: Int, query: String?, genre: String?,
-        sort: String?, broad: String?, year: Int?, month: Int?,
-        duration: String?, tags: LinkedHashSet<String>, brands: LinkedHashSet<String>,
+        sort: String?, broad: Boolean, year: Int?, month: Int?,
+        duration: String?, tags: Set<String>, brands: Set<String>,
     ) = pageIOFlow(
         request = {
             HanimeNetwork.hanimeService.getHanimeSearchResult(
-                page, query, genre,
-                sort, broad, year, month,
-                duration, tags, brands
+                page, query, genre, sort,
+                if (broad) "on" else null,
+                year, month, duration, tags, brands
             )
         },
         action = Parse::hanimeSearch
@@ -83,13 +90,14 @@ object NetworkRepo {
 
     fun addToMyFavVideo(
         videoCode: String,
-        likeStatus: FavStatus,
+        likeStatus: Boolean, // false => "": add fav, true => "1": cancel fav
         currentUserId: String?,
-        token: String?
+        token: String?,
     ) = websiteIOFlow(
         request = {
             HanimeNetwork.hanimeService.addToMyFavVideo(
-                videoCode, likeStatus.value, token, currentUserId
+                videoCode, if (likeStatus) "1" else EMPTY_STRING,
+                token, currentUserId
             )
         }
     ) {
@@ -114,7 +122,7 @@ object NetworkRepo {
         currentUserId: String,
         targetUserId: String,
         type: String,
-        text: String
+        text: String,
     ) = websiteIOFlow(
         request = {
             HanimeNetwork.commentService.postComment(
@@ -130,7 +138,7 @@ object NetworkRepo {
     fun postCommentReply(
         csrfToken: String?,
         replyCommentId: String,
-        text: String
+        text: String,
     ) = websiteIOFlow(
         request = {
             HanimeNetwork.commentService.postCommentReply(
@@ -140,6 +148,36 @@ object NetworkRepo {
     ) {
         Log.d("post_comment_reply_body", it)
         return@websiteIOFlow WebsiteState.Success(Unit)
+    }
+
+    fun likeComment(
+        csrfToken: String?,
+        commentPlace: CommentPlace,
+        foreignId: String?,
+        isPositive: Boolean, // 你選擇的是讚還是踩，1是讚，0是踩
+        likeUserId: String?,
+        commentLikesCount: Int,
+        commentLikesSum: Int,
+        likeCommentStatus: Boolean, // 你之前有沒有點過讚，1是0否
+        unlikeCommentStatus: Boolean, // 你之前有沒有點過踩，1是0否
+        commentPosition: Int, comment: VideoCommentModel.VideoComment,
+    ) = websiteIOFlow(
+        request = {
+            HanimeNetwork.commentService.likeComment(
+                csrfToken, commentPlace.value, foreignId,
+                if (isPositive) 1 else 0,
+                likeUserId, commentLikesCount, commentLikesSum,
+                if (likeCommentStatus) 1 else 0,
+                if (unlikeCommentStatus) 1 else 0
+            )
+        }
+    ) {
+        Log.d("like_comment_body", it)
+        return@websiteIOFlow WebsiteState.Success(
+            VideoCommentArguments(
+                commentPosition, isPositive, comment
+            )
+        )
     }
 
     // ------ VERSION ------ //
@@ -167,14 +205,19 @@ object NetworkRepo {
         emit(WebsiteState.Loading)
         val requestResult = request.invoke()
         val resultBody = requestResult.body()?.string()
-        if (resultBody != null) {
+        if (requestResult.isSuccessful && resultBody != null) {
             emit(action.invoke(resultBody))
         } else {
-            emit(WebsiteState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
+            requestResult.throwRequestException()
         }
     }.catch { e ->
         when (e) {
             is CancellationException -> throw e
+            is ParseException -> {
+                e.printStackTrace()
+                emit(WebsiteState.Error(ParseException("可能這個網址解析起來不大一樣...")))
+            }
+
             else -> {
                 e.printStackTrace()
                 emit(WebsiteState.Error(e))
@@ -188,14 +231,19 @@ object NetworkRepo {
     ) = flow {
         val requestResult = request.invoke()
         val resultBody = requestResult.body()?.string()
-        if (resultBody != null) {
+        if (requestResult.isSuccessful && resultBody != null) {
             emit(action.invoke(resultBody))
         } else {
-            emit(PageLoadingState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
+            requestResult.throwRequestException()
         }
     }.catch { e ->
         when (e) {
             is CancellationException -> throw e
+            is ParseException -> {
+                e.printStackTrace()
+                emit(PageLoadingState.Error(ParseException("可能這個網址解析起來不大一樣...")))
+            }
+
             else -> {
                 e.printStackTrace()
                 emit(PageLoadingState.Error(e))
@@ -209,21 +257,17 @@ object NetworkRepo {
     ) = flow {
         val requestResult = request.invoke()
         val resultBody = requestResult.body()?.string()
-        if (resultBody != null) {
+        if (requestResult.isSuccessful && resultBody != null) {
             emit(action.invoke(resultBody))
         } else {
-            if (requestResult.code() == 403) {
-                emit(VideoLoadingState.NoContent)
-            } else {
-                emit(VideoLoadingState.Error(IllegalStateException("${requestResult.code()} ${requestResult.message()}")))
-            }
+            requestResult.throwRequestException()
         }
     }.catch { e ->
         when (e) {
             is CancellationException -> throw e
-            is IndexOutOfBoundsException -> {
+            is ParseException -> {
                 e.printStackTrace()
-                emit(VideoLoadingState.Error(IndexOutOfBoundsException("可能這個網址解析起來不大一樣...")))
+                emit(VideoLoadingState.Error(ParseException("可能這個網址解析起來不大一樣...")))
             }
 
             else -> {
@@ -232,4 +276,26 @@ object NetworkRepo {
             }
         }
     }.flowOn(Dispatchers.IO)
+
+    private fun Response<ResponseBody>.throwRequestException(): Nothing {
+        val body = errorBody()?.string()
+        when (val code = code()) {
+            403 -> if (!body.isNullOrBlank()) {
+                when {
+                    "you have been blocked" in body ->
+                        throw IPBlockedException("不要使用日本IP地址!!!")
+
+                    "Just a moment" in body ->
+                        throw CloudFlareBlockedException("看到這裏説明他們網站加固了，能不能恢復只能聽天命了...")
+
+                    else ->
+                        throw HanimeNotFoundException("可能不存在") // 主要出現在影片界面，當你v數不大時會報403
+                }
+            } else throw IllegalStateException("$code ${message()}")
+
+            500 -> throw HanimeNotFoundException("可能不存在") // 主要出現在影片界面，當你v數很大時會報500
+
+            else -> throw IllegalStateException("$code ${message()}")
+        }
+    }
 }

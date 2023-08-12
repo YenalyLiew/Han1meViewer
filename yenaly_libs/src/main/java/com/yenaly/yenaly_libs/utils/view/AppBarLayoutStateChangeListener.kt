@@ -8,10 +8,8 @@ import kotlin.math.abs
  *
  * 从[AppBarLayout.addOnOffsetChangedListener]中调用该类
  *
- * @ProjectName : BlViewer
- * @Author : Yenaly Liew
- * @Time : 2022/06/01 001 16:38
- * @Description : Description...
+ * @author Yenaly Liew
+ * @time 2022/06/01 001 16:38
  */
 abstract class AppBarLayoutStateChangeListener : AppBarLayout.OnOffsetChangedListener {
 
@@ -31,12 +29,14 @@ abstract class AppBarLayoutStateChangeListener : AppBarLayout.OnOffsetChangedLis
                 }
                 mCurrentState = State.EXPANDED
             }
+
             abs(verticalOffset) >= appBarLayout.totalScrollRange -> {
                 if (mCurrentState != State.COLLAPSED) {
                     onStateChanged(appBarLayout, State.COLLAPSED)
                 }
                 mCurrentState = State.COLLAPSED
             }
+
             else -> {
                 if (mCurrentState != State.INTERMEDIATE) {
                     onStateChanged(appBarLayout, State.INTERMEDIATE)

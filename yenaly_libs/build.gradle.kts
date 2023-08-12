@@ -36,6 +36,7 @@ android {
         freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-Xskip-prerelease-check"
     }
     resourcePrefix = "yenaly_"
+    namespace = "com.yenaly.yenaly_libs"
 }
 
 dependencies {
@@ -52,7 +53,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("androidx.startup:startup-runtime:1.1.1")

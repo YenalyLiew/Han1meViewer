@@ -6,7 +6,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
-import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeDownloadedRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
@@ -31,8 +30,6 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         adapter.setDiffCallback(HanimeDownloadedRvAdapter.COMPARATOR)
-
-        (activity as? MainActivity)?.setToolbarSubtitle(getString(R.string.downloaded))
     }
 
     override fun liveDataObserve() {

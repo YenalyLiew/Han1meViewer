@@ -6,14 +6,17 @@ import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 
-// base
+// android
 
 internal val notificationManager by unsafeLazy { NotificationManagerCompat.from(applicationContext) }
 
+// base
+
 internal fun getHanimeVideoLink(videoCode: String) = HANIME_BASE_URL + "watch?v=" + videoCode
 
-// 務必保證v=後面都是數字！！一般在程式内特定環境使用，分析剪貼簿時不要用！！
-internal fun String.toVideoCode() = substringAfter("watch?v=")
+internal val videoUrlRegex = Regex("""hanime1\.me/watch\?v=(\d+)""")
+
+internal fun String.toVideoCode() = videoUrlRegex.find(this)?.groupValues?.get(1)
 
 // log in and log out
 

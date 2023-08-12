@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.util
 
 import android.app.Activity
 import android.view.LayoutInflater
+import android.widget.Button
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.yenaly.han1meviewer.FROM_VIDEO_TAG
@@ -14,6 +15,7 @@ import com.yenaly.yenaly_libs.utils.startActivity
 /**
  * dynamically create tag chips.
  */
+@Deprecated("Use [CollapsibleTags] instead.")
 internal fun ChipGroup.createTags(tags: List<String>) {
     for (tag in tags) {
         val chip = LayoutInflater.from(context)
@@ -30,4 +32,8 @@ internal fun ChipGroup.createTags(tags: List<String>) {
         }
         this.addView(chip)
     }
+}
+
+fun Button.setDrawableTop(drawableRes: Int) {
+    this.setCompoundDrawablesWithIntrinsicBounds(0, drawableRes, 0, 0)
 }

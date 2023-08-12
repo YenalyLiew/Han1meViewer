@@ -16,7 +16,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = createVersionCode()
-        versionName = createVersionName(major = 0, minor = 6, patch = 0)
+        versionName = createVersionName(major = 0, minor = 8, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,6 +41,7 @@ android {
         jvmTarget = "1.8"
         freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
     }
+    namespace = "com.yenaly.han1meviewer"
 }
 
 dependencies {
@@ -92,7 +93,6 @@ dependencies {
     implementation("dev.rikka.rikkax.material:material-preference:2.0.0")
     implementation("com.drakeet.about:about:2.5.1")
     implementation("com.drakeet.multitype:multitype:4.3.0")
-    implementation("com.github.mancj:MaterialSearchBar:0.8.5")
 
     ksp("androidx.room:room-compiler:2.5.2")
 

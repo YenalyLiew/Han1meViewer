@@ -20,7 +20,6 @@ import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.toVideoCode
-import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
@@ -42,14 +41,12 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
     override fun initData(savedInstanceState: Bundle?) {
 
-        (activity as? MainActivity)?.setToolbarSubtitle(getString(R.string.fav_video))
-
         addMenu(R.menu.menu_my_list_toolbar, viewLifecycleOwner) { menuItem ->
             when (menuItem.itemId) {
                 R.id.tb_help -> {
                     MaterialAlertDialogBuilder(requireContext())
                         .setTitle("使用注意！")
-                        .setMessage("左劃可以取消喜愛！")
+                        .setMessage("左劃可以取消喜歡！")
                         .setPositiveButton("OK", null)
                         .show()
                     return@addMenu true
@@ -91,10 +88,9 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                     addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                             if (event != DISMISS_EVENT_ACTION) {
-                                viewModel.deleteMyFavVideo(
-                                    data.redirectLink.toVideoCode(),
-                                    viewModel.csrfToken
-                                )
+                                data.redirectLink.toVideoCode()?.let { code ->
+                                    viewModel.deleteMyFavVideo(code)
+                                }
                             }
                         }
                     })
@@ -122,15 +118,18 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                                 "🥺\n${state.throwable.message}"
                             adapter.setEmptyView(errView)
                         }
+
                         is PageLoadingState.Loading -> {
                             adapter.removeEmptyView()
                             if (adapter.data.isEmpty()) binding.srlPageList.autoRefresh()
                         }
+
                         is PageLoadingState.NoMoreData -> {
                             binding.srlPageList.finishLoadMoreWithNoMoreData()
                             Log.d("empty", adapter.data.isEmpty().toString())
                             if (adapter.data.isEmpty()) adapter.setEmptyView(R.layout.layout_empty_view)
                         }
+
                         is PageLoadingState.Success -> {
                             page++
                             if (binding.srlPageList.isRefreshing) binding.srlPageList.finishRefresh()
@@ -151,8 +150,10 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                         showShortToast("刪除失敗！")
                         state.throwable.printStackTrace()
                     }
+
                     is WebsiteState.Loading -> {
                     }
+
                     is WebsiteState.Success -> {
                         showShortToast("刪除成功！")
                     }

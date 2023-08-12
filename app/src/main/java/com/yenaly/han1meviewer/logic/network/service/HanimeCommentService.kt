@@ -13,12 +13,12 @@ interface HanimeCommentService {
     @GET("loadComment")
     suspend fun getComments(
         @Query("type") type: String, // 類似 "video", "preview"
-        @Query("id") code: String
+        @Query("id") code: String,
     ): Response<ResponseBody>
 
     @GET("loadReplies")
     suspend fun getCommentReply(
-        @Query("id") commentId: String
+        @Query("id") commentId: String,
     ): Response<ResponseBody>
 
     @FormUrlEncoded
@@ -30,7 +30,8 @@ interface HanimeCommentService {
         @Field("comment-foreign-id") targetUserId: String,
         @Field("comment-text") text: String,
         @Field("comment-count") count: Int = 1, // 感觉没什么用，仅前端用
-        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken
+        @Field("comment-is-political") isPolitical: Int = 0, // 感觉没什么用，仅前端用
+        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken,
     ): Response<ResponseBody>
 
     @FormUrlEncoded
@@ -39,6 +40,21 @@ interface HanimeCommentService {
         @Field("_token") csrfToken: String?,
         @Field("reply-comment-id") replyCommentId: String,
         @Field("reply-comment-text") text: String,
-        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken
+        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken,
+    ): Response<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("commentLike")
+    suspend fun likeComment(
+        @Field("_token") csrfToken: String?,
+        @Field("foreign_type") foreignType: String,
+        @Field("foreign_id") foreignId: String?,
+        @Field("is_positive") isPositive: Int, // 你選擇的是讚還是踩，1是讚，0是踩
+        @Field("comment-like-user-id") likeUserId: String?,
+        @Field("comment-likes-count") commentLikesCount: Int,
+        @Field("comment-likes-sum") commentLikesSum: Int,
+        @Field("like-comment-status") likeCommentStatus: Int, // 你之前有沒有點過讚，1是0否
+        @Field("unlike-comment-status") unlikeCommentStatus: Int, // 你之前有沒有點過踩，1是0否
+        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken,
     ): Response<ResponseBody>
 }

@@ -21,6 +21,13 @@
             android:layout_marginBottom="16dp"
             android:background="#80FFFFFF" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/child_comment"
+            android:textSize="24sp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_reply"
             android:layout_width="match_parent"

@@ -2,9 +2,9 @@ package com.yenaly.han1meviewer.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.yenaly.han1meviewer.MyListType
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.MyListModel
+import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.yenaly_libs.base.YenalyViewModel
@@ -55,7 +55,7 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
         MutableSharedFlow<WebsiteState<Unit>>()
     val deleteMyFavVideoFlow = _deleteMyFavVideoFlow.asSharedFlow()
 
-    fun deleteMyWatchLater(videoCode: String, csrfToken: String?) {
+    fun deleteMyWatchLater(videoCode: String) {
         viewModelScope.launch {
             NetworkRepo.deleteMyList(MyListType.WATCH_LATER, videoCode, csrfToken).collect {
                 _deleteMyWatchLaterFlow.emit(it)
@@ -63,7 +63,7 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
-    fun deleteMyFavVideo(videoCode: String, csrfToken: String?) {
+    fun deleteMyFavVideo(videoCode: String) {
         viewModelScope.launch {
             NetworkRepo.deleteMyList(MyListType.FAV_VIDEO, videoCode, csrfToken).collect {
                 _deleteMyFavVideoFlow.emit(it)

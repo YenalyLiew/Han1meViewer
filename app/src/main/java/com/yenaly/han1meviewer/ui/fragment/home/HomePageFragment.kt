@@ -7,13 +7,10 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenCreated
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.databinding.FragmentHomePageBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
@@ -62,8 +59,6 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
      */
     override fun initData(savedInstanceState: Bundle?) {
 
-        (activity as? MainActivity)?.setToolbarSubtitle(null)
-
         initTitle()
 
         binding.latestHanime.rv.apply {
@@ -71,19 +66,19 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
             adapter = latestHanimeAdapter
         }
         binding.latestUpload.rv.apply {
-            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = latestUploadAdapter
         }
         binding.hotHanimeMonthly.rv.apply {
-            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = hotHanimeMonthlyAdapter
         }
         binding.hanimeCurrent.rv.apply {
-            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = hanimeCurrentAdapter
         }
         binding.hanimeTheyWatched.rv.apply {
-            layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = hanimeTheyWatchedAdapter
         }
         binding.homePageSrl.apply {
@@ -107,6 +102,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                             binding.homePageSrl.autoRefresh()
                             binding.homePageNsv.isGone = latestHanimeAdapter.data.isEmpty()
                         }
+
                         is WebsiteState.Success -> {
                             binding.homePageSrl.finishRefresh()
                             latestHanimeAdapter.setDiffNewData(state.info.latestHanime)
@@ -115,6 +111,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                             hanimeCurrentAdapter.setDiffNewData(state.info.hanimeCurrent)
                             hanimeTheyWatchedAdapter.setDiffNewData(state.info.hanimeTheyWatched)
                         }
+
                         is WebsiteState.Error -> {
                             binding.homePageSrl.finishRefresh()
                             binding.errorTip.text = "🥺\n${state.throwable.message}"
@@ -127,10 +124,6 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.latestUpload.rv.layoutManager =
-            GridLayoutManager(context, VIDEO_IN_ONE_LINE)
-        binding.hanimeTheyWatched.rv.layoutManager =
-            GridLayoutManager(context, VIDEO_IN_ONE_LINE)
     }
 
     private fun initTitle() {

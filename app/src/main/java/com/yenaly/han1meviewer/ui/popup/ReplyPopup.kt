@@ -13,7 +13,7 @@ import com.yenaly.yenaly_libs.utils.view.textString
  * @author Yenaly Liew
  * @time 2022/09/20 020 09:48
  */
-class CommentPopup(context: Context) : BottomPopupView(context) {
+class ReplyPopup(context: Context) : BottomPopupView(context) {
 
     private val editText by unsafeLazy { findViewById<EditText>(R.id.et_comment) }
     private val btnSend by unsafeLazy { findViewById<MaterialButton>(R.id.btn_send) }
@@ -21,7 +21,7 @@ class CommentPopup(context: Context) : BottomPopupView(context) {
     private var commentPrefix: String? = null
     private var sendListener: OnClickListener? = null
 
-    override fun getImplLayoutId() = R.layout.pop_up_comment
+    override fun getImplLayoutId() = R.layout.pop_up_reply
 
     override fun onCreate() {
         super.onCreate()

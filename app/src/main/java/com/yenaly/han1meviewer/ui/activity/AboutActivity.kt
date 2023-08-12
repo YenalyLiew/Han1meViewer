@@ -57,7 +57,6 @@ class AboutActivity : AbsAboutActivity() {
                 Card(
                     """
                 Hanime1的非官方客戶端，提供了等同Hanime1網站的大部分功能。
-                鑒於網站前端代碼清奇，部分功能無法完美實現或者無法實現，請諒解。
             """.trimIndent()
                 )
             )
@@ -86,26 +85,6 @@ class AboutActivity : AbsAboutActivity() {
                     }
                     newline(2)
                     "「播放清單」功能未實裝".span {
-                        quote(
-                            Color.rgb(
-                                (0..255).random(),
-                                (0..255).random(),
-                                (0..255).random()
-                            ), gapWidth = 4.dp
-                        )
-                    }
-                    newline(2)
-                    "暫不能進行評論點讚、點踩".span {
-                        quote(
-                            Color.rgb(
-                                (0..255).random(),
-                                (0..255).random(),
-                                (0..255).random()
-                            ), gapWidth = 4.dp
-                        )
-                    }
-                    newline(2)
-                    "進入影片頁面後，無法得到該影片是否收藏或加入待看的信息（但可以進行收藏和加入待看，但又可能會造成重複收藏）".span {
                         quote(
                             Color.rgb(
                                 (0..255).random(),

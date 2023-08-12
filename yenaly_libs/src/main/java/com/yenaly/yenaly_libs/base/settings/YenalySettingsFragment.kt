@@ -2,7 +2,6 @@ package com.yenaly.yenaly_libs.base.settings
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.annotation.XmlRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel

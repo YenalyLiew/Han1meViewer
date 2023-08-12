@@ -25,8 +25,8 @@ interface HanimeBaseService {
         @Query("year") year: Int? = null,
         @Query("month") month: Int? = null,
         @Query("duration") duration: String? = null,
-        @Query("tags[]") tags: LinkedHashSet<String> = linkedSetOf(),
-        @Query("brands[]") brands: LinkedHashSet<String> = linkedSetOf()
+        @Query("tags[]") tags: Set<String> = emptySet(),
+        @Query("brands[]") brands: Set<String> = emptySet()
     ): Response<ResponseBody>
 
     @GET("watch")
@@ -60,8 +60,8 @@ interface HanimeBaseService {
         @Field("like-foreign-id") videoCode: String,
         @Field("like-status") likeStatus: String,
         @Field("_token") csrfToken: String?,
-        @Field("like-user-id") userId: String?, // 這網站有點難綳，傳這種參數
-        @Field("like-is-positive") likeIsPositive: Int = 1,
+        @Field("like-user-id") userId: String?,
+        @Field("like-is-positive") isPositive: Int = 1,
         @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken
     ): Response<ResponseBody>
 }

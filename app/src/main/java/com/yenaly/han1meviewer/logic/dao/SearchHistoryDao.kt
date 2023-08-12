@@ -13,7 +13,10 @@ import kotlinx.coroutines.flow.Flow
 abstract class SearchHistoryDao {
 
     @Query("SELECT * FROM SearchHistoryEntity ORDER BY id DESC")
-    abstract fun loadAllSearchHistories(): Flow<List<SearchHistoryEntity>>
+    abstract fun loadAllSearchHistories(): Flow<MutableList<SearchHistoryEntity>>
+
+    @Query("SELECT * FROM SearchHistoryEntity WHERE `query` LIKE '%' || :keyword || '%' ORDER BY id DESC")
+    abstract fun loadAllSearchHistories(keyword: String): Flow<MutableList<SearchHistoryEntity>>
 
     @Delete
     abstract suspend fun deleteSearchHistory(history: SearchHistoryEntity)

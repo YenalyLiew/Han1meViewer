@@ -2,9 +2,10 @@
     android:shape="rectangle">
     <!-- rectangle表示为矩形 -->
 
-    <solid android:color="#80FFFFFF" />
+    <solid android:color="@color/per90_transparent_white" />
 
     <!-- android:radius 圆角的半径 -->
-    <corners android:radius="36dp" />
-
+    <corners
+        android:topLeftRadius="8dp"
+        android:topRightRadius="8dp" />
 </shape>

@@ -1,5 +1,6 @@
-package com.yenaly.han1meviewer.ui.fragment
+package com.yenaly.han1meviewer.ui.fragment.hanime
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
 import androidx.core.view.isGone
@@ -22,9 +23,9 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.service.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
-import com.yenaly.han1meviewer.util.HanimeResolution
+import com.yenaly.han1meviewer.HanimeResolution
 import com.yenaly.han1meviewer.util.checkDownloadedHanimeFile
-import com.yenaly.han1meviewer.util.createTags
+import com.yenaly.han1meviewer.util.setDrawableTop
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.*
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
@@ -53,8 +54,6 @@ class VideoIntroductionFragment :
         binding.playList.title.setText(R.string.series_video)
         binding.relatedHanime.title.setText(R.string.related_video)
 
-        initFunctionBar()
-
         binding.playList.rv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.playList.rv.adapter = playListAdapter
@@ -62,6 +61,7 @@ class VideoIntroductionFragment :
         binding.relatedHanime.rv.adapter = relatedAdapter
     }
 
+    @SuppressLint("SetTextI18n")
     override fun liveDataObserve() {
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {
@@ -71,17 +71,20 @@ class VideoIntroductionFragment :
                         is VideoLoadingState.Error -> {
 
                         }
+
                         is VideoLoadingState.Loading -> {
 
                         }
-                        is VideoLoadingState.Success -> {
 
+                        is VideoLoadingState.Success -> {
                             videoData = state.info
 
                             binding.title.text = state.info.title.also { initShareButton(it) }
-                            binding.dateAndViews.text = state.info.uploadTimeWithViews
+                            binding.uploadTime.text =
+                                TimeUtil.date2String(state.info.uploadTime, DATE_FORMAT)
+                            binding.views.text = "${state.info.views.toString()}次"
                             binding.tvIntroduction.setContent(state.info.introduction)
-                            binding.tagGroup.createTags(state.info.tags)
+                            binding.tags.setTags(state.info.tags)
                             if (state.info.playList != null) {
                                 binding.playList.subTitle.text = state.info.playList.playListName
                                 playListAdapter.setList(state.info.playList.video)
@@ -90,7 +93,9 @@ class VideoIntroductionFragment :
                             }
                             relatedAdapter.setList(state.info.relatedHanimes)
                             initDownloadButton(state.info)
+                            initFunctionBar(state.info)
                         }
+
                         is VideoLoadingState.NoContent -> Unit
                     }
                 }
@@ -102,11 +107,20 @@ class VideoIntroductionFragment :
                 viewModel.addToFavVideoFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
-                            showShortToast("喜愛失敗")
+                            showShortToast("喜歡失敗")
                         }
+
                         is WebsiteState.Loading -> Unit
                         is WebsiteState.Success -> {
-                            showShortToast("喜愛成功")
+                            if (videoData.isFav) {
+                                showShortToast("取消喜歡")
+                                videoData.decrementFavTime()
+                                handleFavButton(false)
+                            } else {
+                                showShortToast("添加喜歡")
+                                videoData.incrementFavTime()
+                                handleFavButton(true)
+                            }
                         }
                     }
                 }
@@ -116,10 +130,7 @@ class VideoIntroductionFragment :
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {
                 viewModel.loadDownloadedFlow.collect { entity ->
-                    val releaseDate = TimeUtil.string2Millis(
-                        videoData.uploadTimeWithViews.substringBefore('|').trim(),
-                        "yyyy-MM-dd"
-                    )
+                    val releaseDate = TimeUtil.date2Millis(videoData.uploadTime)
                     if (entity == null) { // 没下完或没下
                         // 检测是否存在这个关于这个影片的文件，忽略分辨率，若有则不进行下载
                         if (checkDownloadedHanimeFile(videoData.title)) {
@@ -169,14 +180,31 @@ class VideoIntroductionFragment :
         }
     }
 
-    private fun initFunctionBar() {
+    private fun handleFavButton(isFav: Boolean) {
+        if (isFav) {
+            binding.btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_24)
+            binding.btnAddToFav.text = "已喜歡"
+        } else {
+            binding.btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_border_24)
+            binding.btnAddToFav.text = "加入喜歡"
+        }
+    }
+
+    private fun initFunctionBar(videoData: HanimeVideoModel) {
+        handleFavButton(videoData.isFav)
         binding.btnAddToFav.clickTrigger(viewLifecycleOwner.lifecycle) {
             if (isAlreadyLogin) {
-                viewModel.addToFavVideo(
-                    viewModel.videoCode,
-                    videoData.currentUserId,
-                    videoData.csrfToken
-                )
+                if (videoData.isFav) {
+                    viewModel.removeFromFavVideo(
+                        viewModel.videoCode,
+                        videoData.currentUserId,
+                    )
+                } else {
+                    viewModel.addToFavVideo(
+                        viewModel.videoCode,
+                        videoData.currentUserId,
+                    )
+                }
             } else {
                 showShortToast(R.string.login_first)
             }
@@ -208,7 +236,7 @@ class VideoIntroductionFragment :
                 .atView(it)
                 .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
                     if (key == HanimeResolution.RES_UNKNOWN) {
-                        showShortToast("該影片無法下載")
+                        showShortToast("該影片特殊，無法下載")
                     } else notifyDownload(videoData.title, key) {
                         checkedQuality = key
                         viewModel.loadDownloadedHanimeByVideoCode(viewModel.videoCode)
@@ -261,7 +289,7 @@ class VideoIntroductionFragment :
 
     private fun enqueueDownloadWork(
         title: String, quality: String, relatedUrl: String,
-        videoCode: String, coverUrl: String, releaseDate: Long
+        videoCode: String, coverUrl: String, releaseDate: Long,
     ) {
         requestNotificationPermission {
             val constraints = Constraints.Builder()

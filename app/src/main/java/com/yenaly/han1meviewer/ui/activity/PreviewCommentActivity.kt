@@ -7,7 +7,7 @@ import com.yenaly.han1meviewer.DATE_CODE
 import com.yenaly.han1meviewer.PREVIEW_COMMENT_PREFIX
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ActivityPreviewCommentBinding
-import com.yenaly.han1meviewer.ui.fragment.CommentFragment
+import com.yenaly.han1meviewer.ui.fragment.hanime.CommentFragment
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.SystemStatusUtil

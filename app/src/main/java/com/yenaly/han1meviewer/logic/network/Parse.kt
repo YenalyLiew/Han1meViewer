@@ -2,6 +2,8 @@ package com.yenaly.han1meviewer.logic.network
 
 import android.util.Log
 import com.yenaly.han1meviewer.EMPTY_STRING
+import com.yenaly.han1meviewer.DATE_FORMAT
+import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
 import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
@@ -12,8 +14,8 @@ import com.yenaly.han1meviewer.logic.model.VideoCommentModel
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.util.HanimeResolution
-import com.yenaly.yenaly_libs.utils.isInt
+import com.yenaly.han1meviewer.HanimeResolution
+import com.yenaly.yenaly_libs.utils.TimeUtil
 import com.yenaly.yenaly_libs.utils.toIntSafely
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -26,6 +28,14 @@ import org.jsoup.select.Elements
  * @time 2023/07/31 031 16:43
  */
 object Parse {
+
+    /**
+     * 所需 Regex
+     */
+    object Regex {
+        val videoSource = Regex("""const source = '(.+)'""")
+        val viewAndUploadTime = Regex("""觀看次數：(.+)次 *(\d{4}-\d{2}-\d{2})""")
+    }
 
     @Deprecated("改界面了")
     fun homePage(body: String): WebsiteState<HomePageModel> {
@@ -189,27 +199,26 @@ object Parse {
     fun homePageVer2(body: String): WebsiteState<HomePageModel> {
         val parseBody = Jsoup.parse(body).body()
         val homePageParse = parseBody.select("div[id=home-rows-wrapper] > div")
-        val userInfo = parseBody.select("div[id=user-modal-dp-wrapper]").first()
-        var avatarUrl: String? = null
-        var username: String? = null
-        userInfo?.let {
-            avatarUrl = userInfo.select("img").first()?.absUrl("src")
-            username = userInfo.getElementById("user-modal-name")?.text()
-        }
+        val userInfo = parseBody.selectFirst("div[id=user-modal-dp-wrapper]")
+        val avatarUrl: String? = userInfo?.selectFirst("img")?.absUrl("src")
+        val username: String? = userInfo?.getElementById("user-modal-name")?.text()
 
-        val latestHanimeClass = homePageParse[0]
-        val latestUploadClass = homePageParse[2]
-        val hotHanimeMonthlyClass = homePageParse[homePageParse.size - 2]
-        val hanimeCurrentClass = homePageParse[homePageParse.size - 3]
-        val hanimeTheyWatchedClass = homePageParse[4]
+        val latestHanimeClass = homePageParse.getOrNull(0)
+        val latestUploadClass = homePageParse.getOrNull(2)
+        val hotHanimeMonthlyClass = homePageParse.getOrNull(homePageParse.size - 2)
+        val hanimeCurrentClass = homePageParse.getOrNull(homePageParse.size - 3)
+        val hanimeTheyWatchedClass = homePageParse.getOrNull(4)
 
         // for latest hanime
         val latestHanimeList = mutableListOf<HanimeInfoModel>()
-        val latestHanimeItems = latestHanimeClass.select("div[class=home-rows-videos-div]")
-        latestHanimeItems.forEach { latestHanimeItem ->
-            val coverUrl = latestHanimeItem.select("img")[0].absUrl("src")
-            val title = latestHanimeItem.select("div[class$=title]").text()
-            val redirectLink = latestHanimeItem.parent()!!.absUrl("href")
+        val latestHanimeItems = latestHanimeClass?.select("div[class=home-rows-videos-div]")
+        latestHanimeItems?.forEach { latestHanimeItem ->
+            val coverUrl = latestHanimeItem.selectFirst("img")?.absUrl("src")
+                .throwIfParseNull(Parse::homePageVer2.name, "coverUrl")
+            val title = latestHanimeItem.selectFirst("div[class$=title]")?.text()
+                .throwIfParseNull(Parse::homePageVer2.name, "title")
+            val redirectLink = latestHanimeItem.parent()?.absUrl("href")
+                .throwIfParseNull(Parse::homePageVer2.name, "redirectLink")
             latestHanimeList.add(
                 HanimeInfoModel(
                     coverUrl = coverUrl,
@@ -222,32 +231,32 @@ object Parse {
 
         // for latest upload
         val latestUploadList = mutableListOf<HanimeInfoModel>()
-        val latestUploadItems = latestUploadClass.select("div[class^=card-mobile-panel]")
-        latestUploadItems.forEachStep2 { latestUploadItem ->
+        val latestUploadItems = latestUploadClass?.select("div[class^=card-mobile-panel]")
+        latestUploadItems?.forEachStep2 { latestUploadItem ->
             latestUploadList.add(hanimeNormalItemVer2(latestUploadItem))
         }
 
         // for hot hanime monthly
         val hotHanimeMonthlyList = mutableListOf<HanimeInfoModel>()
         val hotHanimeMonthlyItems =
-            hotHanimeMonthlyClass.select("div[class^=card-mobile-panel]")
-        hotHanimeMonthlyItems.forEachStep2 { hotHanimeMonthlyItem ->
+            hotHanimeMonthlyClass?.select("div[class^=card-mobile-panel]")
+        hotHanimeMonthlyItems?.forEachStep2 { hotHanimeMonthlyItem ->
             hotHanimeMonthlyList.add(hanimeNormalItemVer2(hotHanimeMonthlyItem))
         }
 
         // for hanime current
         val hanimeCurrentList = mutableListOf<HanimeInfoModel>()
         val hanimeCurrentItems =
-            hanimeCurrentClass.select("div[class^=card-mobile-panel]")
-        hanimeCurrentItems.forEachStep2 { hanimeCurrentItem ->
+            hanimeCurrentClass?.select("div[class^=card-mobile-panel]")
+        hanimeCurrentItems?.forEachStep2 { hanimeCurrentItem ->
             hanimeCurrentList.add(hanimeNormalItemVer2(hanimeCurrentItem))
         }
 
         // for hanime they watched
         val hanimeTheyWatchedList = mutableListOf<HanimeInfoModel>()
         val hanimeTheyWatchedItems =
-            hanimeTheyWatchedClass.select("div[class^=card-mobile-panel]")
-        hanimeTheyWatchedItems.forEachStep2 { hanimeTheyWatchedItem ->
+            hanimeTheyWatchedClass?.select("div[class^=card-mobile-panel]")
+        hanimeTheyWatchedItems?.forEachStep2 { hanimeTheyWatchedItem ->
             hanimeTheyWatchedList.add(hanimeNormalItemVer2(hanimeTheyWatchedItem))
         }
 
@@ -267,6 +276,7 @@ object Parse {
         )
     }
 
+    @Deprecated("暂时没啥用")
     fun hanimeSearchTags(body: String): WebsiteState<SearchTagModel> {
         val parseBody = Jsoup.parse(body).body()
 
@@ -348,9 +358,9 @@ object Parse {
     fun hanimeSearch(body: String): PageLoadingState<MutableList<HanimeInfoModel>> {
         val parseBody = Jsoup.parse(body).body()
         val allContentsClass =
-            parseBody.getElementsByClass("content-padding-new").first()
+            parseBody.getElementsByClass("content-padding-new").firstOrNull()
         val allSimplifiedContentsClass =
-            parseBody.getElementsByClass("home-rows-videos-wrapper").first()
+            parseBody.getElementsByClass("home-rows-videos-wrapper").firstOrNull()
 
         // emit!
         if (allContentsClass != null) {
@@ -363,7 +373,7 @@ object Parse {
 
     @Deprecated("改界面了")
     private fun hanimeSearchNormal(
-        allContentsClass: Element
+        allContentsClass: Element,
     ): PageLoadingState<MutableList<HanimeInfoModel>> {
         val hanimeSearchList = mutableListOf<HanimeInfoModel>()
         val hanimeSearchItems =
@@ -408,21 +418,24 @@ object Parse {
     // 每一个正常视频单元
     private fun hanimeNormalItemVer2(hanimeSearchItem: Element): HanimeInfoModel {
         val title =
-            hanimeSearchItem.select("div[class=card-mobile-title]")[0].text() // title
+            hanimeSearchItem.selectFirst("div[class=card-mobile-title]")?.text()
+                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "title") // title
         val coverUrl =
-            hanimeSearchItem.select("img")[1].absUrl("src") // coverUrl
+            hanimeSearchItem.select("img").getOrNull(1)?.absUrl("src")
+                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "coverUrl") // coverUrl
         val redirectLink =
-            hanimeSearchItem.previousElementSibling()!!.absUrl("href") // redirectLink
+            hanimeSearchItem.previousElementSibling()?.absUrl("href")
+                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "redirectLink") // redirectLink
         val durationAndViews = hanimeSearchItem.select("div[class=card-mobile-duration]")
-        val mDuration = durationAndViews[0].text() // 改了
-        val views = durationAndViews[1].text() // 改了
+        val mDuration = durationAndViews.getOrNull(0)?.text() // 改了
+        val views = durationAndViews.getOrNull(1)?.text() // 改了
         return HanimeInfoModel(
             title = title,
             coverUrl = coverUrl,
             redirectLink = redirectLink,
-            duration = mDuration,
+            duration = mDuration.logIfParseNull(Parse::hanimeNormalItemVer2.name, "duration"),
             uploader = null,
-            views = views,
+            views = views.logIfParseNull(Parse::hanimeNormalItemVer2.name, "views"),
             uploadTime = null,
             genre = null,
             itemType = HanimeInfoModel.NORMAL
@@ -431,12 +444,12 @@ object Parse {
 
     // 每一个简化版视频单元
     private fun hanimeSimplifiedItem(hanimeSearchItem: Element): HanimeInfoModel {
-        val redirectLink =
-            hanimeSearchItem.attr("href")
-        val coverUrl =
-            hanimeSearchItem.select("img")[0].attr("src")
-        val title =
-            hanimeSearchItem.select("div[class=home-rows-videos-title]")[0].text()
+        val redirectLink = hanimeSearchItem.attr("href")
+            .ifBlank { throw ParseException(Parse::hanimeSimplifiedItem.name, "redirectLink") }
+        val coverUrl = hanimeSearchItem.selectFirst("img")?.attr("src")
+            .throwIfParseNull(Parse::hanimeSimplifiedItem.name, "coverUrl")
+        val title = hanimeSearchItem.selectFirst("div[class=home-rows-videos-title]")?.text()
+            .throwIfParseNull(Parse::hanimeSimplifiedItem.name, "title")
         return HanimeInfoModel(
             title = title,
             coverUrl = coverUrl,
@@ -447,7 +460,7 @@ object Parse {
 
     // 出来后是正常视频单元的页面用这个
     private fun hanimeSearchNormalVer2(
-        allContentsClass: Element
+        allContentsClass: Element,
     ): PageLoadingState<MutableList<HanimeInfoModel>> {
         val hanimeSearchList = mutableListOf<HanimeInfoModel>()
         val hanimeSearchItems =
@@ -489,6 +502,7 @@ object Parse {
 
         val introduction = showPanel.getElementById("caption")?.ownText()
 
+        @Suppress("UNUSED_VARIABLE")
         val uploadTimeWithViews = showPanel.select("p")[0].text()
 
         val tags = showPanel.getElementsByClass("single-video-tag")
@@ -588,9 +602,10 @@ object Parse {
 
         return VideoLoadingState.Success(
             HanimeVideoModel(
-                title = title, coverUrl = videoCoverUrl, uploadTimeWithViews = uploadTimeWithViews,
-                introduction = introduction, videoUrls = hanimeResolution.toLinkedHashMap(),
+                title = title, coverUrl = videoCoverUrl, uploadTime = null, views = null,
+                introduction = introduction, videoUrls = hanimeResolution.toResolutionLinkMap(),
                 tags = tagList, playList = playList, relatedHanimes = relatedAnimeList,
+                favTimes = null,
                 csrfToken = csrfToken, currentUserId = currentUserId
             )
         )
@@ -598,71 +613,105 @@ object Parse {
 
     fun hanimeVideoVer2(body: String): VideoLoadingState<HanimeVideoModel> {
         val parseBody = Jsoup.parse(body).body()
-        val csrfToken = parseBody.select("input[name=_token]").first()?.attr("value") // csrf token
+        val csrfToken = parseBody.selectFirst("input[name=_token]")?.attr("value") // csrf token
 
         val currentUserId =
-            parseBody.select("input[name=like-user-id]").first()?.attr("value") // current user id
+            parseBody.selectFirst("input[name=like-user-id]")?.attr("value") // current user id
 
-        val title = parseBody.getElementById("shareBtn-title")!!.text()
-        val videoDetailWrapper = parseBody.select("div[class=video-details-wrapper]")[0]
+        val title = parseBody.getElementById("shareBtn-title")?.text()
+            .throwIfParseNull(Parse::hanimeVideoVer2.name, "title")
 
-        val introduction = videoDetailWrapper.select("div[class^=video-caption-text]")[0].ownText()
-        val uploadTimeWithViews = videoDetailWrapper.select("div > div > div")[0].text()
+        val likeStatus = parseBody.selectFirst("input[name=like-status]")
+            ?.attr("value")
+        val likesCount = parseBody.selectFirst("input[name=likes-count]")
+            ?.attr("value")?.toIntSafely()
+
+        val videoDetailWrapper = parseBody.selectFirst("div[class=video-details-wrapper]")
+        val introduction =
+            videoDetailWrapper?.selectFirst("div[class^=video-caption-text]")?.ownText()
+        val uploadTimeWithViews = videoDetailWrapper?.selectFirst("div > div > div")?.text()
+        val uploadTimeWithViewsGroups = uploadTimeWithViews?.let {
+            Regex.viewAndUploadTime.find(it)?.groups
+        }
+        val uploadTime = uploadTimeWithViewsGroups?.get(2)?.value?.let { time ->
+            TimeUtil.string2Date(time, DATE_FORMAT)
+        }
+
+        val views = uploadTimeWithViewsGroups?.get(1)?.value
+
         val tags = parseBody.getElementsByClass("single-video-tag")
         val tagList = mutableListOf<String>()
         tags.forEach { tag ->
-            val child = tag.child(0)
-            if (child.hasAttr("href")) {
+            val child = tag.childOrNull(0)
+            if (child != null && child.hasAttr("href")) {
                 tagList.add(child.text())
             }
         }
 
-        val playListWrapper = parseBody.select("div[id=video-playlist-wrapper]").first()
-        var playList: HanimeVideoModel.PlayList? = null
-        playListWrapper?.let {
+        val playListWrapper = parseBody.selectFirst("div[id=video-playlist-wrapper]")
+        val playList = playListWrapper?.let {
             val playListVideoList = mutableListOf<HanimeInfoModel>()
-            val playListName = it.select("div > div > h4")[0].text()
-            val playListScroll = it.getElementById("playlist-scroll")!!
-            playListScroll.children().forEach { parent ->
-                val redirectUrl = parent.select("div > a")[0].absUrl("href")
-                val cardMobilePanel = parent.select("div[class^=card-mobile-panel]")[0]
-                val eachTitleCover = cardMobilePanel.select("div > div > div > img")[1]
-                val eachIsPlaying = cardMobilePanel.select("div > div > div > div").first() != null
-                val eachViews = cardMobilePanel.select("div[class=card-mobile-duration]")[1].text()
-                    .substringBefore("次")
-                val playListEachCoverUrl = eachTitleCover.absUrl("src")
-                val playListEachTitle = eachTitleCover.attr("alt")
+            val playListName = it.selectFirst("div > div > h4")?.text()
+            val playListScroll = it.getElementById("playlist-scroll")
+            playListScroll?.children()?.forEach { parent ->
+                val redirectUrl = parent.selectFirst("div > a")?.absUrl("href")
+                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "redirectUrl")
+                val cardMobilePanel = parent.selectFirst("div[class^=card-mobile-panel]")
+                val eachTitleCover = cardMobilePanel?.select("div > div > div > img")?.getOrNull(1)
+                val eachIsPlaying = cardMobilePanel?.select("div > div > div > div")
+                    ?.firstOrNull()
+                    ?.text()
+                    ?.contains("播放") ?: false
+                val cardMobileDuration = cardMobilePanel?.select("div[class=card-mobile-duration]")
+                val eachDuration = cardMobileDuration?.firstOrNull()?.text()
+                val eachViews = cardMobileDuration?.getOrNull(1)?.text()
+                    ?.substringBefore("次")
+                val playListEachCoverUrl = eachTitleCover?.absUrl("src")
+                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "playListEachCoverUrl")
+                val playListEachTitle = eachTitleCover?.attr("alt")
+                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "playListEachTitle")
                 playListVideoList.add(
                     HanimeInfoModel(
                         title = playListEachTitle, coverUrl = playListEachCoverUrl,
-                        redirectLink = redirectUrl, views = eachViews, isPlaying = eachIsPlaying,
+                        redirectLink = redirectUrl,
+                        duration = eachDuration.logIfParseNull(
+                            Parse::hanimeVideoVer2.name,
+                            "$playListEachTitle duration"
+                        ),
+                        views = eachViews.logIfParseNull(
+                            Parse::hanimeVideoVer2.name,
+                            "$playListEachTitle views"
+                        ),
+                        isPlaying = eachIsPlaying,
                         itemType = HanimeInfoModel.NORMAL
                     )
                 )
             }
-            playList =
-                HanimeVideoModel.PlayList(playListName = playListName, video = playListVideoList)
+            HanimeVideoModel.PlayList(playListName = playListName, video = playListVideoList)
         }
 
         val relatedAnimeList = mutableListOf<HanimeInfoModel>()
         val relatedTabContent = parseBody.getElementById("related-tabcontent")
 
         relatedTabContent?.let {
-            val children = it.child(0).children()
+            val children = it.childOrNull(0)?.children()
             val isSimplified =
-                children.getOrNull(0)?.select("a")?.getOrNull(0)
+                children?.getOrNull(0)?.select("a")?.getOrNull(0)
                     ?.getElementsByClass("home-rows-videos-div")
-                    ?.first() != null
+                    ?.firstOrNull() != null
             if (isSimplified) {
-                children.forEach { each ->
-                    val eachContent = each.select("a")[0]
+                children?.forEach { each ->
+                    val eachContent = each.selectFirst("a")
                     val homeRowsVideosDiv =
-                        eachContent.getElementsByClass("home-rows-videos-div").first()
+                        eachContent?.getElementsByClass("home-rows-videos-div")?.firstOrNull()
 
                     if (homeRowsVideosDiv != null) {
                         val eachRedirect = eachContent.absUrl("href")
-                        val eachCoverUrl = homeRowsVideosDiv.select("img")[0].absUrl("src")
-                        val eachTitle = homeRowsVideosDiv.select("div[class$=title]")[0].text()
+                            .throwIfParseNull(Parse::hanimeVideoVer2.name, "eachRedirect")
+                        val eachCoverUrl = homeRowsVideosDiv.selectFirst("img")?.absUrl("src")
+                            .throwIfParseNull(Parse::hanimeVideoVer2.name, "eachCoverUrl")
+                        val eachTitle = homeRowsVideosDiv.selectFirst("div[class$=title]")?.text()
+                            .throwIfParseNull(Parse::hanimeVideoVer2.name, "eachTitle")
                         relatedAnimeList.add(
                             HanimeInfoModel(
                                 title = eachTitle, coverUrl = eachCoverUrl,
@@ -673,7 +722,7 @@ object Parse {
                     }
                 }
             } else {
-                children.forEachStep2 { each ->
+                children?.forEachStep2 { each ->
                     val item = each.select("div[class^=card-mobile-panel]")[0]
                     relatedAnimeList.add(hanimeNormalItemVer2(item))
                 }
@@ -682,10 +731,11 @@ object Parse {
         Log.d("related_anime_list", relatedAnimeList.toString())
 
         val hanimeResolution = HanimeResolution()
-        val videoClass = parseBody.select("video[id=player]")[0]
-        val videoCoverUrl = videoClass.absUrl("poster")
-        val videos = videoClass.children()
-        if (videos.isNotEmpty()) {
+        val videoClass = parseBody.selectFirst("video[id=player]")
+        val videoCoverUrl = videoClass?.absUrl("poster")
+            .throwIfParseNull(Parse::hanimeVideoVer2.name, "videoCoverUrl")
+        val videos = videoClass?.children()
+        if (!videos.isNullOrEmpty()) {
             videos.forEach { source ->
                 if (source != null) {
                     val resolution = source.attr("size") + "P"
@@ -694,13 +744,13 @@ object Parse {
                 } else return@forEach
             }
         } else {
-            val playerDivWrapper = parseBody.select("div[id=player-div-wrapper]").first()
+            val playerDivWrapper = parseBody.selectFirst("div[id=player-div-wrapper]")
             playerDivWrapper?.select("script")?.let { scripts ->
                 for (script in scripts) {
                     val data = script.data()
                     if (data.isBlank()) continue
-                    val regex = Regex("const source = '(.+)'")
-                    val result = regex.find(data)?.groups?.get(1)?.value ?: continue
+                    val result =
+                        Regex.videoSource.find(data)?.groups?.get(1)?.value ?: continue
                     hanimeResolution.parseResolution(null, result)
                     break
                 }
@@ -709,10 +759,21 @@ object Parse {
 
         return VideoLoadingState.Success(
             HanimeVideoModel(
-                title = title, coverUrl = videoCoverUrl, uploadTimeWithViews = uploadTimeWithViews,
-                introduction = introduction, videoUrls = hanimeResolution.toLinkedHashMap(),
-                tags = tagList, playList = playList, relatedHanimes = relatedAnimeList,
-                csrfToken = csrfToken, currentUserId = currentUserId
+                title = title, coverUrl = videoCoverUrl,
+                uploadTime = uploadTime.logIfParseNull(Parse::hanimeVideoVer2.name, "uploadTime"),
+                views = views.logIfParseNull(Parse::hanimeVideoVer2.name, "views"),
+                introduction = introduction.logIfParseNull(
+                    Parse::hanimeVideoVer2.name,
+                    "introduction"
+                ),
+                videoUrls = hanimeResolution.toResolutionLinkMap(),
+                tags = tagList,
+                playList = playList,
+                relatedHanimes = relatedAnimeList,
+                favTimes = likesCount,
+                isFav = likeStatus == "1",
+                csrfToken = csrfToken,
+                currentUserId = currentUserId
             )
         )
     }
@@ -722,13 +783,16 @@ object Parse {
 
         // latest hanime
         val latestHanimeList = mutableListOf<HanimeInfoModel>()
-        val latestHanimeClass = parseBody.select("div[class$=owl-theme]").first()
+        val latestHanimeClass = parseBody.selectFirst("div[class$=owl-theme]")
         latestHanimeClass?.let {
             val latestHanimeItems = latestHanimeClass.select("div[class=home-rows-videos-div]")
             latestHanimeItems.forEach { latestHanimeItem ->
-                val coverUrl = latestHanimeItem.select("img")[0].absUrl("src")
-                val title = latestHanimeItem.select("div[class$=title]").text()
-                val redirectLink = latestHanimeItem.parent()!!.absUrl("href")
+                val coverUrl = latestHanimeItem.selectFirst("img")?.absUrl("src")
+                    .throwIfParseNull(Parse::hanimePreview.name, "coverUrl")
+                val title = latestHanimeItem.selectFirst("div[class$=title]")?.text()
+                    .throwIfParseNull(Parse::hanimePreview.name, "title")
+                val redirectLink = latestHanimeItem.parent()?.absUrl("href")
+                    .throwIfParseNull(Parse::hanimePreview.name, "redirectLink")
                 latestHanimeList.add(
                     HanimeInfoModel(
                         coverUrl = coverUrl,
@@ -744,28 +808,29 @@ object Parse {
         val previewInfo = mutableListOf<HanimePreviewModel.PreviewInfo>()
         for (i in 0 until contentPaddingClass.size / 2) {
 
-            val firstPart = contentPaddingClass[i * 2]
-            val secondPart = contentPaddingClass[i * 2 + 1]
+            val firstPart = contentPaddingClass.getOrNull(i * 2)
+            val secondPart = contentPaddingClass.getOrNull(i * 2 + 1)
 
-            val videoCode = firstPart.id()
-            val title = firstPart.select("h4")[0].text()
-            val coverUrl = firstPart.select("div[class=preview-info-cover] > img")[0].absUrl("src")
+            val videoCode = firstPart?.id()
+            val title = firstPart?.selectFirst("h4")?.text()
+            val coverUrl =
+                firstPart?.selectFirst("div[class=preview-info-cover] > img")?.absUrl("src")
             val previewInfoContentClass =
-                firstPart.getElementsByClass("preview-info-content-padding")[0]
-            val videoTitle = previewInfoContentClass.select("h4")[0].text()
-            val brand = previewInfoContentClass.select("h5")[0].select("a")[0].text()
-            val releaseDate = previewInfoContentClass.select("h5")[1].ownText()
+                firstPart?.getElementsByClass("preview-info-content-padding")?.firstOrNull()
+            val videoTitle = previewInfoContentClass?.selectFirst("h4")?.text()
+            val brand = previewInfoContentClass?.selectFirst("h5")?.selectFirst("a")?.text()
+            val releaseDate = previewInfoContentClass?.select("h5")?.getOrNull(1)?.ownText()
 
-            val introduction = secondPart.select("h5")[0].text()
-            val tagClass = secondPart.select("div[class=single-video-tag] > a")
+            val introduction = secondPart?.selectFirst("h5")?.text()
+            val tagClass = secondPart?.select("div[class=single-video-tag] > a")
             val tags = mutableListOf<String>()
-            tagClass.forEach {
-                tags.add(it.text())
+            tagClass?.forEach { tag: Element? ->
+                tag?.let { tags.add(tag.text()) }
             }
-            val relatedPicClass = secondPart.select("img[class=preview-image-modal-trigger]")
+            val relatedPicClass = secondPart?.select("img[class=preview-image-modal-trigger]")
             val relatedPics = mutableListOf<String>()
-            relatedPicClass.forEach {
-                relatedPics.add(it.absUrl("src"))
+            relatedPicClass?.forEach { relatedPic: Element? ->
+                relatedPic?.let { relatedPics.add(relatedPic.absUrl("src")) }
             }
 
             previewInfo.add(
@@ -773,26 +838,38 @@ object Parse {
                     title = title,
                     videoTitle = videoTitle,
                     coverUrl = coverUrl,
-                    introduction = introduction,
-                    brand = brand,
-                    releaseDate = releaseDate,
-                    videoCode = videoCode,
+                    introduction = introduction.logIfParseNull(
+                        Parse::hanimePreview.name,
+                        "$title introduction"
+                    ),
+                    brand = brand.logIfParseNull(Parse::hanimePreview.name, "$title brand"),
+                    releaseDate = releaseDate.logIfParseNull(
+                        Parse::hanimePreview.name,
+                        "$title releaseDate"
+                    ),
+                    videoCode = videoCode.logIfParseNull(
+                        Parse::hanimePreview.name,
+                        "$title videoCode"
+                    ),
                     tags = tags,
                     relatedPicsUrl = relatedPics
                 )
             )
         }
 
-        val header = parseBody.select("div[id=player-div-wrapper]")[0]
-        val headerPicUrl = header.select("img")[0].absUrl("src")
-        val hasPrevious = parseBody.getElementsByClass("hidden-md hidden-lg")[0]
-            .select("div[style*=left]").first() != null
-        val hasNext = parseBody.getElementsByClass("hidden-md hidden-lg")[0]
-            .select("div[style*=right]").first() != null
+        val header = parseBody.selectFirst("div[id=player-div-wrapper]")
+        val headerPicUrl = header?.selectFirst("img")?.absUrl("src")
+        val hasPrevious = parseBody.getElementsByClass("hidden-md hidden-lg").firstOrNull()
+            ?.select("div[style*=left]")?.firstOrNull() != null
+        val hasNext = parseBody.getElementsByClass("hidden-md hidden-lg").firstOrNull()
+            ?.select("div[style*=right]")?.firstOrNull() != null
 
         return WebsiteState.Success(
             HanimePreviewModel(
-                headerPicUrl = headerPicUrl,
+                headerPicUrl = headerPicUrl.logIfParseNull(
+                    Parse::hanimePreview.name,
+                    "headerPicUrl"
+                ),
                 hasPrevious = hasPrevious,
                 hasNext = hasNext,
                 latestHanime = latestHanimeList,
@@ -803,23 +880,28 @@ object Parse {
 
     fun myList(body: String): PageLoadingState<MyListModel> {
         val parseBody = Jsoup.parse(body).body()
-        val csrfToken = parseBody.select("input[name=_token]").first()?.attr("value")
+        val csrfToken = parseBody.selectFirst("input[name=_token]")?.attr("value")
 
         val myListHanimeList = mutableListOf<HanimeInfoModel>()
-        val allHanimeClass = parseBody.getElementsByClass("home-rows-videos-wrapper").first()
+        val allHanimeClass = parseBody.getElementsByClass("home-rows-videos-wrapper").firstOrNull()
         allHanimeClass?.let {
             if (allHanimeClass.childrenSize() == 0) {
                 return PageLoadingState.NoMoreData
             }
             allHanimeClass.children().forEach { videoElement ->
                 val title =
-                    videoElement.getElementsByClass("home-rows-videos-title")[0].text()
+                    videoElement.getElementsByClass("home-rows-videos-title")
+                        .firstOrNull()?.text()
+                        .throwIfParseNull(Parse::myList.name, "title")
                 val coverUrl =
                     videoElement.select("img").let {
-                        if (it.size > 1) it[1] else it[0]
-                    }.absUrl("src")
+                        it.getOrNull(1) ?: it.firstOrNull()
+                    }?.absUrl("src")
+                        .throwIfParseNull(Parse::myList.name, "coverUrl")
                 val redirectLink =
-                    videoElement.getElementsByClass("playlist-show-links")[0].absUrl("href")
+                    videoElement.getElementsByClass("playlist-show-links")
+                        .firstOrNull()?.absUrl("href")
+                        .throwIfParseNull(Parse::myList.name, "redirectLink")
                 myListHanimeList.add(
                     HanimeInfoModel(
                         title = title, coverUrl = coverUrl,
@@ -827,9 +909,7 @@ object Parse {
                     )
                 )
             }
-        } ?: return PageLoadingState.Error(
-            IllegalStateException("where is \"home-rows-videos-wrapper\" ???")
-        )
+        }.logIfParseNull(Parse::myList.name, "allHanimeClass_CSS")
 
         return PageLoadingState.Success(MyListModel(myListHanimeList, csrfToken))
     }
@@ -838,37 +918,63 @@ object Parse {
         val jsonObject = JSONObject(body)
         val commentBody = jsonObject.get("comments").toString()
         val parseBody = Jsoup.parse(commentBody).body()
-        val csrfToken = parseBody.select("input[name=_token]").first()?.attr("value")
-        val currentUserId = parseBody.select("input[name=comment-user-id]").first()?.attr("value")
+        val csrfToken = parseBody.selectFirst("input[name=_token]")?.attr("value")
+        val currentUserId = parseBody.selectFirst("input[name=comment-user-id]")?.attr("value")
         val commentList = mutableListOf<VideoCommentModel.VideoComment>()
         val allCommentsClass = parseBody.getElementById("comment-start")
-        allCommentsClass?.let {
-            val avatarClasses = it.select("a > img")
-            val contentClasses = it.getElementsByClass("comment-index-text") // 偶數是日期和作者，奇數是内容
-            val replyClasses = it.select("div[id=comment-like-form-wrapper]")
-            for (i in replyClasses.indices) {
-                val avatarUrl = avatarClasses.getOrNull(i * 2)?.absUrl("src")
-                    ?: avatarClasses[i].absUrl("src")
-                val replyClass = replyClasses[i].select("div > div")
-                val thumbUp =
-                    replyClass[0].children().getOrNull(1)?.text()?.toIntSafely()?.toString()
-                        ?: replyClasses[i].select("span[class=comment-like-btn-wrapper] > button > span")[1].text()
-                val hasMoreReplies =
-                    replyClasses[i].select("div[class~=load-replies-btn]").first() != null
-                val id = replyClasses[i].select("div[id~=reply-section-wrapper]")[0].id()
-                    .substringAfterLast('-')
-                val usernameAndDateClass = contentClasses[i * 2]
-                val username = usernameAndDateClass.select("a")[0].ownText()
-                val date = usernameAndDateClass.select("a > span")[0].ownText()
-                val content = contentClasses[i * 2 + 1].text()
-                commentList.add(
-                    VideoCommentModel.VideoComment(
-                        avatar = avatarUrl, username = username, date = date,
-                        content = content, thumbUp = thumbUp, hasMoreReplies = hasMoreReplies,
-                        id = id, isChildComment = false
-                    )
+        allCommentsClass?.children()?.forEach { child: Element ->
+            val avatarUrl = child.selectFirst("img")?.absUrl("src")
+                .throwIfParseNull(Parse::comments.name, "avatarUrl")
+            val textClass = child.getElementsByClass("comment-index-text")
+            val nameAndDateClass = textClass.firstOrNull()
+            val username = nameAndDateClass?.selectFirst("a")?.ownText()?.trim()
+                .throwIfParseNull(Parse::comments.name, "name")
+            val date = nameAndDateClass?.selectFirst("span")?.ownText()?.trim()
+                .throwIfParseNull(Parse::comments.name, "date")
+            val content = textClass.getOrNull(1)?.text()
+                .throwIfParseNull(Parse::comments.name, "content")
+            val hasMoreReplies = child.selectFirst("div[class^=load-replies-btn]") != null
+            val thumbUp = child.getElementById("comment-like-form-wrapper")
+                ?.select("span[style]")?.getOrNull(1)
+                ?.text()?.toIntSafely()
+            val id = child.selectFirst("div[id^=reply-section-wrapper]")
+                ?.id()?.substringAfterLast("-")
+
+            val foreignId = child.getElementById("foreign_id")?.attr("value")
+            val isPositive = child.getElementById("is_positive")?.attr("value")
+            val likeUserId = child.selectFirst("input[name=comment-like-user-id]")?.attr("value")
+            val commentLikesCount =
+                child.selectFirst("input[name=comment-likes-count]")?.attr("value")
+            val commentLikesSum = child.selectFirst("input[name=comment-likes-sum]")?.attr("value")
+            val likeCommentStatus =
+                child.selectFirst("input[name=like-comment-status]")?.attr("value")
+            val unlikeCommentStatus =
+                child.selectFirst("input[name=unlike-comment-status]")?.attr("value")
+
+            val post = VideoCommentModel.VideoComment.POST(
+                foreignId.logIfParseNull(Parse::comments.name, "foreignId"),
+                isPositive == "1",
+                likeUserId.logIfParseNull(Parse::comments.name, "likeUserId"),
+                commentLikesCount?.toIntSafely().logIfParseNull(
+                    Parse::comments.name,
+                    "commentLikesCount"
+                ),
+                commentLikesSum?.toIntSafely().logIfParseNull(
+                    Parse::comments.name,
+                    "commentLikesSum"
+                ),
+                likeCommentStatus == "1",
+                unlikeCommentStatus == "1",
+            )
+            commentList.add(
+                VideoCommentModel.VideoComment(
+                    avatar = avatarUrl, username = username, date = date,
+                    content = content, hasMoreReplies = hasMoreReplies,
+                    thumbUp = thumbUp.logIfParseNull(Parse::comments.name, "thumbUp"),
+                    id = id.logIfParseNull(Parse::comments.name, "id"),
+                    isChildComment = false, post = post
                 )
-            }
+            )
         }
         Log.d("commentList", commentList.toString())
         return WebsiteState.Success(
@@ -885,27 +991,63 @@ object Parse {
         val replyBody = jsonObject.get("replies").toString()
         val replyList = mutableListOf<VideoCommentModel.VideoComment>()
         val parseBody = Jsoup.parse(replyBody).body()
-        val replyStart = parseBody.select("div[id*=reply-start]").first()
+        val replyStart = parseBody.selectFirst("div[id^=reply-start]")
         replyStart?.let {
             val allRepliesClass = it.children()
-            for (i in 0 until (allRepliesClass.size / 2)) {
-                val avatarUrl = allRepliesClass[i * 2].select("img")[0].absUrl("src")
-                val content =
-                    allRepliesClass[i * 2].getElementsByClass("comment-index-text")[1].text()
-                val usernameClass =
-                    allRepliesClass[i * 2].getElementsByClass("comment-index-text")[0]
-                val username = usernameClass.select("div > a")[0].ownText()
-                val date = usernameClass.select("div > a > span")[0].ownText().trim()
-                val thumbAndReplyClass = allRepliesClass[i * 2 + 1]
-                val thumbUp = with(thumbAndReplyClass.select("span")) {
-                    if (get(1).text().isInt()) get(1).text() else get(2).text()
-                }
+            for (i in allRepliesClass.indices step 2) {
+                val basicClass = allRepliesClass.getOrNull(i)
+                val postClass = allRepliesClass.getOrNull(i + 1)
 
+                val avatarUrl = basicClass?.selectFirst("img")?.absUrl("src")
+                    .throwIfParseNull(Parse::commentReply.name, "avatarUrl")
+                val textClass = basicClass?.getElementsByClass("comment-index-text")
+                val nameAndDateClass = textClass?.firstOrNull()
+                val username = nameAndDateClass?.selectFirst("a")?.ownText()?.trim()
+                    .throwIfParseNull(Parse::commentReply.name, "name")
+                val date = nameAndDateClass?.selectFirst("span")?.ownText()?.trim()
+                    .throwIfParseNull(Parse::commentReply.name, "date")
+                val content = textClass?.getOrNull(1)?.text()
+                    .throwIfParseNull(Parse::commentReply.name, "content")
+                val thumbUp = postClass
+                    ?.select("span[style]")?.getOrNull(1)
+                    ?.text()?.toIntSafely()
+
+                val foreignId =
+                    postClass?.getElementById("foreign_id")?.attr("value")
+                val isPositive =
+                    postClass?.getElementById("is_positive")?.attr("value")
+                val likeUserId =
+                    postClass?.selectFirst("input[name=comment-like-user-id]")?.attr("value")
+                val commentLikesCount =
+                    postClass?.selectFirst("input[name=comment-likes-count]")?.attr("value")
+                val commentLikesSum =
+                    postClass?.selectFirst("input[name=comment-likes-sum]")?.attr("value")
+                val likeCommentStatus =
+                    postClass?.selectFirst("input[name=like-comment-status]")?.attr("value")
+                val unlikeCommentStatus =
+                    postClass?.selectFirst("input[name=unlike-comment-status]")?.attr("value")
+                val post = VideoCommentModel.VideoComment.POST(
+                    foreignId.logIfParseNull(Parse::commentReply.name, "foreignId"),
+                    isPositive == "1",
+                    likeUserId.logIfParseNull(Parse::commentReply.name, "likeUserId"),
+                    commentLikesCount?.toIntSafely().logIfParseNull(
+                        Parse::commentReply.name,
+                        "commentLikesCount"
+                    ),
+                    commentLikesSum?.toIntSafely().logIfParseNull(
+                        Parse::commentReply.name,
+                        "commentLikesSum"
+                    ),
+                    likeCommentStatus == "1",
+                    unlikeCommentStatus == "1",
+                )
                 replyList.add(
                     VideoCommentModel.VideoComment(
-                        avatar = avatarUrl, username = username,
-                        date = date, content = content, thumbUp = thumbUp,
-                        isChildComment = true
+                        avatar = avatarUrl, username = username, date = date,
+                        content = content,
+                        thumbUp = thumbUp.logIfParseNull(Parse::commentReply.name, "thumbUp"),
+                        id = null,
+                        isChildComment = true, post = post
                     )
                 )
             }
@@ -917,9 +1059,38 @@ object Parse {
     /**
      * 這個網站的網頁結構真的很奇怪，所以我寫了一個 forEachStep2 來處理
      */
-    private fun Elements.forEachStep2(action: (Element) -> Unit) {
+    private inline fun Elements.forEachStep2(action: (Element) -> Unit) {
         for (i in 0 until size step 2) {
             action(get(i))
         }
+    }
+
+    /**
+     * 得到 Element 的 child，如果 index 超出範圍，就返回 null
+     */
+    private fun Element.childOrNull(index: Int): Element? {
+        return if (index in 0 until childrenSize()) child(index) else null
+    }
+
+    /**
+     * 基本都是必需的參數，所以如果是 null，就直接丟出 [ParseException]
+     *
+     * @param funcName 這個參數是在哪個函數中被使用的
+     * @param varName 這個參數的名稱
+     * @return 如果 [this] 不是 null，就回傳 [this]
+     * @throws ParseException 如果 [this] 是 null，就丟出 [ParseException]
+     */
+    private fun <T> T?.throwIfParseNull(funcName: String, varName: String): T = this
+        ?: throw ParseException(funcName, varName)
+
+    /**
+     * 如果 [this] 是 null，就在 logcat 中顯示訊息
+     *
+     * @param funcName 這個參數是在哪個函數中被使用的
+     * @param varName 這個參數的名稱
+     * @return 回傳 [this]
+     */
+    private fun <T> T?.logIfParseNull(funcName: String, varName: String): T? = also {
+        if (it == null) Log.d("Parse::$funcName", "[$varName] is null. 這有點不正常")
     }
 }

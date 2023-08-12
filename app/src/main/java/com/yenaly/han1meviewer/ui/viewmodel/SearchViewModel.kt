@@ -24,15 +24,19 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
 
     var page: Int = 1
     var query: String? = null
+
+    // START: Use in [ChildCommentPopupFragment.kt]
+
     var genre: String? = null
     var sort: String? = null
-    var broad: String? = null
+    var broad: Boolean = false
     var year: Int? = null
     var month: Int? = null
     var duration: String? = null
-    var tagSet = linkedSetOf<String>()
-    var brandSet = linkedSetOf<String>()
+    val tagSet = mutableSetOf<String>()
+    val brandSet = mutableSetOf<String>()
 
+    // END: Use in [ChildCommentPopupFragment.kt]
 
     private val _searchFlow =
         MutableStateFlow<PageLoadingState<MutableList<HanimeInfoModel>>>(PageLoadingState.Loading)
@@ -44,8 +48,8 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
 
     fun getHanimeSearchResult(
         page: Int, query: String?, genre: String?,
-        sort: String?, broad: String?, year: Int?, month: Int?,
-        duration: String?, tags: LinkedHashSet<String>, brands: LinkedHashSet<String>
+        sort: String?, broad: Boolean, year: Int?, month: Int?,
+        duration: String?, tags: Set<String>, brands: Set<String>,
     ) {
         viewModelScope.launch {
             NetworkRepo.getHanimeSearchResult(
@@ -80,10 +84,9 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
-    fun loadAllSearchHistories() =
-        DatabaseRepo.loadAllSearchHistories()
-            .catch { e -> e.printStackTrace() }
-            .flowOn(Dispatchers.IO)
+    @JvmOverloads
+    fun loadAllSearchHistories(keyword: String? = null) =
+        DatabaseRepo.loadAllSearchHistories(keyword).flowOn(Dispatchers.IO)
 
     fun deleteSearchHistoryByKeyword(query: String) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -1,6 +1,7 @@
 package com.yenaly.han1meviewer.ui.activity
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,9 +12,10 @@ import coil.load
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.databinding.ActivityVideoBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
+import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
-import com.yenaly.han1meviewer.ui.fragment.CommentFragment
-import com.yenaly.han1meviewer.ui.fragment.VideoIntroductionFragment
+import com.yenaly.han1meviewer.ui.fragment.hanime.CommentFragment
+import com.yenaly.han1meviewer.ui.fragment.hanime.VideoIntroductionFragment
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
@@ -46,7 +48,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
         ScreenRotateUtil.getInstance(this).setOrientationChangeListener(this)
         initViewPager()
 
-        getHanimeVideo(viewModel.videoCode)
+        viewModel.getHanimeVideo(viewModel.videoCode)
     }
 
     override fun liveDataObserve() {
@@ -55,14 +57,20 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                 viewModel.hanimeVideoFlow.collect { state ->
                     when (state) {
                         is VideoLoadingState.Error -> {
-                            showShortToast(state.throwable.message)
-                            browse(getHanimeVideoLink(videoCodeByWebsite ?: videoCode!!))
-                            finish()
+                            showShortToast(state.throwable.localizedMessage)
+                            if (state.throwable is ParseException) {
+                                browse(getHanimeVideoLink(videoCodeByWebsite ?: videoCode!!))
+                                finish()
+                            }
                         }
+
                         is VideoLoadingState.Loading -> {
 
                         }
+
                         is VideoLoadingState.Success -> {
+                            viewModel.csrfToken = state.info.csrfToken
+
                             if (state.info.videoUrls.isEmpty()) {
                                 binding.videoPlayer.startButton.setOnClickListener {
                                     showShortToast("無法得到該影片的播放連接，即將轉向瀏覽器")
@@ -78,10 +86,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                                 crossfade(true)
                             }
                             // 將觀看記錄保存數據庫
-                            val releaseDate = TimeUtil.string2Millis(
-                                state.info.uploadTimeWithViews.substringBefore('|').trim(),
-                                "yyyy-MM-dd"
-                            )
+                            val releaseDate = TimeUtil.date2Millis(state.info.uploadTime)
                             val entity = WatchHistoryEntity(
                                 state.info.coverUrl, state.info.title,
                                 releaseDate, System.currentTimeMillis(),
@@ -89,6 +94,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                             )
                             viewModel.insertWatchHistory(entity)
                         }
+
                         is VideoLoadingState.NoContent -> {
                             // todo: 有時間轉移到 strings.xml
                             showShortToast("可能該影片不存在")
@@ -112,21 +118,23 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
         ScreenRotateUtil.getInstance(this).start(this)
     }
 
-    override fun onPause() {
-        super.onPause()
-        ScreenRotateUtil.getInstance(this).stop()
-        Jzvd.releaseAllVideos()
+    override fun onStop() {
+        super.onStop()
+        Jzvd.goOnPlayOnPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // 可能需要把ScreenRotateUtil的listener置null，但置null可能会崩溃
+        ScreenRotateUtil.getInstance(this).stop()
+        Jzvd.releaseAllVideos()
     }
 
     override fun orientationChange(orientation: Int) {
         if (Jzvd.CURRENT_JZVD != null
             && (binding.videoPlayer.state == Jzvd.STATE_PLAYING || binding.videoPlayer.state == Jzvd.STATE_PAUSE)
             && binding.videoPlayer.screen != Jzvd.SCREEN_TINY
+            && Jzvd.FULLSCREEN_ORIENTATION != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         ) {
             if (orientation in 45..315 && binding.videoPlayer.screen == Jzvd.SCREEN_NORMAL) {
                 changeScreenFullLandscape(ScreenRotateUtil.orientationDirection)
@@ -135,9 +143,6 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             }
         }
     }
-
-    private fun getHanimeVideo(videoCode: String) =
-        viewModel.getHanimeVideo(videoCode)
 
     /**
      * 竖屏并退出全屏
