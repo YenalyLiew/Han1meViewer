@@ -1,24 +1,39 @@
 # Han1meViewer
 
+![Han1meViewer](https://socialify.git.ci/YenalyLiew/Han1meViewer/image?description=1&font=KoHo&forks=1&issues=1&language=1&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
+
 这是一个 [Hanime1](https://hanime1.me/) Android 平台的非官方浏览器。
+
+本项目仅用于学习和交流，不可闭源，严禁商用。
 
 ~~没有 logo，有没有好心人帮帮忙...~~
 
 An unofficial Hanime1.me Application for Android.
 
+This project is intended solely for learning and communication purposes. Commercial use is strictly prohibited.
+
+![download times](https://img.shields.io/github/downloads/YenalyLiew/Han1meViewer/total)
+
+------
+
 ## 功能
 
 - [x] 主页
-- [x] 新番新闻
+
+- 新番新闻
+
   - [x] 月度切换
   - [x] 评论
     - [x] 子评论
-- [x] 用户
+
+- 用户
   - [x] 登入（谷歌登录没试过，可能不行）
   - [x] 登出
-- [x] 搜索
+  
+- 搜索
   - [x] 高级搜索
-- [x] 影片
+  
+- 影片
   - [x] 播放
   - [x] 添加/移除到喜欢列表
   - [ ] 添加/移除到稍后观看
@@ -32,16 +47,20 @@ An unofficial Hanime1.me Application for Android.
     - [ ] 修改（做不了，有人机验证）
   - [x] 评论
     - [x] 子评论
-- [x] 喜欢列表
+  
+- 喜欢列表
   - [x] 删除
-- [x] 稍后观看
+  
+- 稍后观看
   - [x] 删除
-- [ ] 播放清单
+  
+- 播放清单
   - [ ] 修改清单
   - [ ] 添加清单
   - [ ] 删除清单
   - [ ] 删除影片
-- [ ] 漫画（不打算做）
+  
+- 漫画（不打算做）
 
 ## 痛点解决
 
@@ -152,3 +171,8 @@ PS：一年前加了 CloudFlare 防护，然后又把前端改了，当时太忙
 ### v0.1
 
 第一个版本，实现了基本使用，如观看视频，搜索，添加到历史记录等，暂不支持下载功能。
+
+------
+
+~~这里应该还有东西，以后再写！~~
+
