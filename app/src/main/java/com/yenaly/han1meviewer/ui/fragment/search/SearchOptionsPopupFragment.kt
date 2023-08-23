@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.impl.CenterListPopupView
@@ -18,6 +17,7 @@ import com.yenaly.han1meviewer.SEARCH_YEAR_RANGE_START
 import com.yenaly.han1meviewer.databinding.PopUpFragmentSearchOptionsBinding
 import com.yenaly.han1meviewer.ui.popup.HanimeSearchTagCenterPopup
 import com.yenaly.han1meviewer.ui.viewmodel.SearchViewModel
+import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyBottomSheetDialogFragment
 import java.util.Calendar
 import java.util.Date
@@ -36,7 +36,7 @@ class SearchOptionsPopupFragment :
 
         // type 就是 genre
         private val typeArray =
-            arrayOf("全部", "裏番", "泡麵番", "3D動畫", "同人作品", "Cosplay")
+            arrayOf("全部", "裏番", "泡麵番", "Motion Anime", "3D動畫", "同人作品", "Cosplay")
 
         private val videoAttrTagArray =
             arrayOf("無碼", "AI解碼", "1080p", "60FPS")
@@ -342,12 +342,12 @@ class SearchOptionsPopupFragment :
 
     private inline fun Chip.showClearAllTagsDialog(crossinline action: () -> Unit) {
         if (isChecked) {
-            MaterialAlertDialogBuilder(this.context)
-                .setTitle(R.string.alert)
-                .setMessage(R.string.alert_cancel_all_tags)
-                .setPositiveButton(R.string.confirm) { _, _ -> action.invoke() }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+            context.showAlertDialog {
+                setTitle(R.string.alert)
+                setMessage(R.string.alert_cancel_all_tags)
+                setPositiveButton(R.string.confirm) { _, _ -> action.invoke() }
+                setNegativeButton(R.string.cancel, null)
+            }
         }
     }
 

@@ -1,8 +1,9 @@
 package com.yenaly.han1meviewer.logic.network
 
 import android.util.Log
-import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.DATE_FORMAT
+import com.yenaly.han1meviewer.EMPTY_STRING
+import com.yenaly.han1meviewer.HanimeResolution
 import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
@@ -14,9 +15,7 @@ import com.yenaly.han1meviewer.logic.model.VideoCommentModel
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.HanimeResolution
 import com.yenaly.yenaly_libs.utils.TimeUtil
-import com.yenaly.yenaly_libs.utils.toIntSafely
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -605,6 +604,7 @@ object Parse {
                 title = title, coverUrl = videoCoverUrl, uploadTime = null, views = null,
                 introduction = introduction, videoUrls = hanimeResolution.toResolutionLinkMap(),
                 tags = tagList, playList = playList, relatedHanimes = relatedAnimeList,
+                artist = null,
                 favTimes = null,
                 csrfToken = csrfToken, currentUserId = currentUserId
             )
@@ -624,7 +624,7 @@ object Parse {
         val likeStatus = parseBody.selectFirst("input[name=like-status]")
             ?.attr("value")
         val likesCount = parseBody.selectFirst("input[name=likes-count]")
-            ?.attr("value")?.toIntSafely()
+            ?.attr("value")?.toIntOrNull()
 
         val videoDetailWrapper = parseBody.selectFirst("div[class=video-details-wrapper]")
         val introduction =
@@ -757,6 +757,18 @@ object Parse {
             }
         }
 
+        val artistAvatarUrl = parseBody.getElementById("video-user-avatar")?.absUrl("src")
+        val artistNameCSS = parseBody.getElementById("video-artist-name")
+        val artistGenre = artistNameCSS?.nextElementSibling()?.text()?.trim()
+        val artistName = artistNameCSS?.text()?.trim()
+        val artist = if (artistAvatarUrl != null && artistName != null && artistGenre != null) {
+            HanimeVideoModel.Artist(
+                name = artistName,
+                avatarUrl = artistAvatarUrl,
+                genre = artistGenre,
+            )
+        } else null
+
         return VideoLoadingState.Success(
             HanimeVideoModel(
                 title = title, coverUrl = videoCoverUrl,
@@ -770,6 +782,7 @@ object Parse {
                 tags = tagList,
                 playList = playList,
                 relatedHanimes = relatedAnimeList,
+                artist = artist.logIfParseNull(Parse::hanimeVideoVer2.name, "artist"),
                 favTimes = likesCount,
                 isFav = likeStatus == "1",
                 csrfToken = csrfToken,
@@ -936,7 +949,7 @@ object Parse {
             val hasMoreReplies = child.selectFirst("div[class^=load-replies-btn]") != null
             val thumbUp = child.getElementById("comment-like-form-wrapper")
                 ?.select("span[style]")?.getOrNull(1)
-                ?.text()?.toIntSafely()
+                ?.text()?.toIntOrNull()
             val id = child.selectFirst("div[id^=reply-section-wrapper]")
                 ?.id()?.substringAfterLast("-")
 
@@ -955,11 +968,11 @@ object Parse {
                 foreignId.logIfParseNull(Parse::comments.name, "foreignId"),
                 isPositive == "1",
                 likeUserId.logIfParseNull(Parse::comments.name, "likeUserId"),
-                commentLikesCount?.toIntSafely().logIfParseNull(
+                commentLikesCount?.toIntOrNull().logIfParseNull(
                     Parse::comments.name,
                     "commentLikesCount"
                 ),
-                commentLikesSum?.toIntSafely().logIfParseNull(
+                commentLikesSum?.toIntOrNull().logIfParseNull(
                     Parse::comments.name,
                     "commentLikesSum"
                 ),
@@ -1010,7 +1023,7 @@ object Parse {
                     .throwIfParseNull(Parse::commentReply.name, "content")
                 val thumbUp = postClass
                     ?.select("span[style]")?.getOrNull(1)
-                    ?.text()?.toIntSafely()
+                    ?.text()?.toIntOrNull()
 
                 val foreignId =
                     postClass?.getElementById("foreign_id")?.attr("value")
@@ -1030,11 +1043,11 @@ object Parse {
                     foreignId.logIfParseNull(Parse::commentReply.name, "foreignId"),
                     isPositive == "1",
                     likeUserId.logIfParseNull(Parse::commentReply.name, "likeUserId"),
-                    commentLikesCount?.toIntSafely().logIfParseNull(
+                    commentLikesCount?.toIntOrNull().logIfParseNull(
                         Parse::commentReply.name,
                         "commentLikesCount"
                     ),
-                    commentLikesSum?.toIntSafely().logIfParseNull(
+                    commentLikesSum?.toIntOrNull().logIfParseNull(
                         Parse::commentReply.name,
                         "commentLikesSum"
                     ),

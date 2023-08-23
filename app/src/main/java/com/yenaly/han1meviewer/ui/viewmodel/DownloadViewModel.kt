@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.logic.DatabaseRepo
+import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -16,14 +17,26 @@ import kotlinx.coroutines.launch
  */
 class DownloadViewModel(application: Application) : YenalyViewModel(application) {
 
-    fun loadAllDownloadedHanime() =
-        DatabaseRepo.loadAllDownloadedHanime()
+
+    fun loadAllDownloadingHanime() =
+        DatabaseRepo.HanimeDownload.loadAllDownloadingHanime()
             .catch { e -> e.printStackTrace() }
             .flowOn(Dispatchers.IO)
 
-    fun deleteDownloadedHanimeByVideoCode(videoCode: String) {
+    fun loadAllDownloadedHanime() =
+        DatabaseRepo.HanimeDownload.loadAllDownloadedHanime()
+            .catch { e -> e.printStackTrace() }
+            .flowOn(Dispatchers.IO)
+
+    fun updateDownloadHanime(entity: HanimeDownloadEntity) {
+        viewModelScope.launch {
+            DatabaseRepo.HanimeDownload.update(entity)
+        }
+    }
+
+    fun deleteDownloadHanimeBy(videoCode: String, quality: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.deleteDownloadedHanimeByVideoCode(videoCode)
+            DatabaseRepo.HanimeDownload.deleteBy(videoCode, quality)
         }
     }
 }

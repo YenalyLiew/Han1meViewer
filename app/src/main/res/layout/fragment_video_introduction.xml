@@ -19,10 +19,50 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/vg_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_artist"
+                    android:layout_width="@dimen/avatar_size"
+                    android:layout_height="@dimen/avatar_size"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@null"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/tv_genre"
+                    app:layout_constraintStart_toEndOf="@id/iv_artist"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="PORO" />
+
+                <TextView
+                    android:id="@+id/tv_genre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iv_artist"
+                    app:layout_constraintTop_toBottomOf="@id/tv_artist"
+                    tools:text="3D" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
@@ -40,7 +80,7 @@
                     android:id="@+id/views"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="137.6萬次點閱" />
+                    tools:text="137.6萬次" />
 
                 <View
                     android:layout_width="1dp"
@@ -70,7 +110,7 @@
                 app:ep_need_contract="true"
                 tools:text="思春期的性學習 2  劇情續上一話，女主春日為了拓展自己的知識經常泡圖書館" />
 
-            <HorizontalScrollView
+            <com.yenaly.han1meviewer.ui.view.HorizontalNestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
@@ -112,9 +152,17 @@
                         android:drawableTop="@drawable/ic_baseline_share_24"
                         android:text="@string/share" />
 
+                    <Button
+                        android:id="@+id/btn_to_webpage"
+                        style="@style/Widget.Material3.Button.TextButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_baseline_language_24"
+                        android:text="@string/jump_to_webpage" />
+
                 </LinearLayout>
 
-            </HorizontalScrollView>
+            </com.yenaly.han1meviewer.ui.view.HorizontalNestedScrollView>
 
             <com.yenaly.han1meviewer.ui.view.CollapsibleTags
                 android:id="@+id/tags"

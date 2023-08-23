@@ -39,7 +39,7 @@ fun shareFiles(uris: List<Uri>, title: CharSequence? = null, mimeType: String? =
 
 inline fun share(mimeType: String?, crossinline block: ShareCompat.IntentBuilder.() -> Unit) =
     ShareCompat
-        .IntentBuilder(ActivitiesManager.getCurrentActivity() ?: applicationContext)
+        .IntentBuilder(ActivitiesManager.currentActivity ?: applicationContext)
         .setType(mimeType)
         .apply(block)
         .startChooser()

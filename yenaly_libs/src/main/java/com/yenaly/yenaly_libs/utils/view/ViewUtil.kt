@@ -9,6 +9,7 @@ import androidx.core.view.marginBottom
 import androidx.core.view.marginEnd
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
+import androidx.core.view.updateLayoutParams
 
 /**
  * 设置view的margins，设置相对位置margins更符合Google标准
@@ -22,13 +23,9 @@ fun View.setMargins(
     start: Int = marginStart,
     top: Int = marginTop,
     end: Int = marginEnd,
-    bottom: Int = marginBottom
-) {
-    if (this.layoutParams is MarginLayoutParams) {
-        val p = this.layoutParams as MarginLayoutParams
-        p.setMargins(0, top, 0, bottom)
-        p.marginStart = start
-        p.marginEnd = end
-        this.requestLayout()
-    }
+    bottom: Int = marginBottom,
+) = updateLayoutParams<MarginLayoutParams> {
+    setMargins(0, top, 0, bottom)
+    marginStart = start
+    marginEnd = end
 }

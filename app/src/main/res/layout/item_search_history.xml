@@ -5,9 +5,10 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/per90_transparent_white"
     android:gravity="center"
     android:orientation="horizontal">
+
+    <!-- 不设置background的原因是search bar已经有统一color了 -->
 
     <TextView
         android:id="@+id/tv_text"

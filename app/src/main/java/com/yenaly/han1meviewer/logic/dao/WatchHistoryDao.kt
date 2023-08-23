@@ -13,28 +13,28 @@ import kotlinx.coroutines.flow.Flow
 abstract class WatchHistoryDao {
 
     @Query("SELECT * FROM WatchHistoryEntity ORDER BY id DESC")
-    abstract fun loadAllWatchHistories(): Flow<MutableList<WatchHistoryEntity>>
+    abstract fun loadAll(): Flow<MutableList<WatchHistoryEntity>>
 
     @Delete
-    abstract suspend fun deleteWatchHistory(history: WatchHistoryEntity)
+    abstract suspend fun delete(history: WatchHistoryEntity)
 
     @Query("DELETE FROM WatchHistoryEntity")
-    abstract suspend fun deleteAllWatchHistories()
+    abstract suspend fun deleteAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertWatchHistory(history: WatchHistoryEntity)
+    abstract suspend fun insert(history: WatchHistoryEntity)
 
     @Query("SELECT * FROM WatchHistoryEntity WHERE (`title` = :title) LIMIT 1")
-    abstract fun loadWatchHistory(title: String): WatchHistoryEntity?
+    abstract fun find(title: String): WatchHistoryEntity?
 
     @Transaction
-    open suspend fun insertOrUpdateSearchHistory(history: WatchHistoryEntity) {
-        val dbEntity = loadWatchHistory(history.title)
+    open suspend fun insertOrUpdate(history: WatchHistoryEntity) {
+        val dbEntity = find(history.title)
         if (dbEntity != null) {
-            deleteWatchHistory(dbEntity)
-            insertWatchHistory(history)
+            delete(dbEntity)
+            insert(history)
             return
         }
-        insertWatchHistory(history)
+        insert(history)
     }
 }

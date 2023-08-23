@@ -1,12 +1,19 @@
 package com.yenaly.han1meviewer.ui.fragment.home.download
 
 import android.os.Bundle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
+import com.yenaly.han1meviewer.ui.adapter.HanimeDownloadingRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
+import com.yenaly.yenaly_libs.utils.unsafeLazy
+import kotlinx.coroutines.launch
 
 /**
- * 正在下载的影片，暫時用不着
+ * 正在下载的影片
  *
  * @project Han1meViewer
  * @author Yenaly Liew
@@ -14,7 +21,24 @@ import com.yenaly.yenaly_libs.base.YenalyFragment
  */
 class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewModel>() {
 
-    override fun initData(savedInstanceState: Bundle?) {
+    private val adapter by unsafeLazy { HanimeDownloadingRvAdapter(this) }
 
+    override fun initData(savedInstanceState: Bundle?) {
+        binding.rvList.layoutManager = LinearLayoutManager(context)
+        binding.rvList.adapter = adapter
+        adapter.setDiffCallback(HanimeDownloadingRvAdapter.COMPARATOR)
+        binding.rvList.itemAnimator?.changeDuration = 0
+    }
+
+    override fun liveDataObserve() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.loadAllDownloadingHanime().flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .collect {
+                    adapter.setDiffNewData(it)
+                    if (it.isEmpty()) {
+                        adapter.setEmptyView(R.layout.layout_empty_view)
+                    }
+                }
+        }
     }
 }

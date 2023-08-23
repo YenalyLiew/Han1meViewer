@@ -72,25 +72,25 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
 
     fun insertSearchHistory(history: SearchHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.insertSearchHistory(history)
+            DatabaseRepo.SearchHistory.insert(history)
             Log.d("insert_search_hty", "$history DONE!")
         }
     }
 
     fun deleteSearchHistory(history: SearchHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.deleteSearchHistory(history)
+            DatabaseRepo.SearchHistory.delete(history)
             Log.d("delete_search_hty", "$history DONE!")
         }
     }
 
     @JvmOverloads
     fun loadAllSearchHistories(keyword: String? = null) =
-        DatabaseRepo.loadAllSearchHistories(keyword).flowOn(Dispatchers.IO)
+        DatabaseRepo.SearchHistory.loadAll(keyword).flowOn(Dispatchers.IO)
 
     fun deleteSearchHistoryByKeyword(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.deleteSearchHistoryByKeyword(query)
+            DatabaseRepo.SearchHistory.deleteByKeyword(query)
             Log.d("delete_search_hty", "$query DONE!")
         }
     }

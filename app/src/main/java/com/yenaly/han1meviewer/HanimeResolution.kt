@@ -40,10 +40,6 @@ class HanimeResolution {
     }
 
     fun toResolutionLinkMap(): ResolutionLinkMap {
-        val linkedHashMap = linkedMapOf<String, String>()
-        resArray.forEach {
-            if (it != null) linkedHashMap[it.first] = it.second
-        }
-        return linkedHashMap
+        return resArray.filterNotNull().toMap(linkedMapOf())
     }
 }

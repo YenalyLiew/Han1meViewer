@@ -2,11 +2,15 @@ package com.yenaly.han1meviewer
 
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.material.color.DynamicColors
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.yenaly.han1meviewer.service.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyApplication
+import com.yenaly.yenaly_libs.utils.showShortToast
 
 /**
  * @project Hanime1
@@ -16,6 +20,8 @@ import com.yenaly.yenaly_libs.base.YenalyApplication
 class HanimeApplication : YenalyApplication() {
 
     companion object {
+        const val TAG = "HanimeApplication"
+
         init {
             SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, _ ->
                 return@setDefaultRefreshHeaderCreator MaterialHeader(context)
@@ -35,5 +41,21 @@ class HanimeApplication : YenalyApplication() {
             NotificationManagerCompat.IMPORTANCE_HIGH
         ).setName("Hanime Download").build()
         notificationManager.createNotificationChannel(channel)
+
+        WorkManager.getInstance(this)
+            .getWorkInfosByTagLiveData(HanimeDownloadWorker.TAG)
+            .observeForever { workInfos ->
+                workInfos.forEach { workInfo ->
+                    when (workInfo.state) {
+                        WorkInfo.State.FAILED -> {
+                            val err =
+                                workInfo.outputData.getString(HanimeDownloadWorker.FAILED_REASON)
+                            err?.let(::showShortToast)
+                        }
+
+                        else -> Unit
+                    }
+                }
+            }
     }
 }

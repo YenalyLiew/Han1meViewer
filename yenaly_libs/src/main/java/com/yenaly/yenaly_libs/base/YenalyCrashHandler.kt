@@ -58,7 +58,7 @@ class YenalyCrashHandler private constructor() : Thread.UncaughtExceptionHandler
                 flag = Intent.FLAG_ACTIVITY_NEW_TASK,
                 values = arrayOf("yenaly_throwable" to errorWriter.toString())
             )
-            ActivitiesManager.exitAppWithKillingProcess()
+            ActivitiesManager.exit(killProcess = true)
         }
     }
 

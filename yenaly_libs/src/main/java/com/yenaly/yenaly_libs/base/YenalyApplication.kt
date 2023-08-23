@@ -24,7 +24,7 @@ open class YenalyApplication : Application(), Application.ActivityLifecycleCallb
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        ActivitiesManager.pushActivity(activity)
+        ActivitiesManager.push(activity)
     }
 
     override fun onActivityStarted(activity: Activity) {
@@ -43,6 +43,6 @@ open class YenalyApplication : Application(), Application.ActivityLifecycleCallb
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        ActivitiesManager.popActivity(activity)
+        ActivitiesManager.remove(activity)
     }
 }

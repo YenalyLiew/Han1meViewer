@@ -17,6 +17,7 @@ internal fun getDownloadedHanimeFile(title: String, quality: String): File {
     return File(hanimeVideoLocalFolder, createDownloadName(title, quality))
 }
 
+@Deprecated("不用了")
 internal fun checkDownloadedHanimeFile(startsWith: String): Boolean {
     return hanimeVideoLocalFolder?.let { folder ->
         folder.listFiles()?.any { it.name.startsWith(startsWith) }
@@ -26,8 +27,15 @@ internal fun checkDownloadedHanimeFile(startsWith: String): Boolean {
 /**
  * Must be Activity Context!
  */
-internal fun Context.openDownloadedHanimeVideoLocally(uri: String) {
+internal fun Context.openDownloadedHanimeVideoLocally(
+    uri: String,
+    onFileNotFound: (() -> Unit)? = null,
+) {
     val videoFile = uri.toUri().toFile()
+    if (!videoFile.exists()) {
+        onFileNotFound?.invoke()
+        return
+    }
     val fileUri = FileProvider.getUriForFile(
         this, "com.yenaly.han1meviewer.fileProvider", videoFile
     )

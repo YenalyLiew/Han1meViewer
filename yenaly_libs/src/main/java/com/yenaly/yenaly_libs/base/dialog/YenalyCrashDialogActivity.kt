@@ -40,10 +40,10 @@ class YenalyCrashDialogActivity : FrameActivity() {
             .setMessage(info)
             .setCancelable(false)
             .setPositiveButton(R.string.yenaly_restart_app) { _, _ ->
-                ActivitiesManager.restartAppWithKillingProcess()
+                ActivitiesManager.restart(killProcess = true)
             }
             .setNegativeButton(R.string.yenaly_exit_app) { _, _ ->
-                ActivitiesManager.exitAppWithKillingProcess()
+                ActivitiesManager.exit(killProcess = true)
             }
             .show()
     }

@@ -4,21 +4,22 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.work.*
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.DatabaseRepo
-import com.yenaly.han1meviewer.logic.entity.HanimeDownloadedEntity
+import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.network.ServiceCreator
-import com.yenaly.han1meviewer.notificationManager
 import com.yenaly.han1meviewer.util.getDownloadedHanimeFile
-import com.yenaly.yenaly_libs.utils.copyTo
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
+import okhttp3.Response
+import okhttp3.ResponseBody
+import java.io.RandomAccessFile
+import java.util.concurrent.CancellationException
 import kotlin.random.Random
 
 /**
@@ -28,106 +29,143 @@ import kotlin.random.Random
  */
 class HanimeDownloadWorker(
     private val context: Context,
-    workerParams: WorkerParameters
+    workerParams: WorkerParameters,
 ) : CoroutineWorker(context, workerParams) {
 
     companion object {
         const val TAG = "hanime_download_worker"
+
+        const val RESPONSE_INTERVAL = 500L
 
         const val QUALITY = "quality"
         const val DOWNLOAD_URL = "download_url"
         const val HANIME_NAME = "hanime_name"
         const val VIDEO_CODE = "video_code"
         const val COVER_URL = "cover_url"
-        const val RELEASE_DATE = "release_date"
+        // const val RELEASE_DATE = "release_date"
         // const val COVER_DOWNLOAD = "cover_download"
 
         const val PROGRESS = "progress"
+        const val FAILED_REASON = "failed_reason"
     }
 
-    private val hanimeName by unsafeLazy {
-        checkNotNull(inputData.getString(HANIME_NAME))
-    }
-    private val quality by unsafeLazy {
-        checkNotNull(inputData.getString(QUALITY))
-    }
-    private val downloadUrl by unsafeLazy {
-        checkNotNull(inputData.getString(DOWNLOAD_URL))
-    }
-    private val videoCode by unsafeLazy {
-        checkNotNull(inputData.getString(VIDEO_CODE))
-    }
-    private val coverUrl by unsafeLazy {
-        checkNotNull(inputData.getString(COVER_URL))
-    }
-    private val releaseDate by unsafeLazy {
-        checkNotNull(inputData.getLong(RELEASE_DATE, 0))
-    }
+    private val hanimeName by inputData(HANIME_NAME, EMPTY_STRING)
+    private val downloadUrl by inputData(DOWNLOAD_URL, EMPTY_STRING)
+    private val quality by inputData(QUALITY, EMPTY_STRING)
+    private val videoCode by inputData(VIDEO_CODE, EMPTY_STRING)
+    private val coverUrl by inputData(COVER_URL, EMPTY_STRING)
 
     private val downloadId = Random.nextInt()
     private val successId = Random.nextInt()
     private val failId = Random.nextInt()
 
     override suspend fun doWork(): Result {
-        setForeground(createForegroundInfo())
-        return withContext(Dispatchers.IO) {
-            downloadHanime(downloadUrl, hanimeName, quality)
+        if (runAttemptCount > 2) {
+            return Result.failure(workDataOf(FAILED_REASON to "下載失敗三回啊三回！"))
         }
+        setForeground(createForegroundInfo())
+        return download()
     }
 
-    private suspend fun downloadHanime(url: String, name: String, quality: String): Result {
-        val file = getDownloadedHanimeFile(name, quality)
-        val request = Request.Builder().url(url).get().build()
-        val response = ServiceCreator.okHttpClient.newCall(request).execute()
-        if (response.isSuccessful) {
-            response.body!!.let { responseBody ->
-                val total = responseBody.contentLength()
-                file.outputStream().use { output ->
-                    var emittedProgress = 0L
-                    responseBody.byteStream().use { input ->
-                        input.copyTo(output) { bytesCopied ->
-                            val progress = bytesCopied * 100 / total
-                            if (progress - emittedProgress >= 5) {
-                                setProgressAsync(workDataOf(PROGRESS to progress.toInt()))
-                                Log.d("progress", progress.toInt().toString())
-                                setForegroundAsync(createForegroundInfo(progress.toInt()))
-                                emittedProgress = progress
-                            }
+    private suspend fun createNewRaf() {
+        val file = getDownloadedHanimeFile(hanimeName, quality)
+        return withContext(Dispatchers.IO) {
+            var raf: RandomAccessFile? = null
+            var response: Response? = null
+            var body: ResponseBody? = null
+            try {
+                raf = RandomAccessFile(file, "rwd")
+                val request = Request.Builder().url(downloadUrl).get().build()
+                response = ServiceCreator.okHttpClient.newCall(request).execute()
+                if (response.isSuccessful) {
+                    body = response.body
+                    body?.let {
+                        val len = body.contentLength()
+                        if (len > 0) {
+                            raf.setLength(len)
+                            val entity = HanimeDownloadEntity(
+                                coverUrl = coverUrl, title = hanimeName,
+                                addDate = System.currentTimeMillis(), videoCode = videoCode,
+                                videoUri = file.toUri().toString(), quality = quality,
+                                videoUrl = downloadUrl, length = len, downloadedLength = 0,
+                                isDownloading = false
+                            )
+                            DatabaseRepo.HanimeDownload.insert(entity)
                         }
                     }
                 }
-                // 存在該videoCode的影片記錄走這裏，
-                // 更新一下直接返回
-                DatabaseRepo.loadDownloadedHanimeByVideoCode(videoCode)?.let { data ->
-                    // old
-                    data.videoUri.toUri().toFile().delete()
-                    // new
-                    data.quality = quality
-                    data.videoUri = file.toUri().toString()
-                    data.addDate = System.currentTimeMillis()
-                    // update
-                    DatabaseRepo.updateDownloadedHanime(data)
-
-                    showSuccessNotification()
-                    return Result.success()
-                }
-
-                // 若爲空走這裏，直接插入，最後返回
-                DatabaseRepo.insertDownloadedHanime(
-                    HanimeDownloadedEntity(
-                        coverUrl = coverUrl, title = hanimeName, releaseDate = releaseDate,
-                        addDate = System.currentTimeMillis(), videoCode = videoCode,
-                        videoUri = file.toUri().toString(), quality = quality
-                    )
-                )
-
-                showSuccessNotification()
-                return Result.success()
+            } catch (e: Exception) {
+                // 创建，但是并没有下载接收到文件大小，删除文件
+                if (file.length() == 0L) file.delete()
+            } finally {
+                raf?.close()
+                response?.close()
+                body?.close()
             }
-        } else {
-            showFailureNotification(response.message)
-            if (file.exists()) file.delete()
-            return Result.retry()
+        }
+    }
+
+    private suspend fun download(): Result {
+        val file = getDownloadedHanimeFile(hanimeName, quality)
+        return withContext(Dispatchers.IO) {
+            val isExist = DatabaseRepo.HanimeDownload.isExist(videoCode, quality)
+            if (!isExist) createNewRaf()
+            val entity = DatabaseRepo.HanimeDownload.findBy(videoCode, quality)
+                ?: return@withContext Result.retry()
+
+            val needRange = entity.downloadedLength > 0
+            var raf: RandomAccessFile? = null
+            var response: Response? = null
+            var body: ResponseBody? = null
+            try {
+                raf = RandomAccessFile(file, "rwd")
+                val request = Request.Builder().url(downloadUrl)
+                    .also { if (needRange) it.header("Range", "bytes=${entity.downloadedLength}-") }
+                    .get().build()
+                response = ServiceCreator.okHttpClient.newCall(request).execute()
+                entity.isDownloading = true
+                raf.seek(entity.downloadedLength)
+                if ((needRange && response.code == 206) || (!needRange && response.isSuccessful)) {
+                    var delayTime = 0L
+                    body = response.body
+                    body?.let {
+                        val bs = body.byteStream()
+                        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                        var len: Int = bs.read(buffer)
+                        while (len != -1) {
+                            raf.write(buffer, 0, len)
+                            entity.downloadedLength += len
+                            if (System.currentTimeMillis() - delayTime > RESPONSE_INTERVAL) {
+                                val progress = entity.downloadedLength * 100 / entity.length
+                                setProgress(workDataOf(PROGRESS to progress.toInt()))
+                                setForeground(createForegroundInfo(progress.toInt()))
+                                DatabaseRepo.HanimeDownload.update(entity)
+                                delayTime = System.currentTimeMillis()
+                            }
+                            len = bs.read(buffer)
+                        }
+                    }
+                    showSuccessNotification()
+                    return@withContext Result.success()
+                } else {
+                    showFailureNotification(response.message)
+                    return@withContext Result.failure(workDataOf(FAILED_REASON to response.message))
+                }
+            } catch (e: Exception) {
+                // if block 是代表用户暂停
+                if (e !is CancellationException) {
+                    showFailureNotification(e.message ?: "未知下載錯誤")
+                    return@withContext Result.failure(workDataOf(FAILED_REASON to e.message))
+                }
+                return@withContext Result.success()
+            } finally {
+                raf?.close()
+                response?.close()
+                body?.close()
+                entity.isDownloading = false
+                Log.d(TAG, entity.toString())
+                DatabaseRepo.HanimeDownload.update(entity)
+            }
         }
     }
 
@@ -178,5 +216,17 @@ class HanimeDownloadWorker(
                 .setContentText("下載失敗：${hanimeName}\n原因為：${errMsg}")
                 .build()
         )
+    }
+
+    @Suppress("UNCHECKED_CAST", "SameParameterValue")
+    private fun <T : Any> inputData(key: String, def: T): Lazy<T> = unsafeLazy {
+        when (def) {
+            is String -> (inputData.getString(key) ?: def) as T
+            is Int -> inputData.getInt(key, def) as T
+            is Long -> inputData.getLong(key, def) as T
+            is Boolean -> inputData.getBoolean(key, def) as T
+            is Float -> inputData.getFloat(key, def) as T
+            else -> throw IllegalArgumentException("Unsupported type")
+        }
     }
 }

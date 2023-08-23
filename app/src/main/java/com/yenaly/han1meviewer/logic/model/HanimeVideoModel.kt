@@ -21,11 +21,12 @@ data class HanimeVideoModel(
     val tags: List<String>,
     val playList: PlayList?,
     val relatedHanimes: List<HanimeInfoModel>,
+    val artist: Artist?,
 
     var favTimes: Int?,
     var isFav: Boolean = false,
     val csrfToken: String? = null,
-    val currentUserId: String? = null
+    val currentUserId: String? = null,
 ) {
 
     fun incrementFavTime() {
@@ -40,6 +41,12 @@ data class HanimeVideoModel(
 
     data class PlayList(
         val playListName: String?,
-        val video: List<HanimeInfoModel>
+        val video: List<HanimeInfoModel>,
+    )
+
+    data class Artist(
+        val name: String,
+        val avatarUrl: String,
+        val genre: String,
     )
 }

@@ -10,7 +10,8 @@ import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.*
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.permissionx.guolindev.PermissionX
@@ -23,9 +24,8 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.service.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
-import com.yenaly.han1meviewer.HanimeResolution
-import com.yenaly.han1meviewer.util.checkDownloadedHanimeFile
 import com.yenaly.han1meviewer.util.setDrawableTop
+import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.*
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
@@ -68,13 +68,9 @@ class VideoIntroductionFragment :
                 viewModel.hanimeVideoFlow.collect { state ->
                     binding.videoIntroNsv.isInvisible = state !is VideoLoadingState.Success
                     when (state) {
-                        is VideoLoadingState.Error -> {
+                        is VideoLoadingState.Error -> Unit
 
-                        }
-
-                        is VideoLoadingState.Loading -> {
-
-                        }
+                        is VideoLoadingState.Loading -> Unit
 
                         is VideoLoadingState.Success -> {
                             videoData = state.info
@@ -91,6 +87,7 @@ class VideoIntroductionFragment :
                             } else {
                                 binding.playList.root.isGone = true
                             }
+                            initArtist(state.info.artist)
                             relatedAdapter.setList(state.info.relatedHanimes)
                             initDownloadButton(state.info)
                             initFunctionBar(state.info)
@@ -130,50 +127,15 @@ class VideoIntroductionFragment :
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {
                 viewModel.loadDownloadedFlow.collect { entity ->
-                    val releaseDate = TimeUtil.date2Millis(videoData.uploadTime)
-                    if (entity == null) { // 没下完或没下
-                        // 检测是否存在这个关于这个影片的文件，忽略分辨率，若有则不进行下载
-                        if (checkDownloadedHanimeFile(videoData.title)) {
-                            showShortToast("正在下載中，請稍等")
-                        } else {
-                            enqueueDownloadWork(
-                                videoData.title, checkedQuality,
-                                videoData.videoUrls[checkedQuality]!!,
-                                viewModel.videoCode, videoData.coverUrl,
-                                releaseDate
-                            )
-                        }
-                    } else { // 下過了
-                        if (entity.quality == checkedQuality) {
-                            showShortToast("已經下載過咯")
-                        } else {
-                            val msg = spannable {
-                                "存在的影片名稱：".text()
-                                newline()
-                                entity.title.span {
-                                    style(Typeface.BOLD)
-                                }
-                                newline()
-                                "存在的影片畫質：".text()
-                                newline()
-                                entity.quality.span {
-                                    style(Typeface.BOLD)
-                                }
-                                newline(2)
-                                "是否覆蓋原畫質進行下載？".text()
-                            }
-                            MaterialAlertDialogBuilder(requireContext())
-                                .setTitle("已經存在同名稱但非同畫質的影片")
-                                .setMessage(msg)
-                                .setPositiveButton("覆蓋") { _, _ ->
-                                    enqueueDownloadWork(
-                                        videoData.title, checkedQuality,
-                                        videoData.videoUrls[checkedQuality]!!,
-                                        viewModel.videoCode, videoData.coverUrl,
-                                        releaseDate
-                                    )
-                                }.setNegativeButton("不下了！", null).show()
-                        }
+                    if (entity == null) { // 没下
+                        enqueueDownloadWork(videoData)
+                        return@collect
+                    }
+                    // 没下完或下過了
+                    if (!entity.isDownloaded) {
+                        if (entity.isDownloading) showShortToast("正在下載中...")
+                        else showShortToast("正在佇列中...")
+                        return@collect
                     }
                 }
             }
@@ -187,6 +149,20 @@ class VideoIntroductionFragment :
         } else {
             binding.btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_border_24)
             binding.btnAddToFav.text = "加入喜歡"
+        }
+    }
+
+    private fun initArtist(artist: HanimeVideoModel.Artist?) {
+        if (artist == null) {
+            binding.vgArtist.isGone = true
+        } else {
+            binding.vgArtist.isGone = false
+            binding.tvArtist.text = artist.name
+            binding.tvGenre.text = artist.genre
+            binding.ivArtist.load(artist.avatarUrl) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
+            }
         }
     }
 
@@ -212,6 +188,9 @@ class VideoIntroductionFragment :
         binding.btnWatchLater.clickTrigger(viewLifecycleOwner.lifecycle) {
             // todo
             showShortToast("功能暫未實現！")
+        }
+        binding.btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
+            browse(getHanimeVideoLink(viewModel.videoCode))
         }
     }
 
@@ -239,7 +218,9 @@ class VideoIntroductionFragment :
                         showShortToast("該影片特殊，無法下載")
                     } else notifyDownload(videoData.title, key) {
                         checkedQuality = key
-                        viewModel.loadDownloadedHanimeByVideoCode(viewModel.videoCode)
+                        viewModel.findDownloadedHanimeByVideoCodeAndQuality(
+                            viewModel.videoCode, checkedQuality
+                        )
                     }
                 }.show()
         }
@@ -263,14 +244,14 @@ class VideoIntroductionFragment :
             newline(2)
             "下載完畢後可以在「下載」介面找到下載後的影片，「設置」介面裏有詳細儲存路徑。".text()
         }
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("確定要下載嗎？")
-            .setMessage(notifyMsg)
-            .setPositiveButton("是的") { _, _ ->
+        requireContext().showAlertDialog {
+            setTitle("確定要下載嗎？")
+            setMessage(notifyMsg)
+            setPositiveButton("是的") { _, _ ->
                 action.invoke()
             }
-            .setNegativeButton("算了吧", null)
-            .show()
+            setNegativeButton("算了吧", null)
+        }
     }
 
     private inline fun requestNotificationPermission(crossinline then: () -> Unit) {
@@ -287,29 +268,25 @@ class VideoIntroductionFragment :
             }
     }
 
-    private fun enqueueDownloadWork(
-        title: String, quality: String, relatedUrl: String,
-        videoCode: String, coverUrl: String, releaseDate: Long,
-    ) {
+    private fun enqueueDownloadWork(videoData: HanimeVideoModel) {
         requestNotificationPermission {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val data = Data.Builder()
-                .putString(HanimeDownloadWorker.QUALITY, quality)
-                .putString(HanimeDownloadWorker.DOWNLOAD_URL, relatedUrl)
-                .putString(HanimeDownloadWorker.HANIME_NAME, title)
-                .putString(HanimeDownloadWorker.VIDEO_CODE, videoCode)
-                .putString(HanimeDownloadWorker.COVER_URL, coverUrl)
-                .putLong(HanimeDownloadWorker.RELEASE_DATE, releaseDate)
-                .build()
+            val data = workDataOf(
+                HanimeDownloadWorker.QUALITY to checkedQuality,
+                HanimeDownloadWorker.DOWNLOAD_URL to videoData.videoUrls[checkedQuality]!!,
+                HanimeDownloadWorker.HANIME_NAME to videoData.title,
+                HanimeDownloadWorker.VIDEO_CODE to viewModel.videoCode,
+                HanimeDownloadWorker.COVER_URL to videoData.coverUrl,
+            )
             val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
                 .addTag(HanimeDownloadWorker.TAG)
                 .setConstraints(constraints)
                 .setInputData(data)
                 .build()
             WorkManager.getInstance(applicationContext)
-                .beginUniqueWork(videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
+                .beginUniqueWork(viewModel.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
                 .enqueue()
         }
     }

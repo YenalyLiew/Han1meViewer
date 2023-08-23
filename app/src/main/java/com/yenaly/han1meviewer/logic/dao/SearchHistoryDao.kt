@@ -13,31 +13,31 @@ import kotlinx.coroutines.flow.Flow
 abstract class SearchHistoryDao {
 
     @Query("SELECT * FROM SearchHistoryEntity ORDER BY id DESC")
-    abstract fun loadAllSearchHistories(): Flow<MutableList<SearchHistoryEntity>>
+    abstract fun loadAll(): Flow<MutableList<SearchHistoryEntity>>
 
     @Query("SELECT * FROM SearchHistoryEntity WHERE `query` LIKE '%' || :keyword || '%' ORDER BY id DESC")
-    abstract fun loadAllSearchHistories(keyword: String): Flow<MutableList<SearchHistoryEntity>>
+    abstract fun loadAll(keyword: String): Flow<MutableList<SearchHistoryEntity>>
 
     @Delete
-    abstract suspend fun deleteSearchHistory(history: SearchHistoryEntity)
+    abstract suspend fun delete(history: SearchHistoryEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertSearchHistory(history: SearchHistoryEntity)
+    abstract suspend fun insert(history: SearchHistoryEntity)
 
     @Query("SELECT * FROM SearchHistoryEntity WHERE (`query` = :query) LIMIT 1")
-    abstract suspend fun loadSearchHistory(query: String): SearchHistoryEntity?
+    abstract suspend fun find(query: String): SearchHistoryEntity?
 
     @Query("DELETE FROM SearchHistoryEntity WHERE (`query` = :query)")
-    abstract suspend fun deleteSearchHistoryByKeyword(query: String)
+    abstract suspend fun deleteByKeyword(query: String)
 
     @Transaction
-    open suspend fun insertOrUpdateSearchHistory(entity: SearchHistoryEntity) {
-        val dbEntity = loadSearchHistory(entity.query)
+    open suspend fun insertOrUpdate(entity: SearchHistoryEntity) {
+        val dbEntity = find(entity.query)
         if (dbEntity != null) {
-            deleteSearchHistory(dbEntity)
-            insertSearchHistory(entity)
+            delete(dbEntity)
+            insert(entity)
             return
         }
-        insertSearchHistory(entity)
+        insert(entity)
     }
 }

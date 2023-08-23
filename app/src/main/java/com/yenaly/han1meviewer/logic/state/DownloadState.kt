@@ -8,7 +8,7 @@ import java.io.File
  * @time 2022/08/06 006 19:21
  */
 sealed class DownloadState {
-    object None : DownloadState()
+    data object None : DownloadState()
     data class Progress(val value: Int) : DownloadState()
     data class Error(val throwable: Throwable) : DownloadState()
     data class Done(val file: File) : DownloadState()

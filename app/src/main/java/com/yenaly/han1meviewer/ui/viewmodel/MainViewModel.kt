@@ -39,20 +39,20 @@ class MainViewModel(application: Application) : YenalyViewModel(application), IV
 
     fun deleteWatchHistory(history: WatchHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.deleteWatchHistory(history)
+            DatabaseRepo.WatchHistory.delete(history)
             Log.d("delete_watch_hty", "$history DONE!")
         }
     }
 
     fun deleteAllWatchHistories() {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.deleteAllWatchHistories()
+            DatabaseRepo.WatchHistory.deleteAll()
             Log.d("del_all_watch_hty", "DONE!")
         }
     }
 
     fun loadAllWatchHistories() =
-        DatabaseRepo.loadAllWatchHistories()
+        DatabaseRepo.WatchHistory.loadAll()
             .catch { e -> e.printStackTrace() }
             .flowOn(Dispatchers.IO)
 

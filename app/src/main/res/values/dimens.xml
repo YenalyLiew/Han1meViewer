@@ -9,9 +9,10 @@
     <dimen name="video_cover_height_medium">96dp</dimen>
     <dimen name="hanime_preview_news_pic_width">120dp</dimen>
     <dimen name="hanime_preview_news_pic_height">90dp</dimen>
-    <dimen name="avatar_size">50dp</dimen>
+    <dimen name="avatar_size">36dp</dimen>
     <dimen name="view_view_and_time_icon_size">14dp</dimen>
 
     <dimen name="video_view_and_time_and_duration">12sp</dimen>
     <dimen name="err_tip_text_size">24sp</dimen>
+    <dimen name="main_avatar_size">48dp</dimen>
 </resources>

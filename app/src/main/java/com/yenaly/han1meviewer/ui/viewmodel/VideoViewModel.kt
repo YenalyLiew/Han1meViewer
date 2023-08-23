@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.NetworkRepo
-import com.yenaly.han1meviewer.logic.entity.HanimeDownloadedEntity
+import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
@@ -36,7 +36,7 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
     private val _addToFavVideoFlow = MutableSharedFlow<WebsiteState<Unit>>()
     val addToFavVideoFlow = _addToFavVideoFlow.asSharedFlow()
 
-    private val _loadDownloadedFlow = MutableSharedFlow<HanimeDownloadedEntity?>()
+    private val _loadDownloadedFlow = MutableSharedFlow<HanimeDownloadEntity?>()
     val loadDownloadedFlow = _loadDownloadedFlow.asSharedFlow()
 
     fun getHanimeVideo(videoCode: String) {
@@ -72,14 +72,14 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
 
     fun insertWatchHistory(history: WatchHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.insertWatchHistory(history)
+            DatabaseRepo.WatchHistory.insert(history)
             Log.d("insert_watch_hty", "$history DONE!")
         }
     }
 
-    fun loadDownloadedHanimeByVideoCode(videoCode: String) {
+    fun findDownloadedHanimeByVideoCodeAndQuality(videoCode: String, quality: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val info = DatabaseRepo.loadDownloadedHanimeByVideoCode(videoCode)
+            val info = DatabaseRepo.HanimeDownload.findBy(videoCode, quality)
             _loadDownloadedFlow.emit(info)
         }
     }
