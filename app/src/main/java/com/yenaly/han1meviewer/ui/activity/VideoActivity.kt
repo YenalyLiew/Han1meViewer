@@ -60,8 +60,8 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                             showShortToast(state.throwable.localizedMessage)
                             if (state.throwable is ParseException) {
                                 browse(getHanimeVideoLink(videoCodeByWebsite ?: videoCode!!))
-                                finish()
                             }
+                            finish()
                         }
 
                         is VideoLoadingState.Loading -> {

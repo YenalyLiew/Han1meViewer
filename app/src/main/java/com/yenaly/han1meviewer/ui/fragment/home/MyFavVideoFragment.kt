@@ -11,7 +11,6 @@ import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yenaly.han1meviewer.R
@@ -22,6 +21,7 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.toVideoCode
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
+import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.showSnackBar
@@ -44,11 +44,11 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
         addMenu(R.menu.menu_my_list_toolbar, viewLifecycleOwner) { menuItem ->
             when (menuItem.itemId) {
                 R.id.tb_help -> {
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("使用注意！")
-                        .setMessage("左劃可以取消喜歡！")
-                        .setPositiveButton("OK", null)
-                        .show()
+                    requireContext().showAlertDialog {
+                        setTitle("使用注意！")
+                        setMessage("左劃可以取消喜歡！")
+                        setPositiveButton("OK", null)
+                    }
                     return@addMenu true
                 }
             }

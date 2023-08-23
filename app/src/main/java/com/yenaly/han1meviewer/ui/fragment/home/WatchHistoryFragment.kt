@@ -6,13 +6,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
 import com.yenaly.han1meviewer.ui.adapter.WatchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.showSnackBar
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -33,23 +33,23 @@ class WatchHistoryFragment : YenalyFragment<FragmentListOnlyBinding, MainViewMod
             when (item.itemId) {
                 R.id.tb_delete -> {
                     // todo: strings.xml
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("看這裏！")
-                        .setMessage("是否將影片觀看歷史記錄全部刪除🤔")
-                        .setPositiveButton("是的！") { _, _ ->
+                    requireContext().showAlertDialog {
+                        setTitle("看這裏！")
+                        setMessage("是否將影片觀看歷史記錄全部刪除🤔")
+                        setPositiveButton("是的！") { _, _ ->
                             viewModel.deleteAllWatchHistories()
                             historyAdapter.setList(null)
                         }
-                        .setNegativeButton("算了！", null)
-                        .show()
+                        setNegativeButton("算了！", null)
+                    }
                     return@addMenu true
                 }
                 R.id.tb_help -> {
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("使用注意！")
-                        .setMessage("左劃可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
-                        .setPositiveButton("OK", null)
-                        .show()
+                    requireContext().showAlertDialog {
+                        setTitle("使用注意！")
+                        setMessage("左劃可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
+                        setPositiveButton("OK", null)
+                    }
                     return@addMenu true
                 }
             }

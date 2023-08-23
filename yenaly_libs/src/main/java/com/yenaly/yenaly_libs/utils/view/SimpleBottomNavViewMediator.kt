@@ -23,7 +23,7 @@ import com.yenaly.yenaly_libs.utils.activity
 class SimpleBottomNavViewMediator constructor(
     private val bottomNavigationView: BottomNavigationView,
     private val viewPager2: ViewPager2,
-    var smoothScroll: Boolean = true
+    var smoothScroll: Boolean = true,
 ) {
 
     private val fragmentActivity = bottomNavigationView.context.activity as? FragmentActivity
@@ -67,9 +67,7 @@ class SimpleBottomNavViewMediator constructor(
             override fun onPageSelected(position: Int) {
                 bottomNavigationView.selectedItemId = newFragmentList[position].first
                 onFragmentChangedListener?.onFragmentChanged(
-                    fragmentActivity.supportFragmentManager.findFragmentByTag(
-                        "f${position}"
-                    )!!.also { currentFragment = it }
+                    fragmentActivity.supportFragmentManager.fragments.find { it.isResumed }
                 )
             }
         }
@@ -106,6 +104,6 @@ class SimpleBottomNavViewMediator constructor(
     }
 
     fun interface OnFragmentChangedListener {
-        fun onFragmentChanged(currentFragment: Fragment)
+        fun onFragmentChanged(currentFragment: Fragment?)
     }
 }

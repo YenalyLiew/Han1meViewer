@@ -47,8 +47,8 @@ class CollapsibleTags @JvmOverloads constructor(
             chipGroup.removeAllViews()
             value?.forEach(chipGroup::addView)
             chipGroupMeasureHeight = chipGroup.calcHeight()
-            collapseValueAnimator = buildChipGroupValueAnimatorBy(chipGroupMeasureHeight, 0)
-            expandValueAnimator = buildChipGroupValueAnimatorBy(0, chipGroupMeasureHeight)
+            collapseValueAnimator = buildChipGroupAnimator(chipGroupMeasureHeight, 0)
+            expandValueAnimator = buildChipGroupAnimator(0, chipGroupMeasureHeight)
         }
 
     private var chipGroupMeasureHeight = 0
@@ -141,7 +141,7 @@ class CollapsibleTags @JvmOverloads constructor(
         return measuredHeight
     }
 
-    private fun buildChipGroupValueAnimatorBy(start: Int, end: Int): ValueAnimator {
+    private fun buildChipGroupAnimator(start: Int, end: Int): ValueAnimator {
         return ValueAnimator.ofInt(start, end).apply {
             duration = animDuration
             interpolator = animInterpolator

@@ -24,9 +24,6 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
     private val adapter by unsafeLazy { HanimeDownloadedRvAdapter(this) }
 
     override fun initData(savedInstanceState: Bundle?) {
-
-        clearMenu()
-
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         adapter.setDiffCallback(HanimeDownloadedRvAdapter.COMPARATOR)

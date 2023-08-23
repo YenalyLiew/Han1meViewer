@@ -41,7 +41,7 @@
                     android:icon="@drawable/ic_baseline_history_24"
                     android:title="@string/watch_history" />
                 <item
-                    android:id="@+id/nv_downloaded"
+                    android:id="@+id/nv_download"
                     android:icon="@drawable/ic_baseline_download_24"
                     android:title="@string/download" />
             </group>

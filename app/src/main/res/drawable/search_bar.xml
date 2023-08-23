@@ -5,7 +5,5 @@
     <solid android:color="@color/per90_transparent_white" />
 
     <!-- android:radius 圆角的半径 -->
-    <corners
-        android:topLeftRadius="8dp"
-        android:topRightRadius="8dp" />
+    <corners android:radius="8dp" />
 </shape>

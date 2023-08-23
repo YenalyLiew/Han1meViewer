@@ -23,7 +23,7 @@
                 android:layout_width="@dimen/video_cover_weight_small"
                 android:layout_height="@dimen/video_cover_height_small"
                 android:contentDescription="@null"
-                app:layout_constraintBottom_toBottomOf="@id/barrier"
+                app:layout_constraintBottom_toBottomOf="@id/_barrier"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/RoundCornerImageView" />
@@ -65,6 +65,7 @@
                     android:max="100" />
 
                 <TextView
+                    android:id="@+id/tv_progress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -73,38 +74,36 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_added_time"
+                android:id="@+id/tv_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:textStyle="bold"
-                app:drawableStartCompat="@drawable/ic_baseline_more_time_24"
-                app:layout_constraintBottom_toBottomOf="@id/barrier"
+                app:layout_constraintBottom_toBottomOf="@id/_barrier"
                 app:layout_constraintStart_toEndOf="@id/iv_cover"
                 app:layout_constraintTop_toBottomOf="@id/ll_progress"
-                tools:text="2021/02/03 15:12" />
+                tools:text="1 MB / 7 MB" />
 
             <TextView
-                android:id="@+id/tv_release_date"
+                android:id="@+id/tv_quality"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="1"
                 app:layout_constrainedWidth="true"
-                app:layout_constraintBaseline_toBaselineOf="@id/tv_added_time"
-                app:layout_constraintBottom_toBottomOf="@id/barrier"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_size"
+                app:layout_constraintBottom_toBottomOf="@id/_barrier"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="2021-02-02" />
+                tools:text="720P" />
 
             <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier"
+                android:id="@+id/_barrier"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="iv_cover, tv_release_date, tv_added_time" />
+                app:constraint_referenced_ids="iv_cover, tv_quality, tv_size" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cancel"
@@ -115,18 +114,17 @@
                 app:icon="@drawable/ic_baseline_close_24"
                 app:iconGravity="end"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barrier" />
+                app:layout_constraintTop_toBottomOf="@id/_barrier" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_start_or_pause"
+                android:id="@+id/btn_start"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/start_download"
-                app:icon="@drawable/ic_baseline_play_arrow_24"
                 app:iconGravity="start"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barrier" />
+                app:layout_constraintTop_toBottomOf="@id/_barrier" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

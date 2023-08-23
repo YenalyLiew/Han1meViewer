@@ -58,21 +58,3 @@ fun Long.formatFileSize(short: Boolean = true): String {
     }
     return Formatter.formatFileSize(applicationContext, this)
 }
-
-fun String?.isInt(): Boolean {
-    if (this == null) return false
-    return try {
-        toInt()
-        true
-    } catch (e: NumberFormatException) {
-        false
-    }
-}
-
-fun String.toIntSafely(): Int? {
-    return try {
-        toInt()
-    } catch (e: NumberFormatException) {
-        null
-    }
-}

@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
  * @author Yenaly Liew
  * @time 2022/08/06 006 16:54
  */
+@Deprecated("Use [HanimeDownloadEntity] instead.")
 @Entity
 data class HanimeDownloadedEntity(
     var coverUrl: String,
@@ -18,5 +19,5 @@ data class HanimeDownloadedEntity(
     var videoUri: String,
     var quality: String,
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Int = 0,
 )

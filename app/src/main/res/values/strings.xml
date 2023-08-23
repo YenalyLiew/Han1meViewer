@@ -111,4 +111,7 @@
     <string name="no_video_links_found">未發現影片連結</string>
     <string name="child_comment">子評論</string>
     <string name="search_options_tips">長按某單元可以清除當前你所選單元的所有tag</string>
+    <string name="pause">暫停</string>
+    <string name="continues">繼續</string>
+    <string name="jump_to_webpage">轉到網頁</string>
 </resources>

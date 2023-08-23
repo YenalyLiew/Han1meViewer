@@ -1,12 +1,15 @@
 package com.yenaly.han1meviewer.ui.view
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,11 +41,12 @@ class HanimeSearchBar @JvmOverloads constructor(
 
     private val window = checkNotNull(context.activity?.window)
 
+    private val searchBar: ViewGroup
     private val back: MaterialButton
     private val search: MaterialButton
     private val tag: MaterialButton
-    private val historyRv: RecyclerView
-    private val searchBar: TextInputEditText
+    private val rvHistory: RecyclerView
+    private val etSearch: TextInputEditText
 
     /**
      * 历史记录是否折叠
@@ -51,18 +55,20 @@ class HanimeSearchBar @JvmOverloads constructor(
 
     init {
         inflate(context, R.layout.layout_hanime_search_bar, this)
+        searchBar = findViewById(R.id.search_bar)
         back = findViewById(R.id.btn_back)
         search = findViewById(R.id.btn_search)
         tag = findViewById(R.id.btn_tag)
-        historyRv = findViewById(R.id.rv_history)
-        searchBar = findViewById(R.id.et_search)
+        rvHistory = findViewById(R.id.rv_history)
+        etSearch = findViewById(R.id.et_search)
 
         // init
-        historyRv.layoutManager = LinearLayoutManager(context)
-        searchBar.setOnEditorActionListener { _, actionId, _ ->
+        rvHistory.layoutManager = LinearLayoutManager(context)
+        rvHistory.itemAnimator?.removeDuration = 0
+        etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 onSearchClickListener?.let { listener ->
-                    listener(searchBar, searchBar.text?.toString().orEmpty())
+                    listener(etSearch, etSearch.text?.toString().orEmpty())
                     true
                 } ?: false
             }
@@ -73,7 +79,7 @@ class HanimeSearchBar @JvmOverloads constructor(
     var adapter: BaseQuickAdapter<SearchHistoryEntity, out BaseViewHolder>? = null
         set(value) {
             field = value
-            historyRv.adapter = value
+            rvHistory.adapter = value
         }
 
 
@@ -93,8 +99,8 @@ class HanimeSearchBar @JvmOverloads constructor(
         set(value) {
             field = value
             search.setOnClickListener {
-                searchBar.hideIme(window)
-                value?.invoke(it, searchBar.text?.toString().orEmpty())
+                etSearch.hideIme(window)
+                value?.invoke(it, etSearch.text?.toString().orEmpty())
             }
         }
 
@@ -105,50 +111,53 @@ class HanimeSearchBar @JvmOverloads constructor(
         }
 
     var searchText: String?
-        get() = searchBar.text?.toString()
+        get() = etSearch.text?.toString()
         set(value) {
-            searchBar.setText(value)
-            searchBar.setSelection(searchBar.length())
+            etSearch.setText(value)
+            etSearch.setSelection(etSearch.length())
         }
 
     /**
      * 文字修改或者获得焦点的Flow
      */
     fun textChangeFlow() = callbackFlow {
-        val watcher = searchBar.addTextChangedListener { text ->
+        val watcher = etSearch.addTextChangedListener { text ->
             trySend(text?.toString())
             Log.d("HanimeSearchBar", "watcher: $text")
         }
 
-        searchBar.setOnFocusChangeListener { _, hasFocus ->
+        etSearch.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 showHistory()
                 trySend(searchText)
                 Log.d("HanimeSearchBar", "focus: $searchText")
             } else {
-                hideHistory()
+                if (!isCollapsed) hideHistory()
             }
         }
 
         awaitClose {
-            searchBar.removeTextChangedListener(watcher)
-            searchBar.onFocusChangeListener = null
+            etSearch.removeTextChangedListener(watcher)
+            etSearch.onFocusChangeListener = null
         }
     }
 
-    // var history
-    //     get() = adapter?.data ?: mutableListOf()
-    //     set(value) {
-    //         adapter?.setDiffNewData(value)
-    //     }
+    var history
+        get() = adapter?.data ?: mutableListOf()
+        set(value) {
+            adapter?.also {
+                it.setDiffNewData(value)
+            }
+        }
 
     fun showHistory() {
-        historyRv.animate()
+        rvHistory.animate()
             .setInterpolator(animInterpolator)
             .setDuration(animDuration)
             .alpha(1F)
-            .withStartAction { historyRv.visibility = VISIBLE }
+            .withStartAction { rvHistory.visibility = VISIBLE }
             .start()
+
         back.animate()
             .setInterpolator(animInterpolator)
             .setDuration(animDuration)
@@ -158,23 +167,46 @@ class HanimeSearchBar @JvmOverloads constructor(
     }
 
     fun hideHistory() {
-        searchBar.hideIme(window)
-        historyRv.animate()
-            .setInterpolator(animInterpolator)
-            .setDuration(animDuration)
-            .alpha(0F)
-            .withEndAction { historyRv.visibility = GONE }
-            .start()
-        back.animate()
-            .setInterpolator(animInterpolator)
-            .setDuration(animDuration)
-            .rotation(0F)
-            .start()
-        isCollapsed = true
+        if (!isCollapsed) {
+            etSearch.hideIme(window)
+            Log.d("HanimeSearchBar", "History Height: ${rvHistory.height}")
+            rvHistory.visibility = GONE
+            back.animate()
+                .setInterpolator(animInterpolator)
+                .setDuration(animDuration)
+                .rotation(0F)
+                .start()
+            isCollapsed = true
+        }
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-        if (event?.keyCode == KeyEvent.KEYCODE_BACK && !isCollapsed) {
+    private fun View.buildHeightAnimation(
+        from: Int, to: Int,
+    ): ValueAnimator? {
+        if (from == to) return null
+        return ValueAnimator.ofInt(from, to).apply {
+            duration = animDuration
+            interpolator = animInterpolator
+            addUpdateListener {
+                val value = it.animatedValue as Int
+                updateLayoutParams {
+                    height = value
+                }
+            }
+        }
+    }
+
+    private fun View.calcHeight(): Int {
+        val matchParentMeasureSpec =
+            MeasureSpec.makeMeasureSpec((parent as View).width, MeasureSpec.EXACTLY)
+        val wrapContentMeasureSpec =
+            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        measure(matchParentMeasureSpec, wrapContentMeasureSpec)
+        return measuredHeight
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.keyCode == KeyEvent.KEYCODE_BACK && !isCollapsed) {
             hideHistory()
             return true
         }

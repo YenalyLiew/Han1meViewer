@@ -19,9 +19,10 @@ import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
  */
 class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, DownloadViewModel>() {
 
-    private val tabNameArray = arrayOf(R.string.downloading, R.string.downloaded)
+    private val tabNameArray = intArrayOf(R.string.downloading, R.string.downloaded)
 
     override fun initData(savedInstanceState: Bundle?) {
+        clearMenu()
         initViewPager()
     }
 

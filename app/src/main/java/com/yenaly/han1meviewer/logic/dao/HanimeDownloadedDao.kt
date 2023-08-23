@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.yenaly.han1meviewer.logic.dao
 
 import androidx.room.*
@@ -9,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
  * @author Yenaly Liew
  * @time 2022/08/07 007 18:24
  */
+@Deprecated("Use [HanimeDownloadDao] instead.")
 @Dao
 abstract class HanimeDownloadedDao {
     @Query("SELECT * FROM HanimeDownloadedEntity ORDER BY id DESC")

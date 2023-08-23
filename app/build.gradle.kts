@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.util.Date
 import java.text.SimpleDateFormat
 import java.util.TimeZone
@@ -16,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = createVersionCode()
-        versionName = createVersionName(major = 0, minor = 8, patch = 0)
+        versionName = createVersionName(major = 0, minor = 9, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,17 +29,23 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            applicationVariants.all variant@{
+                this@variant.outputs.all output@{
+                    val output = this@output as BaseVariantOutputImpl
+                    output.outputFileName = "Han1meViewer-v${defaultConfig.versionName}.apk"
+                }
+            }
         }
     }
     buildFeatures {
         dataBinding = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
     }
     namespace = "com.yenaly.han1meviewer"

@@ -18,10 +18,11 @@ import java.lang.reflect.ParameterizedType
  * @Time : 2022/04/17 017 19:26
  * @Description : Description...
  */
-abstract class YenalySettingsFragment : PreferenceFragmentCompat() {
+abstract class YenalySettingsFragment(@XmlRes private val xmlRes: Int) :
+    PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(initPreferencesResource(), rootKey)
+        setPreferencesFromResource(xmlRes, rootKey)
         initPreferencesVariable()
         onPreferencesCreated(savedInstanceState)
         liveDataObserve()
@@ -32,12 +33,6 @@ abstract class YenalySettingsFragment : PreferenceFragmentCompat() {
      */
     open fun liveDataObserve() {
     }
-
-    /**
-     * 初始化xml设置列表
-     */
-    @XmlRes
-    abstract fun initPreferencesResource(): Int
 
     /**
      * 在此处使用[findPreference]初始化设置中的变量

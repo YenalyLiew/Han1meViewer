@@ -17,7 +17,6 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
@@ -29,6 +28,7 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.han1meviewer.util.checkNeedUpdate
+import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.videoUrlRegex
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
@@ -63,7 +63,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             R.id.nv_fav_video -> supportActionBar?.setSubtitle(R.string.fav_video)
             R.id.nv_play_list -> supportActionBar?.setSubtitle(R.string.play_list)
             R.id.nv_watch_later -> supportActionBar?.setSubtitle(R.string.watch_later)
-            R.id.nv_downloaded -> supportActionBar?.setSubtitle(R.string.downloaded)
+            R.id.nv_download -> supportActionBar?.setSubtitle(R.string.download)
         }
     }
 
@@ -166,14 +166,14 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
     // todo: 有時間轉移到 strings.xml
     @Deprecated("To SnackBar")
     private fun showFindRelatedLinkDialog(videoCode: String) {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("新發現！")
-            .setMessage("檢測到剪貼簿裏存在Hanime1相關連結")
-            .setPositiveButton("進入！") { _, _ ->
+        showAlertDialog {
+            setTitle("新發現！")
+            setMessage("檢測到剪貼簿裏存在Hanime1相關連結")
+            setPositiveButton("進入！") { _, _ ->
                 startActivity<VideoActivity>(VIDEO_CODE to videoCode)
             }
-            .setNegativeButton("算了吧", null)
-            .show()
+            setNegativeButton("算了吧", null)
+        }
     }
 
     // todo: 有時間轉移到 strings.xml
@@ -200,14 +200,14 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                 style(Typeface.BOLD)
             }
         }
-        MaterialAlertDialogBuilder(this)
-            .setTitle("檢測到新版本！")
-            .setMessage(msg)
-            .setPositiveButton("去下載！") { _, _ ->
+        showAlertDialog {
+            setTitle("檢測到新版本！")
+            setMessage(msg)
+            setPositiveButton("去下載！") { _, _ ->
                 browse(versionInfo.assets.first().browserDownloadURL)
             }
-            .setNeutralButton("忽略", null)
-            .show()
+            setNeutralButton("忽略", null)
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -217,15 +217,15 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             val headerUsername = view.findViewById<TextView>(R.id.header_username)
             if (isAlreadyLogin) {
                 headerAvatar.setOnClickListener {
-                    MaterialAlertDialogBuilder(this)
-                        .setTitle("是否要登出")
-                        .setPositiveButton("是的") { _, _ ->
+                    showAlertDialog {
+                        setTitle("你確定要登出嗎？")
+                        setPositiveButton("是的") { _, _ ->
                             logout()
                             initHeaderView()
                             initMenu()
                         }
-                        .setNegativeButton("算了吧", null)
-                        .show()
+                        setNegativeButton("算了吧", null)
+                    }
                 }
                 lifecycleScope.launch {
                     whenStarted {

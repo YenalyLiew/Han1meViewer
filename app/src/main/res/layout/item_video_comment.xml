@@ -23,17 +23,18 @@
                 android:layout_width="@dimen/avatar_size"
                 android:layout_height="@dimen/avatar_size"
                 android:contentDescription="@null"
+                app:layout_constraintBottom_toTopOf="@id/barrier"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_username"
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -44,7 +45,7 @@
             <TextView
                 android:id="@+id/tv_date"
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
                 android:maxLines="1"
@@ -53,13 +54,20 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_username"
                 tools:text="12121231231" />
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="tv_date,tv_username, iv_avatar" />
+
             <TextView
                 android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:textIsSelectable="true"
-                app:layout_constraintTop_toBottomOf="@id/iv_avatar" />
+                app:layout_constraintTop_toBottomOf="@id/barrier" />
 
             <LinearLayout
                 android:id="@+id/linear"

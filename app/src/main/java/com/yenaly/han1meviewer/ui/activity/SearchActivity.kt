@@ -56,6 +56,11 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
+        fromVideoTag?.let {
+            viewModel.query = it
+            binding.searchBar.searchText = it
+        }
+
         initSearchBar()
 
         binding.searchRv.apply {
@@ -158,6 +163,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private fun initSearchBar() {
         val searchAdapter = HanimeSearchHistoryRvAdapter()
+        searchAdapter.setDiffCallback(HanimeSearchHistoryRvAdapter.COMPARATOR)
         searchAdapter.listener = object : HanimeSearchHistoryRvAdapter.OnItemViewClickListener {
             override fun onItemClickListener(v: View, history: SearchHistoryEntity) {
                 binding.searchBar.searchText = history.query
@@ -167,7 +173,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 viewModel.deleteSearchHistory(history)
             }
         }
-        binding.searchBar.apply {
+        binding.searchBar.apply hsb@{
             adapter = searchAdapter
             onTagClickListener = {
                 optionsPopupFragment.showIn(this@SearchActivity)
@@ -190,7 +196,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                 .flatMapLatest {
                     viewModel.loadAllSearchHistories(it)
                 }.flowOn(Dispatchers.IO).onEach {
-                    searchAdapter.setList(it)
+                    this@hsb.history = it
                 }.flowWithLifecycle(lifecycle).launchIn(lifecycleScope)
         }
     }
