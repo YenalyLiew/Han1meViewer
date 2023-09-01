@@ -18,7 +18,11 @@ This project is intended solely for learning and communication purposes. Commerc
 
 ## 功能
 
-- [x] 主页
+- 主页
+
+  - [x] 头图
+
+  - [x] 推荐
 
 - 新番新闻
 
@@ -27,17 +31,17 @@ This project is intended solely for learning and communication purposes. Commerc
     - [x] 子评论
 
 - 用户
-  - [x] 登入（谷歌登录没试过，可能不行）
+  - [x] 登入（暂不支持谷歌登录）
   - [x] 登出
-  
+
 - 搜索
   - [x] 高级搜索
-  
+
 - 影片
   - [x] 播放
   - [x] 添加/移除到喜欢列表
-  - [ ] 添加/移除到稍后观看
-  - [ ] 添加/移除到播放清单
+  - [x] 添加/移除到稍后观看
+  - [x] 添加/移除到播放清单
   - [x] 下载
   - [x] 分享
   - [x] 同系列影片
@@ -45,21 +49,22 @@ This project is intended solely for learning and communication purposes. Commerc
   - [x] TAG
     - [x] 查看
     - [ ] 修改（做不了，有人机验证）
+
   - [x] 评论
     - [x] 子评论
-  
+
 - 喜欢列表
   - [x] 删除
-  
+
 - 稍后观看
   - [x] 删除
-  
+
 - 播放清单
-  - [ ] 修改清单
-  - [ ] 添加清单
-  - [ ] 删除清单
-  - [ ] 删除影片
-  
+  - [x] 修改清单
+  - [x] 添加清单
+  - [x] 删除清单
+  - [x] 删除影片
+
 - 漫画（不打算做）
 
 ## 痛点解决
@@ -85,6 +90,20 @@ This project is intended solely for learning and communication purposes. Commerc
 ~~PS：你还真给我大改了。。~~
 
 ## 更新内容
+
+### v0.10.0
+
+**[新增]** 播放清单。支持添加、删除、修改等一系列操作。创建播放清单在原网页中是在影片界面添加，而在本软件里更改为在播放清单界面添加。
+
+**[新增]** 转官方网页下载。有些在本软件中无法解析的影片可以转到官方下载页面进行独立下载。
+
+**[新增]** 主页头图显示。
+
+**[改动]** 清单页面删除操作由从右向左滑动修改为长按。
+
+**[优化]** 部分页面的 UI，清单页面影片布局修改为和官网一样的竖版。
+
+**[修复]** 页面刷新后刷新标志不消失。在清单页面删除某项后再次回到该页面又复现。
 
 ### v0.9.0
 

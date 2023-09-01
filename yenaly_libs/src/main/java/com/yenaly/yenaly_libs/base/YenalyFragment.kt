@@ -39,7 +39,7 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initData(savedInstanceState)
-        liveDataObserve()
+        bindDataObservers()
     }
 
     override fun onDestroyView() {
@@ -64,9 +64,9 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
     }
 
     /**
-     * Livedata监听位 (optional)
+     * 用于绑定数据观察器 (optional)
      */
-    open fun liveDataObserve() {
+    open fun bindDataObservers() {
     }
 
     /**

@@ -3,6 +3,9 @@ package com.yenaly.han1meviewer
 import com.yenaly.yenaly_libs.utils.appScreenWidth
 import com.yenaly.yenaly_libs.utils.applicationContext
 
+/**
+ * 我觉得空字符串写出来太逆天了，所以搞了个常量
+ */
 const val EMPTY_STRING = ""
 
 // 标准时间格式

@@ -6,6 +6,8 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 
 /**
+ * 受代码影响的 Chip，用于搜索栏的高级搜索
+ *
  * @project Hanime1
  * @author Yenaly Liew
  * @time 2022/06/16 016 16:19

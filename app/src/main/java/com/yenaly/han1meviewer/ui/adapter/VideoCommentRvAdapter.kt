@@ -18,8 +18,8 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemVideoCommentBinding
 import com.yenaly.han1meviewer.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.model.VideoCommentModel
-import com.yenaly.han1meviewer.ui.fragment.hanime.ChildCommentPopupFragment
-import com.yenaly.han1meviewer.ui.fragment.hanime.CommentFragment
+import com.yenaly.han1meviewer.ui.fragment.video.ChildCommentPopupFragment
+import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup
 import com.yenaly.yenaly_libs.utils.makeBundle
 import com.yenaly.yenaly_libs.utils.showShortToast

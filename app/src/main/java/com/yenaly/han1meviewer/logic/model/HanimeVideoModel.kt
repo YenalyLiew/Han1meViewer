@@ -19,7 +19,14 @@ data class HanimeVideoModel(
     val videoUrls: ResolutionLinkMap,
 
     val tags: List<String>,
-    val playList: PlayList?,
+    /**
+     * 注意，這裏的myList是指用戶的播放清單playlist
+     */
+    val myList: MyList?,
+    /**
+     * 注意，這裏的playlist是指該影片的系列影片，並非用戶的播放清單
+     */
+    val playlist: Playlist?,
     val relatedHanimes: List<HanimeInfoModel>,
     val artist: Artist?,
 
@@ -30,17 +37,31 @@ data class HanimeVideoModel(
 ) {
 
     fun incrementFavTime() {
-        if (favTimes != null) favTimes = favTimes!! + 1
+        favTimes?.let { favTimes = it + 1 }
         isFav = true
     }
 
     fun decrementFavTime() {
-        if (favTimes != null) favTimes = favTimes!! - 1
+        favTimes?.let { favTimes = it - 1 }
         isFav = false
     }
 
-    data class PlayList(
-        val playListName: String?,
+    data class MyList(
+        var isWatchLater: Boolean,
+        val myListInfo: List<MyListInfo>,
+    ) {
+        data class MyListInfo(
+            val code: String,
+            val title: String,
+            var isSelected: Boolean,
+        )
+
+        val titleArray get() = myListInfo.map { it.title }.toTypedArray()
+        val isSelectedArray get() = myListInfo.map { it.isSelected }.toBooleanArray()
+    }
+
+    data class Playlist(
+        val playlistName: String?,
         val video: List<HanimeInfoModel>,
     )
 

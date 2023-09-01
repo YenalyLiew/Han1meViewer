@@ -12,10 +12,8 @@ import com.drakeet.about.Card
 import com.drakeet.about.Category
 import com.drakeet.about.Contributor
 import com.google.android.material.appbar.AppBarLayout
-import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.appLocalVersionName
-import com.yenaly.yenaly_libs.utils.dp
 
 /**
  * @project Han1meViewer
@@ -70,31 +68,6 @@ class AboutActivity : AbsAboutActivity() {
                     "https://github.com/YenalyLiew"
                 )
             )
-
-            add(Category("未實現或不足"))
-            add(Card(
-                spannable {
-                    "「下載」功能不夠完善".span {
-                        quote(
-                            Color.rgb(
-                                (0..255).random(),
-                                (0..255).random(),
-                                (0..255).random()
-                            ), gapWidth = 4.dp
-                        )
-                    }
-                    newline(2)
-                    "「播放清單」功能未實裝".span {
-                        quote(
-                            Color.rgb(
-                                (0..255).random(),
-                                (0..255).random(),
-                                (0..255).random()
-                            ), gapWidth = 4.dp
-                        )
-                    }
-                }
-            ))
         }
     }
 }

@@ -6,6 +6,10 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Theme.Hanime1.Main" parent="Theme.Hanime1">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
     <style name="Theme.Hanime1.About" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q">true</item>
     </style>

@@ -1,13 +1,17 @@
 package com.yenaly.han1meviewer
 
 /**
+ * resolution to link map
+ */
+typealias ResolutionLinkMap = LinkedHashMap<String, String>
+
+/**
+ * 如果你在其他地方看到了 Quality，那就是 Resolution，我混用了。
+ *
  * @project Han1meViewer
  * @author Yenaly Liew
  * @time 2022/10/11 011 21:19
  */
-
-typealias ResolutionLinkMap = LinkedHashMap<String, String>
-
 class HanimeResolution {
 
     private val resArray = arrayOfNulls<Pair<String, String>>(5)

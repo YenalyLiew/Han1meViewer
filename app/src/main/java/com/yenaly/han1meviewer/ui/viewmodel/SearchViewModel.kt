@@ -57,7 +57,7 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
                 sort, broad, year, month,
                 duration, tags, brands
             ).collect { search ->
-                _searchFlow.value = search
+                _searchFlow.emit(search)
             }
         }
     }

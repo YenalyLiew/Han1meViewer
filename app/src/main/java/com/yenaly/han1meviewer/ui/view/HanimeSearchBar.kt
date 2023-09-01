@@ -26,6 +26,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
 /**
+ * 搜索界面的搜索栏
+ *
  * @project Han1meViewer
  * @author Yenaly Liew
  * @time 2023/08/11 011 15:20

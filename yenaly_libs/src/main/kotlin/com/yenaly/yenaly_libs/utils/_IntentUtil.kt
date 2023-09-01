@@ -24,7 +24,7 @@ import androidx.fragment.app.Fragment
 inline fun <reified Ava : Activity> Activity.startActivity(
     vararg values: Pair<String, Any?>,
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = startActivity(getIntent<Ava>(flag, extra, *values))
 
 /**
@@ -35,7 +35,7 @@ inline fun <reified Ava : Activity> Activity.startActivity(
  */
 inline fun <reified Ava : Activity> Activity.startActivity(
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = Intent(this, Ava::class.java).apply {
     flag?.let { flags = it }
     extra?.let { putExtras(it) }
@@ -53,7 +53,7 @@ inline fun <reified Ava : Activity> Activity.startActivity(
 inline fun <reified S : Service> Activity.startService(
     vararg values: Pair<String, Any?>,
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = startService(getIntent<S>(flag, extra, *values))
 
 /**
@@ -64,7 +64,7 @@ inline fun <reified S : Service> Activity.startService(
  */
 inline fun <reified S : Service> Activity.startService(
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = Intent(this, S::class.java).apply {
     flag?.let { flags = it }
     extra?.let { putExtras(it) }
@@ -80,9 +80,9 @@ inline fun <reified S : Service> Activity.startService(
  *  @param values 需要传过去的值
  */
 inline fun <reified Bella : Activity> Fragment.startActivity(
+    vararg values: Pair<String, Any?>,
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg values: Pair<String, Any?>
 ) = activity?.let {
     startActivity(it.getIntent<Bella>(flag, extra, *values))
 }
@@ -95,7 +95,7 @@ inline fun <reified Bella : Activity> Fragment.startActivity(
  */
 inline fun <reified Bella : Activity> Fragment.startActivity(
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = activity?.let { activity ->
     Intent(activity, Bella::class.java).apply {
         flag?.let { flags = it }
@@ -115,7 +115,7 @@ inline fun <reified Bella : Activity> Fragment.startActivity(
 inline fun <reified S : Service> Fragment.startService(
     vararg values: Pair<String, Any?>,
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = activity?.let {
     it.startService(it.getIntent<S>(flag, extra, *values))
 }
@@ -128,7 +128,7 @@ inline fun <reified S : Service> Fragment.startService(
  */
 inline fun <reified S : Service> Fragment.startService(
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = activity?.let { activity ->
     Intent(activity, S::class.java).apply {
         flag?.let { flags = it }
@@ -148,7 +148,7 @@ inline fun <reified S : Service> Fragment.startService(
 inline fun <reified Carol : Activity> Context.startActivity(
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg values: Pair<String, Any?>
+    vararg values: Pair<String, Any?>,
 ) = startActivity(getIntent<Carol>(flag, extra, *values))
 
 /**
@@ -160,7 +160,7 @@ inline fun <reified Carol : Activity> Context.startActivity(
  */
 inline fun <reified Carol : Activity> Context.startActivity(
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = Intent(this, Carol::class.java).apply {
     flag?.let { flags = it }
     extra?.let { putExtras(it) }
@@ -178,7 +178,7 @@ inline fun <reified Carol : Activity> Context.startActivity(
 inline fun <reified S : Service> Context.startService(
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg values: Pair<String, Any?>
+    vararg values: Pair<String, Any?>,
 ) = startService(getIntent<S>(flag, extra, *values))
 
 /**
@@ -190,7 +190,7 @@ inline fun <reified S : Service> Context.startService(
  */
 inline fun <reified S : Service> Context.startService(
     flag: Int? = null,
-    extra: Bundle? = null
+    extra: Bundle? = null,
 ) = Intent(this, S::class.java).apply {
     flag?.let { flags = it }
     extra?.let { putExtras(it) }
@@ -208,11 +208,13 @@ inline fun <reified S : Service> Context.startService(
 inline fun <reified Diana : Context> Context.getIntent(
     flag: Int? = null,
     extra: Bundle? = null,
-    vararg pairs: Pair<String, Any?>
+    vararg pairs: Pair<String, Any?>,
 ): Intent = Intent(this, Diana::class.java).apply {
     flag?.let { flags = it }
     extra?.let { putExtras(it) }
-    if (pairs.isNotEmpty()) { putExtras(bundleOf(*pairs)) }
+    if (pairs.isNotEmpty()) {
+        putExtras(bundleOf(*pairs))
+    }
 }
 
 /**

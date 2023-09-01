@@ -7,8 +7,24 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/srl_page_list"
@@ -34,4 +50,5 @@
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

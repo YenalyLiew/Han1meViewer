@@ -29,7 +29,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
         adapter.setDiffCallback(HanimeDownloadedRvAdapter.COMPARATOR)
     }
 
-    override fun liveDataObserve() {
+    override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllDownloadedHanime().flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {

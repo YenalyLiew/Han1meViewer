@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.fragment.hanime
+package com.yenaly.han1meviewer.ui.fragment.video
 
 import android.app.Dialog
 import android.os.Bundle

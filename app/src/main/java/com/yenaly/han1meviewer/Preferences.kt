@@ -15,14 +15,14 @@ internal val preferenceSp get() = PreferenceManager.getDefaultSharedPreferences(
 /**
  * 是否登入，一般跟[loginCookie]一起賦值
  */
-inline var isAlreadyLogin
+internal var isAlreadyLogin
     get() = getSpValue(ALREADY_LOGIN, false)
     set(value) = putSpValue(ALREADY_LOGIN, value)
 
 /**
  * 保存的string格式的登入cookie
  */
-inline var loginCookie
+internal var loginCookie
     get() = CookieString(getSpValue(LOGIN_COOKIE, EMPTY_STRING))
     set(value) = putSpValue(LOGIN_COOKIE, value.cookie)
 

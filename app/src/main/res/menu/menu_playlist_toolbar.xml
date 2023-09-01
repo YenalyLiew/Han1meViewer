@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tb_open_drawer"
+        android:icon="@drawable/baseline_format_list_bulleted_24"
+        android:showAsAction="ifRoom"
+        android:title="@string/open_playlist_drawer" />
+</menu>

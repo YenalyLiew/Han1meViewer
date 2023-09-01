@@ -28,7 +28,7 @@ abstract class YenalyActivity<DB : ViewDataBinding, VM : ViewModel>(
         super.onCreate(savedInstanceState)
         initView()
         initData(savedInstanceState)
-        liveDataObserve()
+        bindDataObservers()
     }
 
     override fun onDestroy() {
@@ -46,9 +46,9 @@ abstract class YenalyActivity<DB : ViewDataBinding, VM : ViewModel>(
     }
 
     /**
-     * Livedata监听位 (optional)
+     * 用于绑定数据观察器 (optional)
      */
-    open fun liveDataObserve() {
+    open fun bindDataObservers() {
     }
 
     /**

@@ -30,7 +30,7 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
         binding.rvList.itemAnimator?.changeDuration = 0
     }
 
-    override fun liveDataObserve() {
+    override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllDownloadingHanime().flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {

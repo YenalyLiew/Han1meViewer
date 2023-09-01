@@ -52,6 +52,5 @@ val appScreenHeight: Int get() = DeviceUtil.getAppScreenSize(applicationContext)
  *
  * @return true if debuggable
  */
-@get:JvmName("isDebuggable")
-val debuggable: Boolean
+val isDebugEnabled: Boolean
     get() = 0 != applicationContext.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE

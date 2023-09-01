@@ -17,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = createVersionCode()
-        versionName = createVersionName(major = 0, minor = 9, patch = 0)
+        versionName = createVersionName(major = 0, minor = 10, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,9 +67,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.room:room-runtime:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
-    implementation("androidx.navigation:navigation-fragment:2.6.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
-    implementation("androidx.navigation:navigation-ui:2.6.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("androidx.work:work-runtime:2.8.1")

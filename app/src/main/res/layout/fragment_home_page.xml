@@ -8,66 +8,180 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-        <TextView
-            android:id="@+id/error_tip"
-            android:layout_width="wrap_content"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textSize="@dimen/err_tip_text_size"
-            android:visibility="gone"
-            tools:text="404 Not Found" />
+            android:fitsSystemWindows="true">
 
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/home_page_srl"
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="exitUntilCollapsed|scroll"
+                app:titleEnabled="false">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true">
+
+                    <ImageView
+                        android:id="@+id/cover"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="centerCrop"
+                        app:layout_collapseMode="parallax" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_black80_transparent_270" />
+
+                    <LinearLayout
+                        android:id="@+id/banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_banner_title"
+                                style="@style/TextAppearance.Material3.TitleLarge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:padding="4dp"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textStyle="bold"
+                                tools:text="1234 -v 125" />
+
+                            <TextView
+                                android:id="@+id/tv_banner_desc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="4dp"
+                                android:background="@drawable/shape_title_mask_black"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:padding="4dp"
+                                tools:text="131231313566666666666624444444444444444466666" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_banner"
+                            style="@style/Widget.Material3.Button.IconButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="8dp"
+                            android:backgroundTint="@color/per70_transparent_white"
+                            app:icon="@drawable/ic_baseline_arrow_forward_24"
+                            app:iconTint="@color/red" />
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:menu="@menu/menu_main_toolbar">
+
+                </androidx.appcompat.widget.Toolbar>
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <com.scwang.smart.refresh.header.MaterialHeader
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/error_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="@dimen/err_tip_text_size"
+                android:visibility="gone"
+                tools:text="404 Not Found" />
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/home_page_nsv"
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/home_page_srl"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <LinearLayout
+                <com.scwang.smart.refresh.header.MaterialHeader
+                    android:id="@+id/header"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content" />
 
-                    <include
-                        android:id="@+id/latest_hanime"
-                        layout="@layout/item_home_page" />
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/home_page_nsv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                    <include
-                        android:id="@+id/latest_upload"
-                        layout="@layout/item_home_page" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                    <include
-                        android:id="@+id/hot_hanime_monthly"
-                        layout="@layout/item_home_page" />
+                        <include
+                            android:id="@+id/latest_hanime"
+                            layout="@layout/item_home_page" />
 
-                    <include
-                        android:id="@+id/hanime_current"
-                        layout="@layout/item_home_page" />
+                        <include
+                            android:id="@+id/latest_upload"
+                            layout="@layout/item_home_page" />
 
-                    <include
-                        android:id="@+id/hanime_they_watched"
-                        layout="@layout/item_home_page" />
+                        <include
+                            android:id="@+id/hot_hanime_monthly"
+                            layout="@layout/item_home_page" />
 
-                </LinearLayout>
+                        <include
+                            android:id="@+id/hanime_current"
+                            layout="@layout/item_home_page" />
 
-            </androidx.core.widget.NestedScrollView>
+                        <include
+                            android:id="@+id/hanime_they_watched"
+                            layout="@layout/item_home_page" />
 
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </layout>

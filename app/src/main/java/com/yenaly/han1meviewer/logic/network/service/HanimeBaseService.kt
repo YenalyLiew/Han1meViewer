@@ -38,30 +38,4 @@ interface HanimeBaseService {
     suspend fun getHanimePreview(
         @Path("date") date: String // 类似 202206. 202012
     ): Response<ResponseBody>
-
-    @GET("playlist")
-    suspend fun getMyList(
-        @Query("page") @IntRange(from = 1) page: Int,
-        @Query("list") listType: String // WL, LL
-    ): Response<ResponseBody>
-
-    @FormUrlEncoded
-    @POST("deletePlayitem")
-    suspend fun deleteMyList(
-        @Field("playlist_id") listType: String,
-        @Field("video_id") videoCode: String,
-        @Field("count") count: Int = 1, // 隨便傳一個就行
-        @Header("X-CSRF-TOKEN") csrfToken: String?
-    ): Response<ResponseBody>
-
-    @FormUrlEncoded
-    @POST("like")
-    suspend fun addToMyFavVideo(
-        @Field("like-foreign-id") videoCode: String,
-        @Field("like-status") likeStatus: String,
-        @Field("_token") csrfToken: String?,
-        @Field("like-user-id") userId: String?,
-        @Field("like-is-positive") isPositive: Int = 1,
-        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken
-    ): Response<ResponseBody>
 }

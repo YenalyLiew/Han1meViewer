@@ -14,7 +14,8 @@ data class WatchHistoryEntity(
     var title: String,
     var releaseDate: Long,
     var watchDate: Long,
-    var redirectLink: String,
+
+    var videoCode: String,
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Int = 0,
 )

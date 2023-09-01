@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.fragment.hanime
+package com.yenaly.han1meviewer.ui.fragment.video
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
@@ -18,10 +18,11 @@ import com.permissionx.guolindev.PermissionX
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
+import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.service.HanimeDownloadWorker
+import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.han1meviewer.util.setDrawableTop
@@ -45,24 +46,23 @@ class VideoIntroductionFragment :
     @UsingCautiously("use after [Xpopup#asAttachList]")
     private lateinit var checkedQuality: String
 
-    private val playListAdapter by unsafeLazy { HanimeVideoRvAdapter(VIDEO_LAYOUT_WRAP_CONTENT) }
+    private val playlistAdapter by unsafeLazy { HanimeVideoRvAdapter(VIDEO_LAYOUT_WRAP_CONTENT) }
     private val relatedAdapter by unsafeLazy { HanimeVideoRvAdapter(VIDEO_LAYOUT_MATCH_PARENT) }
 
     override fun initData(savedInstanceState: Bundle?) {
         binding.relatedHanime.subTitle.isGone = true
-        binding.playList.rv.isNestedScrollingEnabled = true
-        binding.playList.title.setText(R.string.series_video)
+        binding.playlist.rv.isNestedScrollingEnabled = true
+        binding.playlist.title.setText(R.string.series_video)
         binding.relatedHanime.title.setText(R.string.related_video)
 
-        binding.playList.rv.layoutManager =
+        binding.playlist.rv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.playList.rv.adapter = playListAdapter
-        binding.relatedHanime.rv.layoutManager = GridLayoutManager(context, VIDEO_IN_ONE_LINE)
+        binding.playlist.rv.adapter = playlistAdapter
         binding.relatedHanime.rv.adapter = relatedAdapter
     }
 
     @SuppressLint("SetTextI18n")
-    override fun liveDataObserve() {
+    override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {
                 viewModel.hanimeVideoFlow.collect { state ->
@@ -81,14 +81,15 @@ class VideoIntroductionFragment :
                             binding.views.text = "${state.info.views.toString()}次"
                             binding.tvIntroduction.setContent(state.info.introduction)
                             binding.tags.setTags(state.info.tags)
-                            if (state.info.playList != null) {
-                                binding.playList.subTitle.text = state.info.playList.playListName
-                                playListAdapter.setList(state.info.playList.video)
+                            if (state.info.playlist != null) {
+                                binding.playlist.subTitle.text = state.info.playlist.playlistName
+                                playlistAdapter.setList(state.info.playlist.video)
                             } else {
-                                binding.playList.root.isGone = true
+                                binding.playlist.root.isGone = true
                             }
-                            initArtist(state.info.artist)
                             relatedAdapter.setList(state.info.relatedHanimes)
+                            binding.relatedHanime.rv.layoutManager = buildFlexibleGridLayoutManager()
+                            initArtist(state.info.artist)
                             initDownloadButton(state.info)
                             initFunctionBar(state.info)
                         }
@@ -134,8 +135,29 @@ class VideoIntroductionFragment :
                     // 没下完或下過了
                     if (!entity.isDownloaded) {
                         if (entity.isDownloading) showShortToast("正在下載中...")
-                        else showShortToast("正在佇列中...")
+                        else showShortToast("已經在佇列中...")
                         return@collect
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            whenStarted {
+                viewModel.modifyMyListFlow.collect { state ->
+                    when (state) {
+                        is WebsiteState.Error -> {
+                            showShortToast("操作失敗")
+                        }
+
+                        is WebsiteState.Loading -> Unit
+                        is WebsiteState.Success -> {
+                            val index = state.info
+                            checkNotNull(videoData.myList?.myListInfo?.get(index)).let {
+                                it.isSelected = !it.isSelected
+                            }
+                            showShortToast("操作成功")
+                        }
                     }
                 }
             }
@@ -185,9 +207,24 @@ class VideoIntroductionFragment :
                 showShortToast(R.string.login_first)
             }
         }
-        binding.btnWatchLater.clickTrigger(viewLifecycleOwner.lifecycle) {
-            // todo
-            showShortToast("功能暫未實現！")
+        binding.btnMyList.setOnClickListener {
+            if (isAlreadyLogin) {
+                requireContext().showAlertDialog {
+                    setTitle(R.string.add_to_playlist)
+                    setMultiChoiceItems(
+                        videoData.myList?.titleArray,
+                        videoData.myList?.isSelectedArray,
+                    ) { _, index, isChecked ->
+                        viewModel.modifyMyList(
+                            checkNotNull(videoData.myList?.myListInfo?.get(index)).code,
+                            viewModel.videoCode, isChecked, index
+                        )
+                    }
+                    setNeutralButton(R.string.back, null)
+                }
+            } else {
+                showShortToast(R.string.login_first)
+            }
         }
         binding.btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
             browse(getHanimeVideoLink(viewModel.videoCode))
@@ -215,10 +252,11 @@ class VideoIntroductionFragment :
                 .atView(it)
                 .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
                     if (key == HanimeResolution.RES_UNKNOWN) {
-                        showShortToast("該影片特殊，無法下載")
+                        showShortToast("暫時無法從這裏下載！")
+                        browse(getHanimeVideoDownloadLink(viewModel.videoCode))
                     } else notifyDownload(videoData.title, key) {
                         checkedQuality = key
-                        viewModel.findDownloadedHanimeByVideoCodeAndQuality(
+                        viewModel.findDownloadedHanime(
                             viewModel.videoCode, checkedQuality
                         )
                     }
@@ -251,6 +289,9 @@ class VideoIntroductionFragment :
                 action.invoke()
             }
             setNegativeButton("算了吧", null)
+            setNeutralButton("轉到官方") { _, _ ->
+                browse(getHanimeVideoDownloadLink(viewModel.videoCode))
+            }
         }
     }
 
@@ -289,5 +330,11 @@ class VideoIntroductionFragment :
                 .beginUniqueWork(viewModel.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
                 .enqueue()
         }
+    }
+
+    private fun buildFlexibleGridLayoutManager(): GridLayoutManager {
+        val counts = if (relatedAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
+            VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
+        return GridLayoutManager(context, counts)
     }
 }
