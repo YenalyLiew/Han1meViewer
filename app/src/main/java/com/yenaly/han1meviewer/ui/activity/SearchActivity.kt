@@ -17,6 +17,7 @@ import com.yenaly.han1meviewer.databinding.ActivitySearchBinding
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
+import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
 import com.yenaly.han1meviewer.ui.adapter.HanimeSearchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.search.SearchOptionsPopupFragment
@@ -101,8 +102,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                             viewModel.page++
                             if (binding.searchSrl.isRefreshing) binding.searchSrl.finishRefresh()
                             binding.searchSrl.finishLoadMore(true)
+                            binding.searchRv.layoutManager =
+                                state.info.buildFlexibleGridLayoutManager()
                             searchAdapter.addData(state.info)
-                            binding.searchRv.layoutManager = buildFlexibleGridLayoutManager()
                         }
 
                         is PageLoadingState.NoMoreData -> {
@@ -131,7 +133,10 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.searchRv.layoutManager = buildFlexibleGridLayoutManager()
+        val dataState = viewModel.searchFlow.value
+        binding.searchRv.layoutManager = if (dataState is PageLoadingState.Success) {
+            dataState.info.buildFlexibleGridLayoutManager()
+        } else null
     }
 
     private fun getHanimeSearchResult() {
@@ -193,9 +198,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         }
     }
 
-    private fun buildFlexibleGridLayoutManager(): GridLayoutManager {
-        val counts = if (searchAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
+    private fun List<HanimeInfoModel>.buildFlexibleGridLayoutManager(): GridLayoutManager {
+        val counts = if (any { it.itemType == HanimeInfoModel.NORMAL })
             VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
-        return GridLayoutManager(this, counts)
+        return FixedGridLayoutManager(this@SearchActivity, counts)
     }
 }
