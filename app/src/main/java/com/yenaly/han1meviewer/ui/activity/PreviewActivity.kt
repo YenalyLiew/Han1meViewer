@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -34,6 +35,11 @@ import java.util.*
  * @time 2022/06/23 023 16:46
  */
 class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>() {
+
+    companion object {
+        private const val animDuration = 300L
+        private val animInterpolator = FastOutSlowInInterpolator()
+    }
 
     private val dateUtils by unsafeLazy { DateUtils() }
 
@@ -65,9 +71,27 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         }
 
         binding.appBar.addOnOffsetChangedListener(object : AppBarLayoutStateChangeListener() {
+            private val fabList = arrayOf(binding.fabPrevious, binding.fabNext)
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
-                binding.fabPrevious.isInvisible = state == State.COLLAPSED
-                binding.fabNext.isInvisible = state == State.COLLAPSED
+                if (state == State.COLLAPSED) {
+                    fabList.forEach {
+                        it.animate()
+                            .setDuration(animDuration)
+                            .setInterpolator(animInterpolator)
+                            .alpha(0F)
+                            .withEndAction { it.isInvisible = true }
+                            .start()
+                    }
+                } else {
+                    fabList.forEach {
+                        it.animate()
+                            .setDuration(animDuration)
+                            .setInterpolator(animInterpolator)
+                            .alpha(1F)
+                            .withStartAction { it.isInvisible = false }
+                            .start()
+                    }
+                }
             }
         })
 
@@ -82,7 +106,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                 override fun scrollVerticallyBy(
                     dy: Int,
                     recycler: RecyclerView.Recycler?,
-                    state: RecyclerView.State?
+                    state: RecyclerView.State?,
                 ): Int {
                     if (!binding.latestHanimeNews.rv.isInTouchMode) {
                         onScrollWhenInNonTouchMode(dy)
@@ -122,21 +146,24 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
     }
 
     @SuppressLint("SetTextI18n")
-    override fun liveDataObserve() {
+    override fun bindDataObservers() {
         lifecycleScope.launch {
             whenStarted {
                 viewModel.previewFlow.collect { state ->
                     binding.nsvPreview.isGone = state !is WebsiteState.Success
+                    binding.appBar.setExpanded(state is WebsiteState.Success, true)
                     when (state) {
                         is WebsiteState.Error -> {
                             binding.srlPreview.finishRefresh()
                             supportActionBar?.title = "🥺\n${state.throwable.message}"
                         }
+
                         is WebsiteState.Loading -> {
                             binding.srlPreview.autoRefresh()
                             binding.fabPrevious.isEnabled = false
                             binding.fabNext.isEnabled = false
                         }
+
                         is WebsiteState.Success -> {
                             binding.srlPreview.finishRefresh()
                             supportActionBar?.title =
@@ -175,6 +202,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                 finish()
                 return true
             }
+
             R.id.tb_comment -> {
                 startActivity<PreviewCommentActivity>(
                     "date" to dateUtils.current.first,

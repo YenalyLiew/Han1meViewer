@@ -86,7 +86,7 @@
     <string name="check_update_success">當前有新版本：%s，點擊查看</string>
     <string name="current_version">當前版本：%s</string>
     <string name="already_latest_update">已經是最新版本！</string>
-    <string name="app_slogan">第三方 Hanime1.me 客戶端</string>
+    <string name="app_slogan">非官方 Hanime1.me 客戶端</string>
     <string name="search_placeholder">今天想看點什麽呢</string>
 
     <string name="downloading">正在下載</string>
@@ -114,4 +114,10 @@
     <string name="pause">暫停</string>
     <string name="continues">繼續</string>
     <string name="jump_to_webpage">轉到網頁</string>
+    <string name="sure_to_delete_s_video">確定要刪除 %s 嗎？</string>
+    <string name="sure_to_delete">確定要刪除嗎？</string>
+    <string name="playlist_title">標題</string>
+    <string name="playlist_description">介紹</string>
+    <string name="open_playlist_drawer">打開播放清單列表</string>
+    <string name="add_to_playlist">加入播放清單</string>
 </resources>

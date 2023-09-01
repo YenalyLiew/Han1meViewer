@@ -118,6 +118,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <Button
@@ -129,12 +130,13 @@
                         android:text="@string/add_to_fav" />
 
                     <Button
-                        android:id="@+id/btn_watch_later"
+                        android:id="@+id/btn_my_list"
                         style="@style/Widget.Material3.Button.TextButton.Icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableTop="@drawable/ic_outline_watch_later_24"
-                        android:text="@string/add_to_watch_later" />
+                        android:drawableTop="@drawable/baseline_format_list_bulleted_24"
+                        android:text="@string/add_to_playlist"
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/btn_download"
@@ -173,7 +175,7 @@
                 android:layout_marginEnd="8dp" />
 
             <include
-                android:id="@+id/play_list"
+                android:id="@+id/playlist"
                 layout="@layout/item_home_page" />
 
             <include

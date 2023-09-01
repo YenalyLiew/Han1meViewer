@@ -9,12 +9,14 @@ import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
 import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 import com.yenaly.han1meviewer.logic.model.HomePageModel
-import com.yenaly.han1meviewer.logic.model.MyListModel
+import com.yenaly.han1meviewer.logic.model.MyListItemsModel
+import com.yenaly.han1meviewer.logic.model.PlaylistsModel
 import com.yenaly.han1meviewer.logic.model.SearchTagModel
 import com.yenaly.han1meviewer.logic.model.VideoCommentModel
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.toVideoCode
 import com.yenaly.yenaly_libs.utils.TimeUtil
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -65,7 +67,7 @@ object Parse {
                 HanimeInfoModel(
                     coverUrl = coverUrl,
                     title = title,
-                    redirectLink = redirectLink,
+                    videoCode = redirectLink,
                     itemType = HanimeInfoModel.SIMPLIFIED
                 )
             )
@@ -96,7 +98,7 @@ object Parse {
                 HanimeInfoModel(
                     title = title,
                     coverUrl = coverUrl,
-                    redirectLink = redirectLink,
+                    videoCode = redirectLink,
                     duration = duration,
                     uploader = uploader,
                     views = views,
@@ -118,7 +120,7 @@ object Parse {
                 HanimeInfoModel(
                     coverUrl = coverUrl,
                     title = title,
-                    redirectLink = redirectLink,
+                    videoCode = redirectLink,
                     itemType = HanimeInfoModel.SIMPLIFIED
                 )
             )
@@ -136,7 +138,7 @@ object Parse {
                 HanimeInfoModel(
                     coverUrl = coverUrl,
                     title = title,
-                    redirectLink = redirectLink,
+                    videoCode = redirectLink,
                     itemType = HanimeInfoModel.SIMPLIFIED
                 )
             )
@@ -168,7 +170,7 @@ object Parse {
                 HanimeInfoModel(
                     title = title,
                     coverUrl = coverUrl,
-                    redirectLink = redirectLink,
+                    videoCode = redirectLink,
                     duration = duration,
                     uploader = uploader,
                     views = views,
@@ -188,7 +190,7 @@ object Parse {
         // emit!
         return WebsiteState.Success(
             HomePageModel(
-                avatarUrl, username,
+                avatarUrl, username, null,
                 latestHanimeList, latestUploadList, hotHanimeMonthlyList,
                 hanimeCurrentList, hanimeTheyWatchedList
             )
@@ -201,6 +203,23 @@ object Parse {
         val userInfo = parseBody.selectFirst("div[id=user-modal-dp-wrapper]")
         val avatarUrl: String? = userInfo?.selectFirst("img")?.absUrl("src")
         val username: String? = userInfo?.getElementById("user-modal-name")?.text()
+
+        val bannerCSS = parseBody.selectFirst("div[id=home-banner-wrapper]")
+        val bannerImg = bannerCSS?.previousElementSibling()
+        val bannerTitle = bannerImg?.selectFirst("img")?.attr("alt")
+            .logIfParseNull(Parse::homePageVer2.name, "bannerTitle")
+        val bannerPic = bannerImg?.selectFirst("img")?.absUrl("src")
+            .logIfParseNull(Parse::homePageVer2.name, "bannerPic")
+        val bannerDesc = bannerCSS?.selectFirst("h4")?.ownText()
+        val bannerVideoCode =
+            bannerCSS?.selectFirst("a[class~=play-btn]")?.absUrl("href")?.toVideoCode()
+                .logIfParseNull(Parse::homePageVer2.name, "bannerVideoCode")
+        val banner = if (bannerTitle != null && bannerPic != null && bannerVideoCode != null) {
+            HomePageModel.Banner(
+                title = bannerTitle, description = bannerDesc,
+                picUrl = bannerPic, videoCode = bannerVideoCode,
+            )
+        } else null
 
         val latestHanimeClass = homePageParse.getOrNull(0)
         val latestUploadClass = homePageParse.getOrNull(2)
@@ -216,13 +235,13 @@ object Parse {
                 .throwIfParseNull(Parse::homePageVer2.name, "coverUrl")
             val title = latestHanimeItem.selectFirst("div[class$=title]")?.text()
                 .throwIfParseNull(Parse::homePageVer2.name, "title")
-            val redirectLink = latestHanimeItem.parent()?.absUrl("href")
-                .throwIfParseNull(Parse::homePageVer2.name, "redirectLink")
+            val videoCode = latestHanimeItem.parent()?.absUrl("href")?.toVideoCode()
+                .throwIfParseNull(Parse::homePageVer2.name, "videoCode")
             latestHanimeList.add(
                 HanimeInfoModel(
                     coverUrl = coverUrl,
                     title = title,
-                    redirectLink = redirectLink,
+                    videoCode = videoCode,
                     itemType = HanimeInfoModel.SIMPLIFIED
                 )
             )
@@ -268,7 +287,7 @@ object Parse {
         // emit!
         return WebsiteState.Success(
             HomePageModel(
-                avatarUrl, username,
+                avatarUrl, username, banner = banner,
                 latestHanimeList, latestUploadList, hotHanimeMonthlyList,
                 hanimeCurrentList, hanimeTheyWatchedList
             )
@@ -401,7 +420,7 @@ object Parse {
                 HanimeInfoModel(
                     title = title,
                     coverUrl = coverUrl,
-                    redirectLink = redirectLink,
+                    videoCode = redirectLink,
                     duration = mDuration,
                     uploader = uploader,
                     views = views,
@@ -422,16 +441,16 @@ object Parse {
         val coverUrl =
             hanimeSearchItem.select("img").getOrNull(1)?.absUrl("src")
                 .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "coverUrl") // coverUrl
-        val redirectLink =
-            hanimeSearchItem.previousElementSibling()?.absUrl("href")
-                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "redirectLink") // redirectLink
+        val videoCode =
+            hanimeSearchItem.previousElementSibling()?.absUrl("href")?.toVideoCode()
+                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "videoCode") // videoCode
         val durationAndViews = hanimeSearchItem.select("div[class=card-mobile-duration]")
         val mDuration = durationAndViews.getOrNull(0)?.text() // 改了
         val views = durationAndViews.getOrNull(1)?.text() // 改了
         return HanimeInfoModel(
             title = title,
             coverUrl = coverUrl,
-            redirectLink = redirectLink,
+            videoCode = videoCode,
             duration = mDuration.logIfParseNull(Parse::hanimeNormalItemVer2.name, "duration"),
             uploader = null,
             views = views.logIfParseNull(Parse::hanimeNormalItemVer2.name, "views"),
@@ -443,8 +462,8 @@ object Parse {
 
     // 每一个简化版视频单元
     private fun hanimeSimplifiedItem(hanimeSearchItem: Element): HanimeInfoModel {
-        val redirectLink = hanimeSearchItem.attr("href")
-            .ifBlank { throw ParseException(Parse::hanimeSimplifiedItem.name, "redirectLink") }
+        val videoCode = hanimeSearchItem.attr("href").toVideoCode()
+            .throwIfParseNull(Parse::hanimeSimplifiedItem.name, "videoCode")
         val coverUrl = hanimeSearchItem.selectFirst("img")?.attr("src")
             .throwIfParseNull(Parse::hanimeSimplifiedItem.name, "coverUrl")
         val title = hanimeSearchItem.selectFirst("div[class=home-rows-videos-title]")?.text()
@@ -452,7 +471,7 @@ object Parse {
         return HanimeInfoModel(
             title = title,
             coverUrl = coverUrl,
-            redirectLink = redirectLink,
+            videoCode = videoCode,
             itemType = HanimeInfoModel.SIMPLIFIED
         )
     }
@@ -513,31 +532,31 @@ object Parse {
             }
         }
 
-        val playListWrapper = parseBody.select("div[id=video-playlist-wrapper]").first()
-        var playList: HanimeVideoModel.PlayList? = null
-        playListWrapper?.let {
-            val playListVideoList = mutableListOf<HanimeInfoModel>()
-            val playListName = it.select("div > h4")[0].text()
-            val playListScroll = it.getElementById("playlist-scroll")!!
-            playListScroll.children().forEach { parent ->
+        val playlistWrapper = parseBody.select("div[id=video-playlist-wrapper]").first()
+        var playlist: HanimeVideoModel.Playlist? = null
+        playlistWrapper?.let {
+            val playlistVideoList = mutableListOf<HanimeInfoModel>()
+            val playlistName = it.select("div > h4")[0].text()
+            val playlistScroll = it.getElementById("playlist-scroll")!!
+            playlistScroll.children().forEach { parent ->
                 val child = parent.child(0)
                 val redirectUrl = child.absUrl("href")
                 val eachTitleCover = child.select("div > img")[1]
                 val eachIsPlaying = child.select("div > div").first() != null
                 val eachViews = child.select("div > p").first()?.text()
                     ?.substringAfter('：')?.substringBefore('次')
-                val playListEachCoverUrl = eachTitleCover.absUrl("src")
-                val playListEachTitle = eachTitleCover.attr("alt")
-                playListVideoList.add(
+                val playlistEachCoverUrl = eachTitleCover.absUrl("src")
+                val playlistEachTitle = eachTitleCover.attr("alt")
+                playlistVideoList.add(
                     HanimeInfoModel(
-                        title = playListEachTitle, coverUrl = playListEachCoverUrl,
-                        redirectLink = redirectUrl, views = eachViews, isPlaying = eachIsPlaying,
+                        title = playlistEachTitle, coverUrl = playlistEachCoverUrl,
+                        videoCode = redirectUrl, views = eachViews, isPlaying = eachIsPlaying,
                         itemType = HanimeInfoModel.NORMAL
                     )
                 )
             }
-            playList =
-                HanimeVideoModel.PlayList(playListName = playListName, video = playListVideoList)
+            playlist =
+                HanimeVideoModel.Playlist(playlistName = playlistName, video = playlistVideoList)
         }
 
         val relatedAnimeList = mutableListOf<HanimeInfoModel>()
@@ -557,7 +576,7 @@ object Parse {
                     relatedAnimeList.add(
                         HanimeInfoModel(
                             title = eachTitle, coverUrl = eachCoverUrl,
-                            redirectLink = eachRedirect,
+                            videoCode = eachRedirect,
                             itemType = HanimeInfoModel.SIMPLIFIED
                         )
                     )
@@ -578,7 +597,7 @@ object Parse {
                     relatedAnimeList.add(
                         HanimeInfoModel(
                             title = eachTitle, coverUrl = eachCoverUrl,
-                            redirectLink = eachRedirect, duration = eachDuration,
+                            videoCode = eachRedirect, duration = eachDuration,
                             uploader = eachUploader, views = eachViews, uploadTime = eachUploadTime,
                             itemType = HanimeInfoModel.NORMAL
                         )
@@ -603,9 +622,9 @@ object Parse {
             HanimeVideoModel(
                 title = title, coverUrl = videoCoverUrl, uploadTime = null, views = null,
                 introduction = introduction, videoUrls = hanimeResolution.toResolutionLinkMap(),
-                tags = tagList, playList = playList, relatedHanimes = relatedAnimeList,
-                artist = null,
-                favTimes = null,
+                tags = tagList, myList = null,
+                playlist = playlist, relatedHanimes = relatedAnimeList,
+                artist = null, favTimes = null,
                 csrfToken = csrfToken, currentUserId = currentUserId
             )
         )
@@ -648,14 +667,33 @@ object Parse {
             }
         }
 
-        val playListWrapper = parseBody.selectFirst("div[id=video-playlist-wrapper]")
-        val playList = playListWrapper?.let {
-            val playListVideoList = mutableListOf<HanimeInfoModel>()
-            val playListName = it.selectFirst("div > div > h4")?.text()
-            val playListScroll = it.getElementById("playlist-scroll")
-            playListScroll?.children()?.forEach { parent ->
-                val redirectUrl = parent.selectFirst("div > a")?.absUrl("href")
-                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "redirectUrl")
+        val myListCheckboxWrapper = parseBody.select("div[class~=playlist-checkbox-wrapper]")
+        val myListInfo = mutableListOf<HanimeVideoModel.MyList.MyListInfo>()
+        myListCheckboxWrapper.forEach {
+            val listTitle = it.selectFirst("span")?.ownText()
+                .logIfParseNull(Parse::hanimeVideoVer2.name, "myListTitle")
+            val listInput = it.selectFirst("input")
+            val listCode = listInput?.attr("id")
+                .logIfParseNull(Parse::hanimeVideoVer2.name, "myListCode")
+            val isSelected = listInput?.hasAttr("checked") ?: false
+            if (listTitle != null && listCode != null) {
+                myListInfo += HanimeVideoModel.MyList.MyListInfo(
+                    code = listCode, title = listTitle, isSelected = isSelected
+                )
+            }
+        }
+        val isWatchLater = parseBody.getElementById("playlist-save-checkbox")
+            ?.selectFirst("input")?.hasAttr("checked") ?: false
+        val myList = HanimeVideoModel.MyList(isWatchLater = isWatchLater, myListInfo = myListInfo)
+
+        val playlistWrapper = parseBody.selectFirst("div[id=video-playlist-wrapper]")
+        val playlist = playlistWrapper?.let {
+            val playlistVideoList = mutableListOf<HanimeInfoModel>()
+            val playlistName = it.selectFirst("div > div > h4")?.text()
+            val playlistScroll = it.getElementById("playlist-scroll")
+            playlistScroll?.children()?.forEach { parent ->
+                val videoCode = parent.selectFirst("div > a")?.absUrl("href")?.toVideoCode()
+                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "videoCode")
                 val cardMobilePanel = parent.selectFirst("div[class^=card-mobile-panel]")
                 val eachTitleCover = cardMobilePanel?.select("div > div > div > img")?.getOrNull(1)
                 val eachIsPlaying = cardMobilePanel?.select("div > div > div > div")
@@ -666,28 +704,28 @@ object Parse {
                 val eachDuration = cardMobileDuration?.firstOrNull()?.text()
                 val eachViews = cardMobileDuration?.getOrNull(1)?.text()
                     ?.substringBefore("次")
-                val playListEachCoverUrl = eachTitleCover?.absUrl("src")
-                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "playListEachCoverUrl")
-                val playListEachTitle = eachTitleCover?.attr("alt")
-                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "playListEachTitle")
-                playListVideoList.add(
+                val playlistEachCoverUrl = eachTitleCover?.absUrl("src")
+                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "playlistEachCoverUrl")
+                val playlistEachTitle = eachTitleCover?.attr("alt")
+                    .throwIfParseNull(Parse::hanimeVideoVer2.name, "playlistEachTitle")
+                playlistVideoList.add(
                     HanimeInfoModel(
-                        title = playListEachTitle, coverUrl = playListEachCoverUrl,
-                        redirectLink = redirectUrl,
+                        title = playlistEachTitle, coverUrl = playlistEachCoverUrl,
+                        videoCode = videoCode,
                         duration = eachDuration.logIfParseNull(
                             Parse::hanimeVideoVer2.name,
-                            "$playListEachTitle duration"
+                            "$playlistEachTitle duration"
                         ),
                         views = eachViews.logIfParseNull(
                             Parse::hanimeVideoVer2.name,
-                            "$playListEachTitle views"
+                            "$playlistEachTitle views"
                         ),
                         isPlaying = eachIsPlaying,
                         itemType = HanimeInfoModel.NORMAL
                     )
                 )
             }
-            HanimeVideoModel.PlayList(playListName = playListName, video = playListVideoList)
+            HanimeVideoModel.Playlist(playlistName = playlistName, video = playlistVideoList)
         }
 
         val relatedAnimeList = mutableListOf<HanimeInfoModel>()
@@ -706,8 +744,8 @@ object Parse {
                         eachContent?.getElementsByClass("home-rows-videos-div")?.firstOrNull()
 
                     if (homeRowsVideosDiv != null) {
-                        val eachRedirect = eachContent.absUrl("href")
-                            .throwIfParseNull(Parse::hanimeVideoVer2.name, "eachRedirect")
+                        val eachVideoCode = eachContent.absUrl("href").toVideoCode()
+                            .throwIfParseNull(Parse::hanimeVideoVer2.name, "eachVideoCode")
                         val eachCoverUrl = homeRowsVideosDiv.selectFirst("img")?.absUrl("src")
                             .throwIfParseNull(Parse::hanimeVideoVer2.name, "eachCoverUrl")
                         val eachTitle = homeRowsVideosDiv.selectFirst("div[class$=title]")?.text()
@@ -715,7 +753,7 @@ object Parse {
                         relatedAnimeList.add(
                             HanimeInfoModel(
                                 title = eachTitle, coverUrl = eachCoverUrl,
-                                redirectLink = eachRedirect,
+                                videoCode = eachVideoCode,
                                 itemType = HanimeInfoModel.SIMPLIFIED
                             )
                         )
@@ -732,8 +770,7 @@ object Parse {
 
         val hanimeResolution = HanimeResolution()
         val videoClass = parseBody.selectFirst("video[id=player]")
-        val videoCoverUrl = videoClass?.absUrl("poster")
-            .throwIfParseNull(Parse::hanimeVideoVer2.name, "videoCoverUrl")
+        val videoCoverUrl = videoClass?.absUrl("poster").orEmpty()
         val videos = videoClass?.children()
         if (!videos.isNullOrEmpty()) {
             videos.forEach { source ->
@@ -780,7 +817,8 @@ object Parse {
                 ),
                 videoUrls = hanimeResolution.toResolutionLinkMap(),
                 tags = tagList,
-                playList = playList,
+                myList = myList,
+                playlist = playlist,
                 relatedHanimes = relatedAnimeList,
                 artist = artist.logIfParseNull(Parse::hanimeVideoVer2.name, "artist"),
                 favTimes = likesCount,
@@ -804,13 +842,11 @@ object Parse {
                     .throwIfParseNull(Parse::hanimePreview.name, "coverUrl")
                 val title = latestHanimeItem.selectFirst("div[class$=title]")?.text()
                     .throwIfParseNull(Parse::hanimePreview.name, "title")
-                val redirectLink = latestHanimeItem.parent()?.absUrl("href")
-                    .throwIfParseNull(Parse::hanimePreview.name, "redirectLink")
                 latestHanimeList.add(
                     HanimeInfoModel(
                         coverUrl = coverUrl,
                         title = title,
-                        redirectLink = redirectLink /* empty string here! */,
+                        videoCode = EMPTY_STRING /* empty string here! */,
                         itemType = HanimeInfoModel.SIMPLIFIED
                     )
                 )
@@ -891,9 +927,10 @@ object Parse {
         )
     }
 
-    fun myList(body: String): PageLoadingState<MyListModel> {
+    fun myListItems(body: String): PageLoadingState<MyListItemsModel> {
         val parseBody = Jsoup.parse(body).body()
         val csrfToken = parseBody.selectFirst("input[name=_token]")?.attr("value")
+        val desc = parseBody.getElementById("playlist-show-description")?.ownText()
 
         val myListHanimeList = mutableListOf<HanimeInfoModel>()
         val allHanimeClass = parseBody.getElementsByClass("home-rows-videos-wrapper").firstOrNull()
@@ -905,26 +942,51 @@ object Parse {
                 val title =
                     videoElement.getElementsByClass("home-rows-videos-title")
                         .firstOrNull()?.text()
-                        .throwIfParseNull(Parse::myList.name, "title")
+                        .throwIfParseNull(Parse::myListItems.name, "title")
                 val coverUrl =
                     videoElement.select("img").let {
                         it.getOrNull(1) ?: it.firstOrNull()
                     }?.absUrl("src")
-                        .throwIfParseNull(Parse::myList.name, "coverUrl")
-                val redirectLink =
+                        .throwIfParseNull(Parse::myListItems.name, "coverUrl")
+                val videoCode =
                     videoElement.getElementsByClass("playlist-show-links")
-                        .firstOrNull()?.absUrl("href")
-                        .throwIfParseNull(Parse::myList.name, "redirectLink")
+                        .firstOrNull()?.absUrl("href")?.toVideoCode()
+                        .throwIfParseNull(Parse::myListItems.name, "videoCode")
                 myListHanimeList.add(
                     HanimeInfoModel(
                         title = title, coverUrl = coverUrl,
-                        redirectLink = redirectLink, itemType = HanimeInfoModel.NORMAL
+                        videoCode = videoCode, itemType = HanimeInfoModel.SIMPLIFIED
                     )
                 )
             }
-        }.logIfParseNull(Parse::myList.name, "allHanimeClass_CSS")
+        }.logIfParseNull(Parse::myListItems.name, "allHanimeClass_CSS")
 
-        return PageLoadingState.Success(MyListModel(myListHanimeList, csrfToken))
+        return PageLoadingState.Success(
+            MyListItemsModel(
+                myListHanimeList,
+                desc = desc,
+                csrfToken = csrfToken
+            )
+        )
+    }
+
+    fun playlists(body: String): WebsiteState<PlaylistsModel> {
+        val parseBody = Jsoup.parse(body).body()
+        val csrfToken = parseBody.selectFirst("input[name=_token]")?.attr("value")
+        val lists = parseBody.select("div[class~=single-playlist-wrapper]")
+        val playlists = mutableListOf<PlaylistsModel.Playlist>()
+        lists.forEach {
+            val listCode = it.childOrNull(0)?.absUrl("href")?.substringAfter('=')
+                .throwIfParseNull(Parse::playlists.name, "listCode")
+            val listTitle = it.selectFirst("div[class=card-mobile-title]")?.ownText()
+                .throwIfParseNull(Parse::playlists.name, "listTitle")
+            val listTotal = it.selectFirst("div[style]")?.text()?.toIntOrNull()
+                .throwIfParseNull(Parse::playlists.name, "listName")
+            playlists += PlaylistsModel.Playlist(
+                listCode = listCode, title = listTitle, total = listTotal
+            )
+        }
+        return WebsiteState.Success(PlaylistsModel(playlists = playlists, csrfToken = csrfToken))
     }
 
     fun comments(body: String): WebsiteState<VideoCommentModel> {

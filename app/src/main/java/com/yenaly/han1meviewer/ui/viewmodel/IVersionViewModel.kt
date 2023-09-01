@@ -8,5 +8,5 @@ package com.yenaly.han1meviewer.ui.viewmodel
  * @time 2022/09/09 009 21:58
  */
 interface IVersionViewModel {
-    fun getLatestVersion() = Unit
+    fun getLatestVersion()
 }

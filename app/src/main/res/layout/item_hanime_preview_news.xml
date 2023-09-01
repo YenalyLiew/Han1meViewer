@@ -20,8 +20,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_cover"
-                android:layout_width="@dimen/video_cover_simplified_width"
-                android:layout_height="@dimen/video_cover_simplified_height"
+                android:layout_width="@dimen/video_cover_simplified_width_large"
+                android:layout_height="@dimen/video_cover_simplified_height_large"
                 android:layout_margin="8dp"
                 android:contentDescription="@null"
                 app:layout_constraintBottom_toTopOf="@id/_BARRIER"
@@ -39,8 +39,7 @@
                 android:background="@drawable/shape_title_mask"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:padding="4dp"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 android:textSize="20sp"
                 app:layout_constrainedWidth="true"

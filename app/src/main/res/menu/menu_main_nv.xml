@@ -26,7 +26,7 @@
                     android:icon="@drawable/ic_baseline_favorite_24"
                     android:title="@string/fav_video" />
                 <item
-                    android:id="@+id/nv_play_list"
+                    android:id="@+id/nv_playlist"
                     android:icon="@drawable/ic_baseline_list_24"
                     android:title="@string/play_list" />
             </group>

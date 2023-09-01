@@ -21,6 +21,8 @@ import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
+ * 可折叠 TAG 栏
+ *
  * @project Han1meViewer
  * @author Yenaly Liew
  * @time 2023/08/06 006 21:46
@@ -35,6 +37,10 @@ class CollapsibleTags @JvmOverloads constructor(
         const val animDuration = 300L
     }
 
+    /**
+     * 设置当前是否折叠，同时作为监听器，
+     * 修改这里的值会改变折叠状态
+     */
     var isCollapsed = true
         set(value) {
             field = value

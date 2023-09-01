@@ -12,15 +12,22 @@ import coil.load
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.*
+import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.VIDEO_CODE
+import com.yenaly.han1meviewer.VIDEO_LAYOUT_MATCH_PARENT
+import com.yenaly.han1meviewer.VIDEO_LAYOUT_WRAP_CONTENT
+import com.yenaly.han1meviewer.getHanimeVideoLink
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
+import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
-import com.yenaly.han1meviewer.toVideoCode
-import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.fragment.home.HomePageFragment
-import com.yenaly.yenaly_libs.utils.*
+import com.yenaly.yenaly_libs.utils.activity
+import com.yenaly.yenaly_libs.utils.copyTextToClipboard
+import com.yenaly.yenaly_libs.utils.dp
+import com.yenaly.yenaly_libs.utils.showShortToast
+import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
  * @project Hanime1
@@ -41,7 +48,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
                 oldItem: HanimeInfoModel,
                 newItem: HanimeInfoModel,
             ): Boolean {
-                return oldItem.redirectLink == newItem.redirectLink
+                return oldItem.videoCode == newItem.videoCode
             }
 
             override fun areContentsTheSame(
@@ -153,14 +160,14 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
                         // todo: strings.xml
                         showShortToast("當前正在觀看該影片哦~")
                     } else {
-                        val videoCode = item.redirectLink.toVideoCode()
+                        val videoCode = item.videoCode
                         context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
                     }
                 }
                 setOnLongClickListener {
                     val position = viewHolder.bindingAdapterPosition
                     val item = getItem(position)
-                    copyTextToClipboard("${item.title}\n${item.redirectLink}")
+                    copyTextToClipboard("${item.title}\n${getHanimeVideoLink(item.videoCode)}")
                     showShortToast(R.string.copy_to_clipboard)
                     return@setOnLongClickListener true
                 }

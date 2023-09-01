@@ -37,12 +37,10 @@ internal fun ChipGroup.createTags(tags: List<String>) {
     }
 }
 
-inline fun Context.showAlertDialog(foo: MaterialAlertDialogBuilder.() -> Unit) {
-    MaterialAlertDialogBuilder(this).apply {
-        foo()
-    }.show()
+internal inline fun Context.showAlertDialog(action: MaterialAlertDialogBuilder.() -> Unit) {
+    MaterialAlertDialogBuilder(this).apply(action).show()
 }
 
-fun Button.setDrawableTop(@DrawableRes drawableRes: Int) {
+internal fun Button.setDrawableTop(@DrawableRes drawableRes: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, drawableRes, 0, 0)
 }

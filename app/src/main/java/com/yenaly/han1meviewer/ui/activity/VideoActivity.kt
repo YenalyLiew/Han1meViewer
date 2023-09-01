@@ -14,8 +14,8 @@ import com.yenaly.han1meviewer.databinding.ActivityVideoBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
-import com.yenaly.han1meviewer.ui.fragment.hanime.CommentFragment
-import com.yenaly.han1meviewer.ui.fragment.hanime.VideoIntroductionFragment
+import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
+import com.yenaly.han1meviewer.ui.fragment.video.VideoIntroductionFragment
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
@@ -51,7 +51,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
         viewModel.getHanimeVideo(viewModel.videoCode)
     }
 
-    override fun liveDataObserve() {
+    override fun bindDataObservers() {
         lifecycleScope.launch {
             whenStarted {
                 viewModel.hanimeVideoFlow.collect { state ->
@@ -90,7 +90,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                             val entity = WatchHistoryEntity(
                                 state.info.coverUrl, state.info.title,
                                 releaseDate, System.currentTimeMillis(),
-                                getHanimeVideoLink(videoCodeByWebsite ?: videoCode!!)
+                                videoCodeByWebsite ?: videoCode!!
                             )
                             viewModel.insertWatchHistory(entity)
                         }

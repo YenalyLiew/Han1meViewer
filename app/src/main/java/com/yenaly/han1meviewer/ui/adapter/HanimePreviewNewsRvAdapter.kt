@@ -43,28 +43,7 @@ class HanimePreviewNewsRvAdapter :
         holder.binding.tags.setTags(item.tags)
         holder.binding.rvPreview.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = object : BaseQuickAdapter<String, BaseViewHolder>(
-                R.layout.item_hanime_preview_news_pic,
-                item.relatedPicsUrl.toMutableList()
-            ) {
-                override fun convert(holder: BaseViewHolder, item: String) {
-                    holder.getView<ImageView>(R.id.iv_preview_news_pic).load(item) {
-                        crossfade(true)
-                    }
-                }
-
-                override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
-                    viewHolder.itemView.setOnClickListener {
-                        val position = viewHolder.bindingAdapterPosition
-                        XPopup.Builder(context).asImageViewer(
-                            it as? ImageView,
-                            position, item.relatedPicsUrl, { popupView, pos ->
-                                popupView.updateSrcView(recyclerView.getChildAt(pos) as? ImageView)
-                            }, imageLoader
-                        ).show()
-                    }
-                }
-            }
+            adapter = PreviewPicRvAdapter(item)
         }
     }
 
@@ -76,6 +55,30 @@ class HanimePreviewNewsRvAdapter :
                 if (context is PreviewActivity) {
                     (context as PreviewActivity).startActivity<VideoActivity>(VIDEO_CODE to item.videoCode)
                 }
+            }
+        }
+    }
+
+    private inner class PreviewPicRvAdapter(private val item: HanimePreviewModel.PreviewInfo) :
+        BaseQuickAdapter<String, BaseViewHolder>(
+            R.layout.item_hanime_preview_news_pic,
+            item.relatedPicsUrl.toMutableList()
+        ) {
+        override fun convert(holder: BaseViewHolder, item: String) {
+            holder.getView<ImageView>(R.id.iv_preview_news_pic).load(item) {
+                crossfade(true)
+            }
+        }
+
+        override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
+            viewHolder.itemView.setOnClickListener {
+                val position = viewHolder.bindingAdapterPosition
+                XPopup.Builder(context).asImageViewer(
+                    it as? ImageView,
+                    position, item.relatedPicsUrl, { popupView, pos ->
+                        popupView.updateSrcView(recyclerView.getChildAt(pos) as? ImageView)
+                    }, imageLoader
+                ).show()
             }
         }
     }

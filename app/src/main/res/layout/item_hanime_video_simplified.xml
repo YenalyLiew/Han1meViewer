@@ -31,9 +31,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
+            android:maxLines="2"
+            android:minLines="2"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
-            android:singleLine="true"
             tools:text="123123123abc, abc, abc" />
 
     </LinearLayout>

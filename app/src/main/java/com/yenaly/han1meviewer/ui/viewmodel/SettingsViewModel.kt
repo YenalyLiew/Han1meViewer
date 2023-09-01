@@ -31,10 +31,6 @@ class SettingsViewModel(application: Application) : YenalyViewModel(application)
     }
 
     init {
-        viewModelScope.launch {
-            NetworkRepo.getLatestVersion().collect {
-                _versionFlow.value = it
-            }
-        }
+        getLatestVersion()
     }
 }

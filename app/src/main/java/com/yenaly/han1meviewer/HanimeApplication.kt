@@ -8,7 +8,7 @@ import com.google.android.material.color.DynamicColors
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.yenaly.han1meviewer.service.HanimeDownloadWorker
+import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyApplication
 import com.yenaly.yenaly_libs.utils.showShortToast
 

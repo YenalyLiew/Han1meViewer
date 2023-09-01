@@ -7,6 +7,8 @@ import android.widget.HorizontalScrollView
 import kotlin.math.abs
 
 /**
+ * 暂时是专门为影片界面中的横向功能滚动条而设计的
+ *
  * @project Han1meViewer
  * @author Yenaly Liew
  * @time 2023/08/21 021 16:05

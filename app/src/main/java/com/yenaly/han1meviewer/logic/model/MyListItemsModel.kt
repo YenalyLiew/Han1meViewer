@@ -5,7 +5,11 @@ package com.yenaly.han1meviewer.logic.model
  * @author Yenaly Liew
  * @time 2022/07/05 005 15:30
  */
-data class MyListModel(
+data class MyListItemsModel(
     val hanimeInfo: List<HanimeInfoModel>,
-    val csrfToken: String? = null
+    /**
+     * 清單的介紹，一般用於播放清單
+     */
+    var desc: String? = null,
+    val csrfToken: String? = null,
 )

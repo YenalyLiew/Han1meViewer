@@ -33,12 +33,6 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
         MutableStateFlow<VideoLoadingState<HanimeVideoModel>>(VideoLoadingState.Loading)
     val hanimeVideoFlow = _hanimeVideoFlow.asStateFlow()
 
-    private val _addToFavVideoFlow = MutableSharedFlow<WebsiteState<Unit>>()
-    val addToFavVideoFlow = _addToFavVideoFlow.asSharedFlow()
-
-    private val _loadDownloadedFlow = MutableSharedFlow<HanimeDownloadEntity?>()
-    val loadDownloadedFlow = _loadDownloadedFlow.asSharedFlow()
-
     fun getHanimeVideo(videoCode: String) {
         viewModelScope.launch {
             NetworkRepo.getHanimeVideo(videoCode).collect { video ->
@@ -46,6 +40,12 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
             }
         }
     }
+
+    private val _addToFavVideoFlow = MutableSharedFlow<WebsiteState<Unit>>()
+    val addToFavVideoFlow = _addToFavVideoFlow.asSharedFlow()
+
+    private val _loadDownloadedFlow = MutableSharedFlow<HanimeDownloadEntity?>()
+    val loadDownloadedFlow = _loadDownloadedFlow.asSharedFlow()
 
     fun addToFavVideo(
         videoCode: String,
@@ -70,6 +70,22 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
+    private val _modifyMyListFlow = MutableSharedFlow<WebsiteState<Int>>()
+    val modifyMyListFlow = _modifyMyListFlow.asSharedFlow()
+
+    fun modifyMyList(
+        listCode: String,
+        videoCode: String,
+        isChecked: Boolean,
+        position: Int,
+    ) {
+        viewModelScope.launch {
+            NetworkRepo.addToMyList(listCode, videoCode, isChecked, position, csrfToken).collect {
+                _modifyMyListFlow.emit(it)
+            }
+        }
+    }
+
     fun insertWatchHistory(history: WatchHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             DatabaseRepo.WatchHistory.insert(history)
@@ -77,7 +93,7 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
-    fun findDownloadedHanimeByVideoCodeAndQuality(videoCode: String, quality: String) {
+    fun findDownloadedHanime(videoCode: String, quality: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val info = DatabaseRepo.HanimeDownload.findBy(videoCode, quality)
             _loadDownloadedFlow.emit(info)

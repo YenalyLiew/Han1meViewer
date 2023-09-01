@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 用sp而不用dp是爲了能和文字大小一樣 -->
+
+    <item
+        android:width="14sp"
+        android:height="14sp"
+        android:drawable="@drawable/ic_baseline_more_time_24" />
+
+</layer-list>

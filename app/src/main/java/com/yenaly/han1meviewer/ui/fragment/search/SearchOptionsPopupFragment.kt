@@ -137,6 +137,8 @@ class SearchOptionsPopupFragment :
                 .asCustom(popup) as HanimeSearchTagCenterPopup
         }
 
+    @Suppress("unused")
+    @Deprecated("with no reason")
     private val sortOptionPopup: CenterListPopupView
         get() {
             val index = sortOptionArray.indexOf(viewModel.sort)
@@ -153,6 +155,8 @@ class SearchOptionsPopupFragment :
                 }!!
         }
 
+    @Suppress("unused")
+    @Deprecated("with no reason")
     private val durationPopup: CenterListPopupView
         get() {
             val durations = durationMap.keys.toTypedArray()
@@ -204,6 +208,8 @@ class SearchOptionsPopupFragment :
                 .asCustom(popup) as HanimeSearchTagCenterPopup
         }
 
+    @Suppress("unused")
+    @Deprecated("with no reason")
     private val typePopup: CenterListPopupView
         get() {
             val index = typeArray.indexOf(viewModel.genre)
@@ -267,7 +273,23 @@ class SearchOptionsPopupFragment :
     private fun initClick() {
         binding.type.apply {
             setOnClickListener {
-                typePopup.show()
+                // typePopup.show()
+                requireContext().showAlertDialog {
+                    val index = typeArray.indexOf(viewModel.genre)
+                    setTitle(R.string.type)
+                    setSingleChoiceItems(typeArray, index) { _, which ->
+                        viewModel.genre = typeArray.getOrNull(which)
+                        initOptionsChecked()
+                    }
+                    setPositiveButton(R.string.save, null)
+                    setNeutralButton(R.string.reset) { _, _ ->
+                        viewModel.genre = null
+                        initOptionsChecked()
+                    }
+                    setOnDismissListener {
+                        initOptionsChecked()
+                    }
+                }
             }
             setOnLongClickListener lc@{
                 showClearAllTagsDialog {
@@ -303,7 +325,23 @@ class SearchOptionsPopupFragment :
         }
         binding.sortOption.apply {
             setOnClickListener {
-                sortOptionPopup.show()
+                // sortOptionPopup.show()
+                requireContext().showAlertDialog {
+                    val index = sortOptionArray.indexOf(viewModel.sort)
+                    setTitle(R.string.sort_option)
+                    setSingleChoiceItems(sortOptionArray, index) { _, which ->
+                        viewModel.sort = sortOptionArray.getOrNull(which)
+                        initOptionsChecked()
+                    }
+                    setPositiveButton(R.string.save, null)
+                    setNeutralButton(R.string.reset) { _, _ ->
+                        viewModel.sort = null
+                        initOptionsChecked()
+                    }
+                    setOnDismissListener {
+                        initOptionsChecked()
+                    }
+                }
             }
             setOnLongClickListener lc@{
                 showClearAllTagsDialog {
@@ -315,7 +353,24 @@ class SearchOptionsPopupFragment :
         }
         binding.duration.apply {
             setOnClickListener {
-                durationPopup.show()
+                // durationPopup.show()
+                requireContext().showAlertDialog {
+                    val durations = durationMap.keys.toTypedArray()
+                    val index = durations.indexOf(viewModel.duration)
+                    setTitle(R.string.duration)
+                    setSingleChoiceItems(durations, index) { _, which ->
+                        viewModel.duration = durationMap[durations.getOrNull(which)]
+                        initOptionsChecked()
+                    }
+                    setPositiveButton(R.string.save, null)
+                    setNeutralButton(R.string.reset) { _, _ ->
+                        viewModel.duration = null
+                        initOptionsChecked()
+                    }
+                    setOnDismissListener {
+                        initOptionsChecked()
+                    }
+                }
             }
             setOnLongClickListener lc@{
                 showClearAllTagsDialog {

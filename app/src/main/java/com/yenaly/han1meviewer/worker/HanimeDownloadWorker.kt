@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.service
+package com.yenaly.han1meviewer.worker
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -68,8 +68,8 @@ class HanimeDownloadWorker(
     }
 
     private suspend fun createNewRaf() {
-        val file = getDownloadedHanimeFile(hanimeName, quality)
         return withContext(Dispatchers.IO) {
+            val file = getDownloadedHanimeFile(hanimeName, quality)
             var raf: RandomAccessFile? = null
             var response: Response? = null
             var body: ResponseBody? = null
@@ -106,8 +106,8 @@ class HanimeDownloadWorker(
     }
 
     private suspend fun download(): Result {
-        val file = getDownloadedHanimeFile(hanimeName, quality)
         return withContext(Dispatchers.IO) {
+            val file = getDownloadedHanimeFile(hanimeName, quality)
             val isExist = DatabaseRepo.HanimeDownload.isExist(videoCode, quality)
             if (!isExist) createNewRaf()
             val entity = DatabaseRepo.HanimeDownload.findBy(videoCode, quality)
@@ -152,7 +152,7 @@ class HanimeDownloadWorker(
                     return@withContext Result.failure(workDataOf(FAILED_REASON to response.message))
                 }
             } catch (e: Exception) {
-                // if block 是代表用户暂停
+                // cancellation exception block 是代表用户暂停
                 if (e !is CancellationException) {
                     showFailureNotification(e.message ?: "未知下載錯誤")
                     return@withContext Result.failure(workDataOf(FAILED_REASON to e.message))

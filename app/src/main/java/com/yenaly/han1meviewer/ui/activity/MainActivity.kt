@@ -2,18 +2,17 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -22,6 +21,7 @@ import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
+import com.yenaly.han1meviewer.hanimeSpannable
 import com.yenaly.han1meviewer.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.model.VersionModel
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -41,8 +41,8 @@ import kotlinx.coroutines.launch
  */
 class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
 
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
+    lateinit var navHostFragment: NavHostFragment
+    lateinit var navController: NavController
 
     val currentFragment get() = navHostFragment.childFragmentManager.fragments.getOrNull(0)
 
@@ -56,63 +56,14 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             }
         }
 
-    private val navListener = NavController.OnDestinationChangedListener { _, destination, _ ->
-        when (destination.id) {
-            R.id.nv_home_page -> supportActionBar?.subtitle = null
-            R.id.nv_watch_history -> supportActionBar?.setSubtitle(R.string.watch_history)
-            R.id.nv_fav_video -> supportActionBar?.setSubtitle(R.string.fav_video)
-            R.id.nv_play_list -> supportActionBar?.setSubtitle(R.string.play_list)
-            R.id.nv_watch_later -> supportActionBar?.setSubtitle(R.string.watch_later)
-            R.id.nv_download -> supportActionBar?.setSubtitle(R.string.download)
-        }
-    }
-
     override fun setUiStyle() {
-        SystemStatusUtil.fullScreen(window, true)
+
     }
 
     /**
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
-        setSupportActionBar(binding.toolbar)
-
-        // 暂时先这样
-        addMenu(R.menu.menu_main_toolbar) { item ->
-            when (item.itemId) {
-                R.id.tb_search -> {
-                    startActivity<SearchActivity>()
-                    return@addMenu true
-                }
-
-                R.id.tb_previews -> {
-                    startActivity<PreviewActivity>()
-                    return@addMenu true
-                }
-            }
-            return@addMenu item.onNavDestinationSelected(navController)
-        }
-
-        supportActionBar?.let {
-            it.title = spannable {
-                "H".span {
-                    style(Typeface.BOLD)
-                    color(Color.RED)
-                }
-                "an1me".span {
-                    style(Typeface.BOLD)
-                }
-                //"anime1".span {
-                //    style(Typeface.BOLD)
-                //}
-                //".".span {
-                //    style(Typeface.BOLD)
-                //    color(Color.RED)
-                //}
-                //"me".text()
-                "Viewer".text()
-            }
-        }
 
         initHeaderView()
         initMenu()
@@ -121,9 +72,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             supportFragmentManager.findFragmentById(R.id.fcv_main) as NavHostFragment
         navController = navHostFragment.navController
         binding.nvMain.setupWithNavController(navController)
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.nv_home_page), binding.dlMain)
-        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
-        navController.addOnDestinationChangedListener(navListener)
 
         binding.nvMain.getHeaderView(0)?.setPaddingRelative(0, window.currentStatusBarHeight, 0, 0)
 
@@ -145,7 +93,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
-    override fun liveDataObserve() {
+    override fun bindDataObservers() {
         lifecycleScope.launch {
             whenStarted {
                 viewModel.versionFlow.collect {
@@ -260,23 +208,34 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
+    private val loginNeededFragmentList =
+        intArrayOf(R.id.nv_fav_video, R.id.nv_watch_later, R.id.nv_playlist)
+
     private fun initMenu() {
         if (isAlreadyLogin) {
-            binding.nvMain.menu.findItem(R.id.nv_fav_video).setOnMenuItemClickListener(null)
-            binding.nvMain.menu.findItem(R.id.nv_watch_later).setOnMenuItemClickListener(null)
-        } else {
-            binding.nvMain.menu.findItem(R.id.nv_fav_video).setOnMenuItemClickListener {
-                showShortToast(R.string.login_first)
-                val intent = Intent(this, LoginActivity::class.java)
-                loginDataLauncher.launch(intent)
-                return@setOnMenuItemClickListener false
+            loginNeededFragmentList.forEach {
+                binding.nvMain.menu.findItem(it).setOnMenuItemClickListener(null)
             }
-            binding.nvMain.menu.findItem(R.id.nv_watch_later).setOnMenuItemClickListener {
-                showShortToast(R.string.login_first)
-                val intent = Intent(this, LoginActivity::class.java)
-                loginDataLauncher.launch(intent)
-                return@setOnMenuItemClickListener false
+        } else {
+            loginNeededFragmentList.forEach {
+                binding.nvMain.menu.findItem(it).setOnMenuItemClickListener {
+                    showShortToast(R.string.login_first)
+                    val intent = Intent(this, LoginActivity::class.java)
+                    loginDataLauncher.launch(intent)
+                    return@setOnMenuItemClickListener false
+                }
             }
         }
+    }
+
+    /**
+     * 设置toolbar与navController关联
+     *
+     * 必须最后调用！先设置好toolbar！
+     */
+    fun Toolbar.setupWithMainNavController() {
+        supportActionBar!!.title = hanimeSpannable
+        val appBarConfiguration = AppBarConfiguration(setOf(R.id.nv_home_page), binding.dlMain)
+        this.setupWithNavController(navController, appBarConfiguration)
     }
 }

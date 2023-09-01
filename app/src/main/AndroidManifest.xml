@@ -51,7 +51,8 @@
             android:name=".ui.activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Hanime1.Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

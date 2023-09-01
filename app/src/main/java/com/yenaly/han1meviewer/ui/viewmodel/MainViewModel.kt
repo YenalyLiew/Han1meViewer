@@ -56,11 +56,16 @@ class MainViewModel(application: Application) : YenalyViewModel(application), IV
             .catch { e -> e.printStackTrace() }
             .flowOn(Dispatchers.IO)
 
-    init {
+
+    override fun getLatestVersion() {
         viewModelScope.launch {
             NetworkRepo.getLatestVersion().collect {
                 _versionFlow.emit(it)
             }
         }
+    }
+
+    init {
+        getLatestVersion()
     }
 }

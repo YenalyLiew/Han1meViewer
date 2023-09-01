@@ -5,15 +5,19 @@ import androidx.recyclerview.widget.DiffUtil
 import coil.load
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
-import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.DATE_FORMAT
 import com.yenaly.han1meviewer.DATE_TIME_FORMAT
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemWatchHistoryBinding
+import com.yenaly.han1meviewer.getHanimeVideoLink
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
-import com.yenaly.han1meviewer.toVideoCode
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
-import com.yenaly.yenaly_libs.utils.*
+import com.yenaly.yenaly_libs.utils.TimeUtil
+import com.yenaly.yenaly_libs.utils.activity
+import com.yenaly.yenaly_libs.utils.copyTextToClipboard
+import com.yenaly.yenaly_libs.utils.showShortToast
+import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
  * @project Han1meViewer
@@ -31,14 +35,14 @@ class WatchHistoryRvAdapter :
         val COMPARATOR = object : DiffUtil.ItemCallback<WatchHistoryEntity>() {
             override fun areItemsTheSame(
                 oldItem: WatchHistoryEntity,
-                newItem: WatchHistoryEntity
+                newItem: WatchHistoryEntity,
             ): Boolean {
                 return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(
                 oldItem: WatchHistoryEntity,
-                newItem: WatchHistoryEntity
+                newItem: WatchHistoryEntity,
             ): Boolean {
                 return oldItem == newItem
             }
@@ -59,13 +63,13 @@ class WatchHistoryRvAdapter :
             setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition
                 val item = getItem(position)
-                val videoCode = item.redirectLink.toVideoCode()
+                val videoCode = item.videoCode
                 context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
             }
             setOnLongClickListener {
                 val position = viewHolder.bindingAdapterPosition
                 val item = getItem(position)
-                copyTextToClipboard("${item.title}\n${item.redirectLink}")
+                copyTextToClipboard("${item.title}\n${getHanimeVideoLink(item.videoCode)}")
                 showShortToast(R.string.copy_to_clipboard)
                 return@setOnLongClickListener true
             }

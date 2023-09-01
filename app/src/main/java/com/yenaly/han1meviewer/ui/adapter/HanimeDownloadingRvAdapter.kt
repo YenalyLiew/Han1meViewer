@@ -21,7 +21,7 @@ import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadingBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
-import com.yenaly.han1meviewer.service.HanimeDownloadWorker
+import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.util.createDownloadName
 import com.yenaly.han1meviewer.util.showAlertDialog

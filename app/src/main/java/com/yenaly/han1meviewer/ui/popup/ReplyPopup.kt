@@ -6,7 +6,6 @@ import com.google.android.material.button.MaterialButton
 import com.lxj.xpopup.core.BottomPopupView
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.unsafeLazy
-import com.yenaly.yenaly_libs.utils.view.textString
 
 /**
  * @project Han1meViewer
@@ -33,7 +32,7 @@ class ReplyPopup(context: Context) : BottomPopupView(context) {
     /**
      * 得到你输入的内容
      */
-    val comment get() = editText.textString()
+    val comment get() = editText.text.toString()
 
     /**
      * 设置提示

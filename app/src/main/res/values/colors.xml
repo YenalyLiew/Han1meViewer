@@ -12,8 +12,10 @@
     <color name="title_mask_color">#66F5F5F5</color>
     <color name="search_bar_icon_color">#FF00A1FF</color>
     <color name="per50_transparent_black">#80000000</color>
+    <color name="per60_transparent_black">#99000000</color>
     <color name="per70_transparent_black">#B3000000</color>
     <color name="per80_transparent_black">#CC000000</color>
     <color name="per90_transparent_black">#E6000000</color>
+    <color name="per70_transparent_white">#B3FFFFFF</color>
     <color name="per90_transparent_white">#E6FFFFFF</color>
 </resources>

@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.ui.fragment.home
 import android.os.Bundle
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentTabViewPagerOnlyBinding
+import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
@@ -17,12 +18,13 @@ import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
  * @author Yenaly Liew
  * @time 2022/08/01 001 17:44
  */
-class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, DownloadViewModel>() {
+class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, DownloadViewModel>(),
+    IToolbarFragment<MainActivity> {
 
     private val tabNameArray = intArrayOf(R.string.downloading, R.string.downloaded)
 
     override fun initData(savedInstanceState: Bundle?) {
-        clearMenu()
+        (activity as MainActivity).setupToolbar()
         initViewPager()
     }
 
@@ -36,5 +38,14 @@ class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, Downloa
         binding.tabLayout.attach(binding.viewPager) { tab, position ->
             tab.setText(tabNameArray[position])
         }
+    }
+
+    override fun MainActivity.setupToolbar() {
+        val toolbar = this@DownloadFragment.binding.toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setSubtitle(R.string.download)
+        this@DownloadFragment.clearMenu()
+
+        toolbar.setupWithMainNavController()
     }
 }

@@ -10,14 +10,14 @@ import com.chad.library.adapter.base.entity.MultiItemEntity
 data class HanimeInfoModel(
     val title: String,
     val coverUrl: String,
-    val redirectLink: String,
+    val videoCode: String,
     val duration: String? = null,
     val uploader: String? = null,
     val views: String? = null,
     val uploadTime: String? = null,
     val genre: String? = null,
 
-    val isPlaying: Boolean = false, // for video list only.
+    val isPlaying: Boolean = false, // for video playlist only.
 
     override var itemType: Int
 ) : MultiItemEntity {

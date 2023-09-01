@@ -66,6 +66,9 @@ data class VideoCommentModel(
     }
 }
 
+/**
+ * 用於 評論交互 Flow 的返回值
+ */
 data class VideoCommentArguments(
     // 當前評論所處adapter位置
     val commentPosition: Int,

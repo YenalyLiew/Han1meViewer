@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.fragment.hanime
+package com.yenaly.han1meviewer.ui.fragment.video
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -48,10 +48,12 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         }
         binding.btnComment.isVisible = isAlreadyLogin
         replyPopup.setOnSendListener {
-            viewModel.postComment(
-                viewModel.currentUserId!!,
-                viewModel.code, commentTypePrefix, replyPopup.comment
-            )
+            viewModel.currentUserId?.let { id ->
+                viewModel.postComment(
+                   id,
+                    viewModel.code, commentTypePrefix, replyPopup.comment
+                )
+            } ?: showShortToast("出了點小問題...")
         }
         binding.btnComment.setOnClickListener {
             XPopup.Builder(context).autoOpenSoftInput(true)
@@ -68,7 +70,7 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
     }
 
     @SuppressLint("SetTextI18n")
-    override fun liveDataObserve() {
+    override fun bindDataObservers() {
         lifecycleScope.launch {
             whenStarted {
                 viewModel.videoCommentFlow.collect { state ->
