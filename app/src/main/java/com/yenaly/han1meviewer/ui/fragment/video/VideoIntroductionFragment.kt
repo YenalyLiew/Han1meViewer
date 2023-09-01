@@ -22,6 +22,7 @@ import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
@@ -87,8 +88,9 @@ class VideoIntroductionFragment :
                             } else {
                                 binding.playlist.root.isGone = true
                             }
+                            binding.relatedHanime.rv.layoutManager =
+                                state.info.relatedHanimes.buildFlexibleGridLayoutManager()
                             relatedAdapter.setList(state.info.relatedHanimes)
-                            binding.relatedHanime.rv.layoutManager = buildFlexibleGridLayoutManager()
                             initArtist(state.info.artist)
                             initDownloadButton(state.info)
                             initFunctionBar(state.info)
@@ -332,9 +334,9 @@ class VideoIntroductionFragment :
         }
     }
 
-    private fun buildFlexibleGridLayoutManager(): GridLayoutManager {
-        val counts = if (relatedAdapter.getItemViewType(0) == HanimeInfoModel.NORMAL)
+    private fun List<HanimeInfoModel>.buildFlexibleGridLayoutManager(): GridLayoutManager {
+        val counts = if (any { it.itemType == HanimeInfoModel.NORMAL })
             VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
-        return GridLayoutManager(context, counts)
+        return FixedGridLayoutManager(context, counts)
     }
 }
