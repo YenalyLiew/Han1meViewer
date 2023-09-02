@@ -48,7 +48,7 @@ interface HanimeMyListService {
     ): Response<ResponseBody>
 
     @GET("playlists")
-    suspend fun getPlaylist(): Response<ResponseBody>
+    suspend fun getPlaylists(): Response<ResponseBody>
 
     @FormUrlEncoded
     @POST("createPlaylist")

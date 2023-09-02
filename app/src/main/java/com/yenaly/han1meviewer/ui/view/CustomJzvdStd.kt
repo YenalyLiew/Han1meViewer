@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.media.AudioManager
@@ -8,17 +9,21 @@ import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
 import android.util.AttributeSet
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import cn.jzvd.JZDataSource
 import cn.jzvd.JZMediaSystem
 import cn.jzvd.JZUtils
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
+import com.lxj.xpopup.XPopup
+import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
-import com.yenaly.yenaly_libs.utils.dp
+import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlin.math.abs
 
 /**
@@ -38,12 +43,60 @@ class CustomJzvdStd @JvmOverloads constructor(
         // 相當於重寫了
         // 5感覺正好，一般大拖動划滑動條，小拖動划屏幕就完事了
         const val PROGRESS_DRAG_RATE = 5f //进度条滑动阻尼系数 越大播放进度条滑动越慢
+
+        private val speedArray = floatArrayOf(
+            0.5F, 0.75F,
+            1.0F, 1.25F, 1.5F, 1.75F,
+            2.0F, 2.25F, 2.5F, 2.75F,
+            3.0F,
+        )
+
+        private const val defSpeedIndex = 2
+    }
+
+    private var currentSpeedIndex = defSpeedIndex
+        @SuppressLint("SetTextI18n")
+        set(value) {
+            field = value
+            if (value == defSpeedIndex) {
+                tvSpeed.text = "倍速"
+            } else {
+                tvSpeed.text = "${speedArray[value]}x"
+            }
+            videoSpeed = speedArray[value]
+            jzDataSource.objects[0] = value
+        }
+    private lateinit var tvSpeed: TextView
+
+    private val speedPopup by unsafeLazy {
+        val speedStringArray = Array(speedArray.size) { speedArray[it].toString() }
+        XPopup.Builder(context).atView(tvSpeed).isDarkTheme(true)
+            .asAttachList(speedStringArray, null) { index, _ ->
+                currentSpeedIndex = index
+            }
+    }
+
+    private var videoSpeed: Float = 1F
+        set(value) {
+            field = value
+            val isPlaying = mediaInterface.isPlaying
+            mediaInterface.setSpeed(value)
+            if (!isPlaying) {
+                mediaInterface.pause()
+            }
+        }
+
+    override fun getLayoutId() = R.layout.layout_jzvd_with_speed
+
+    override fun init(context: Context?) {
+        super.init(context)
+        tvSpeed = findViewById(R.id.tv_speed)
+        tvSpeed.setOnClickListener(this)
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
         super.setUp(jzDataSource, screen, CustomJZMediaSystem::class.java)
         titleTextView.isInvisible = true
-        titleTextView.updatePadding(right = 18.dp)
     }
 
     override fun gotoFullscreen() {
@@ -59,6 +112,18 @@ class CustomJzvdStd @JvmOverloads constructor(
     override fun setScreenNormal() {
         super.setScreenNormal()
         backButton.isVisible = true
+        tvSpeed.isVisible = false
+    }
+
+    override fun setScreenFullscreen() {
+        super.setScreenFullscreen()
+        tvSpeed.isVisible = true
+        if (jzDataSource.objects == null) {
+            jzDataSource.objects = arrayOf(defSpeedIndex)
+            currentSpeedIndex = defSpeedIndex
+        } else {
+            currentSpeedIndex = jzDataSource.objects.first() as Int
+        }
     }
 
     override fun clickBack() {
@@ -75,6 +140,13 @@ class CustomJzvdStd @JvmOverloads constructor(
             else -> { //剩餘情況直接退出
                 context.activity?.finish()
             }
+        }
+    }
+
+    override fun onClick(v: View) {
+        super.onClick(v)
+        when (v.id) {
+            R.id.tv_speed -> speedPopup.show()
         }
     }
 
@@ -203,8 +275,19 @@ class CustomJzvdStd @JvmOverloads constructor(
         startVideo()
     }
 
-    fun setVideoSpeed(speed: Float) {
-        mediaInterface.setSpeed(speed)
+    override fun showWifiDialog() {
+        jzvdContext.showAlertDialog {
+            setTitle("Warning!")
+            setMessage(cn.jzvd.R.string.tips_not_wifi)
+            setPositiveButton(cn.jzvd.R.string.tips_not_wifi_confirm) { _, _ ->
+                WIFI_TIP_DIALOG_SHOWED = true
+                if (state == STATE_PAUSE) startButton.performClick() else startVideo()
+            }
+            setNegativeButton(cn.jzvd.R.string.tips_not_wifi_cancel) { _, _ ->
+                releaseAllVideos()
+                clearFloatScreen()
+            }
+        }
     }
 }
 

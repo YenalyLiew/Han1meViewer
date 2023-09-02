@@ -128,7 +128,7 @@ object NetworkRepo {
     }
 
     fun getPlaylists() = websiteIOFlow(
-        request = HanimeNetwork.myListService::getPlaylist,
+        request = HanimeNetwork.myListService::getPlaylists,
         action = Parse::playlists
     )
 
