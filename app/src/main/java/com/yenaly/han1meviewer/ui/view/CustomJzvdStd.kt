@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.getSystemService
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -210,6 +211,9 @@ class CustomJzvdStd @JvmOverloads constructor(
                             }
                         } else { //右侧改变声音
                             mChangeVolume = true
+                            if (mAudioManager == null) {
+                                mAudioManager = context.getSystemService()
+                            }
                             mGestureDownVolume =
                                 mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                         }

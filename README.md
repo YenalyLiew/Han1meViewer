@@ -91,6 +91,10 @@ This project is intended solely for learning and communication purposes. Commerc
 
 ## 更新内容
 
+### v0.10.4
+
+**[修复]** 影片界面调节音量崩溃。
+
 ### v0.10.3
 
 **[新增]** 影片可以倍速了，全屏右上角！11种速度任你选择！
