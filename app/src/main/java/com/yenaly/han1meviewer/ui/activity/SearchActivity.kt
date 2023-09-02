@@ -64,6 +64,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         initSearchBar()
 
         binding.searchRv.apply {
+            layoutManager = FixedGridLayoutManager(this@SearchActivity, VIDEO_IN_ONE_LINE)
             adapter = searchAdapter
             addOnScrollListener(object : OnScrollListener() {
 
@@ -136,7 +137,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         val dataState = viewModel.searchFlow.value
         binding.searchRv.layoutManager = if (dataState is PageLoadingState.Success) {
             dataState.info.buildFlexibleGridLayoutManager()
-        } else null
+        } else FixedGridLayoutManager(this, VIDEO_IN_ONE_LINE)
     }
 
     private fun getHanimeSearchResult() {
