@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -97,6 +98,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
             whenStarted {
                 viewModel.searchFlow.collect { state ->
                     binding.errorTip.isVisible = state is PageLoadingState.Error
+                    binding.searchRv.isGone = state is PageLoadingState.Error
                     when (state) {
                         is PageLoadingState.Loading -> {
                             if (searchAdapter.data.isEmpty()) binding.searchSrl.autoRefresh()
@@ -119,6 +121,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
                             if (searchAdapter.data.isEmpty()) {
                                 binding.errorTip.setText(R.string.here_is_empty)
                                 binding.errorTip.isVisible = true
+                                binding.searchRv.isGone = true
                             }
                         }
 
