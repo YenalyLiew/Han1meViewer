@@ -19,6 +19,16 @@
             android:layout_marginTop="8dp"
             android:elevation="16dp" />
 
+        <TextView
+            android:id="@+id/error_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="@dimen/err_tip_text_size"
+            android:visibility="gone"
+            tools:text="404 Not Found" />
+
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/search_srl"
             android:layout_width="match_parent"

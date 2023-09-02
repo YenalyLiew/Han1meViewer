@@ -3,9 +3,8 @@ package com.yenaly.han1meviewer.ui.activity
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
@@ -42,6 +41,11 @@ import java.util.*
  * @time 2022/06/13 013 22:29
  */
 class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() {
+
+    /**
+     * 判断adapter是否已经加载，防止多次加载导致滑动浏览总是跳到顶部。
+     */
+    private var hasAdapterLoaded = false
 
     private val searchAdapter by unsafeLazy { HanimeVideoRvAdapter() }
     private val fromVideoTag by intentExtra<String>(FROM_VIDEO_TAG)
@@ -92,39 +96,37 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         lifecycleScope.launch {
             whenStarted {
                 viewModel.searchFlow.collect { state ->
+                    binding.errorTip.isVisible = state is PageLoadingState.Error
                     when (state) {
                         is PageLoadingState.Loading -> {
-                            // 防止只要list為空就會蹦出來empty view，這樣觀感不好
-                            searchAdapter.removeEmptyView()
                             if (searchAdapter.data.isEmpty()) binding.searchSrl.autoRefresh()
                         }
 
                         is PageLoadingState.Success -> {
                             viewModel.page++
-                            if (binding.searchSrl.isRefreshing) binding.searchSrl.finishRefresh()
+                            binding.searchSrl.finishRefresh()
                             binding.searchSrl.finishLoadMore(true)
-                            binding.searchRv.layoutManager =
-                                state.info.buildFlexibleGridLayoutManager()
+                            if (!hasAdapterLoaded) {
+                                binding.searchRv.layoutManager =
+                                    state.info.buildFlexibleGridLayoutManager()
+                                hasAdapterLoaded = true
+                            }
                             searchAdapter.addData(state.info)
                         }
 
                         is PageLoadingState.NoMoreData -> {
                             binding.searchSrl.finishLoadMoreWithNoMoreData()
-                            if (searchAdapter.data.isEmpty()) searchAdapter.setEmptyView(R.layout.layout_empty_view)
+                            if (searchAdapter.data.isEmpty()) {
+                                binding.errorTip.setText(R.string.here_is_empty)
+                                binding.errorTip.isVisible = true
+                            }
                         }
 
                         is PageLoadingState.Error -> {
-                            if (binding.searchSrl.isRefreshing) binding.searchSrl.finishRefresh()
+                            binding.searchSrl.finishRefresh()
                             binding.searchSrl.finishLoadMore(false)
                             // set error view
-                            val errView = LayoutInflater.from(this@SearchActivity).inflate(
-                                R.layout.layout_empty_view,
-                                searchAdapter.recyclerViewOrNull,
-                                false
-                            )
-                            errView.findViewById<TextView>(R.id.tv_empty).text =
-                                "🥺\n${state.throwable.message}"
-                            searchAdapter.setEmptyView(errView)
+                            binding.errorTip.text = "🥺\n${state.throwable.message}"
                         }
                     }
                 }
@@ -155,6 +157,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     private fun getNewHanimeSearchResult() {
         searchAdapter.data.clear()
         viewModel.page = 1
+        hasAdapterLoaded = false
         getHanimeSearchResult()
     }
 

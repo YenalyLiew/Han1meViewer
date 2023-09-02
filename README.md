@@ -91,6 +91,10 @@ This project is intended solely for learning and communication purposes. Commerc
 
 ## 更新内容
 
+### v0.10.2
+
+**[修复]** 打开搜索页面后，加载新的一页会跳回顶部，且错误提示经常抽风。
+
 ### v0.10.1
 
 **[修复]** 打开搜索页面，当搜索页面为空或搜索失败时崩溃。
