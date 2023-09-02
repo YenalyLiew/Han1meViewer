@@ -91,6 +91,10 @@ This project is intended solely for learning and communication purposes. Commerc
 
 ## 更新内容
 
+### v0.10.3
+
+**[新增]** 影片可以倍速了，全屏右上角！11种速度任你选择！
+
 ### v0.10.2
 
 **[修复]** 打开搜索页面后，加载新的一页会跳回顶部，且错误提示经常抽风。
