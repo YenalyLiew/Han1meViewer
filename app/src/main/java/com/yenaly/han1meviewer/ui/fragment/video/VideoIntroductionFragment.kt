@@ -56,6 +56,8 @@ class VideoIntroductionFragment :
         binding.playlist.title.setText(R.string.series_video)
         binding.relatedHanime.title.setText(R.string.related_video)
 
+        binding.relatedHanime.rv.layoutManager =
+            FixedGridLayoutManager(context, VIDEO_IN_ONE_LINE)
         binding.playlist.rv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.playlist.rv.adapter = playlistAdapter

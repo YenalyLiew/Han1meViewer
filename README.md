@@ -91,6 +91,10 @@ This project is intended solely for learning and communication purposes. Commerc
 
 ## 更新内容
 
+### v0.10.1
+
+**[修复]** 打开搜索页面，当搜索页面为空或搜索失败时崩溃。
+
 ### v0.10.0
 
 **[最新修复]** 打开搜索页面和影片界面崩溃，出现在旧 v0.10.0 版本中。
