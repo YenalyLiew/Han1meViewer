@@ -44,7 +44,7 @@
      y="0"
      rx="64"
      ry="64"
-     inkscape:label="圆角背景" />
+     inkscape:label="round_bg" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:384px;font-family:Tahoma;-inkscape-font-specification:Tahoma;display:inline;fill:#000000"
@@ -52,7 +52,7 @@
      y="407.77441"
      id="text113"
      transform="translate(4.5686543,-11.711914)"
-     inkscape:label="H1文字"><tspan
+     inkscape:label="H1_text"><tspan
        sodipodi:role="line"
        id="tspan111"
        x="23.068846"
@@ -61,27 +61,27 @@
    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:384px;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#ffffff;fill-opacity:1"
    id="tspan3623">1</tspan></tspan></text>
   <g
-     inkscape:label="Ha1图标"
+     inkscape:label="Ha1_icon"
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(4.5686543,-11.711914)">
     <g
        id="g3892"
-       inkscape:label="Anime标志">
+       inkscape:label="Anime_icon">
       <circle
          style="fill:#dc143c;fill-opacity:1"
          id="path3783"
          cx="299.20551"
          cy="335.77441"
          r="72"
-         inkscape:label="标记圆" />
+         inkscape:label="tag_round" />
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:170.667px;font-family:Arial;-inkscape-font-specification:Arial;fill:#000080;fill-opacity:1"
          x="252.28874"
          y="380.02451"
          id="text3729"
-         inkscape:label="a文字"><tspan
+         inkscape:label="a_text"><tspan
            sodipodi:role="line"
            id="tspan3727"
            x="252.28874"
