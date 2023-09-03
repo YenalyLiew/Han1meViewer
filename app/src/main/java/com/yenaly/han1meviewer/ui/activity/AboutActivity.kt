@@ -14,6 +14,7 @@ import com.drakeet.about.Contributor
 import com.google.android.material.appbar.AppBarLayout
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.appLocalVersionName
+import com.yenaly.yenaly_libs.utils.showSnackBar
 
 /**
  * @project Han1meViewer
@@ -21,6 +22,19 @@ import com.yenaly.yenaly_libs.utils.appLocalVersionName
  * @time 2022/07/06 006 22:42
  */
 class AboutActivity : AbsAboutActivity() {
+
+    private val eggArray = arrayOf(
+        "爲什麽點擊這裏，以爲這裏有彩蛋嗎？",
+        "別點了！！",
+        "再點擊 4 次進入崩壞模式",
+        "再點擊 3 次進入崩壞模式",
+        "再點擊 2 次進入崩壞模式",
+        "再點擊 1 次進入崩壞模式",
+        "逗你玩的，你還真信了！",
+    )
+
+    private var clickIconTimes = 0
+
     @SuppressLint("SetTextI18n")
     override fun onCreateHeader(icon: ImageView, slogan: TextView, version: TextView) {
 
@@ -41,8 +55,11 @@ class AboutActivity : AbsAboutActivity() {
         }
         setHeaderContentScrim(gradientDrawable)
 
-        icon.load(R.mipmap.ic_launcher) {
+        icon.load(R.drawable.icon_transparent_han1me_viewer_rurires) {
             transformations(CircleCropTransformation())
+        }
+        icon.setOnClickListener {
+            showSnackBar(eggArray[clickIconTimes++ % eggArray.size])
         }
         slogan.setText(R.string.app_slogan)
         version.text = "v$appLocalVersionName"
@@ -66,6 +83,14 @@ class AboutActivity : AbsAboutActivity() {
                     "Yenaly Liew",
                     "Developer",
                     "https://github.com/YenalyLiew"
+                )
+            )
+            add(
+                Contributor(
+                    0,
+                    "rurires",
+                    "Icon creator",
+                    "https://github.com/rurires"
                 )
             )
         }

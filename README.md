@@ -6,8 +6,6 @@
 
 本项目仅用于学习和交流，不可闭源，严禁商用。
 
-~~没有 logo，有没有好心人帮帮忙...~~
-
 An unofficial Hanime1.me Application for Android.
 
 This project is intended solely for learning and communication purposes. Commercial use is strictly prohibited.
@@ -90,6 +88,10 @@ This project is intended solely for learning and communication purposes. Commerc
 ~~PS：你还真给我大改了。。~~
 
 ## 更新内容
+
+### v0.10.5
+
+**[新增]** 终于有图标了，感谢 [rurires](https://github.com/rurires) 提供！
 
 ### v0.10.4
 
