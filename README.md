@@ -1,6 +1,6 @@
 # Han1meViewer
 
-![Han1meViewer](https://socialify.git.ci/YenalyLiew/Han1meViewer/image?description=1&descriptionEditable=A%20unofficial%20Hanime1.me%20Application%20for%20Android.&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FYenalyLiew%2FHan1meViewer%2F8e28087c3692cf9e1e6f702f60f0a180e55661e0%2Ficon%2Ficon_han1me_viewer%2540rurires.svg&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
+![Han1meViewer](https://socialify.git.ci/YenalyLiew/Han1meViewer/image?description=1&descriptionEditable=A%20unofficial%20Hanime1.me%20Application%20for%20Android.&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FYenalyLiew%2FHan1meViewer%2F8e28087c3692cf9e1e6f702f60f0a180e55661e0%2Ficon%2Ficon_han1me_viewer_rurires.svg&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
 
 这是一个 [Hanime1](https://hanime1.me/) Android 平台的非官方浏览器。
 
