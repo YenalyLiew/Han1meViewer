@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenCreated
+import androidx.lifecycle.whenStarted
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
@@ -67,6 +67,11 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     }
 
     /**
+     * 用於判斷是否需要 setExpanded，防止重複喚出 AppBar
+     */
+    private var isAfterRefreshing = false
+
+    /**
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
@@ -97,6 +102,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         }
         binding.homePageSrl.apply {
             setOnRefreshListener {
+                isAfterRefreshing = false
                 // will enter here firstly. cuz the flow's def value is Loading.
                 viewModel.getHomePage()
             }
@@ -107,13 +113,15 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         lifecycleScope.launch {
-            whenCreated {
+            whenStarted {
                 viewModel.homePageFlow.collect { state ->
                     binding.homePageNsv.isGone = state !is WebsiteState.Success
                     binding.banner.isVisible =
                         state is WebsiteState.Success || binding.banner.isVisible // 只有在刚开始的时候是不可见的
                     binding.errorTip.isVisible = state is WebsiteState.Error
-                    binding.appBar.setExpanded(state is WebsiteState.Success, true)
+                    if (!isAfterRefreshing) {
+                        binding.appBar.setExpanded(state is WebsiteState.Success, true)
+                    }
                     when (state) {
                         is WebsiteState.Loading -> {
                             binding.homePageSrl.autoRefresh()
@@ -121,6 +129,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                         }
 
                         is WebsiteState.Success -> {
+                            isAfterRefreshing = true
                             binding.homePageSrl.finishRefresh()
                             initBanner(state.info)
                             latestHanimeAdapter.setDiffNewData(state.info.latestHanime)
