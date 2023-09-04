@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.fragment.home
+package com.yenaly.han1meviewer.ui.fragment
 
 import androidx.appcompat.app.AppCompatActivity
 
@@ -9,4 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
  */
 interface IToolbarFragment<T : AppCompatActivity> {
     fun T.setupToolbar()
+
 }
+

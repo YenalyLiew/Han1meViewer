@@ -8,60 +8,62 @@
 
 An unofficial Hanime1.me Application for Android.
 
-This project is intended solely for learning and communication purposes. Commercial use is strictly prohibited.
+This project is intended solely for learning purposes. Commercial use is strictly prohibited.
 
 ![download times](https://img.shields.io/github/downloads/YenalyLiew/Han1meViewer/total)
+
+## Star History
+
+感谢大家对本项目的支持
+
+[![Star History Chart](https://api.star-history.com/svg?repos=YenalyLiew/Han1meViewer&type=Date)](https://star-history.com/#YenalyLiew/Han1meViewer&Date)
 
 ------
 
 ## 功能
 
 - 主页
-
-  - [x] 头图
-
-  - [x] 推荐
+    - [x] 头图
+    - [x] 推荐
 
 - 新番新闻
-
-  - [x] 月度切换
-  - [x] 评论
-    - [x] 子评论
+    - [x] 月度切换
+    - [x] 评论
+        - [x] 子评论
 
 - 用户
-  - [x] 登入（暂不支持谷歌登录）
-  - [x] 登出
+    - [x] 登入（暂不支持谷歌登录）
+    - [x] 登出
 
 - 搜索
-  - [x] 高级搜索
+    - [x] 高级搜索
 
 - 影片
-  - [x] 播放
-  - [x] 添加/移除到喜欢列表
-  - [x] 添加/移除到稍后观看
-  - [x] 添加/移除到播放清单
-  - [x] 下载
-  - [x] 分享
-  - [x] 同系列影片
-  - [x] 推荐栏
-  - [x] TAG
-    - [x] 查看
-    - [ ] 修改（做不了，有人机验证）
-
-  - [x] 评论
-    - [x] 子评论
+    - [x] 播放
+    - [x] 添加/移除到喜欢列表
+    - [x] 添加/移除到稍后观看
+    - [x] 添加/移除到播放清单
+    - [x] 下载
+    - [x] 分享
+    - [x] 同系列影片
+    - [x] 推荐栏
+    - [x] TAG
+        - [x] 查看
+        - [ ] 修改（做不了，有人机验证）
+    - [x] 评论
+        - [x] 子评论
 
 - 喜欢列表
-  - [x] 删除
+    - [x] 删除
 
 - 稍后观看
-  - [x] 删除
+    - [x] 删除
 
 - 播放清单
-  - [x] 修改清单
-  - [x] 添加清单
-  - [x] 删除清单
-  - [x] 删除影片
+    - [x] 修改清单
+    - [x] 添加清单
+    - [x] 删除清单
+    - [x] 删除影片
 
 - 漫画（不打算做）
 
@@ -93,6 +95,10 @@ This project is intended solely for learning and communication purposes. Commerc
 
 **[新增]** 终于有图标了，感谢 [rurires](https://github.com/rurires) 提供！
 
+**[修复]** 返回主页后总是展开头图。
+
+**[新增]** 可关闭播放器下方进度条，在 设置->播放器设置 里，默认开启。
+
 ### v0.10.4
 
 **[修复]** 影片界面调节音量崩溃。
@@ -110,8 +116,6 @@ This project is intended solely for learning and communication purposes. Commerc
 **[修复]** 打开搜索页面，当搜索页面为空或搜索失败时崩溃。
 
 ### v0.10.0
-
-**[最新修复]** 打开搜索页面和影片界面崩溃，出现在旧 v0.10.0 版本中。
 
 **[新增]** 播放清单。支持添加、删除、修改等一系列操作。创建播放清单在原网页中是在影片界面添加，而在本软件里更改为在播放清单界面添加。
 
@@ -155,7 +159,9 @@ This project is intended solely for learning and communication purposes. Commerc
 
 但目前有个 bug 没修：日期问题。所以你可能发现不少 1970-01-01，特别是在下载页面，那个我以后再搞，目前能用即可。
 
-PS：一年前加了 CloudFlare 防护，然后又把前端改了，当时太忙就索性不搞了。最近暑假闲来无事，发现 CloudFlare 突然没了，索性重新搞了一遍，不过目前还会有一些 bug，但是基本使用还是可以的。而且他们主页改动巨大，但我还是套用的之前的模板，你可能会发现主页和网页版主页可能对应不上，但是不影响。
+PS：一年前加了 CloudFlare 防护，然后又把前端改了，当时太忙就索性不搞了。最近暑假闲来无事，发现 CloudFlare
+突然没了，索性重新搞了一遍，不过目前还会有一些
+bug，但是基本使用还是可以的。而且他们主页改动巨大，但我还是套用的之前的模板，你可能会发现主页和网页版主页可能对应不上，但是不影响。
 
 ### v0.5.2
 
@@ -203,7 +209,8 @@ PS：一年前加了 CloudFlare 防护，然后又把前端改了，当时太忙
 
 修复旋转屏幕列表单列显示错乱的问题。
 
-实现了下载功能，支持新番导览小图点击后打开大图的功能，支持保存。未测试过能否断点续传，貌似没实现，如果下载一半关闭程序可能会有 bug 产生，所以建议下载完了再关闭。
+实现了下载功能，支持新番导览小图点击后打开大图的功能，支持保存。未测试过能否断点续传，貌似没实现，如果下载一半关闭程序可能会有
+bug 产生，所以建议下载完了再关闭。
 
 最低可用安卓版本从 Android 6.0 修改为 Android 7.0。
 

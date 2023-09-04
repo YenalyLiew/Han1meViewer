@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.fragment.home
+package com.yenaly.han1meviewer.ui.fragment
 
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController

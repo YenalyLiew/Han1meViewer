@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentTabViewPagerOnlyBinding
 import com.yenaly.han1meviewer.ui.activity.MainActivity
+import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel

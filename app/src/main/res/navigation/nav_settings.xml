@@ -6,6 +6,19 @@
 
     <fragment
         android:id="@+id/homeSettingsFragment"
-        android:name="com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment" />
+        android:name="com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment">
+
+        <action
+            android:id="@+id/action_homeSettingsFragment_to_playerSettingsFragment"
+            app:destination="@id/playerSettingsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playerSettingsFragment"
+        android:name="com.yenaly.han1meviewer.ui.fragment.settings.PlayerSettingsFragment" />
 
 </navigation>

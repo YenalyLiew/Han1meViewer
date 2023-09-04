@@ -10,6 +10,8 @@ import android.provider.Settings.SettingNotFoundException
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.getSystemService
 import androidx.core.view.isGone
@@ -22,6 +24,7 @@ import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.preferenceSp
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -54,6 +57,8 @@ class CustomJzvdStd @JvmOverloads constructor(
 
         private const val defSpeedIndex = 2
     }
+
+    private val showBottomProgress get() = preferenceSp.getBoolean("show_bottom_progress", true)
 
     private var currentSpeedIndex = defSpeedIndex
         @SuppressLint("SetTextI18n")
@@ -93,6 +98,10 @@ class CustomJzvdStd @JvmOverloads constructor(
         super.init(context)
         tvSpeed = findViewById(R.id.tv_speed)
         tvSpeed.setOnClickListener(this)
+        if (bottomProgressBar != null && !showBottomProgress) {
+            bottomProgressBar.removeItself()
+            bottomProgressBar = ProgressBar(context)
+        }
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
@@ -292,6 +301,13 @@ class CustomJzvdStd @JvmOverloads constructor(
                 clearFloatScreen()
             }
         }
+    }
+
+    /**
+     * 刪除自己
+     */
+    private fun View.removeItself() {
+        (parent as? ViewGroup)?.removeView(this)
     }
 }
 

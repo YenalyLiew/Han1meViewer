@@ -120,4 +120,5 @@
     <string name="playlist_description">介紹</string>
     <string name="open_playlist_drawer">打開播放清單列表</string>
     <string name="add_to_playlist">加入播放清單</string>
+    <string name="player_settings">播放器設置</string>
 </resources>
