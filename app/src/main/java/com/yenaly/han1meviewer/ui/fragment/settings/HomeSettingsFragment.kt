@@ -6,12 +6,15 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.preferenceSp
 import com.yenaly.han1meviewer.ui.activity.AboutActivity
+import com.yenaly.han1meviewer.ui.activity.SettingsActivity
+import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
 import com.yenaly.han1meviewer.util.checkNeedUpdate
 import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
@@ -35,15 +38,22 @@ import kotlin.concurrent.thread
  * @author Yenaly Liew
  * @time 2022/07/01 001 14:25
  */
-class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home) {
+class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
+    IToolbarFragment<SettingsActivity> {
 
     private val viewModel by activityViewModels<SettingsViewModel>()
 
     private val videoLanguageListPreference by safePreference<SimpleMenuPreference>("video_language")
+    private val playerSettingsPreference by safePreference<Preference>("player_settings")
     private val updatePreference by safePreference<Preference>("update")
     private val aboutPreference by safePreference<Preference>("about")
     private val downloadPath by safePreference<LongClickablePreference>("download_path")
     private val clearCache by safePreference<Preference>("clear_cache")
+
+    override fun onStart() {
+        super.onStart()
+        (activity as SettingsActivity).setupToolbar()
+    }
 
     override fun onPreferencesCreated(savedInstanceState: Bundle?) {
         videoLanguageListPreference.setOnPreferenceChangeListener { _, newValue ->
@@ -58,6 +68,10 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home) {
                 }
             }
             return@setOnPreferenceChangeListener true
+        }
+        playerSettingsPreference.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.action_homeSettingsFragment_to_playerSettingsFragment)
+            return@setOnPreferenceClickListener true
         }
         aboutPreference.apply {
             title = buildString {
@@ -78,9 +92,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home) {
                 requireContext().showAlertDialog {
                     setTitle("不允許更改哦")
                     setMessage(
-                        "Android 權限收太緊了，將就著用吧！\n" +
-                                "詳細位置：${path}\n" +
-                                "長按選項可以複製哦！"
+                        "詳細位置：${path}\n" + "長按選項可以複製哦！"
                     )
                     setPositiveButton("OK", null)
                 }
@@ -144,10 +156,12 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home) {
                                 return@setOnPreferenceClickListener true
                             }
                         }
+
                         is WebsiteState.Loading -> {
                             updatePreference.setSummary(R.string.checking_update)
                             updatePreference.onPreferenceClickListener = null
                         }
+
                         is WebsiteState.Success -> {
                             if (checkNeedUpdate(state.info.tagName)) {
                                 updatePreference.summary =
@@ -175,5 +189,9 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home) {
             " ".text()
             getString(R.string.cache_occupy).text()
         }
+    }
+
+    override fun SettingsActivity.setupToolbar() {
+        supportActionBar!!.setTitle(R.string.settings)
     }
 }

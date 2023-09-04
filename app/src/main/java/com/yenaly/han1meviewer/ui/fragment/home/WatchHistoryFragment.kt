@@ -12,6 +12,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.WatchHistoryRvAdapter
+import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment

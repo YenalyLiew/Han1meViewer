@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.onNavDestinationSelected
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ActivitySettingsBinding
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
@@ -30,21 +29,19 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeActionContentDescription(R.string.back)
-            it.setTitle(R.string.settings)
         }
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fcv_settings) as NavHostFragment
         navController = navHostFragment.navController
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return if (navController.navigateUp()) true else {
-            finish()
-            true
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            android.R.id.home -> if (!navController.navigateUp()) {
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
