@@ -5,7 +5,10 @@ import com.yenaly.han1meviewer.cookieMap
 import com.yenaly.han1meviewer.loginCookie
 import com.yenaly.han1meviewer.util.toCookieList
 import com.yenaly.yenaly_libs.utils.GsonUtil
-import okhttp3.*
+import okhttp3.Cookie
+import okhttp3.CookieJar
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit

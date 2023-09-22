@@ -1,6 +1,6 @@
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import java.util.Date
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.TimeZone
 
 plugins {
@@ -17,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = createVersionCode()
-        versionName = createVersionName(major = 0, minor = 10, patch = 5)
+        versionName = createVersionName(major = 0, minor = 10, patch = 6)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

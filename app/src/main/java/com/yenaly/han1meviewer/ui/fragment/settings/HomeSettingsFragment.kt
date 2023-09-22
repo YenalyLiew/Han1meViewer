@@ -56,18 +56,26 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
     }
 
     override fun onPreferencesCreated(savedInstanceState: Bundle?) {
-        videoLanguageListPreference.setOnPreferenceChangeListener { _, newValue ->
-            if (newValue != preferenceSp.getString("video_language", "zh-CHT")) {
-                requireContext().showAlertDialog {
-                    setTitle("注意！")
-                    setMessage("修改影片語言需要重新程式")
-                    setPositiveButton("確認") { _, _ ->
-                        ActivitiesManager.restart(killProcess = false)
+        videoLanguageListPreference.apply {
+
+            // 從 xml 轉移至此
+            entries = arrayOf("繁體中文", "簡體中文")
+            entryValues = arrayOf("zh-CHT", "zh-CHS")
+            setDefaultValue(entryValues.first())
+
+            setOnPreferenceChangeListener { _, newValue ->
+                if (newValue != preferenceSp.getString("video_language", "zh-CHT")) {
+                    requireContext().showAlertDialog {
+                        setTitle("注意！")
+                        setMessage("修改影片語言需要重新程式")
+                        setPositiveButton("確認") { _, _ ->
+                            ActivitiesManager.restart(killProcess = false)
+                        }
+                        setNegativeButton("取消", null)
                     }
-                    setNegativeButton("取消", null)
                 }
+                return@setOnPreferenceChangeListener true
             }
-            return@setOnPreferenceChangeListener true
         }
         playerSettingsPreference.setOnPreferenceClickListener {
             findNavController().navigate(R.id.action_homeSettingsFragment_to_playerSettingsFragment)

@@ -12,8 +12,12 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.itxca.spannablex.spannable
+import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
+import com.yenaly.han1meviewer.AdvancedSearch
+import com.yenaly.han1meviewer.AdvancedSearchMap
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
+import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentHomePageBinding
 import com.yenaly.han1meviewer.logic.model.HomePageModel
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -158,18 +162,33 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     private fun initTitle() {
         binding.latestHanime.title.setText(R.string.latest_hanime)
         binding.latestHanime.subTitle.setText(R.string.h_anime)
+        binding.latestHanime.title.setOnClickListener {
+            toSearchActivity(advancedSearchMapOf(AdvancedSearch.GENRE to "裏番"))
+        }
 
         binding.latestUpload.title.setText(R.string.latest_upload)
         binding.latestUpload.subTitle.setText(R.string.fresh)
+        binding.latestUpload.title.setOnClickListener {
+            toSearchActivity(advancedSearchMapOf(AdvancedSearch.SORT to "最新上傳"))
+        }
 
         binding.hotHanimeMonthly.title.setText(R.string.hot_video)
         binding.hotHanimeMonthly.subTitle.setText(R.string.this_month)
+        binding.hotHanimeMonthly.title.setOnClickListener {
+            toSearchActivity(advancedSearchMapOf(AdvancedSearch.SORT to "本月排行"))
+        }
 
         binding.hanimeCurrent.title.setText(R.string.hot_video_2)
         binding.hanimeCurrent.subTitle.setText(R.string.current)
+        binding.hanimeCurrent.title.setOnClickListener {
+            toSearchActivity(advancedSearchMapOf(AdvancedSearch.SORT to "本日排行"))
+        }
 
         binding.hanimeTheyWatched.title.setText(R.string.they_watched)
         binding.hanimeTheyWatched.subTitle.setText(R.string.trends)
+        binding.hanimeTheyWatched.title.setOnClickListener {
+            toSearchActivity(advancedSearchMapOf(AdvancedSearch.SORT to "他們在看"))
+        }
     }
 
     private fun initBanner(info: HomePageModel) {
@@ -185,6 +204,10 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                 requireActivity().startActivity<VideoActivity>(VIDEO_CODE to banner.videoCode)
             }
         }
+    }
+
+    private fun toSearchActivity(advancedSearchMap: AdvancedSearchMap) {
+        startActivity<SearchActivity>(ADVANCED_SEARCH_MAP to advancedSearchMap)
     }
 
     override fun MainActivity.setupToolbar() {

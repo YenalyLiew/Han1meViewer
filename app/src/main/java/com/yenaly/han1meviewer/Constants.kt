@@ -45,7 +45,13 @@ const val SEARCH_YEAR_RANGE_END = 2022
 
 const val VIDEO_CODE = "VIDEO_CODE"
 
+@Deprecated("Use [ADVANCED_SEARCH_MAP] instead")
 const val FROM_VIDEO_TAG = "FROM_VIDEO_TAG"
+
+/**
+ * 接受类型 [AdvancedSearchMap] 或者 [String]
+ */
+const val ADVANCED_SEARCH_MAP = "ADVANCED_SEARCH_MAP"
 
 const val COMMENT_ID = "COMMENT_ID"
 

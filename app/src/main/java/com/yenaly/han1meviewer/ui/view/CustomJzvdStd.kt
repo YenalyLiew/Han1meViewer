@@ -42,32 +42,80 @@ class CustomJzvdStd @JvmOverloads constructor(
 
     companion object {
         // 相當於重寫了
+        /**
+         * 滑动操作的阈值
+         */
         const val THRESHOLD = 10
 
         // 相當於重寫了
-        // 5感覺正好，一般大拖動划滑動條，小拖動划屏幕就完事了
-        const val PROGRESS_DRAG_RATE = 5f //进度条滑动阻尼系数 越大播放进度条滑动越慢
+        /**
+         * 默認滑動調整進度條的靈敏度 越大播放进度条滑动越慢
+         */
+        const val DEF_PROGRESS_SLIDE_SENSITIVITY = 5
 
-        private val speedArray = floatArrayOf(
+        /**
+         * 默認速度
+         */
+        const val DEF_SPEED = 1.0F
+
+        /**
+         * 默認速度的索引
+         */
+        private const val DEF_SPEED_INDEX = 2
+
+        /**
+         * 速度列表
+         */
+        val speedArray = floatArrayOf(
             0.5F, 0.75F,
             1.0F, 1.25F, 1.5F, 1.75F,
             2.0F, 2.25F, 2.5F, 2.75F,
             3.0F,
         )
 
-        private const val defSpeedIndex = 2
+        /**
+         * 速度列表的字符串
+         */
+        val speedStringArray = Array(speedArray.size) { "${speedArray[it]}x" }
+
+        /**
+         * 用戶定義的是否顯示底部進度條
+         */
+        var showBottomProgress = preferenceSp.getBoolean("show_bottom_progress", true)
+
+        /**
+         * 用戶定義的默認速度
+         */
+        var userDefSpeed =
+            preferenceSp.getString("player_speed", DEF_SPEED.toString())?.toFloat() ?: DEF_SPEED
+
+        /**
+         * 用戶定義的默認速度的索引
+         */
+        var userDefSpeedIndex = speedArray.indexOfFirst { it == userDefSpeed }
+
+        /**
+         * 用戶定義的滑動調整進度條的靈敏度
+         */
+        var userDefSlideSensitivity =
+            preferenceSp.getInt("slide_sensitivity", DEF_PROGRESS_SLIDE_SENSITIVITY)
+            set(value) {
+                field = value
+                Log.d("CustomJzvdStd", "userDefSlideSensitivity: $value")
+            }
     }
 
-    private val showBottomProgress get() = preferenceSp.getBoolean("show_bottom_progress", true)
-
-    private var currentSpeedIndex = defSpeedIndex
+    /**
+     * 當前速度的索引
+     */
+    private var currentSpeedIndex = userDefSpeedIndex
         @SuppressLint("SetTextI18n")
         set(value) {
             field = value
-            if (value == defSpeedIndex) {
+            if (value == DEF_SPEED_INDEX) {
                 tvSpeed.text = "倍速"
             } else {
-                tvSpeed.text = "${speedArray[value]}x"
+                tvSpeed.text = speedStringArray[value]
             }
             videoSpeed = speedArray[value]
             jzDataSource.objects[0] = value
@@ -75,14 +123,14 @@ class CustomJzvdStd @JvmOverloads constructor(
     private lateinit var tvSpeed: TextView
 
     private val speedPopup by unsafeLazy {
-        val speedStringArray = Array(speedArray.size) { speedArray[it].toString() }
         XPopup.Builder(context).atView(tvSpeed).isDarkTheme(true)
+            .hasShadowBg(false).hasStatusBar(false)
             .asAttachList(speedStringArray, null) { index, _ ->
                 currentSpeedIndex = index
             }
     }
 
-    private var videoSpeed: Float = 1F
+    private var videoSpeed: Float = userDefSpeed
         set(value) {
             field = value
             val isPlaying = mediaInterface.isPlaying
@@ -129,8 +177,8 @@ class CustomJzvdStd @JvmOverloads constructor(
         super.setScreenFullscreen()
         tvSpeed.isVisible = true
         if (jzDataSource.objects == null) {
-            jzDataSource.objects = arrayOf(defSpeedIndex)
-            currentSpeedIndex = defSpeedIndex
+            jzDataSource.objects = arrayOf(userDefSpeedIndex)
+            currentSpeedIndex = userDefSpeedIndex
         } else {
             currentSpeedIndex = jzDataSource.objects.first() as Int
         }
@@ -188,7 +236,7 @@ class CustomJzvdStd @JvmOverloads constructor(
                     cancelProgressTimer()
                     if (absDeltaX >= THRESHOLD) {
                         // 全屏模式下的CURRENT_STATE_ERROR状态下,不响应进度拖动事件.
-                        // 否则会因为mediaplayer的状态非法导致App Crash
+                        // 否则会因为media player的状态非法导致App Crash
                         if (state != STATE_ERROR) {
                             mChangePosition = true
                             mGestureDownPosition = currentPositionWhenPlaying
@@ -234,8 +282,7 @@ class CustomJzvdStd @JvmOverloads constructor(
         if (mChangePosition) {
             val totalTimeDuration = duration
             mSeekTimePosition =
-                (mGestureDownPosition + deltaX * totalTimeDuration / (mScreenWidth * PROGRESS_DRAG_RATE)).toInt()
-                    .toLong()
+                (mGestureDownPosition + deltaX * totalTimeDuration / (mScreenWidth * userDefSlideSensitivity)).toLong()
             if (mSeekTimePosition > totalTimeDuration) mSeekTimePosition = totalTimeDuration
             val seekTime = JZUtils.stringForTime(mSeekTimePosition)
             val totalTime = JZUtils.stringForTime(totalTimeDuration)
