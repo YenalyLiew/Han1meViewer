@@ -12,7 +12,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.yenaly.han1meviewer.FROM_VIDEO_TAG
+import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.yenaly_libs.utils.activity
@@ -28,7 +28,7 @@ import com.yenaly.yenaly_libs.utils.startActivity
  * @time 2023/08/06 006 21:46
  */
 class CollapsibleTags @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null
+    context: Context, attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
 
 
@@ -97,7 +97,7 @@ class CollapsibleTags @JvmOverloads constructor(
                 .apply {
                     text = tag
                     setOnClickListener {
-                        context?.activity?.startActivity<SearchActivity>(FROM_VIDEO_TAG to tag)
+                        context?.activity?.startActivity<SearchActivity>(ADVANCED_SEARCH_MAP to tag)
                     }
                     setOnLongClickListener {
                         tag.copyToClipboard()

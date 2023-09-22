@@ -49,7 +49,8 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
     private var hasAdapterLoaded = false
 
     private val searchAdapter by unsafeLazy { HanimeVideoRvAdapter() }
-    private val fromVideoTag by intentExtra<String>(FROM_VIDEO_TAG)
+
+    private val advancedSearchMap by intentExtra<Any>(ADVANCED_SEARCH_MAP)
 
     private val optionsPopupFragment by unsafeLazy { SearchOptionsPopupFragment() }
 
@@ -61,10 +62,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
-        fromVideoTag?.let {
-            viewModel.query = it
-            binding.searchBar.searchText = it
-        }
+        advancedSearchMap?.let(::loadAdvancedSearch)
 
         initSearchBar()
 
@@ -209,5 +207,40 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
         val counts = if (any { it.itemType == HanimeInfoModel.NORMAL })
             VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
         return FixedGridLayoutManager(this@SearchActivity, counts)
+    }
+
+    /**
+     * 分析该 any 并加载给相应 ViewModel 中的参数
+     *
+     * any 可以爲 [AdvancedSearchMap] 或者 [String]
+     *
+     * 若为 [String]，则默认给 query 处理
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun loadAdvancedSearch(any: Any) {
+        if (any is String) {
+            viewModel.query = any
+            binding.searchBar.searchText = any
+            return
+        }
+        val map = any as AdvancedSearchMap
+        (map[AdvancedSearch.QUERY] as? String)?.let {
+            viewModel.query = it
+            binding.searchBar.searchText = it
+        }
+        viewModel.genre = map[AdvancedSearch.GENRE] as? String
+        viewModel.sort = map[AdvancedSearch.SORT] as? String
+        viewModel.year = map[AdvancedSearch.YEAR] as? Int
+        viewModel.month = map[AdvancedSearch.MONTH] as? Int
+        viewModel.duration = map[AdvancedSearch.DURATION] as? String
+
+        when (val tags = map[AdvancedSearch.TAGS]) {
+            is String -> viewModel.tagSet.add(tags)
+            is HashSet<*> -> viewModel.tagSet.addAll(tags as Set<String>)
+        }
+        when (val brands = map[AdvancedSearch.BRANDS]) {
+            is String -> viewModel.brandSet.add(brands)
+            is HashSet<*> -> viewModel.brandSet.addAll(brands as Set<String>)
+        }
     }
 }

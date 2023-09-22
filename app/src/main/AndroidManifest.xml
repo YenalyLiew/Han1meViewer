@@ -70,6 +70,7 @@
             android:configChanges="screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.Hanime1.Preview"
             tools:ignore="LockedOrientationActivity">
 
         </activity>

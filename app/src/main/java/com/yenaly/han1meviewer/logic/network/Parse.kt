@@ -208,7 +208,7 @@ object Parse {
         val bannerImg = bannerCSS?.previousElementSibling()
         val bannerTitle = bannerImg?.selectFirst("img")?.attr("alt")
             .logIfParseNull(Parse::homePageVer2.name, "bannerTitle")
-        val bannerPic = bannerImg?.selectFirst("img")?.absUrl("src")
+        val bannerPic = bannerImg?.select("img")?.getOrNull(1)?.absUrl("src")
             .logIfParseNull(Parse::homePageVer2.name, "bannerPic")
         val bannerDesc = bannerCSS?.selectFirst("h4")?.ownText()
         val bannerVideoCode =

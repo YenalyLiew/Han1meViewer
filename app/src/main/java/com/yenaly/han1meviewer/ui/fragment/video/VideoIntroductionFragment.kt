@@ -22,12 +22,13 @@ import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
-import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.han1meviewer.util.setDrawableTop
 import com.yenaly.han1meviewer.util.showAlertDialog
+import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.*
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
@@ -183,6 +184,14 @@ class VideoIntroductionFragment :
             binding.vgArtist.isGone = true
         } else {
             binding.vgArtist.isGone = false
+            binding.vgArtist.setOnClickListener {
+                startActivity<SearchActivity>(
+                    ADVANCED_SEARCH_MAP to advancedSearchMapOf(
+                        AdvancedSearch.QUERY to artist.name,
+                        AdvancedSearch.GENRE to artist.genre
+                    )
+                )
+            }
             binding.tvArtist.text = artist.name
             binding.tvGenre.text = artist.genre
             binding.ivArtist.load(artist.avatarUrl) {

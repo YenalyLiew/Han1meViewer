@@ -22,7 +22,6 @@ import com.yenaly.han1meviewer.ui.adapter.HanimePreviewNewsRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.PreviewViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.SystemStatusUtil
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.AppBarLayoutStateChangeListener
@@ -47,7 +46,6 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
     private val newsAdapter by unsafeLazy { HanimePreviewNewsRvAdapter() }
 
     override fun setUiStyle() {
-        SystemStatusUtil.fullScreen(window, true)
     }
 
     override fun initData(savedInstanceState: Bundle?) {

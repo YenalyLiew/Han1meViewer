@@ -121,4 +121,5 @@
     <string name="open_playlist_drawer">打開播放清單列表</string>
     <string name="add_to_playlist">加入播放清單</string>
     <string name="player_settings">播放器設置</string>
+    <string name="current_slide_sensitivity">當前靈敏度：%s</string>
 </resources>

@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="entries_video_language">
-        <item>繁體中文</item>
-        <item>簡體中文</item>
-    </string-array>
-    <string-array name="entries_value_video_language">
-        <item>zh-CHT</item>
-        <item>zh-CHS</item>
-    </string-array>
+    
 </resources>
