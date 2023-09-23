@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.IntRange
 import androidx.core.content.getSystemService
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -61,7 +62,7 @@ class CustomJzvdStd @JvmOverloads constructor(
         /**
          * 默認速度的索引
          */
-        private const val DEF_SPEED_INDEX = 2
+        const val DEF_SPEED_INDEX = 2
 
         /**
          * 速度列表
@@ -77,33 +78,29 @@ class CustomJzvdStd @JvmOverloads constructor(
          * 速度列表的字符串
          */
         val speedStringArray = Array(speedArray.size) { "${speedArray[it]}x" }
-
-        /**
-         * 用戶定義的是否顯示底部進度條
-         */
-        var showBottomProgress = preferenceSp.getBoolean("show_bottom_progress", true)
-
-        /**
-         * 用戶定義的默認速度
-         */
-        var userDefSpeed =
-            preferenceSp.getString("player_speed", DEF_SPEED.toString())?.toFloat() ?: DEF_SPEED
-
-        /**
-         * 用戶定義的默認速度的索引
-         */
-        var userDefSpeedIndex = speedArray.indexOfFirst { it == userDefSpeed }
-
-        /**
-         * 用戶定義的滑動調整進度條的靈敏度
-         */
-        var userDefSlideSensitivity =
-            preferenceSp.getInt("slide_sensitivity", DEF_PROGRESS_SLIDE_SENSITIVITY)
-            set(value) {
-                field = value
-                Log.d("CustomJzvdStd", "userDefSlideSensitivity: $value")
-            }
     }
+
+    /**
+     * 用戶定義的是否顯示底部進度條
+     */
+    private val showBottomProgress = preferenceSp.getBoolean("show_bottom_progress", true)
+
+    /**
+     * 用戶定義的默認速度
+     */
+    private val userDefSpeed =
+        preferenceSp.getString("player_speed", DEF_SPEED.toString())?.toFloat() ?: DEF_SPEED
+
+    /**
+     * 用戶定義的默認速度的索引
+     */
+    private val userDefSpeedIndex = speedArray.indexOfFirst { it == userDefSpeed }
+
+    /**
+     * 用戶定義的滑動調整進度條的靈敏度
+     */
+    private val userDefSlideSensitivity =
+        preferenceSp.getInt("slide_sensitivity", DEF_PROGRESS_SLIDE_SENSITIVITY).toRealSensitivity()
 
     /**
      * 當前速度的索引
@@ -154,7 +151,27 @@ class CustomJzvdStd @JvmOverloads constructor(
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
         super.setUp(jzDataSource, screen, CustomJZMediaSystem::class.java)
+        Log.d("CustomJzvdStd-Settings", buildString {
+            append("showBottomProgress: ")
+            appendLine(showBottomProgress)
+            append("userDefSpeed: ")
+            appendLine(userDefSpeed)
+            append("userDefSpeedIndex: ")
+            appendLine(userDefSpeedIndex)
+            append("userDefSlideSensitivity: ")
+            appendLine(userDefSlideSensitivity)
+        })
         titleTextView.isInvisible = true
+    }
+
+    override fun onStatePreparingPlaying() {
+        super.onStatePreparingPlaying()
+        if (jzDataSource.objects == null) {
+            jzDataSource.objects = arrayOf(userDefSpeedIndex)
+            currentSpeedIndex = userDefSpeedIndex
+        } else {
+            currentSpeedIndex = jzDataSource.objects.first() as Int
+        }
     }
 
     override fun gotoFullscreen() {
@@ -176,12 +193,6 @@ class CustomJzvdStd @JvmOverloads constructor(
     override fun setScreenFullscreen() {
         super.setScreenFullscreen()
         tvSpeed.isVisible = true
-        if (jzDataSource.objects == null) {
-            jzDataSource.objects = arrayOf(userDefSpeedIndex)
-            currentSpeedIndex = userDefSpeedIndex
-        } else {
-            currentSpeedIndex = jzDataSource.objects.first() as Int
-        }
     }
 
     override fun clickBack() {
@@ -347,6 +358,21 @@ class CustomJzvdStd @JvmOverloads constructor(
                 releaseAllVideos()
                 clearFloatScreen()
             }
+        }
+    }
+
+    /**
+     * 將靈敏度轉換為實際數值，很多用戶對滑動要求挺高，
+     * 靈敏度太高沒人在乎，所以高靈敏度照舊，低靈敏度差別大一點
+     */
+    private fun @receiver:IntRange(from = 1, to = 9) Int.toRealSensitivity(): Int {
+        return when (this) {
+            1, 2, 3, 4, 5 -> this
+            6 -> 7
+            7 -> 10
+            8 -> 20
+            9 -> 40
+            else -> throw IllegalStateException("Invalid sensitivity value: $this")
         }
     }
 

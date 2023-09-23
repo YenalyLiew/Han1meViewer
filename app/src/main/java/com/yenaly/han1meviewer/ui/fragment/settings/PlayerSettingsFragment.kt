@@ -34,14 +34,8 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
             entryValues = Array(CustomJzvdStd.speedArray.size) {
                 CustomJzvdStd.speedArray[it].toString()
             }
-            setDefaultValue(CustomJzvdStd.DEF_SPEED.toString())
-            setOnPreferenceChangeListener { _, newValue ->
-                val newVal = (newValue as String).toFloat()
-                CustomJzvdStd.userDefSpeed = newVal
-                CustomJzvdStd.userDefSpeedIndex =
-                    CustomJzvdStd.speedArray.indexOfFirst { it == newVal }
-                return@setOnPreferenceChangeListener true
-            }
+            // 不能直接用 defaultValue 设置，没效果
+            if (value == null) setValueIndex(CustomJzvdStd.DEF_SPEED_INDEX)
         }
         slideSensitivity.apply {
             setDefaultValue(CustomJzvdStd.DEF_PROGRESS_SLIDE_SENSITIVITY)
@@ -49,30 +43,13 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
                 R.string.current_slide_sensitivity,
                 value.toPrettySensitivityString()
             )
-            setOnPreferenceChangeListener { _, newValue ->
-                val newVal = newValue as Int
-                CustomJzvdStd.userDefSlideSensitivity = newVal.toRealSensitivity()
-                summary = getString(
+            setOnPreferenceChangeListener { pref, newVal ->
+                pref.summary = pref.context.getString(
                     R.string.current_slide_sensitivity,
-                    newVal.toPrettySensitivityString()
+                    (newVal as Int).toPrettySensitivityString()
                 )
                 return@setOnPreferenceChangeListener true
             }
-        }
-    }
-
-    /**
-     * 將靈敏度轉換為實際數值，很多用戶對滑動要求挺高，
-     * 靈敏度太高沒人在乎，所以高靈敏度照舊，低靈敏度差別大一點
-     */
-    private fun @receiver:IntRange(from = 1, to = 9) Int.toRealSensitivity(): Int {
-        return when (this) {
-            1, 2, 3, 4, 5 -> this
-            6 -> 7
-            7 -> 10
-            8 -> 20
-            9 -> 40
-            else -> throw IllegalStateException("Invalid sensitivity value: $this")
         }
     }
 

@@ -61,7 +61,8 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             // 從 xml 轉移至此
             entries = arrayOf("繁體中文", "簡體中文")
             entryValues = arrayOf("zh-CHT", "zh-CHS")
-            setDefaultValue(entryValues.first())
+            // 不能直接用 defaultValue 设置，没效果
+            if (value == null) setValueIndex(0)
 
             setOnPreferenceChangeListener { _, newValue ->
                 if (newValue != preferenceSp.getString("video_language", "zh-CHT")) {
