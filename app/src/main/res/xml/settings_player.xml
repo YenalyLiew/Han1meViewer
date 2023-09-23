@@ -9,7 +9,6 @@
         app:title="顯示底部進度條" />
 
     <rikka.preference.SimpleMenuPreference
-        app:defaultValue="0"
         app:iconSpaceReserved="false"
         app:key="player_speed"
         app:title="默認播放速度"
