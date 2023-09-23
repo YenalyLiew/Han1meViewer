@@ -100,6 +100,8 @@ This project is intended solely for learning purposes. Commercial use is strictl
 
 **[新增]** 可设置播放器默认速度与滑动调整进度条的灵敏度。
 
+**[新增]** 在首页点击相应栏能直接进入相关搜索页面。
+
 ### v0.10.5
 
 **[新增]** 终于有图标了，感谢 [rurires](https://github.com/rurires) 提供！
