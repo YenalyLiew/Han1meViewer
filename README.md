@@ -94,6 +94,14 @@ This project is intended solely for learning purposes. Commercial use is strictl
 
 ## 更新内容
 
+### v0.10.7
+
+**[修复]** 在三键导航栏模式下无法呼出倍速选单。
+
+**[修复]** 隐藏下方进度条不生效。
+
+**[修复]** 主评论无法复制。
+
 ### v0.10.6
 
 **[修复]** 首页头图不显示的问题。

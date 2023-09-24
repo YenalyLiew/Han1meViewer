@@ -50,7 +50,7 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         replyPopup.setOnSendListener {
             viewModel.currentUserId?.let { id ->
                 viewModel.postComment(
-                   id,
+                    id,
                     viewModel.code, commentTypePrefix, replyPopup.comment
                 )
             } ?: showShortToast("出了點小問題...")

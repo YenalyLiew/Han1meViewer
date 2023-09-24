@@ -9,8 +9,11 @@ import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.IntRange
@@ -18,17 +21,18 @@ import androidx.core.content.getSystemService
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import cn.jzvd.JZDataSource
 import cn.jzvd.JZMediaSystem
 import cn.jzvd.JZUtils
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
-import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.preferenceSp
+import com.yenaly.han1meviewer.ui.adapter.VideoSpeedAdapter
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
-import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlin.math.abs
 
 /**
@@ -115,17 +119,14 @@ class CustomJzvdStd @JvmOverloads constructor(
                 tvSpeed.text = speedStringArray[value]
             }
             videoSpeed = speedArray[value]
+            // @issue-14: 有些机器到这里可能会报空指针异常，所以加了个判断，但是不知道为什么会报空指针异常
+            if (jzDataSource.objects == null) {
+                jzDataSource.objects = arrayOf(userDefSpeedIndex)
+            }
             jzDataSource.objects[0] = value
         }
-    private lateinit var tvSpeed: TextView
 
-    private val speedPopup by unsafeLazy {
-        XPopup.Builder(context).atView(tvSpeed).isDarkTheme(true)
-            .hasShadowBg(false).hasStatusBar(false)
-            .asAttachList(speedStringArray, null) { index, _ ->
-                currentSpeedIndex = index
-            }
-    }
+    private lateinit var tvSpeed: TextView
 
     private var videoSpeed: Float = userDefSpeed
         set(value) {
@@ -143,10 +144,6 @@ class CustomJzvdStd @JvmOverloads constructor(
         super.init(context)
         tvSpeed = findViewById(R.id.tv_speed)
         tvSpeed.setOnClickListener(this)
-        if (bottomProgressBar != null && !showBottomProgress) {
-            bottomProgressBar.removeItself()
-            bottomProgressBar = ProgressBar(context)
-        }
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
@@ -162,6 +159,10 @@ class CustomJzvdStd @JvmOverloads constructor(
             appendLine(userDefSlideSensitivity)
         })
         titleTextView.isInvisible = true
+        if (bottomProgressBar != null && !showBottomProgress) {
+            bottomProgressBar.removeItself()
+            bottomProgressBar = ProgressBar(context)
+        }
     }
 
     override fun onStatePreparingPlaying() {
@@ -215,7 +216,7 @@ class CustomJzvdStd @JvmOverloads constructor(
     override fun onClick(v: View) {
         super.onClick(v)
         when (v.id) {
-            R.id.tv_speed -> speedPopup.show()
+            R.id.tv_speed -> clickSpeed()
         }
     }
 
@@ -359,6 +360,29 @@ class CustomJzvdStd @JvmOverloads constructor(
                 clearFloatScreen()
             }
         }
+    }
+
+    // @issue-14: 之前用 XPopup 三键模式下会有 bug，无法呼出，所以换成这个
+    @SuppressLint("InflateParams")
+    fun clickSpeed() {
+        onCLickUiToggleToClear()
+        val inflater = LayoutInflater.from(context).inflate(R.layout.jz_layout_speed, null)
+        val rv = inflater.findViewById<RecyclerView>(R.id.rv_video_speed)
+        val popup = PopupWindow(
+            inflater, JZUtils.dip2px(jzvdContext, 240f),
+            LayoutParams.MATCH_PARENT, true
+        ).apply {
+            contentView = inflater
+            animationStyle = cn.jzvd.R.style.pop_animation
+        }
+        rv.layoutManager = LinearLayoutManager(context)
+        rv.adapter = VideoSpeedAdapter(currentSpeedIndex).apply {
+            setOnItemClickListener { _, _, position ->
+                currentSpeedIndex = position
+                popup.dismiss()
+            }
+        }
+        popup.showAtLocation(textureViewContainer, Gravity.END, 0, 0)
     }
 
     /**
