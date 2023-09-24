@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.ui.adapter
 
 import android.graphics.Typeface
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -57,6 +58,10 @@ class VideoCommentRvAdapter constructor(private val fragment: Fragment? = null) 
     }
 
     override fun convert(holder: ViewHolder, item: VideoCommentModel.VideoComment) {
+
+        // 在release版中，主评论内容无法被复制，此为解决方法。
+        holder.binding.tvContent.fixTextSelection()
+
         holder.binding.ivAvatar.load(item.avatar) {
             crossfade(true)
             transformations(CircleCropTransformation())
@@ -169,13 +174,16 @@ class VideoCommentRvAdapter constructor(private val fragment: Fragment? = null) 
                         "@${item.username}".span {
                             style(Typeface.BOLD)
                         }
-                        context.getString(R.string.reply_warning).span {
-                            absoluteSize(10)
-                        }
                     }
                 }
                 XPopup.Builder(context).autoOpenSoftInput(true).asCustom(commentPopup).show()
             }
         }
+    }
+
+    // stackoverflow-36801486
+    private fun TextView.fixTextSelection() {
+        setTextIsSelectable(false)
+        post { setTextIsSelectable(true) }
     }
 }
