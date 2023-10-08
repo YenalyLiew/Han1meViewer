@@ -94,6 +94,10 @@ This project is intended solely for learning purposes. Commercial use is strictl
 
 ## 更新内容
 
+### v0.10.8
+
+**[新增]** 应用内可设置网络内置代理。
+
 ### v0.10.7
 
 **[修复]** 播放器呼出倍速选单异常。

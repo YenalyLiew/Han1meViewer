@@ -125,7 +125,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                 setTitle("創建新清單")
                 val etView =
                     LayoutInflater.from(context)
-                        .inflate(R.layout.layout_playlist_modify_edit_text, null)
+                        .inflate(R.layout.dialog_playlist_modify_edit_text, null)
                 val etTitle = etView.findViewById<EditText>(R.id.et_title)
                 val etDesc = etView.findViewById<EditText>(R.id.et_desc)
                 setView(etView)

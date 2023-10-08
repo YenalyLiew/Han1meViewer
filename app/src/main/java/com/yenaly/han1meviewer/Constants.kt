@@ -80,6 +80,8 @@ const val PREVIEW_COMMENT_PREFIX = "preview"
 
 // base url
 
+const val HANIME_HOSTNAME = "hanime1.me"
+
 const val HANIME_BASE_URL = "https://hanime1.me/"
 
 const val HANIME_LOGIN_URL = HANIME_BASE_URL + "login"

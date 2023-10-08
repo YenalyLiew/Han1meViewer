@@ -9,7 +9,7 @@ import java.io.Serializable
  * @author Yenaly Liew
  * @time 2023/09/22 022 18:13
  */
-enum class AdvancedSearch {
+enum class HAdvancedSearch {
     /**
      * 搜索关键词，类型 [String]
      */
@@ -54,7 +54,8 @@ enum class AdvancedSearch {
 /**
  * 高级搜索的 Map，所有给 SearchActivity 的传参走这里！
  */
-typealias AdvancedSearchMap = HashMap<AdvancedSearch, Serializable>
+typealias AdvancedSearchMap = HashMap<HAdvancedSearch, Serializable>
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun advancedSearchMapOf(vararg pairs: Pair<AdvancedSearch, Serializable>) = hashMapOf(*pairs)
+inline fun advancedSearchMapOf(vararg pairs: Pair<HAdvancedSearch, Serializable>) =
+    hashMapOf(*pairs)

@@ -11,6 +11,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.network.ServiceCreator
+import com.yenaly.han1meviewer.logic.network.ServiceCreator.await
 import com.yenaly.han1meviewer.util.getDownloadedHanimeFile
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +77,7 @@ class HanimeDownloadWorker(
             try {
                 raf = RandomAccessFile(file, "rwd")
                 val request = Request.Builder().url(downloadUrl).get().build()
-                response = ServiceCreator.okHttpClient.newCall(request).execute()
+                response = ServiceCreator.okHttpClient.newCall(request).await()
                 if (response.isSuccessful) {
                     body = response.body
                     body?.let {
@@ -122,7 +123,7 @@ class HanimeDownloadWorker(
                 val request = Request.Builder().url(downloadUrl)
                     .also { if (needRange) it.header("Range", "bytes=${entity.downloadedLength}-") }
                     .get().build()
-                response = ServiceCreator.okHttpClient.newCall(request).execute()
+                response = ServiceCreator.okHttpClient.newCall(request).await()
                 entity.isDownloading = true
                 raf.seek(entity.downloadedLength)
                 if ((needRange && response.code == 206) || (!needRange && response.isSuccessful)) {

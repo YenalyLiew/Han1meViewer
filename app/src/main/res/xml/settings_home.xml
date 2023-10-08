@@ -4,7 +4,7 @@
     <PreferenceCategory app:title="@string/video">
 
         <rikka.preference.SimpleMenuPreference
-            app:icon="@drawable/ic_baseline_language_24"
+            app:icon="@drawable/baseline_simp_to_trad_24"
             app:key="video_language"
             app:title="@string/video_language"
             app:useSimpleSummaryProvider="true" />
@@ -22,6 +22,15 @@
             app:icon="@drawable/ic_baseline_download_24"
             app:key="download_path"
             app:title="@string/download_path" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/network">
+
+        <Preference
+            app:icon="@drawable/ic_baseline_language_24"
+            app:title="@string/proxy"
+            app:key="proxy" />
 
     </PreferenceCategory>
 
