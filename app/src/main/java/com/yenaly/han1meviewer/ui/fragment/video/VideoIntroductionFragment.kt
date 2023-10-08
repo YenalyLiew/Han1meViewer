@@ -187,8 +187,8 @@ class VideoIntroductionFragment :
             binding.vgArtist.setOnClickListener {
                 startActivity<SearchActivity>(
                     ADVANCED_SEARCH_MAP to advancedSearchMapOf(
-                        AdvancedSearch.QUERY to artist.name,
-                        AdvancedSearch.GENRE to artist.genre
+                        HAdvancedSearch.QUERY to artist.name,
+                        HAdvancedSearch.GENRE to artist.genre
                     )
                 )
             }

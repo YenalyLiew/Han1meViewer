@@ -122,4 +122,16 @@
     <string name="add_to_playlist">加入播放清單</string>
     <string name="player_settings">播放器設置</string>
     <string name="current_slide_sensitivity">當前靈敏度：%s</string>
+    <string name="network">網路</string>
+    <string name="safe_dns">安全 DNS</string>
+    <string name="proxy">代理</string>
+    <string name="host_or_ip">Host 或 IP</string>
+    <string name="port">端口</string>
+    <string name="direct">直接連接</string>
+    <string name="system_proxy">系統代理</string>
+    <string name="http">HTTP</string>
+    <string name="http_proxy">HTTP %s:%d</string>
+    <string name="socks">SOCKS</string>
+    <string name="socks_proxy">SOCKS %s:%d</string>
+    <string name="host_or_ipv4">Host 或 IPv4</string>
 </resources>

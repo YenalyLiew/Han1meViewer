@@ -31,6 +31,7 @@ import cn.jzvd.JzvdStd
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.preferenceSp
 import com.yenaly.han1meviewer.ui.adapter.VideoSpeedAdapter
+import com.yenaly.han1meviewer.ui.fragment.settings.PlayerSettingsFragment
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
 import kotlin.math.abs
@@ -87,13 +88,15 @@ class CustomJzvdStd @JvmOverloads constructor(
     /**
      * 用戶定義的是否顯示底部進度條
      */
-    private val showBottomProgress = preferenceSp.getBoolean("show_bottom_progress", true)
+    private val showBottomProgress =
+        preferenceSp.getBoolean(PlayerSettingsFragment.SHOW_BOTTOM_PROGRESS, true)
 
     /**
      * 用戶定義的默認速度
      */
     private val userDefSpeed =
-        preferenceSp.getString("player_speed", DEF_SPEED.toString())?.toFloat() ?: DEF_SPEED
+        preferenceSp.getString(PlayerSettingsFragment.PLAYER_SPEED, DEF_SPEED.toString())
+            ?.toFloat() ?: DEF_SPEED
 
     /**
      * 用戶定義的默認速度的索引
@@ -103,8 +106,10 @@ class CustomJzvdStd @JvmOverloads constructor(
     /**
      * 用戶定義的滑動調整進度條的靈敏度
      */
-    private val userDefSlideSensitivity =
-        preferenceSp.getInt("slide_sensitivity", DEF_PROGRESS_SLIDE_SENSITIVITY).toRealSensitivity()
+    private val userDefSlideSensitivity = preferenceSp.getInt(
+        PlayerSettingsFragment.SLIDE_SENSITIVITY,
+        DEF_PROGRESS_SLIDE_SENSITIVITY
+    ).toRealSensitivity()
 
     /**
      * 當前速度的索引

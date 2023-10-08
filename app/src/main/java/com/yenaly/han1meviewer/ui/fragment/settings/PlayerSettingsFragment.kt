@@ -19,9 +19,18 @@ import rikka.preference.SimpleMenuPreference
 class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
     IToolbarFragment<SettingsActivity> {
 
-    private val showBottomProgressPref by safePreference<SwitchPreferenceCompat>("show_bottom_progress")
-    private val playerSpeed by safePreference<SimpleMenuPreference>("player_speed")
-    private val slideSensitivity by safePreference<SeekBarPreference>("slide_sensitivity")
+    companion object {
+        const val SHOW_BOTTOM_PROGRESS = "show_bottom_progress"
+        const val PLAYER_SPEED = "player_speed"
+        const val SLIDE_SENSITIVITY = "slide_sensitivity"
+    }
+
+    private val showBottomProgressPref
+            by safePreference<SwitchPreferenceCompat>(SHOW_BOTTOM_PROGRESS)
+    private val playerSpeed
+            by safePreference<SimpleMenuPreference>(PLAYER_SPEED)
+    private val slideSensitivity
+            by safePreference<SeekBarPreference>(SLIDE_SENSITIVITY)
 
     override fun onStart() {
         super.onStart()

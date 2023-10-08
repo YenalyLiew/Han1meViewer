@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="8dp">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cg_types"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_direct"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/direct" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_system_proxy"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/system_proxy" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_http"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/http" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_socks"
+                style="@style/Widget.Material3.Chip.Filter.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/socks" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_ip"
+            style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/host_or_ipv4"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_port"
+            style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/port"
+            android:inputType="numberSigned"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

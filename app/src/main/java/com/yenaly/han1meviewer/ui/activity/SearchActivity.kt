@@ -224,21 +224,21 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>() 
             return
         }
         val map = any as AdvancedSearchMap
-        (map[AdvancedSearch.QUERY] as? String)?.let {
+        (map[HAdvancedSearch.QUERY] as? String)?.let {
             viewModel.query = it
             binding.searchBar.searchText = it
         }
-        viewModel.genre = map[AdvancedSearch.GENRE] as? String
-        viewModel.sort = map[AdvancedSearch.SORT] as? String
-        viewModel.year = map[AdvancedSearch.YEAR] as? Int
-        viewModel.month = map[AdvancedSearch.MONTH] as? Int
-        viewModel.duration = map[AdvancedSearch.DURATION] as? String
+        viewModel.genre = map[HAdvancedSearch.GENRE] as? String
+        viewModel.sort = map[HAdvancedSearch.SORT] as? String
+        viewModel.year = map[HAdvancedSearch.YEAR] as? Int
+        viewModel.month = map[HAdvancedSearch.MONTH] as? Int
+        viewModel.duration = map[HAdvancedSearch.DURATION] as? String
 
-        when (val tags = map[AdvancedSearch.TAGS]) {
+        when (val tags = map[HAdvancedSearch.TAGS]) {
             is String -> viewModel.tagSet.add(tags)
             is HashSet<*> -> viewModel.tagSet.addAll(tags as Set<String>)
         }
-        when (val brands = map[AdvancedSearch.BRANDS]) {
+        when (val brands = map[HAdvancedSearch.BRANDS]) {
             is String -> viewModel.brandSet.add(brands)
             is HashSet<*> -> viewModel.brandSet.addAll(brands as Set<String>)
         }

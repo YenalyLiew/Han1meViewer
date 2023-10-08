@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.util
 
 import com.yenaly.han1meviewer.cookieMap
 import com.yenaly.han1meviewer.preferenceSp
+import com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment
 import okhttp3.Cookie
 
 @JvmInline
@@ -42,7 +43,8 @@ internal fun CookieString.toCookieList(domain: String): List<Cookie> {
  * 讓[preferencesCookieList]成爲 存在偏好設置 但不存在個人信息 的[emptyList]
  */
 private fun preferencesCookieList(domain: String): List<Cookie> {
-    val videoLanguage = preferenceSp.getString("video_language", "zh-CHT") ?: "zh-CHT"
+    val videoLanguage =
+        preferenceSp.getString(HomeSettingsFragment.VIDEO_LANGUAGE, "zh-CHT") ?: "zh-CHT"
     val videoLanguageCookie = Cookie.Builder().domain(domain)
         .name("user_lang")
         .value(videoLanguage)

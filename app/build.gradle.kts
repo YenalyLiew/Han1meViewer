@@ -17,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = createVersionCode()
-        versionName = createVersionName(major = 0, minor = 10, patch = 7)
+        versionName = createVersionName(major = 0, minor = 10, patch = 8)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -77,6 +77,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("org.jsoup:jsoup:1.14.3")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0")
 
     // pic
     implementation("io.coil-kt:coil:2.1.0")
