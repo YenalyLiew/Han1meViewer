@@ -34,6 +34,12 @@
                     android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/per50_transparent_black"
+                    android:fitsSystemWindows="true" />
+
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"

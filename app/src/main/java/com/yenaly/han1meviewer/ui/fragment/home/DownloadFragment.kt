@@ -9,6 +9,7 @@ import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
+import com.yenaly.yenaly_libs.utils.view.addOnTabSelectedListener
 import com.yenaly.yenaly_libs.utils.view.attach
 import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
 
@@ -39,14 +40,21 @@ class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, Downloa
         binding.tabLayout.attach(binding.viewPager) { tab, position ->
             tab.setText(tabNameArray[position])
         }
+
+        // 因为一进来是“正在下载”，所以先把 menu 隐藏。
+        binding.toolbar.menu.setGroupVisible(0, false)
+        binding.tabLayout.addOnTabSelectedListener {
+            when (it.position) {
+                0 -> binding.toolbar.menu.setGroupVisible(0, false)
+                1 -> binding.toolbar.menu.setGroupVisible(0, true)
+            }
+        }
     }
 
     override fun MainActivity.setupToolbar() {
         val toolbar = this@DownloadFragment.binding.toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.setSubtitle(R.string.download)
-        this@DownloadFragment.clearMenu()
-
         toolbar.setupWithMainNavController()
     }
 }

@@ -11,10 +11,11 @@ import java.io.File
 
 internal val hanimeVideoLocalFolder get() = applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
 
-internal fun createDownloadName(title: String, quality: String) = "${title}_${quality}.mp4"
+internal fun createDownloadName(title: String, quality: String, suffix: String = "mp4") =
+    "${title}_${quality}.${suffix}"
 
-internal fun getDownloadedHanimeFile(title: String, quality: String): File {
-    return File(hanimeVideoLocalFolder, createDownloadName(title, quality))
+internal fun getDownloadedHanimeFile(title: String, quality: String, suffix: String = "mp4"): File {
+    return File(hanimeVideoLocalFolder, createDownloadName(title, quality, suffix))
 }
 
 @Deprecated("不用了")

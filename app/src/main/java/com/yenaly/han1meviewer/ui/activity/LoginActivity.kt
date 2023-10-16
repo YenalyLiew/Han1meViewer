@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.activity
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -16,6 +17,7 @@ import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HANIME_BASE_URL
 import com.yenaly.han1meviewer.HANIME_LOGIN_URL
 import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.han1meviewer.databinding.ActivityLoginBinding
 import com.yenaly.han1meviewer.login
 import com.yenaly.han1meviewer.util.CookieString
@@ -79,8 +81,13 @@ class LoginActivity : FrameActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
         binding.wvLogin.apply {
+            // #issue-17: 谷歌登录需要开启JavaScript，但是谷歌拒絕這種登錄方式，遂放棄
+            settings.javaScriptEnabled = true
+            settings.userAgentString = USER_AGENT
+
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String) {
                     binding.srlLogin.finishRefresh()
@@ -88,7 +95,7 @@ class LoginActivity : FrameActivity() {
 
                 override fun shouldOverrideUrlLoading(
                     view: WebView,
-                    request: WebResourceRequest
+                    request: WebResourceRequest,
                 ): Boolean {
                     if (request.isRedirect && request.url.toString() == HANIME_BASE_URL) {
                         val url = request.url

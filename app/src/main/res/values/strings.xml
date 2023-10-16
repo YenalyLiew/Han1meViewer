@@ -134,4 +134,8 @@
     <string name="socks">SOCKS</string>
     <string name="socks_proxy">SOCKS %s:%d</string>
     <string name="host_or_ipv4">Host 或 IPv4</string>
+    <string name="sort_by_date_ascending">時間正排序</string>
+    <string name="sort_by_date_descending">時間反排序</string>
+    <string name="sort_by_alphabet_ascending">字母正排序</string>
+    <string name="sort_by_alphabet_descending">字母反排序</string>
 </resources>
