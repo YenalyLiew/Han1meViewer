@@ -3,11 +3,7 @@ package com.yenaly.han1meviewer.ui.fragment.home
 import android.os.Bundle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.ui.activity.MainActivity
@@ -16,7 +12,6 @@ import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
-import com.yenaly.yenaly_libs.utils.showSnackBar
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
 
@@ -40,35 +35,17 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
         binding.srlPageList.finishRefreshWithNoMoreData()
         historyAdapter.setDiffCallback(WatchHistoryRvAdapter.COMPARATOR)
         historyAdapter.setEmptyView(R.layout.layout_empty_view)
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START) {
-
-            // 上下滑動
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder,
-            ) = false
-
-            // 左右滑動
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.bindingAdapterPosition
-                val data = historyAdapter.getItem(position)
-                historyAdapter.remove(data)
-                // todo: strings.xml
-                showSnackBar("你正在刪除該歷史記錄", Snackbar.LENGTH_LONG) {
-                    setAction("撤銷") {
-                        historyAdapter.addData(position, data)
-                    }
-                    addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                            if (event != DISMISS_EVENT_ACTION) {
-                                viewModel.deleteWatchHistory(data)
-                            }
-                        }
-                    })
+        historyAdapter.setOnItemLongClickListener { _, _, position ->
+            val data = historyAdapter.getItem(position)
+            requireContext().showAlertDialog {
+                setTitle("刪除歷史記錄")
+                setMessage(getString(R.string.sure_to_delete_s_video, data.title))
+                setPositiveButton(R.string.confirm) { _, _ ->
+                    viewModel.deleteWatchHistory(data)
                 }
             }
-        }).attachToRecyclerView(binding.rvPageList)
+            return@setOnItemLongClickListener true
+        }
     }
 
     override fun bindDataObservers() {
@@ -111,7 +88,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
                 R.id.tb_help -> {
                     requireContext().showAlertDialog {
                         setTitle("使用注意！")
-                        setMessage("左劃可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
+                        setMessage("長按可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
                         setPositiveButton("OK", null)
                     }
                     return@addMenu true

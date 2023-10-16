@@ -10,8 +10,7 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/dl_playlist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:openDrawer="end">
+        android:layout_height="match_parent">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/coordinator"
@@ -20,48 +19,91 @@
             android:fitsSystemWindows="true">
 
             <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true">
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
+                <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:menu="@menu/menu_playlist_toolbar">
+                    android:layout_height="240dp"
+                    android:fitsSystemWindows="true"
+                    app:layout_scrollFlags="exitUntilCollapsed|scroll"
+                    app:titleEnabled="false">
 
-                </androidx.appcompat.widget.Toolbar>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fitsSystemWindows="true">
 
-                <com.yenaly.han1meviewer.ui.view.PlaylistHeader
-                    android:id="@+id/playlist_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        <ImageView
+                            android:id="@+id/cover"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@null"
+                            android:fitsSystemWindows="true"
+                            android:scaleType="centerCrop"
+                            app:layout_collapseMode="parallax" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/per70_transparent_black" />
+
+                        <com.yenaly.han1meviewer.ui.view.PlaylistHeader
+                            android:id="@+id/playlist_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            tools:visibility="visible" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_collapseMode="pin"
+                        app:menu="@menu/menu_playlist_toolbar">
+
+                    </androidx.appcompat.widget.Toolbar>
+
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
 
-
-            <com.scwang.smart.refresh.layout.SmartRefreshLayout
-                android:id="@+id/srl_page_list"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <com.scwang.smart.refresh.header.MaterialHeader
+                <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                    android:id="@+id/srl_page_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_page_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:padding="8dp" />
+                    <com.scwang.smart.refresh.header.MaterialHeader
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <com.scwang.smart.refresh.footer.ClassicsFooter
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_page_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        android:paddingHorizontal="8dp"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="8dp" />
 
-            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+                    <com.scwang.smart.refresh.footer.ClassicsFooter
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

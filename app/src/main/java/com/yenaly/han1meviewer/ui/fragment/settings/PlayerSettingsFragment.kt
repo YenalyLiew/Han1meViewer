@@ -7,7 +7,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
-import com.yenaly.han1meviewer.ui.view.CustomJzvdStd
+import com.yenaly.han1meviewer.ui.view.HJzvdStd
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 import rikka.preference.SimpleMenuPreference
 
@@ -23,6 +23,7 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
         const val SHOW_BOTTOM_PROGRESS = "show_bottom_progress"
         const val PLAYER_SPEED = "player_speed"
         const val SLIDE_SENSITIVITY = "slide_sensitivity"
+        const val LONG_PRESS_SPEED_TIMES = "long_press_speed_times"
     }
 
     private val showBottomProgressPref
@@ -31,6 +32,8 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
             by safePreference<SimpleMenuPreference>(PLAYER_SPEED)
     private val slideSensitivity
             by safePreference<SeekBarPreference>(SLIDE_SENSITIVITY)
+    private val longPressSpeedTimesPref
+            by safePreference<SimpleMenuPreference>(LONG_PRESS_SPEED_TIMES)
 
     override fun onStart() {
         super.onStart()
@@ -39,15 +42,15 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
 
     override fun onPreferencesCreated(savedInstanceState: Bundle?) {
         playerSpeed.apply {
-            entries = CustomJzvdStd.speedStringArray
-            entryValues = Array(CustomJzvdStd.speedArray.size) {
-                CustomJzvdStd.speedArray[it].toString()
+            entries = HJzvdStd.speedStringArray
+            entryValues = Array(HJzvdStd.speedArray.size) {
+                HJzvdStd.speedArray[it].toString()
             }
             // 不能直接用 defaultValue 设置，没效果
-            if (value == null) setValueIndex(CustomJzvdStd.DEF_SPEED_INDEX)
+            if (value == null) setValueIndex(HJzvdStd.DEF_SPEED_INDEX)
         }
         slideSensitivity.apply {
-            setDefaultValue(CustomJzvdStd.DEF_PROGRESS_SLIDE_SENSITIVITY)
+            setDefaultValue(HJzvdStd.DEF_PROGRESS_SLIDE_SENSITIVITY)
             summary = getString(
                 R.string.current_slide_sensitivity,
                 value.toPrettySensitivityString()
@@ -59,6 +62,17 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
                 )
                 return@setOnPreferenceChangeListener true
             }
+        }
+        longPressSpeedTimesPref.apply {
+            entries = arrayOf(
+                "1倍", "1.5倍", "2倍", "2.5倍（預設）", "2.8倍",
+                "3倍", "3.2倍", "3.5倍", "3.8倍", "4倍"
+            )
+            entryValues = arrayOf(
+                "1", "1.5", "2", "2.5", "2.8",
+                "3", "3.2", "3.5", "3.8", "4"
+            )
+            if (value == null) setValueIndex(3)
         }
     }
 

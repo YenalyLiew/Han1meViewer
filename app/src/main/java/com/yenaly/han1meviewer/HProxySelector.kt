@@ -1,6 +1,7 @@
 package com.yenaly.han1meviewer
 
 import com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment
+import okhttp3.internal.proxy.NullProxySelector
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -17,13 +18,13 @@ import java.net.URI
  * @author Yenaly Liew
  * @time 2023/10/07 007 17:32
  */
+// #issue-15: 添加系统代理功能
 class HProxySelector : ProxySelector() {
 
     private var delegation: ProxySelector? = null
-    private val alternative: ProxySelector
+    private val alternative: ProxySelector = getDefault() ?: NullProxySelector
 
     init {
-        alternative = getDefault() ?: NullProxySelector()
         updateProxy()
     }
 
@@ -47,10 +48,10 @@ class HProxySelector : ProxySelector() {
 
     private fun updateProxy() {
         delegation = when (preferenceSp.getInt(HomeSettingsFragment.PROXY_TYPE, TYPE_SYSTEM)) {
-            TYPE_DIRECT -> NullProxySelector()
+            TYPE_DIRECT -> NullProxySelector
             TYPE_SYSTEM -> alternative
             TYPE_HTTP, TYPE_SOCKS -> null
-            else -> NullProxySelector()
+            else -> NullProxySelector
         }
     }
 
@@ -76,11 +77,5 @@ class HProxySelector : ProxySelector() {
 
     override fun connectFailed(uri: URI?, sa: SocketAddress?, ioe: IOException?) {
         delegation?.select(uri)
-    }
-
-    class NullProxySelector : ProxySelector() {
-        override fun select(uri: URI?): MutableList<Proxy> = mutableListOf(Proxy.NO_PROXY)
-
-        override fun connectFailed(uri: URI?, sa: SocketAddress?, ioe: IOException?) = Unit
     }
 }

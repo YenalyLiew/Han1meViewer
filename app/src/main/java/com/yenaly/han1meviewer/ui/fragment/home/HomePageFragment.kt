@@ -29,6 +29,7 @@ import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
+import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
@@ -194,7 +195,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     private fun initBanner(info: HomePageModel) {
         info.banner?.let { banner ->
             binding.tvBannerTitle.text = spannable {
-                banner.title.quote(Color.RED, gapWidth = 16)
+                banner.title.quote(Color.RED, stripeWidth = 4.dp, gapWidth = 4.dp)
             }
             binding.tvBannerDesc.text = banner.description
             binding.cover.load(banner.picUrl) {

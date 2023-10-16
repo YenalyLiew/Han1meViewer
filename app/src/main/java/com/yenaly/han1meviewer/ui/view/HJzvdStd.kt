@@ -9,8 +9,10 @@ import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
 import android.util.AttributeSet
 import android.util.Log
+import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
@@ -41,7 +43,7 @@ import kotlin.math.abs
  * @author Yenaly Liew
  * @time 2022/06/18 018 15:54
  */
-class CustomJzvdStd @JvmOverloads constructor(
+class HJzvdStd @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : JzvdStd(context, attrs) {
@@ -68,6 +70,11 @@ class CustomJzvdStd @JvmOverloads constructor(
          * 默認速度的索引
          */
         const val DEF_SPEED_INDEX = 2
+
+        /**
+         * 默認長按速度是原先速度的幾倍
+         */
+        const val DEF_LONG_PRESS_SPEED_TIMES = 2.5F
 
         /**
          * 速度列表
@@ -112,7 +119,16 @@ class CustomJzvdStd @JvmOverloads constructor(
     ).toRealSensitivity()
 
     /**
-     * 當前速度的索引
+     * 用戶定義的默認長按速度是原先速度的幾倍
+     */
+    private val userDefLongPressSpeedTimes =
+        preferenceSp.getString(
+            PlayerSettingsFragment.LONG_PRESS_SPEED_TIMES,
+            DEF_LONG_PRESS_SPEED_TIMES.toString()
+        )?.toFloat() ?: DEF_LONG_PRESS_SPEED_TIMES
+
+    /**
+     * 當前速度的索引，如果设置速度的话，修改这个，别动 [videoSpeed]
      */
     private var currentSpeedIndex = userDefSpeedIndex
         @SuppressLint("SetTextI18n")
@@ -124,7 +140,7 @@ class CustomJzvdStd @JvmOverloads constructor(
                 tvSpeed.text = speedStringArray[value]
             }
             videoSpeed = speedArray[value]
-            // @issue-14: 有些机器到这里可能会报空指针异常，所以加了个判断，但是不知道为什么会报空指针异常
+            // #issue-14: 有些机器到这里可能会报空指针异常，所以加了个判断，但是不知道为什么会报空指针异常
             if (jzDataSource.objects == null) {
                 jzDataSource.objects = arrayOf(userDefSpeedIndex)
             }
@@ -143,6 +159,29 @@ class CustomJzvdStd @JvmOverloads constructor(
             }
         }
 
+    /**
+     * 是否觸發了長按快進
+     */
+    private var isSpeedGestureDetected = false
+
+    /**
+     * 長按快進檢測
+     */
+    // #issue-20: 长按倍速功能添加
+    private val speedGestureDetector =
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onLongPress(e: MotionEvent) {
+                when (e.action) {
+                    MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+                        if (mediaInterface.isPlaying) {
+                            mediaInterface.setSpeed(videoSpeed * userDefLongPressSpeedTimes)
+                            isSpeedGestureDetected = true
+                        }
+                    }
+                }
+            }
+        })
+
     override fun getLayoutId() = R.layout.layout_jzvd_with_speed
 
     override fun init(context: Context?) {
@@ -152,7 +191,7 @@ class CustomJzvdStd @JvmOverloads constructor(
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
-        super.setUp(jzDataSource, screen, CustomJZMediaSystem::class.java)
+        super.setUp(jzDataSource, screen, HJZMediaSystem::class.java)
         Log.d("CustomJzvdStd-Settings", buildString {
             append("showBottomProgress: ")
             appendLine(showBottomProgress)
@@ -168,6 +207,23 @@ class CustomJzvdStd @JvmOverloads constructor(
             bottomProgressBar.removeItself()
             bottomProgressBar = ProgressBar(context)
         }
+    }
+
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        when (v.id) {
+            R.id.surface_container -> {
+                speedGestureDetector.onTouchEvent(event)
+                when (event.action) {
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                        if (isSpeedGestureDetected) {
+                            mediaInterface.setSpeed(videoSpeed)
+                            isSpeedGestureDetected = false
+                        }
+                    }
+                }
+            }
+        }
+        return super.onTouch(v, event)
     }
 
     override fun onStatePreparingPlaying() {
@@ -333,7 +389,7 @@ class CustomJzvdStd @JvmOverloads constructor(
             val brightnessPercent =
                 (mGestureDownBrightness * 100 / 255 + deltaY * 3 * 100 / mScreenHeight).toInt()
             showBrightnessDialog(brightnessPercent)
-//                        mDownY = y;
+//            mDownY = y;
         }
     }
 
@@ -367,7 +423,7 @@ class CustomJzvdStd @JvmOverloads constructor(
         }
     }
 
-    // @issue-14: 之前用 XPopup 三键模式下会有 bug，无法呼出，所以换成这个
+    // #issue-14: 之前用 XPopup 三键模式下会有 bug，无法呼出，所以换成这个
     @SuppressLint("InflateParams")
     fun clickSpeed() {
         onCLickUiToggleToClear()
@@ -413,7 +469,7 @@ class CustomJzvdStd @JvmOverloads constructor(
     }
 }
 
-class CustomJZMediaSystem(jzvd: Jzvd) : JZMediaSystem(jzvd) {
+class HJZMediaSystem(jzvd: Jzvd) : JZMediaSystem(jzvd) {
     override fun onVideoSizeChanged(mediaPlayer: MediaPlayer?, width: Int, height: Int) {
         super.onVideoSizeChanged(mediaPlayer, width, height)
         val ratio = width.toFloat() / height // > 1 橫屏， < 1 竖屏

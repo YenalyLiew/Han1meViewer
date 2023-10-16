@@ -20,8 +20,27 @@ abstract class HanimeDownloadDao {
     @Query("SELECT * FROM HanimeDownloadEntity WHERE downloadedLength <> length ORDER BY id DESC")
     abstract fun loadAllDownloadingHanime(): Flow<MutableList<HanimeDownloadEntity>>
 
-    @Query("SELECT * FROM HanimeDownloadEntity WHERE downloadedLength == length ORDER BY id DESC")
-    abstract fun loadAllDownloadedHanime(): Flow<MutableList<HanimeDownloadEntity>>
+    open fun loadAllDownloadedHanime(
+        sortedBy: HanimeDownloadEntity.SortedBy,
+        ascending: Boolean,
+    ): Flow<MutableList<HanimeDownloadEntity>> {
+        return when (sortedBy) {
+            HanimeDownloadEntity.SortedBy.TITLE -> loadAllDownloadedHanimeByTitle(ascending)
+            HanimeDownloadEntity.SortedBy.ID -> loadAllDownloadedHanimeById(ascending)
+        }
+    }
+
+    @Query(
+        "SELECT * FROM HanimeDownloadEntity WHERE downloadedLength == length ORDER BY " +
+                "CASE WHEN :ascending THEN title END ASC, CASE WHEN NOT :ascending THEN title END DESC"
+    )
+    abstract fun loadAllDownloadedHanimeByTitle(ascending: Boolean): Flow<MutableList<HanimeDownloadEntity>>
+
+    @Query(
+        "SELECT * FROM HanimeDownloadEntity WHERE downloadedLength == length ORDER BY " +
+                "CASE WHEN :ascending THEN id END ASC, CASE WHEN NOT :ascending THEN id END DESC"
+    )
+    abstract fun loadAllDownloadedHanimeById(ascending: Boolean): Flow<MutableList<HanimeDownloadEntity>>
 
     @Query("DELETE FROM HanimeDownloadEntity WHERE (`videoCode` = :videoCode AND `quality` = :quality)")
     abstract suspend fun deleteBy(videoCode: String, quality: String)

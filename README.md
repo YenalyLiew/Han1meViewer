@@ -32,7 +32,7 @@ This project is intended solely for learning purposes. Commercial use is strictl
         - [x] 子评论
 
 - 用户
-    - [x] 登入（暂不支持谷歌登录）
+    - [x] 登入（不支持谷歌登录）
     - [x] 登出
 
 - 搜索
@@ -93,6 +93,20 @@ This project is intended solely for learning purposes. Commercial use is strictl
 ~~PS：你还真给我大改了。。~~
 
 ## 更新内容
+
+### v0.11.0
+
+也不是什么大功能更新，我也不知道为什么要 v0.11.0，就是想换个版本号。
+
+**[新增]** 播放时，长按屏幕可快进。两边都是快进，没有快退，因为我觉得应该没人会用快退。
+
+**[新增]** 可设置长按快进倍数。
+
+**[新增]** “已下载”界面可以更改排序。
+
+**[更改]** 历史记录删除由 左滑 修改为 长按 删除。
+
+**[优化]** 调整部分 UI，看起来更顺眼。
 
 ### v0.10.8
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tb_sort"
+        android:icon="@drawable/baseline_sort_24"
+        android:showAsAction="ifRoom"
+        android:title="@string/sort_option">
+
+        <menu>
+
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/sm_sort_by_date_ascending"
+                    android:title="@string/sort_by_date_ascending" />
+
+                <item
+                    android:id="@+id/sm_sort_by_date_descending"
+                    android:checked="true"
+                    android:title="@string/sort_by_date_descending" />
+
+                <item
+                    android:id="@+id/sm_sort_by_alphabet_ascending"
+                    android:title="@string/sort_by_alphabet_ascending" />
+
+                <item
+                    android:id="@+id/sm_sort_by_alphabet_descending"
+                    android:title="@string/sort_by_alphabet_descending" />
+
+            </group>
+
+        </menu>
+
+    </item>
+
+</menu>

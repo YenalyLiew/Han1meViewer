@@ -66,4 +66,11 @@ data class HanimeDownloadEntity(
      * 是否已下载完成
      */
     val isDownloaded get() = downloadedLength == length
+
+    /**
+     * 排序方式
+     */
+    enum class SortedBy {
+        ID, TITLE
+    }
 }

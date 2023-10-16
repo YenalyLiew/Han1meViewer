@@ -53,8 +53,10 @@ object DatabaseRepo {
         fun loadAllDownloadingHanime() =
             hanimeDownloadDao.loadAllDownloadingHanime()
 
-        fun loadAllDownloadedHanime() =
-            hanimeDownloadDao.loadAllDownloadedHanime()
+        fun loadAllDownloadedHanime(
+            sortedBy: HanimeDownloadEntity.SortedBy,
+            ascending: Boolean,
+        ) = hanimeDownloadDao.loadAllDownloadedHanime(sortedBy, ascending)
 
         suspend fun deleteBy(videoCode: String, quality: String) =
             hanimeDownloadDao.deleteBy(videoCode, quality)

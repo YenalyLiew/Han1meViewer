@@ -5,7 +5,7 @@ import android.view.Gravity
 import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.yenaly.han1meviewer.ui.view.CustomJzvdStd
+import com.yenaly.han1meviewer.ui.view.HJzvdStd
 
 /**
  * @project Han1meViewer
@@ -14,7 +14,7 @@ import com.yenaly.han1meviewer.ui.view.CustomJzvdStd
  */
 class VideoSpeedAdapter(private var currentIndex: Int) : BaseQuickAdapter<String, BaseViewHolder>(
     android.R.layout.simple_list_item_1,
-    CustomJzvdStd.speedStringArray.toMutableList()
+    HJzvdStd.speedStringArray.toMutableList()
 ) {
     override fun convert(holder: BaseViewHolder, item: String) {
         holder.setText(android.R.id.text1, item)

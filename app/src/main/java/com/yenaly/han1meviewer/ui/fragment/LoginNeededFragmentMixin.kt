@@ -9,7 +9,7 @@ import com.yenaly.han1meviewer.isAlreadyLogin
  * @author Yenaly Liew
  * @time 2023/08/29 029 15:32
  */
-interface ILoginNeededFragment {
+interface LoginNeededFragmentMixin {
     fun Fragment.checkLogin() {
         if (!isAlreadyLogin) {
             findNavController().navigateUp()

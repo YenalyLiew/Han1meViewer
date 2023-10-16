@@ -43,7 +43,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/gradient_black80_transparent_270" />
+                        android:background="@color/per70_transparent_black" />
 
                     <LinearLayout
                         android:id="@+id/banner"
@@ -67,7 +67,7 @@
                                 style="@style/TextAppearance.Material3.TitleLarge"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
+                                android:layout_marginStart="2dp"
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:padding="4dp"
@@ -80,9 +80,8 @@
                                 android:id="@+id/tv_banner_desc"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/shape_title_mask_black"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="2dp"
                                 android:ellipsize="end"
                                 android:maxLines="2"
                                 android:padding="4dp"

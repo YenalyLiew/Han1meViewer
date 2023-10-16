@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.databinding.FragmentPlaylistBinding
@@ -20,8 +21,8 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeMyListVideoAdapter
 import com.yenaly.han1meviewer.ui.adapter.PlaylistRvAdapter
-import com.yenaly.han1meviewer.ui.fragment.ILoginNeededFragment
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
+import com.yenaly.han1meviewer.ui.fragment.LoginNeededFragmentMixin
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
 import com.yenaly.han1meviewer.util.resetEmptyView
 import com.yenaly.han1meviewer.util.showAlertDialog
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
  * @time 2022/07/04 004 22:43
  */
 class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewModel>(),
-    IToolbarFragment<MainActivity>, ILoginNeededFragment {
+    IToolbarFragment<MainActivity>, LoginNeededFragmentMixin {
 
     private var page: Int
         set(value) {
@@ -84,6 +85,11 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
             false
         )
     }
+
+    /**
+     * 用於判斷是否需要 setExpanded，防止重複喚出 AppBar
+     */
+    private var isAfterRefreshing = false
 
     @SuppressLint("InflateParams")
     override fun initData(savedInstanceState: Bundle?) {
@@ -160,6 +166,13 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {
                 viewModel.playlistFlow.collect { state ->
+                    val isExist =
+                        state is PageLoadingState.Success || state is PageLoadingState.NoMoreData
+                    if (!isAfterRefreshing) {
+                        binding.appBar.setExpanded(isExist, true)
+                        binding.playlistHeader.isVisible =
+                            isExist || binding.playlistHeader.isVisible // 只有在刚开始的时候是不可见的
+                    }
                     when (state) {
                         is PageLoadingState.Error -> {
                             binding.srlPageList.finishRefresh()
@@ -188,6 +201,12 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
 
                         is PageLoadingState.Success -> {
                             page++
+                            if (!isAfterRefreshing) {
+                                binding.cover.load(state.info.hanimeInfo.firstOrNull()?.coverUrl) {
+                                    crossfade(true)
+                                }
+                            }
+                            isAfterRefreshing = true
                             binding.srlPageList.finishRefresh()
                             binding.srlPageList.finishLoadMore(true)
                             viewModel.csrfToken = state.info.csrfToken
@@ -302,6 +321,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
     fun getNewPlaylistItems() {
         page = 1
         adapter.data.clear()
+        isAfterRefreshing = false
         getPlaylistItems()
     }
 
@@ -329,6 +349,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
     }
 
     private fun initPlaylistHeader() {
+        binding.appBar.setExpanded(false)
         binding.playlistHeader.onChangedListener = { title, desc ->
             listCode?.let { listCode ->
                 viewModel.modifyPlaylist(listCode, title, desc, delete = false)

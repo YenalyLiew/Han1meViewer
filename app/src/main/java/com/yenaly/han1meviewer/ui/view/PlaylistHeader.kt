@@ -25,14 +25,14 @@ class PlaylistHeader @JvmOverloads constructor(
     private val tvTitle: TextView
     private val btnDelete: Button
     private val tvDesc: TextView
-    private val btnDesc: Button
+    private val btnEdit: Button
 
     init {
-        inflate(context, R.layout.layout_playlist_header, this)
+        inflate(context, R.layout.layout_playlist_header_v2, this)
         tvTitle = findViewById(R.id.tv_title)
         btnDelete = findViewById(R.id.btn_delete)
         tvDesc = findViewById(R.id.tv_desc)
-        btnDesc = findViewById(R.id.btn_desc)
+        btnEdit = findViewById(R.id.btn_edit)
         init()
     }
 
@@ -64,7 +64,7 @@ class PlaylistHeader @JvmOverloads constructor(
                 setNegativeButton(R.string.cancel, null)
             }
         }
-        btnDesc.setOnClickListener {
+        btnEdit.setOnClickListener {
             context.showAlertDialog {
                 setTitle("修改標題或介紹")
                 val etView =

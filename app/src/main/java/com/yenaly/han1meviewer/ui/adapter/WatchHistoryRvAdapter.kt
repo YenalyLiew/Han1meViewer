@@ -10,13 +10,10 @@ import com.yenaly.han1meviewer.DATE_TIME_FORMAT
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemWatchHistoryBinding
-import com.yenaly.han1meviewer.getHanimeVideoLink
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.yenaly_libs.utils.TimeUtil
 import com.yenaly.yenaly_libs.utils.activity
-import com.yenaly.yenaly_libs.utils.copyTextToClipboard
-import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
@@ -66,13 +63,7 @@ class WatchHistoryRvAdapter :
                 val videoCode = item.videoCode
                 context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
             }
-            setOnLongClickListener {
-                val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position)
-                copyTextToClipboard("${item.title}\n${getHanimeVideoLink(item.videoCode)}")
-                showShortToast(R.string.copy_to_clipboard)
-                return@setOnLongClickListener true
-            }
+            // setOnLongClickListener 由各自的 Fragment 实现
         }
     }
 }
