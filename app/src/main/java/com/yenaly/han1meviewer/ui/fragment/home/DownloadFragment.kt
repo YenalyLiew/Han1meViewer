@@ -41,8 +41,6 @@ class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, Downloa
             tab.setText(tabNameArray[position])
         }
 
-        // 因为一进来是“正在下载”，所以先把 menu 隐藏。
-        binding.toolbar.menu.setGroupVisible(0, false)
         binding.tabLayout.addOnTabSelectedListener {
             when (it.position) {
                 0 -> binding.toolbar.menu.setGroupVisible(0, false)

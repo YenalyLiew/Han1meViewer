@@ -66,7 +66,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
                 menuItem.isChecked = true
                 return loadAllSortedDownloadedHanime()
             }
-        })
+        }, viewLifecycleOwner)
     }
 
     // #issue-18: 添加下载区排序
