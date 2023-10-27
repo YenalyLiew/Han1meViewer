@@ -297,7 +297,7 @@ class HJzvdStd @JvmOverloads constructor(
         val absDeltaX = abs(deltaX)
         val absDeltaY = abs(deltaY)
         // 此處進行了修改，未全屏也能調節進度
-        if (screen != SCREEN_TINY) {
+        if (screen != SCREEN_TINY && !isSpeedGestureDetected) {
             //拖动的是NavigationBar和状态栏
             if (mDownX > JZUtils.getScreenWidth(context)
                 || mDownY < JZUtils.getStatusBarHeight(context)

@@ -43,6 +43,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
                 setPositiveButton(R.string.confirm) { _, _ ->
                     viewModel.deleteWatchHistory(data)
                 }
+                setNegativeButton(R.string.cancel, null)
             }
             return@setOnItemLongClickListener true
         }
@@ -53,11 +54,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
             viewModel.loadAllWatchHistories()
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {
-                    if (it.isEmpty()) {
-                        historyAdapter.setEmptyView(R.layout.layout_empty_view)
-                    } else {
-                        historyAdapter.setDiffNewData(it)
-                    }
+                    historyAdapter.setDiffNewData(it)
                 }
         }
     }
