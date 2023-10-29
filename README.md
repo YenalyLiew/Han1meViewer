@@ -94,6 +94,12 @@ This project is intended solely for learning purposes. Commercial use is strictl
 
 ## 更新内容
 
+### v0.11.1
+
+**[修复]** 历史记录只有一条时，删除无响应。
+
+**[优化]** 长按快进时触发音量、亮度、拖拽调整的问题。
+
 ### v0.11.0
 
 也不是什么大功能更新，我也不知道为什么要 v0.11.0，就是想换个版本号。
