@@ -11,6 +11,7 @@ import java.util.Date
 data class HanimeVideoModel(
     val title: String,
     val coverUrl: String,
+    val chineseTitle: String?,
     val introduction: String?,
     val uploadTime: Date?,
     val views: String?,

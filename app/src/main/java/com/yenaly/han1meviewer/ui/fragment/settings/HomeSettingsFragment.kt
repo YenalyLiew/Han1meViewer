@@ -16,12 +16,13 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.EMPTY_STRING
+import com.yenaly.han1meviewer.HA1_GITHUB_FORUM_URL
+import com.yenaly.han1meviewer.HA1_GITHUB_ISSUE_URL
 import com.yenaly.han1meviewer.HProxySelector
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.preferenceSp
 import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
@@ -57,6 +58,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
     companion object {
         const val VIDEO_LANGUAGE = "video_language"
         const val PLAYER_SETTINGS = "player_settings"
+        const val H_KEYFRAME_SETTINGS = "h_keyframe_settings"
         const val UPDATE = "update"
         const val ABOUT = "about"
         const val DOWNLOAD_PATH = "download_path"
@@ -65,12 +67,16 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         const val PROXY_TYPE = "proxy_type"
         const val PROXY_IP = "proxy_ip"
         const val PROXY_PORT = "proxy_port"
+        const val SUBMIT_BUG = "submit_bug"
+        const val FORUM = "forum"
     }
 
     private val videoLanguage
             by safePreference<SimpleMenuPreference>(VIDEO_LANGUAGE)
     private val playerSettings
             by safePreference<Preference>(PLAYER_SETTINGS)
+    private val hKeyframeSettings
+            by safePreference<Preference>(H_KEYFRAME_SETTINGS)
     private val update
             by safePreference<Preference>(UPDATE)
     private val about
@@ -81,6 +87,10 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             by safePreference<Preference>(CLEAR_CACHE)
     private val proxy
             by safePreference<Preference>(PROXY)
+    private val submitBug
+            by safePreference<Preference>(SUBMIT_BUG)
+    private val forum
+            by safePreference<Preference>(FORUM)
 
     private val proxyDialog by unsafeLazy {
         ProxyDialog(proxy, R.layout.dialog_proxy)
@@ -101,7 +111,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             if (value == null) setValueIndex(0)
 
             setOnPreferenceChangeListener { _, newValue ->
-                if (newValue != preferenceSp.getString(VIDEO_LANGUAGE, "zh-CHT")) {
+                if (newValue != Preferences.videoLanguage) {
                     requireContext().showAlertDialog {
                         setTitle("注意！")
                         setMessage("修改影片語言需要重新程式")
@@ -116,6 +126,10 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
         playerSettings.setOnPreferenceClickListener {
             findNavController().navigate(R.id.action_homeSettingsFragment_to_playerSettingsFragment)
+            return@setOnPreferenceClickListener true
+        }
+        hKeyframeSettings.setOnPreferenceClickListener {
+            findNavController().navigate(R.id.action_homeSettingsFragment_to_hKeyframeSettingsFragment)
             return@setOnPreferenceClickListener true
         }
         about.apply {
@@ -135,9 +149,9 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             summary = path
             setOnPreferenceClickListener {
                 requireContext().showAlertDialog {
-                    setTitle("不允許更改哦")
+                    setTitle("不允許更改")
                     setMessage(
-                        "詳細位置：${path}\n" + "長按選項可以複製哦！"
+                        "詳細位置：${path}\n" + "長按選項可以複製！"
                     )
                     setPositiveButton("OK", null)
                 }
@@ -184,14 +198,28 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
         proxy.apply {
             summary = generateProxySummary(
-                preferenceSp.getInt(PROXY_TYPE, HProxySelector.TYPE_SYSTEM),
-                preferenceSp.getString(PROXY_IP, EMPTY_STRING).orEmpty(),
-                preferenceSp.getInt(PROXY_PORT, -1)
+                Preferences.proxyType,
+                Preferences.proxyIp,
+                Preferences.proxyPort
             )
             setOnPreferenceClickListener {
                 proxyDialog.show()
                 return@setOnPreferenceClickListener true
             }
+        }
+        submitBug.apply {
+            setOnPreferenceClickListener {
+                browse(HA1_GITHUB_ISSUE_URL)
+                return@setOnPreferenceClickListener true
+            }
+
+        }
+        forum.apply {
+            setOnPreferenceClickListener {
+                browse(HA1_GITHUB_FORUM_URL)
+                return@setOnPreferenceClickListener true
+            }
+
         }
     }
 
@@ -288,7 +316,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                     val isValid = checkValid(ip, port)
                     if (isValid) {
                         val proxyType = proxyType
-                        preferenceSp.edit(commit = true) {
+                        Preferences.preferenceSp.edit(commit = true) {
                             putInt(PROXY_TYPE, proxyType)
                             putString(PROXY_IP, ip)
                             putInt(PROXY_PORT, port)
@@ -305,15 +333,15 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
 
         private fun initView() {
-            when (preferenceSp.getInt(PROXY_TYPE, HProxySelector.TYPE_SYSTEM)) {
+            when (Preferences.proxyType) {
                 HProxySelector.TYPE_DIRECT -> cgTypes.check(R.id.chip_direct)
                 HProxySelector.TYPE_SYSTEM -> cgTypes.check(R.id.chip_system_proxy)
                 HProxySelector.TYPE_HTTP -> cgTypes.check(R.id.chip_http)
                 HProxySelector.TYPE_SOCKS -> cgTypes.check(R.id.chip_socks)
             }
-            val prefIp = preferenceSp.getString(PROXY_IP, EMPTY_STRING)
-            val prefPort = preferenceSp.getInt(PROXY_PORT, -1)
-            if (!prefIp.isNullOrBlank() && prefPort != -1) {
+            val prefIp = Preferences.proxyIp
+            val prefPort = Preferences.proxyPort
+            if (prefIp.isNotBlank() && prefPort != -1) {
                 etIp.setText(prefIp)
                 etPort.setText(prefPort.toString())
             }

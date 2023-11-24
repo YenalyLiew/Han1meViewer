@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.ui.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.graphics.Typeface
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.provider.Settings
@@ -14,7 +15,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
+import android.view.View.OnLongClickListener
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -30,12 +31,18 @@ import cn.jzvd.JZMediaSystem
 import cn.jzvd.JZUtils
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
+import com.itxca.spannablex.spannable
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.preferenceSp
+import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
+import com.yenaly.han1meviewer.ui.adapter.HKeyframeRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.VideoSpeedAdapter
-import com.yenaly.han1meviewer.ui.fragment.settings.PlayerSettingsFragment
+import com.yenaly.han1meviewer.util.removeItself
+import com.yenaly.han1meviewer.util.resetEmptyView
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
+import com.yenaly.yenaly_libs.utils.unsafeLazy
+import java.util.Timer
 import kotlin.math.abs
 
 /**
@@ -46,7 +53,7 @@ import kotlin.math.abs
 class HJzvdStd @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-) : JzvdStd(context, attrs) {
+) : JzvdStd(context, attrs), OnLongClickListener {
 
     companion object {
         // 相當於重寫了
@@ -60,6 +67,8 @@ class HJzvdStd @JvmOverloads constructor(
          * 默認滑動調整進度條的靈敏度 越大播放进度条滑动越慢
          */
         const val DEF_PROGRESS_SLIDE_SENSITIVITY = 5
+
+        const val DEF_COUNTDOWN_SEC = 10
 
         /**
          * 默認速度
@@ -95,15 +104,12 @@ class HJzvdStd @JvmOverloads constructor(
     /**
      * 用戶定義的是否顯示底部進度條
      */
-    private val showBottomProgress =
-        preferenceSp.getBoolean(PlayerSettingsFragment.SHOW_BOTTOM_PROGRESS, true)
+    private val showBottomProgress = Preferences.showBottomProgress
 
     /**
      * 用戶定義的默認速度
      */
-    private val userDefSpeed =
-        preferenceSp.getString(PlayerSettingsFragment.PLAYER_SPEED, DEF_SPEED.toString())
-            ?.toFloat() ?: DEF_SPEED
+    private val userDefSpeed = Preferences.playerSpeed
 
     /**
      * 用戶定義的默認速度的索引
@@ -113,19 +119,27 @@ class HJzvdStd @JvmOverloads constructor(
     /**
      * 用戶定義的滑動調整進度條的靈敏度
      */
-    private val userDefSlideSensitivity = preferenceSp.getInt(
-        PlayerSettingsFragment.SLIDE_SENSITIVITY,
-        DEF_PROGRESS_SLIDE_SENSITIVITY
-    ).toRealSensitivity()
+    private val userDefSlideSensitivity = Preferences.slideSensitivity.toRealSensitivity()
 
     /**
      * 用戶定義的默認長按速度是原先速度的幾倍
      */
-    private val userDefLongPressSpeedTimes =
-        preferenceSp.getString(
-            PlayerSettingsFragment.LONG_PRESS_SPEED_TIMES,
-            DEF_LONG_PRESS_SPEED_TIMES.toString()
-        )?.toFloat() ?: DEF_LONG_PRESS_SPEED_TIMES
+    private val userDefLongPressSpeedTimes = Preferences.longPressSpeedTime
+
+    /**
+     * 用戶定義的倒數提醒毫秒數
+     */
+    private val userDefWhenCountdownRemind = Preferences.whenCountdownRemind
+
+    /**
+     * 用戶定義的是否在倒數時顯示評論
+     */
+    private val userDefShowCommentWhenCountdown = Preferences.showCommentWhenCountdown
+
+    /**
+     * 用戶定義的是否啟用關鍵H幀
+     */
+    private val isHKeyframeEnabled = Preferences.hKeyframesEnable
 
     /**
      * 當前速度的索引，如果设置速度的话，修改这个，别动 [videoSpeed]
@@ -148,6 +162,56 @@ class HJzvdStd @JvmOverloads constructor(
         }
 
     private lateinit var tvSpeed: TextView
+    private lateinit var tvKeyframe: TextView
+    private lateinit var tvTimer: TextView
+
+    var hKeyframe: HKeyframeEntity? = null
+        set(value) {
+            field = value
+            hKeyframeAdapter.setDiffNewData(value?.keyframes)
+            hKeyframeAdapter.isLocal = value?.let { it.author == null } ?: true
+        }
+
+    var videoCode: String? = null
+
+    private val hKeyframeAdapter: HKeyframeRvAdapter by unsafeLazy { initHKeyframeAdapter() }
+
+    /**
+     * 初始化關鍵H幀的 Adapter，最好不用 lazy
+     *
+     * 但我還是最終用了 lazy，要不然首次 setList 收不到
+     */
+    private fun initHKeyframeAdapter() = run {
+        val videoCode = checkNotNull(this.videoCode) {
+            "If you want to use HKeyframeAdapter, you must set videoCode first."
+        }
+        HKeyframeRvAdapter(videoCode).apply {
+            setDiffCallback(HKeyframeRvAdapter.COMPARATOR)
+            setOnItemClickListener { _, _, position ->
+                val keyframe = getItem(position)
+                mediaInterface.seekTo(keyframe.position)
+                startProgressTimer()
+            }
+            resetEmptyView(
+                View.inflate(this@HJzvdStd.context, R.layout.layout_empty_view, null),
+                this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n請長按🥵添加關鍵H幀"
+            )
+        }
+    }
+
+    /**
+     * 關鍵H幀的點擊事件
+     *
+     * 作用：打開 Dialog，顯示關鍵H幀的列表
+     */
+    var onKeyframeClickListener: ((View) -> Unit)? = null
+
+    /**
+     * 關鍵H幀的長按事件
+     *
+     * 作用：將當前時刻加入關鍵H幀
+     */
+    var onKeyframeLongClickListener: ((View) -> Unit)? = null
 
     private var videoSpeed: Float = userDefSpeed
         set(value) {
@@ -187,7 +251,11 @@ class HJzvdStd @JvmOverloads constructor(
     override fun init(context: Context?) {
         super.init(context)
         tvSpeed = findViewById(R.id.tv_speed)
+        tvKeyframe = findViewById(R.id.tv_keyframe)
+        tvTimer = findViewById(R.id.tv_timer)
         tvSpeed.setOnClickListener(this)
+        tvKeyframe.setOnClickListener(this)
+        tvKeyframe.setOnLongClickListener(this)
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
@@ -236,25 +304,20 @@ class HJzvdStd @JvmOverloads constructor(
         }
     }
 
-    override fun gotoFullscreen() {
-        super.gotoFullscreen()
-        titleTextView.isVisible = true
-    }
-
-    override fun gotoNormalScreen() {
-        super.gotoNormalScreen()
-        titleTextView.isInvisible = true
-    }
-
     override fun setScreenNormal() {
         super.setScreenNormal()
         backButton.isVisible = true
         tvSpeed.isVisible = false
+        tvKeyframe.isVisible = false
+        titleTextView.isInvisible = true
+        tvTimer.isInvisible = true
     }
 
     override fun setScreenFullscreen() {
         super.setScreenFullscreen()
         tvSpeed.isVisible = true
+        if (isHKeyframeEnabled) tvKeyframe.isVisible = true
+        titleTextView.isVisible = true
     }
 
     override fun clickBack() {
@@ -278,6 +341,18 @@ class HJzvdStd @JvmOverloads constructor(
         super.onClick(v)
         when (v.id) {
             R.id.tv_speed -> clickSpeed()
+            R.id.tv_keyframe -> onKeyframeClickListener?.invoke(v)
+        }
+    }
+
+    override fun onLongClick(v: View): Boolean {
+        return when (v.id) {
+            R.id.tv_keyframe -> {
+                onKeyframeLongClickListener?.invoke(v)
+                return true
+            }
+
+            else -> false
         }
     }
 
@@ -423,6 +498,54 @@ class HJzvdStd @JvmOverloads constructor(
         }
     }
 
+    // 原來是 300 period 我改成了 100 爲了計時準確
+    override fun startProgressTimer() {
+        Log.i(TAG, "startProgressTimer: " + " [" + this.hashCode() + "] ")
+        cancelProgressTimer()
+        UPDATE_PROGRESS_TIMER = Timer()
+        mProgressTimerTask = ProgressTimerTask()
+        UPDATE_PROGRESS_TIMER.schedule(mProgressTimerTask, 0, 100)
+    }
+
+    override fun onProgress(progress: Int, position: Long, duration: Long) {
+        super.onProgress(progress, position, duration)
+        if (screen == SCREEN_FULLSCREEN) hKeyframe?.let {
+            var match = false
+            for ((index, kf) in it.keyframes.withIndex()) {
+                val interval = kf.position - position
+                if (interval in 0L until userDefWhenCountdownRemind) {
+                    val timeLong = interval / 1_000L
+                    val spannable = spannable {
+                        if (userDefShowCommentWhenCountdown) {
+                            "#${index + 1}".span {
+                                relativeSize(proportion = 0.7F)
+                            }
+                            if (!kf.prompt.isNullOrBlank()) {
+                                " ${kf.prompt}".span {
+                                    relativeSize(proportion = 0.7F)
+                                }
+                            }
+                            newline()
+                        }
+                        val time = if (timeLong >= 1) {
+                            (timeLong + 1).toString()
+                        } else {
+                            val timeFloat = interval / 1_000F
+                            "%.1f".format(timeFloat)
+                        }
+                        time.span {
+                            style(Typeface.BOLD)
+                        }
+                    }
+                    tvTimer.text = spannable
+                    match = true
+                    break
+                }
+            }
+            tvTimer.isInvisible = !match
+        } ?: run { tvTimer.isInvisible = true }
+    }
+
     // #issue-14: 之前用 XPopup 三键模式下会有 bug，无法呼出，所以换成这个
     @SuppressLint("InflateParams")
     fun clickSpeed() {
@@ -446,6 +569,23 @@ class HJzvdStd @JvmOverloads constructor(
         popup.showAtLocation(textureViewContainer, Gravity.END, 0, 0)
     }
 
+    @SuppressLint("InflateParams")
+    fun clickHKeyframe(v: View) {
+        onCLickUiToggleToClear()
+        val inflater = LayoutInflater.from(context).inflate(R.layout.jz_layout_speed, null)
+        val rv = inflater.findViewById<RecyclerView>(R.id.rv_video_speed)
+        val popup = PopupWindow(
+            inflater, JZUtils.dip2px(jzvdContext, 240f),
+            LayoutParams.MATCH_PARENT, true
+        ).apply {
+            contentView = inflater
+            animationStyle = cn.jzvd.R.style.pop_animation
+        }
+        rv.layoutManager = LinearLayoutManager(v.context)
+        rv.adapter = hKeyframeAdapter
+        popup.showAtLocation(textureViewContainer, Gravity.END, 0, 0)
+    }
+
     /**
      * 將靈敏度轉換為實際數值，很多用戶對滑動要求挺高，
      * 靈敏度太高沒人在乎，所以高靈敏度照舊，低靈敏度差別大一點
@@ -459,13 +599,6 @@ class HJzvdStd @JvmOverloads constructor(
             9 -> 40
             else -> throw IllegalStateException("Invalid sensitivity value: $this")
         }
-    }
-
-    /**
-     * 刪除自己
-     */
-    private fun View.removeItself() {
-        (parent as? ViewGroup)?.removeView(this)
     }
 }
 

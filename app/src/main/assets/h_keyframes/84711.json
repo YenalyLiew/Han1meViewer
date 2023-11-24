@@ -1,0 +1,15 @@
+{
+  "videoCode": "84711",
+  "title": "abc",
+  "author": "yenaly",
+  "keyframes": [
+    {
+      "position": 1000000,
+      "prompt": "abc"
+    },
+    {
+      "position": 2000000,
+      "prompt": null
+    }
+  ]
+}

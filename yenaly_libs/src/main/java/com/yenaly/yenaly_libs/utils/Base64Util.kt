@@ -16,15 +16,15 @@ fun String.encodeToStringByBase64(flag: Int = Base64.DEFAULT): String {
 /**
  * Base64解密
  */
-@JvmName("decodeToString")
-fun String.decodeToStringByBase64(flag: Int = Base64.DEFAULT): String {
+@JvmName("decodeFromString")
+fun String.decodeFromStringByBase64(flag: Int = Base64.DEFAULT): String {
     return String(Base64.decode(this.toByteArray(), flag))
 }
 
 /**
  * Base64解密
  */
-@JvmName("decodeToByteArray")
-fun String.decodeToByteArrayByBase64(flag: Int = Base64.DEFAULT): ByteArray {
-    return Base64.decode(this.toByteArray(), flag)
+@JvmName("decodeFromByteArray")
+fun ByteArray.decodeFromByteArrayByBase64(flag: Int = Base64.DEFAULT): ByteArray {
+    return Base64.decode(this, flag)
 }

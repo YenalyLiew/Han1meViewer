@@ -1,10 +1,20 @@
 package com.yenaly.han1meviewer.logic
 
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.logic.dao.DownloadDatabase
 import com.yenaly.han1meviewer.logic.dao.HistoryDatabase
+import com.yenaly.han1meviewer.logic.dao.MiscellanyDatabase
+import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
+import com.yenaly.yenaly_libs.utils.applicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 
 /**
  * @project Hanime1
@@ -12,6 +22,85 @@ import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
  * @time 2022/06/22 022 23:00
  */
 object DatabaseRepo {
+
+    object HKeyframe {
+        private val hKeyframeDao = MiscellanyDatabase.instance.hKeyframeDao
+
+        fun loadAll(keyword: String? = null) =
+            if (keyword != null) hKeyframeDao.loadAll(keyword)
+            else hKeyframeDao.loadAll()
+
+        @OptIn(ExperimentalSerializationApi::class)
+        fun loadAllShared() = flow {
+            val list = applicationContext.assets.let { assets ->
+                assets.list("h_keyframes")?.asSequence()
+                    ?.filter { it.endsWith(".json") }
+                    ?.mapNotNullTo(mutableListOf()) {
+                        try {
+                            assets.open("h_keyframes/$it").use { inputStream ->
+                                Json.decodeFromStream<HKeyframeEntity>(inputStream)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            null
+                        }
+                    }
+            }
+            emit(list)
+        }
+
+        suspend fun findBy(videoCode: String) =
+            hKeyframeDao.findBy(videoCode)
+
+        @OptIn(ExperimentalSerializationApi::class)
+        fun observe(videoCode: String): Flow<HKeyframeEntity?> {
+            if (Preferences.sharedHKeyframesEnable) {
+                return flow t@{
+                    val find = hKeyframeDao.findBy(videoCode)
+                    if (find == null || Preferences.sharedHKeyframesUseFirst) {
+                        applicationContext.assets
+                            .open("h_keyframes/$videoCode.json")
+                            .use { inputStream ->
+                                val entity = Json.decodeFromStream<HKeyframeEntity>(inputStream)
+                                this@t.emit(entity)
+                            }
+                    } else {
+                        hKeyframeDao.observe(videoCode).collect {
+                            this@t.emit(it)
+                        }
+                    }
+                }.catch t@{ e ->
+                    e.printStackTrace()
+                    hKeyframeDao.observe(videoCode).collect {
+                        this@t.emit(it)
+                    }
+                }
+            }
+            return hKeyframeDao.observe(videoCode)
+        }
+
+        suspend fun insert(entity: HKeyframeEntity) = hKeyframeDao.insert(entity)
+
+        suspend fun update(entity: HKeyframeEntity) = hKeyframeDao.update(entity)
+
+        suspend fun delete(entity: HKeyframeEntity) =
+            hKeyframeDao.delete(entity)
+
+        suspend fun modifyKeyframe(
+            videoCode: String,
+            oldKeyframe: HKeyframeEntity.Keyframe, keyframe: HKeyframeEntity.Keyframe,
+        ) = hKeyframeDao.modifyKeyframe(videoCode, oldKeyframe, keyframe)
+
+        suspend fun appendKeyframe(
+            videoCode: String, title: String,
+            keyframe: HKeyframeEntity.Keyframe,
+        ) = hKeyframeDao.appendKeyframe(videoCode, title, keyframe)
+
+        suspend fun removeKeyframe(
+            videoCode: String,
+            keyframe: HKeyframeEntity.Keyframe,
+        ) = hKeyframeDao.removeKeyframe(videoCode, keyframe)
+    }
 
     object SearchHistory {
         private val searchHistoryDao = HistoryDatabase.instance.searchHistory

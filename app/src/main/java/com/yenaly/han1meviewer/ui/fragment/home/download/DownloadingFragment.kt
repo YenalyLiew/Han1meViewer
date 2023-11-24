@@ -27,6 +27,7 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         adapter.setDiffCallback(HanimeDownloadingRvAdapter.COMPARATOR)
+        adapter.setEmptyView(R.layout.layout_empty_view)
         binding.rvList.itemAnimator?.changeDuration = 0
     }
 
@@ -35,9 +36,6 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
             viewModel.loadAllDownloadingHanime().flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {
                     adapter.setDiffNewData(it)
-                    if (it.isEmpty()) {
-                        adapter.setEmptyView(R.layout.layout_empty_view)
-                    }
                 }
         }
     }

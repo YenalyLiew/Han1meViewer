@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="h_keyframes_enable"
+        app:summary="@string/h_keyframes_disable_tip"
+        app:title="@string/h_keyframes_enable" />
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:key="h_keyframe_manage_category"
+        app:title="@string/manage">
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="h_keyframe_manage"
+            app:title="@string/h_keyframe_manage" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:key="shared_h_keyframes_category"
+        app:title="@string/shared">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="shared_h_keyframes_enable"
+            app:summary="@string/shared_h_keyframes_enable_tip"
+            app:title="@string/shared_h_keyframes_enable" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="shared_h_keyframes_use_first"
+            app:summary="@string/shared_h_keyframes_use_first_tip"
+            app:title="@string/shared_h_keyframes_use_first" />
+
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="shared_h_keyframe_manage"
+            app:summary="@string/shared_h_keyframe_manage_tip"
+            app:title="@string/shared_h_keyframe_manage" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:key="h_keyframe_custom_category"
+        app:title="自訂">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="show_comment_when_countdown"
+            app:title="@string/show_prompt_when_countdown" />
+
+        <SeekBarPreference
+            android:max="30"
+            app:defaultValue="10"
+            app:iconSpaceReserved="false"
+            app:key="when_countdown_remind"
+            app:min="5"
+            app:title="@string/when_countdown_remind" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

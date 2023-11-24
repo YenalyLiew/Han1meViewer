@@ -15,9 +15,9 @@ import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.COMMENT_ID
 import com.yenaly.han1meviewer.CSRF_TOKEN
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemVideoCommentBinding
-import com.yenaly.han1meviewer.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.model.VideoCommentModel
 import com.yenaly.han1meviewer.ui.fragment.video.ChildCommentPopupFragment
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment

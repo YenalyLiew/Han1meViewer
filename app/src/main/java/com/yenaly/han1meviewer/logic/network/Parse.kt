@@ -4,6 +4,7 @@ import android.util.Log
 import com.yenaly.han1meviewer.DATE_FORMAT
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.HanimeResolution
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
@@ -321,8 +322,9 @@ object Parse {
             ?.attr("value")?.toIntOrNull()
 
         val videoDetailWrapper = parseBody.selectFirst("div[class=video-details-wrapper]")
-        val introduction =
-            videoDetailWrapper?.selectFirst("div[class^=video-caption-text]")?.ownText()
+        val videoCaptionText = videoDetailWrapper?.selectFirst("div[class^=video-caption-text]")
+        val chineseTitle = videoCaptionText?.previousElementSibling()?.ownText()
+        val introduction = videoCaptionText?.ownText()
         val uploadTimeWithViews = videoDetailWrapper?.selectFirst("div > div > div")?.text()
         val uploadTimeWithViewsGroups = uploadTimeWithViews?.let {
             Regex.viewAndUploadTime.find(it)?.groups
@@ -346,10 +348,10 @@ object Parse {
         val myListInfo = mutableListOf<HanimeVideoModel.MyList.MyListInfo>()
         myListCheckboxWrapper.forEach {
             val listTitle = it.selectFirst("span")?.ownText()
-                .logIfParseNull(Parse::hanimeVideoVer2.name, "myListTitle")
+                .logIfParseNull(Parse::hanimeVideoVer2.name, "myListTitle", loginNeeded = true)
             val listInput = it.selectFirst("input")
             val listCode = listInput?.attr("id")
-                .logIfParseNull(Parse::hanimeVideoVer2.name, "myListCode")
+                .logIfParseNull(Parse::hanimeVideoVer2.name, "myListCode", loginNeeded = true)
             val isSelected = listInput?.hasAttr("checked") ?: false
             if (listTitle != null && listCode != null) {
                 myListInfo += HanimeVideoModel.MyList.MyListInfo(
@@ -484,6 +486,10 @@ object Parse {
         return VideoLoadingState.Success(
             HanimeVideoModel(
                 title = title, coverUrl = videoCoverUrl,
+                chineseTitle = chineseTitle.logIfParseNull(
+                    Parse::hanimeVideoVer2.name,
+                    "chineseTitle"
+                ),
                 uploadTime = uploadTime.logIfParseNull(Parse::hanimeVideoVer2.name, "uploadTime"),
                 views = views.logIfParseNull(Parse::hanimeVideoVer2.name, "views"),
                 introduction = introduction.logIfParseNull(
@@ -702,16 +708,16 @@ object Parse {
                 child.selectFirst("input[name=unlike-comment-status]")?.attr("value")
 
             val post = VideoCommentModel.VideoComment.POST(
-                foreignId.logIfParseNull(Parse::comments.name, "foreignId"),
+                foreignId.logIfParseNull(Parse::comments.name, "foreignId", loginNeeded = true),
                 isPositive == "1",
-                likeUserId.logIfParseNull(Parse::comments.name, "likeUserId"),
+                likeUserId.logIfParseNull(Parse::comments.name, "likeUserId", loginNeeded = true),
                 commentLikesCount?.toIntOrNull().logIfParseNull(
                     Parse::comments.name,
-                    "commentLikesCount"
+                    "commentLikesCount", loginNeeded = true
                 ),
                 commentLikesSum?.toIntOrNull().logIfParseNull(
                     Parse::comments.name,
-                    "commentLikesSum"
+                    "commentLikesSum", loginNeeded = true
                 ),
                 likeCommentStatus == "1",
                 unlikeCommentStatus == "1",
@@ -777,16 +783,24 @@ object Parse {
                 val unlikeCommentStatus =
                     postClass?.selectFirst("input[name=unlike-comment-status]")?.attr("value")
                 val post = VideoCommentModel.VideoComment.POST(
-                    foreignId.logIfParseNull(Parse::commentReply.name, "foreignId"),
+                    foreignId.logIfParseNull(
+                        Parse::commentReply.name,
+                        "foreignId",
+                        loginNeeded = true
+                    ),
                     isPositive == "1",
-                    likeUserId.logIfParseNull(Parse::commentReply.name, "likeUserId"),
+                    likeUserId.logIfParseNull(
+                        Parse::commentReply.name,
+                        "likeUserId",
+                        loginNeeded = true
+                    ),
                     commentLikesCount?.toIntOrNull().logIfParseNull(
                         Parse::commentReply.name,
-                        "commentLikesCount"
+                        "commentLikesCount", loginNeeded = true
                     ),
                     commentLikesSum?.toIntOrNull().logIfParseNull(
                         Parse::commentReply.name,
-                        "commentLikesSum"
+                        "commentLikesSum", loginNeeded = true
                     ),
                     likeCommentStatus == "1",
                     unlikeCommentStatus == "1",
@@ -840,7 +854,15 @@ object Parse {
      * @param varName 這個參數的名稱
      * @return 回傳 [this]
      */
-    private fun <T> T?.logIfParseNull(funcName: String, varName: String): T? = also {
-        if (it == null) Log.d("Parse::$funcName", "[$varName] is null. 這有點不正常")
+    private fun <T> T?.logIfParseNull(
+        funcName: String, varName: String, loginNeeded: Boolean = false,
+    ): T? = also {
+        if (it == null) {
+            if (loginNeeded && isAlreadyLogin) {
+                Log.d("Parse::$funcName", "[$varName] is null. 而且處於登入狀態，這有點不正常")
+            } else {
+                Log.d("Parse::$funcName", "[$varName] is null. 這有點不正常")
+            }
+        }
     }
 }

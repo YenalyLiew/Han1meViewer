@@ -11,10 +11,10 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.interfaces.SimpleCallback
 import com.yenaly.han1meviewer.COMMENT_TYPE
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_COMMENT_PREFIX
 import com.yenaly.han1meviewer.databinding.FragmentCommentBinding
-import com.yenaly.han1meviewer.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.adapter.VideoCommentRvAdapter
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup

@@ -51,15 +51,9 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
         }
         slideSensitivity.apply {
             setDefaultValue(HJzvdStd.DEF_PROGRESS_SLIDE_SENSITIVITY)
-            summary = getString(
-                R.string.current_slide_sensitivity,
-                value.toPrettySensitivityString()
-            )
+            summary = value.toPrettySensitivityString()
             setOnPreferenceChangeListener { pref, newVal ->
-                pref.summary = pref.context.getString(
-                    R.string.current_slide_sensitivity,
-                    (newVal as Int).toPrettySensitivityString()
-                )
+                pref.summary = (newVal as Int).toPrettySensitivityString()
                 return@setOnPreferenceChangeListener true
             }
         }
@@ -80,7 +74,7 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
      * 將數字靈敏度轉換為漂亮的字串
      */
     private fun @receiver:IntRange(from = 1, to = 9) Int.toPrettySensitivityString(): String {
-        return when (this) {
+        val pretty = when (this) {
             1, 2 -> "高"
             3, 4 -> "較高"
             5 -> "適中"
@@ -90,6 +84,7 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
             9 -> "極低"
             else -> throw IllegalStateException("Invalid sensitivity value: $this")
         }
+        return getString(R.string.current_slide_sensitivity, pretty)
     }
 
     override fun SettingsActivity.setupToolbar() {

@@ -11,6 +11,7 @@
 
     <color name="title_mask_color">#66F5F5F5</color>
     <color name="search_bar_icon_color">#FF00A1FF</color>
+    <color name="video_code_link_text_color">#FF1E90FF</color>
     <color name="per50_transparent_black">#80000000</color>
     <color name="per60_transparent_black">#99000000</color>
     <color name="per70_transparent_black">#B3000000</color>

@@ -1,6 +1,5 @@
 package com.yenaly.han1meviewer
 
-import com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment
 import okhttp3.internal.proxy.NullProxySelector
 import java.io.IOException
 import java.net.InetAddress
@@ -47,7 +46,7 @@ class HProxySelector : ProxySelector() {
     }
 
     private fun updateProxy() {
-        delegation = when (preferenceSp.getInt(HomeSettingsFragment.PROXY_TYPE, TYPE_SYSTEM)) {
+        delegation = when (Preferences.proxyType) {
             TYPE_DIRECT -> NullProxySelector
             TYPE_SYSTEM -> alternative
             TYPE_HTTP, TYPE_SOCKS -> null
@@ -56,11 +55,11 @@ class HProxySelector : ProxySelector() {
     }
 
     override fun select(uri: URI?): MutableList<Proxy> {
-        val type = preferenceSp.getInt(HomeSettingsFragment.PROXY_TYPE, TYPE_SYSTEM)
+        val type = Preferences.proxyType
         if (type == TYPE_HTTP || type == TYPE_SOCKS) {
-            val ip = preferenceSp.getString(HomeSettingsFragment.PROXY_IP, EMPTY_STRING)
-            val port = preferenceSp.getInt(HomeSettingsFragment.PROXY_PORT, -1)
-            if (!ip.isNullOrBlank() && port != -1) {
+            val ip = Preferences.proxyIp
+            val port = Preferences.proxyPort
+            if (ip.isNotBlank() && port != -1) {
                 val inetAddress = InetAddress.getByName(ip)
                 val socketAddress = InetSocketAddress(inetAddress, port)
                 return mutableListOf(

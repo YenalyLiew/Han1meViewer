@@ -15,10 +15,47 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
+
+        <action
+            android:id="@+id/action_homeSettingsFragment_to_hKeyframeSettingsFragment"
+            app:destination="@id/hKeyframeSettingsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+
     </fragment>
 
     <fragment
         android:id="@+id/playerSettingsFragment"
         android:name="com.yenaly.han1meviewer.ui.fragment.settings.PlayerSettingsFragment" />
+
+    <fragment
+        android:id="@+id/hKeyframesFragment"
+        android:name="com.yenaly.han1meviewer.ui.fragment.settings.HKeyframesFragment" />
+
+    <fragment
+        android:id="@+id/sharedHKeyframesFragment"
+        android:name="com.yenaly.han1meviewer.ui.fragment.settings.SharedHKeyframesFragment" />
+
+    <fragment
+        android:id="@+id/hKeyframeSettingsFragment"
+        android:name="com.yenaly.han1meviewer.ui.fragment.settings.HKeyframeSettingsFragment">
+
+        <action
+            android:id="@+id/action_hKeyframeSettingsFragment_to_hKeyframesFragment"
+            app:destination="@id/hKeyframesFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_hKeyframeSettingsFragment_to_sharedHKeyframesFragment"
+            app:destination="@id/sharedHKeyframesFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
 
 </navigation>

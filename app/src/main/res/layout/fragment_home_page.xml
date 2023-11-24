@@ -43,7 +43,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/per70_transparent_black" />
+                        android:background="@color/per60_transparent_black" />
 
                     <LinearLayout
                         android:id="@+id/banner"

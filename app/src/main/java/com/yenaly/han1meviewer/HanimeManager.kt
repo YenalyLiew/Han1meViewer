@@ -5,6 +5,8 @@ import android.graphics.Typeface
 import android.webkit.CookieManager
 import androidx.core.app.NotificationManagerCompat
 import com.itxca.spannablex.spannable
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
+import com.yenaly.han1meviewer.Preferences.loginCookie
 import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.unsafeLazy

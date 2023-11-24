@@ -2,7 +2,7 @@ package com.yenaly.han1meviewer.logic
 
 import android.util.Log
 import com.yenaly.han1meviewer.EMPTY_STRING
-import com.yenaly.han1meviewer.isAlreadyLogin
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.exception.CloudFlareBlockedException
 import com.yenaly.han1meviewer.logic.exception.HanimeNotFoundException
 import com.yenaly.han1meviewer.logic.exception.IPBlockedException
@@ -326,23 +326,7 @@ object NetworkRepo {
             requestResult.throwRequestException()
         }
     }.catch { e ->
-        when (e) {
-            is CancellationException -> throw e
-            is ParseException -> {
-                e.printStackTrace()
-                emit(WebsiteState.Error(ParseException("可能這個網址解析起來不大一樣...")))
-            }
-
-            is SSLHandshakeException -> {
-                e.printStackTrace()
-                emit(WebsiteState.Error(SSLHandshakeException("可能是你的網路不穩定，多刷新！")))
-            }
-
-            else -> {
-                e.printStackTrace()
-                emit(WebsiteState.Error(e))
-            }
-        }
+        emit(WebsiteState.Error(handleException(e)))
     }.flowOn(Dispatchers.IO)
 
     /**
@@ -361,23 +345,7 @@ object NetworkRepo {
             requestResult.throwRequestException()
         }
     }.catch { e ->
-        when (e) {
-            is CancellationException -> throw e
-            is ParseException -> {
-                e.printStackTrace()
-                emit(PageLoadingState.Error(ParseException("可能這個網址解析起來不大一樣...")))
-            }
-
-            is SSLHandshakeException -> {
-                e.printStackTrace()
-                emit(PageLoadingState.Error(SSLHandshakeException("可能是你的網路不穩定，多刷新！")))
-            }
-
-            else -> {
-                e.printStackTrace()
-                emit(PageLoadingState.Error(e))
-            }
-        }
+        emit(PageLoadingState.Error(handleException(e)))
     }.flowOn(Dispatchers.IO)
 
     /**
@@ -396,23 +364,7 @@ object NetworkRepo {
             requestResult.throwRequestException()
         }
     }.catch { e ->
-        when (e) {
-            is CancellationException -> throw e
-            is ParseException -> {
-                e.printStackTrace()
-                emit(VideoLoadingState.Error(ParseException("可能這個網址解析起來不大一樣...")))
-            }
-
-            is SSLHandshakeException -> {
-                e.printStackTrace()
-                emit(VideoLoadingState.Error(SSLHandshakeException("可能是你的網路不穩定，多刷新！")))
-            }
-
-            else -> {
-                e.printStackTrace()
-                emit(VideoLoadingState.Error(e))
-            }
-        }
+        emit(VideoLoadingState.Error(handleException(e)))
     }.flowOn(Dispatchers.IO)
 
     private fun Response<ResponseBody>.throwRequestException(): Nothing {
@@ -438,6 +390,26 @@ object NetworkRepo {
             } else throw IllegalStateException("$code ${message()}")
 
             else -> throw IllegalStateException("$code ${message()}")
+        }
+    }
+
+    private fun handleException(e: Throwable): Throwable {
+        return when (e) {
+            is CancellationException -> throw e
+            is ParseException -> {
+                e.printStackTrace()
+                ParseException("可能這個網址解析起來不大一樣...")
+            }
+
+            is SSLHandshakeException -> {
+                e.printStackTrace()
+                SSLHandshakeException("可能是你的網路不穩定，多刷新！")
+            }
+
+            else -> {
+                e.printStackTrace()
+                e
+            }
         }
     }
 
