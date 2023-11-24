@@ -18,11 +18,11 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.android.material.snackbar.Snackbar
 import com.itxca.spannablex.spannable
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
 import com.yenaly.han1meviewer.hanimeSpannable
-import com.yenaly.han1meviewer.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.model.VersionModel
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
@@ -44,7 +44,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
     lateinit var navHostFragment: NavHostFragment
     lateinit var navController: NavController
 
-    val currentFragment get() = navHostFragment.childFragmentManager.fragments.getOrNull(0)
+    val currentFragment get() = navHostFragment.childFragmentManager.primaryNavigationFragment
 
     // 登錄完了後讓activity刷新主頁
     private val loginDataLauncher =

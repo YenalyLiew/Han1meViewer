@@ -4,11 +4,15 @@
 
 这是一个 [Hanime1](https://hanime1.me/) Android 平台的非官方浏览器。
 
-本项目仅用于学习和交流，不可闭源，严禁商用。
+Android 版本必须不小于 7.0 才能使用。
+
+本项目仅用于学习和交流代码，不可闭源，严禁商用。
 
 An unofficial Hanime1.me Application for Android.
 
-This project is intended solely for learning purposes. Commercial use is strictly prohibited.
+Android version must be no less than 7.0 to be used.
+
+This project is intended solely for code learning purposes. Commercial use is strictly prohibited.
 
 ![download times](https://img.shields.io/github/downloads/YenalyLiew/Han1meViewer/total)
 
@@ -78,11 +82,29 @@ This project is intended solely for learning purposes. Commercial use is strictl
 
 但是本软件不存在这些问题噢。
 
+除此之外，在 v0.12.0 新增了新功能，关键H帧（名字我自己取的）！
+
+### 关键H帧
+
+> 目前还属于实验性功能，如果你经常使用这个功能，不妨在讨论区提出你的建议，或者在 issue 区提交 bug，非常感谢！
+
+什么是**关键H帧**？就是影片到达**「顶点」**的那一刻。
+
+还在因为不能和影片内「顶点」同步，而不停地记着「顶点」的时刻然后看进度条卡时间同步吗？
+
+现在你可能不需要了。如果你开启了该功能（默认开启），并且在影片内**手动标记**每一个关键H帧，它会在 5-30s 前在屏幕**左上角**倒计时提醒（可调整）。在 0-1s 时，会精确到一位小数，方便你更好的控制时间。
+
+你还可以将你标记的分享给其他人，别人只需要点击右上角的添加就可以一键导入。
+
+此外，还提供了**共享关键H帧集**。这些关键H帧是内置于软件里的，来源于贡献者在 GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，暂时不考虑服务器在线共享之类的，~~前提是有贡献者来帮忙补充~~。
+
+如果你想贡献关键H帧，请点击[这里]()查看应该怎么做。
+
 ## 存在问题
 
 本软件和网站深度绑定，如果网站不能用，软件 100% 用不了。除非你下载过影片，那可以看。
 
-不能用日本节点，这是网站自带的拦截。
+**不能用日本节点**，这是网站自带的拦截。
 
 只要网站添加了 CloudFlare 防护，软件就不能用。
 
@@ -93,6 +115,14 @@ This project is intended solely for learning purposes. Commercial use is strictl
 ~~PS：你还真给我大改了。。~~
 
 ## 更新内容
+
+### v0.12.0
+
+**[新增]** 重磅！关键H帧！支持创建、分享，精准卡点不是问题。
+
+**[新增]** 影片页面显示中文译名。
+
+**[新增]** 在 GitHub 上开通了讨论区，并在设置里添加了跳转到 提交BUG 和 讨论区 的按钮，欢迎来吐槽！
 
 ### v0.11.1
 

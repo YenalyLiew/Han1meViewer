@@ -3,6 +3,8 @@ package com.yenaly.han1meviewer.util
 import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import androidx.annotation.DrawableRes
 import com.google.android.material.chip.Chip
@@ -35,6 +37,13 @@ internal fun ChipGroup.createTags(tags: List<String>) {
         }
         this.addView(chip)
     }
+}
+
+/**
+ * 刪除自己
+ */
+fun View.removeItself() {
+    (parent as? ViewGroup)?.removeView(this)
 }
 
 internal inline fun Context.showAlertDialog(action: MaterialAlertDialogBuilder.() -> Unit) {

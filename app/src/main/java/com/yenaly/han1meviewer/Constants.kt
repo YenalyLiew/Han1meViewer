@@ -86,6 +86,14 @@ const val HANIME_BASE_URL = "https://hanime1.me/"
 
 const val HANIME_LOGIN_URL = HANIME_BASE_URL + "login"
 
+// github url
+
+const val HA1_GITHUB_URL = "https://github.com/YenalyLiew/Han1meViewer/"
+
+const val HA1_GITHUB_ISSUE_URL = HA1_GITHUB_URL + "issues"
+
+const val HA1_GITHUB_FORUM_URL = HA1_GITHUB_URL + "discussions"
+
 // for Shared Preference
 
 const val LOGIN_COOKIE = "cookie"

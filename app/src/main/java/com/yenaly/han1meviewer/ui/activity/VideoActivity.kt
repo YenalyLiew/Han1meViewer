@@ -4,13 +4,19 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import coil.load
-import com.yenaly.han1meviewer.*
+import com.yenaly.han1meviewer.COMMENT_TYPE
+import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.VIDEO_CODE
+import com.yenaly.han1meviewer.VIDEO_COMMENT_PREFIX
 import com.yenaly.han1meviewer.databinding.ActivityVideoBinding
+import com.yenaly.han1meviewer.getHanimeVideoLink
+import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
@@ -18,8 +24,14 @@ import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.fragment.video.VideoIntroductionFragment
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
+import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.*
+import com.yenaly.yenaly_libs.utils.ScreenRotateUtil
+import com.yenaly.yenaly_libs.utils.TimeUtil
+import com.yenaly.yenaly_libs.utils.browse
+import com.yenaly.yenaly_libs.utils.intentExtra
+import com.yenaly.yenaly_libs.utils.makeBundle
+import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.view.attach
 import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
 import kotlinx.coroutines.launch
@@ -30,6 +42,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     private val commentViewModel by viewModels<CommentViewModel>()
 
     private val videoCode by intentExtra<String>(VIDEO_CODE)
+    private var videoTitle: String? = null
     private var videoCodeByWebsite: String? = null
 
     private val tabNameArray = intArrayOf(R.string.introduction, R.string.comment)
@@ -42,13 +55,15 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             }
         }
 
-        viewModel.videoCode = videoCodeByWebsite ?: videoCode!!
-        commentViewModel.code = videoCodeByWebsite ?: videoCode!!
+        (videoCodeByWebsite ?: videoCode!!).let {
+            viewModel.videoCode = it
+            commentViewModel.code = it
+            binding.videoPlayer.videoCode = it
+        }
 
         ScreenRotateUtil.getInstance(this).setOrientationChangeListener(this)
         initViewPager()
-
-        viewModel.getHanimeVideo(viewModel.videoCode)
+        initHKeyframe()
     }
 
     override fun bindDataObservers() {
@@ -59,7 +74,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                         is VideoLoadingState.Error -> {
                             showShortToast(state.throwable.localizedMessage)
                             if (state.throwable is ParseException) {
-                                browse(getHanimeVideoLink(videoCodeByWebsite ?: videoCode!!))
+                                browse(getHanimeVideoLink(viewModel.videoCode))
                             }
                             finish()
                         }
@@ -70,11 +85,12 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
                         is VideoLoadingState.Success -> {
                             viewModel.csrfToken = state.info.csrfToken
+                            videoTitle = state.info.title
 
                             if (state.info.videoUrls.isEmpty()) {
                                 binding.videoPlayer.startButton.setOnClickListener {
                                     showShortToast("無法得到該影片的播放連接，即將轉向瀏覽器")
-                                    browse(getHanimeVideoLink(videoCodeByWebsite ?: videoCode!!))
+                                    browse(getHanimeVideoLink(viewModel.videoCode))
                                 }
                             } else {
                                 binding.videoPlayer.setUp(
@@ -90,7 +106,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                             val entity = WatchHistoryEntity(
                                 state.info.coverUrl, state.info.title,
                                 releaseDate, System.currentTimeMillis(),
-                                videoCodeByWebsite ?: videoCode!!
+                                viewModel.videoCode
                             )
                             viewModel.insertWatchHistory(entity)
                         }
@@ -102,6 +118,19 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                         }
                     }
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.observeKeyframe(viewModel.videoCode)?.flowWithLifecycle(lifecycle)?.collect {
+                binding.videoPlayer.hKeyframe = it
+                viewModel.hKeyframes = it
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.modifyHKeyframeFlow.collect { (_, reason) ->
+                showShortToast(reason)
             }
         }
     }
@@ -175,6 +204,37 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
         binding.videoTl.attach(binding.videoVp) { tab, position ->
             tab.setText(tabNameArray[position])
+        }
+    }
+
+    private fun initHKeyframe() {
+        binding.videoPlayer.onKeyframeClickListener = { v ->
+            binding.videoPlayer.clickHKeyframe(v)
+        }
+        binding.videoPlayer.onKeyframeLongClickListener = {
+            if (!binding.videoPlayer.mediaInterface.isPlaying) {
+                val currentPosition = binding.videoPlayer.currentPositionWhenPlaying
+                it.context.showAlertDialog {
+                    setTitle("加入關鍵H幀")
+                    setMessage(buildString {
+                        appendLine("確定要將當前時刻加入關鍵H幀嗎？")
+                        append("當前時刻：${currentPosition}ms")
+                    })
+                    setPositiveButton(R.string.confirm) { _, _ ->
+                        viewModel.appendHKeyframe(
+                            viewModel.videoCode,
+                            videoTitle ?: "Untitled",
+                            HKeyframeEntity.Keyframe(
+                                position = currentPosition,
+                                prompt = null // 這裏不要給太多負擔，保存就行了沒必要寫comment
+                            )
+                        )
+                    }
+                    setNegativeButton(R.string.cancel, null)
+                }
+            } else {
+                showShortToast("先暫停再長按")
+            }
         }
     }
 }

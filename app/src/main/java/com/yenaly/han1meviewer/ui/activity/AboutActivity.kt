@@ -72,6 +72,7 @@ class AboutActivity : AbsAboutActivity() {
                 Card(
                     """
                 Hanime1的非官方客戶端，提供了等同Hanime1網站的大部分功能。
+                而且添加了一些独特的功能。
             """.trimIndent()
                 )
             )
@@ -80,7 +81,7 @@ class AboutActivity : AbsAboutActivity() {
             add(
                 Contributor(
                     R.drawable.yenaly_liew,
-                    "Yenaly Liew",
+                    "Yenaly",
                     "Developer",
                     "https://github.com/YenalyLiew"
                 )

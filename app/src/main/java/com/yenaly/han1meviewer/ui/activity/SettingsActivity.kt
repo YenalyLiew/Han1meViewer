@@ -20,6 +20,8 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
 
+    val currentFragment get() = navHostFragment.childFragmentManager.primaryNavigationFragment
+
     override fun setUiStyle() {
         SystemStatusUtil.fullScreen(window, true)
     }

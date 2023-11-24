@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 20
@@ -33,7 +33,8 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-Xskip-prerelease-check"
+        freeCompilerArgs =
+            freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-Xskip-prerelease-check"
     }
     resourcePrefix = "yenaly_"
     namespace = "com.yenaly.yenaly_libs"
@@ -42,17 +43,17 @@ android {
 dependencies {
 
     // 全局使用
-    api("com.github.cymchad:baserecyclerviewadapterhelper:3.0.7")
+    api("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
     api("com.itxca.spannablex:spannablex:1.0.4")
-    api("androidx.recyclerview:recyclerview:1.3.1")
+    api("androidx.recyclerview:recyclerview:1.3.2")
     api("io.github.scwang90:refresh-layout-kernel:2.0.5") // 未添加Header，Footer
 
     // 模块内使用
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("com.google.android.material:material:1.10.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("com.google.code.gson:gson:2.9.0")

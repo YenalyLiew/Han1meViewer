@@ -14,6 +14,11 @@
             app:key="player_settings"
             app:title="@string/player_settings" />
 
+        <Preference
+            app:icon="@drawable/baseline_h_24"
+            app:key="h_keyframe_settings"
+            app:title="@string/h_keyframe_settings" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/download">
@@ -29,8 +34,8 @@
 
         <Preference
             app:icon="@drawable/ic_baseline_language_24"
-            app:title="@string/proxy"
-            app:key="proxy" />
+            app:key="proxy"
+            app:title="@string/proxy" />
 
     </PreferenceCategory>
 
@@ -45,6 +50,18 @@
             app:icon="@drawable/ic_baseline_update_24"
             app:key="update"
             app:title="@string/check_update" />
+
+        <Preference
+            app:icon="@drawable/baseline_bug_report_24"
+            app:key="submit_bug"
+            app:summary="@string/submit_bug_summary"
+            app:title="@string/submit_bug" />
+
+        <Preference
+            app:icon="@drawable/baseline_forum_24"
+            app:key="forum"
+            app:summary="@string/forum_summary"
+            app:title="@string/forum" />
 
         <Preference
             app:icon="@drawable/ic_baseline_info_24"

@@ -16,6 +16,7 @@ import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.permissionx.guolindev.PermissionX
 import com.yenaly.han1meviewer.*
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
@@ -79,7 +80,7 @@ class VideoIntroductionFragment :
                         is VideoLoadingState.Success -> {
                             videoData = state.info
 
-                            binding.title.text = state.info.title.also { initShareButton(it) }
+                            initTitle(state.info)
                             binding.uploadTime.text =
                                 TimeUtil.date2String(state.info.uploadTime, DATE_FORMAT)
                             binding.views.text = "${state.info.views.toString()}次"
@@ -167,6 +168,11 @@ class VideoIntroductionFragment :
                 }
             }
         }
+    }
+
+    private fun initTitle(info: HanimeVideoModel) {
+        binding.title.text = info.title.also { initShareButton(it) }
+        binding.chineseTitle.text = info.chineseTitle
     }
 
     private fun handleFavButton(isFav: Boolean) {
@@ -293,7 +299,7 @@ class VideoIntroductionFragment :
                 style(Typeface.BOLD)
             }
             newline(2)
-            "下載完畢後可以在「下載」介面找到下載後的影片，「設置」介面裏有詳細儲存路徑。".text()
+            "下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裏有詳細儲存路徑。".text()
         }
         requireContext().showAlertDialog {
             setTitle("確定要下載嗎？")

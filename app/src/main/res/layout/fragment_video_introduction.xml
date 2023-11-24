@@ -63,10 +63,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingHorizontal="8dp"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 tools:text="思春期のお勉強 第2話 学ぶより経験がしたいお年頃 [中文字幕]" />
+
+            <TextView
+                android:id="@+id/chinese_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingHorizontal="8dp"
+                android:textSize="16sp"
+                tools:text="這是中文標題2這是中文標題2這是中文標題2這是中文標題2這是中文標題2" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -135,8 +143,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawableTop="@drawable/baseline_format_list_bulleted_24"
-                        android:text="@string/add_to_playlist"
-                        android:textSize="12sp" />
+                        android:text="@string/add_to_playlist" />
 
                     <Button
                         android:id="@+id/btn_download"

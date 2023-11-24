@@ -137,14 +137,25 @@
             tools:text="[中字候补] 一眼顶针，鉴定为纯纯的初生" />
 
         <TextView
+            android:id="@+id/tv_keyframe"
+            android:layout_width="42dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="4dp"
+            android:layout_toStartOf="@+id/tv_speed"
+            android:gravity="center"
+            android:text="🥵"
+            android:textColor="#ffffffff"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
             android:id="@+id/tv_speed"
             android:layout_width="42dp"
             android:layout_height="60dp"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="13dp"
-            android:layout_marginRight="13dp"
+            android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/battery_time_layout"
-            android:layout_toLeftOf="@+id/battery_time_layout"
             android:gravity="center"
             android:text="倍速"
             android:textColor="#ffffffff"
@@ -193,6 +204,25 @@
         android:layout_centerVertical="true"
         android:indeterminateDrawable="@drawable/jz_loading"
         android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_top"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:visibility="invisible"
+            tools:text="#9 尻\n9"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/start_layout"

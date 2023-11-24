@@ -2,7 +2,7 @@ package com.yenaly.han1meviewer.ui.fragment
 
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.yenaly.han1meviewer.isAlreadyLogin
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 
 /**
  * @project Han1meViewer

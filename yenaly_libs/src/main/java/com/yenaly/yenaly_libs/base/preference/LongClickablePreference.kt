@@ -10,8 +10,8 @@ import androidx.preference.PreferenceViewHolder
  * @author Yenaly Liew
  * @time 2022/08/25 025 23:26
  */
-class LongClickablePreference(
-    context: Context, attrs: AttributeSet?
+open class LongClickablePreference @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null,
 ) : Preference(context, attrs) {
 
     private var onPreferenceLongClickListener: OnPreferenceLongClickListener? = null
