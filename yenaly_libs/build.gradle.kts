@@ -6,10 +6,10 @@ plugins {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = Config.compileSdk
 
     defaultConfig {
-        minSdk = 20
+        minSdk = Config.minSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -42,25 +42,20 @@ android {
 
 dependencies {
 
-    // 全局使用
-    api("io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14")
-    api("com.itxca.spannablex:spannablex:1.0.4")
-    api("androidx.recyclerview:recyclerview:1.3.2")
-    api("io.github.scwang90:refresh-layout-kernel:2.0.5") // 未添加Header，Footer
+    implementation(Libs.Core.recyclerView)
+    implementation(Libs.Core.coreKtx)
+    implementation(Libs.Core.appCompat)
+    implementation(Libs.Core.material)
+    implementation(Libs.Core.coroutinesAndroid)
 
-    // 模块内使用
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    implementation("com.google.code.gson:gson:2.9.0")
-    implementation("androidx.startup:startup-runtime:1.1.1")
+    implementation(Libs.Jetpack.lifecycleLiveDataKtx)
+    implementation(Libs.Jetpack.lifecycleViewModelKtx)
+    implementation(Libs.Jetpack.preferenceKtx)
+    implementation(Libs.Jetpack.startupRuntime)
+    implementation(Libs.Parse.gson)
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(Libs.Test.junit)
 
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation(Libs.Test.testJunit)
+    androidTestImplementation(Libs.Test.testEspressoCore)
 }
