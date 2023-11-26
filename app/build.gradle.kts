@@ -1,7 +1,6 @@
+import Config.Version.createVersionCode
+import Config.Version.createVersionName
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.TimeZone
 
 plugins {
     id("com.android.application")
@@ -11,14 +10,14 @@ plugins {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = Config.compileSdk
 
     defaultConfig {
         applicationId = "com.yenaly.han1meviewer"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = Config.minSdk
+        targetSdk = Config.targetSdk
         versionCode = createVersionCode()
-        versionName = createVersionName(major = 0, minor = 12, patch = 0)
+        versionName = versionCode.createVersionName(major = 0, minor = 12, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,7 +46,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
     }
     namespace = "com.yenaly.han1meviewer"
 }
@@ -57,73 +56,73 @@ dependencies {
     implementation(project(":yenaly_libs"))
 
     // android related
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.room:room-runtime:2.6.0")
-    implementation("androidx.room:room-ktx:2.6.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.work:work-runtime:2.8.1")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
-    // serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+    implementation(Libs.Core.coreKtx)
+    implementation(Libs.Core.appCompat)
+    implementation(Libs.Core.material)
+    implementation(Libs.Core.coroutinesAndroid)
+    implementation(Libs.Core.fragmentKtx)
+    implementation(Libs.Core.constraintLayout)
+    implementation(Libs.Core.recyclerView)
+
+    implementation(Libs.Jetpack.lifecycleViewModelKtx)
+    implementation(Libs.Jetpack.lifecycleRuntimeKtx)
+    implementation(Libs.Jetpack.lifecycleLiveDataKtx)
+    implementation(Libs.Jetpack.roomRuntime)
+    implementation(Libs.Jetpack.roomKtx)
+    implementation(Libs.Jetpack.navigationFragmentKtx)
+    implementation(Libs.Jetpack.navigationUiKtx)
+    implementation(Libs.Jetpack.preferenceKtx)
+    implementation(Libs.Jetpack.workRuntime)
+    implementation(Libs.Jetpack.workRuntimeKtx)
+
+    // parse
+
+    implementation(Libs.Parse.serialization)
+    implementation(Libs.Parse.jsoup)
 
     // network
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("org.jsoup:jsoup:1.14.3")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0")
+
+    implementation(Libs.Network.retrofit)
+    implementation(Libs.Network.converterGson)
 
     // pic
-    implementation("io.coil-kt:coil:2.1.0")
+
+    implementation(Libs.Pic.coil)
 
     // popup
-    implementation("com.github.li-xiaojun:XPopup:2.9.19")
-    implementation("com.github.li-xiaojun:XPopupExt:0.0.8")
+
+    implementation(Libs.Popup.xPopup)
+    implementation(Libs.Popup.xPopupExt)
 
     // video
-    implementation("cn.jzvd:jiaozivideoplayer:7.7.0")
+
+    implementation(Libs.Video.jiaoziVideoPlayer)
 
     // permission
-    implementation("com.guolindev.permissionx:permissionx:1.7.1")
+
+    implementation(Libs.Permission.permissionX)
 
     // view
-    implementation("io.github.scwang90:refresh-header-material:2.0.5")
-    implementation("io.github.scwang90:refresh-footer-classics:2.0.5")
-    implementation("com.github.MZCretin:ExpandableTextView:v1.6.1-x")
-    implementation("dev.rikka.rikkax.material:material-preference:2.0.0")
-    implementation("com.drakeet.about:about:2.5.1")
-    implementation("com.drakeet.multitype:multitype:4.3.0")
 
-    ksp("androidx.room:room-compiler:2.6.0")
+    implementation(Libs.Core.RecyclerView.refreshLayoutKernel)
+    implementation(Libs.Core.RecyclerView.refreshHeaderMaterial)
+    implementation(Libs.Core.RecyclerView.refreshFooterClassics)
+    implementation(Libs.Core.RecyclerView.multiType)
+    implementation(Libs.Core.RecyclerView.baseRecyclerViewAdapterHelper3)
+    implementation(Libs.Core.TextView.expandableTextView)
+    implementation(Libs.Spannable.spannableX)
+    implementation(Libs.Jetpack.Preference.materialPreference)
+    implementation(Libs.Activity.about)
 
-    testImplementation("junit:junit:4.13.2")
+    ksp(Libs.Jetpack.roomCompiler)
 
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    testImplementation(Libs.Test.junit)
+
+    androidTestImplementation(Libs.Test.testJunit)
+    androidTestImplementation(Libs.Test.testEspressoCore)
 }
 
 configurations.all {
     exclude(group = "androidx.appcompat", module = "appcompat")
 }
-
-fun createVersionName(major: Int, minor: Int, patch: Int, isPreRelease: Boolean = false): String {
-    val version = if (isPreRelease) {
-        "${major}.${minor}.${patch}-pre+${android.defaultConfig.versionCode}"
-    } else "${major}.${minor}.${patch}+${android.defaultConfig.versionCode}"
-    return version.also { println("Version Name: $it") }
-}
-
-fun createVersionCode() = SimpleDateFormat("yyMMddHH").let {
-    it.timeZone = TimeZone.getTimeZone("UTC")
-    it.format(Date()).toInt()
-}.also { println("Version Code: $it") }
