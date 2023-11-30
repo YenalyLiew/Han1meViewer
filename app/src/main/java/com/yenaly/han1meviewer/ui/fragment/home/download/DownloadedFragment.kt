@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
+import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeDownloadedRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
+import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
@@ -27,7 +29,7 @@ import kotlinx.coroutines.launch
  * @time 2022/08/01 001 17:45
  */
 class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewModel>(),
-    IToolbarFragment<MainActivity> {
+    IToolbarFragment<MainActivity>, StateLayoutMixin {
 
     private val adapter by unsafeLazy { HanimeDownloadedRvAdapter(this) }
 
@@ -35,8 +37,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
         (activity as MainActivity).setupToolbar()
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
-        adapter.setDiffCallback(HanimeDownloadedRvAdapter.COMPARATOR)
-        adapter.setEmptyView(R.layout.layout_empty_view)
+        adapter.setStateViewLayout(R.layout.layout_empty_view)
         loadAllSortedDownloadedHanime()
     }
 
@@ -44,7 +45,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.downloaded.flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {
-                    adapter.setDiffNewData(it)
+                    adapter.submitList(it)
                 }
         }
     }

@@ -1,9 +1,12 @@
 package com.yenaly.han1meviewer.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
@@ -14,26 +17,31 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil.load
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
+import com.chad.library.adapter4.BaseDifferAdapter
+import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.google.android.material.button.MaterialButton
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadingBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
-import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.util.createDownloadName
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.showAlertDialog
+import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.utils.formatFileSize
 
 /**
  * @project Han1meViewer
  * @author Yenaly Liew
- * @time 2023/08/19 019 21:11
+ * @time 2023/11/26 026 17:05
  */
 class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
-    BaseQuickAdapter<HanimeDownloadEntity, HanimeDownloadingRvAdapter.ViewHolder>(R.layout.item_hanime_downloading) {
+    BaseDifferAdapter<HanimeDownloadEntity, HanimeDownloadingRvAdapter.ViewHolder>(COMPARATOR) {
+
+    init {
+        isStateViewEnable = true
+    }
 
     companion object {
         val COMPARATOR = object : DiffUtil.ItemCallback<HanimeDownloadEntity>() {
@@ -53,12 +61,11 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         }
     }
 
-    inner class ViewHolder(view: View) : BaseDataBindingHolder<ItemHanimeDownloadingBinding>(view) {
-        val binding = dataBinding!!
-    }
+    inner class ViewHolder(view: View) : DataBindingHolder<ItemHanimeDownloadingBinding>(view)
 
     @SuppressLint("SetTextI18n")
-    override fun convert(holder: ViewHolder, item: HanimeDownloadEntity) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, item: HanimeDownloadEntity?) {
+        item.notNull()
         holder.binding.tvTitle.text = item.title
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
@@ -76,6 +83,50 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         holder.binding.btnStart.handleStartButton(item.isDownloading)
     }
 
+    override fun onCreateViewHolder(
+        context: Context,
+        parent: ViewGroup,
+        viewType: Int,
+    ): ViewHolder {
+        return ViewHolder(
+            ItemHanimeDownloadingBinding.inflate(
+                LayoutInflater.from(context), parent, false
+            ).root
+        ).also { viewHolder ->
+            viewHolder.binding.btnStart.setOnClickListener {
+                val pos = viewHolder.bindingAdapterPosition
+                val item = getItem(pos).notNull()
+                if (item.isDownloading) {
+                    item.isDownloading = false
+                    WorkManager.getInstance(context.applicationContext)
+                        .cancelUniqueWorkAndPause(item)
+                } else {
+                    item.isDownloading = true
+                    continueWork(item)
+                }
+                viewHolder.binding.btnStart.handleStartButton(item.isDownloading)
+            }
+            viewHolder.binding.btnCancel.setOnClickListener {
+                val pos = viewHolder.bindingAdapterPosition
+                val item = getItem(pos).notNull()
+                context.showAlertDialog {
+                    setTitle("你確定要刪除嗎？")
+                    setMessage(
+                        "你現在正要準備刪除" + "\n" + createDownloadName(
+                            item.title, item.quality
+                        )
+                    )
+                    setPositiveButton("沒錯") { _, _ ->
+                        WorkManager.getInstance(context.applicationContext)
+                            .cancelUniqueWorkAndDelete(item)
+                    }
+                    setNegativeButton("算了", null)
+                }
+            }
+        }
+    }
+
+
     private fun MaterialButton.handleStartButton(isDownloading: Boolean) {
         if (isDownloading) {
             setText(R.string.pause)
@@ -83,39 +134,6 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         } else {
             setText(R.string.continues)
             setIconResource(R.drawable.ic_baseline_play_arrow_24)
-        }
-    }
-
-    override fun onItemViewHolderCreated(viewHolder: ViewHolder, viewType: Int) {
-        viewHolder.binding.btnStart.setOnClickListener {
-            val pos = viewHolder.bindingAdapterPosition
-            val item = getItem(pos)
-            if (item.isDownloading) {
-                item.isDownloading = false
-                WorkManager.getInstance(context.applicationContext)
-                    .cancelUniqueWorkAndPause(item)
-            } else {
-                item.isDownloading = true
-                continueWork(item)
-            }
-            viewHolder.binding.btnStart.handleStartButton(item.isDownloading)
-        }
-        viewHolder.binding.btnCancel.setOnClickListener {
-            val pos = viewHolder.bindingAdapterPosition
-            val item = getItem(pos)
-            context.showAlertDialog {
-                setTitle("你確定要刪除嗎？")
-                setMessage(
-                    "你現在正要準備刪除" + "\n" + createDownloadName(
-                        item.title, item.quality
-                    )
-                )
-                setPositiveButton("沒錯") { _, _ ->
-                    WorkManager.getInstance(context.applicationContext)
-                        .cancelUniqueWorkAndDelete(item)
-                }
-                setNegativeButton("算了", null)
-            }
         }
     }
 

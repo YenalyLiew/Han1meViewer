@@ -1,7 +1,10 @@
 package com.yenaly.han1meviewer.ui.adapter
 
+import android.content.Context
 import android.graphics.Typeface
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -9,29 +12,34 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
+import com.chad.library.adapter4.BaseDifferAdapter
+import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.COMMENT_ID
 import com.yenaly.han1meviewer.CSRF_TOKEN
-import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemVideoCommentBinding
 import com.yenaly.han1meviewer.logic.model.VideoCommentModel
 import com.yenaly.han1meviewer.ui.fragment.video.ChildCommentPopupFragment
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.makeBundle
 import com.yenaly.yenaly_libs.utils.showShortToast
 
 /**
- * @project Hanime1
+ * @project Han1meViewer
  * @author Yenaly Liew
- * @time 2022/06/21 021 00:03
+ * @time 2023/11/26 026 16:19
  */
-class VideoCommentRvAdapter constructor(private val fragment: Fragment? = null) :
-    BaseQuickAdapter<VideoCommentModel.VideoComment, VideoCommentRvAdapter.ViewHolder>(R.layout.item_video_comment) {
+class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
+    BaseDifferAdapter<VideoCommentModel.VideoComment, VideoCommentRvAdapter.ViewHolder>(COMPARATOR) {
+
+    init {
+        isStateViewEnable = true
+    }
 
     var replyPopup: ReplyPopup? = null
 
@@ -53,11 +61,14 @@ class VideoCommentRvAdapter constructor(private val fragment: Fragment? = null) 
         }
     }
 
-    inner class ViewHolder(view: View) : BaseDataBindingHolder<ItemVideoCommentBinding>(view) {
-        val binding = dataBinding!!
-    }
+    inner class ViewHolder(view: View) : DataBindingHolder<ItemVideoCommentBinding>(view)
 
-    override fun convert(holder: ViewHolder, item: VideoCommentModel.VideoComment) {
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int,
+        item: VideoCommentModel.VideoComment?,
+    ) {
+        item.notNull()
 
         // 在release版中，主评论内容无法被复制，此为解决方法。
         holder.binding.tvContent.fixTextSelection()
@@ -83,100 +94,110 @@ class VideoCommentRvAdapter constructor(private val fragment: Fragment? = null) 
         }
     }
 
-    override fun onItemViewHolderCreated(viewHolder: ViewHolder, viewType: Int) {
-        viewHolder.binding.btnViewMoreReplies.setOnClickListener {
-            val position = viewHolder.bindingAdapterPosition
-            val item = getItem(position)
-            check(fragment != null && fragment is CommentFragment)
-            item.realReplyId.let { id ->
-                (ChildCommentPopupFragment().makeBundle(
-                    COMMENT_ID to id,
-                    CSRF_TOKEN to fragment.viewModel.csrfToken
-                ) as ChildCommentPopupFragment).showIn(context as FragmentActivity)
-            }
-        }
-        viewHolder.binding.btnThumbUp.setOnClickListener {
-            if (!isAlreadyLogin) {
-                showShortToast(R.string.login_first)
-                return@setOnClickListener
-            }
-            val position = viewHolder.bindingAdapterPosition
-            val item = getItem(position)
-
-            if (item.isChildComment) {
-                check(fragment != null && fragment is ChildCommentPopupFragment)
-                fragment.viewModel.likeChildComment(
-                    true, position, item,
-                    likeCommentStatus = item.post.likeCommentStatus
-                )
-            } else {
+    override fun onCreateViewHolder(
+        context: Context,
+        parent: ViewGroup,
+        viewType: Int,
+    ): ViewHolder {
+        return ViewHolder(
+            ItemVideoCommentBinding.inflate(
+                LayoutInflater.from(context), parent, false
+            ).root
+        ).also { viewHolder ->
+            viewHolder.binding.btnViewMoreReplies.setOnClickListener {
+                val position = viewHolder.bindingAdapterPosition
+                val item = getItem(position).notNull()
                 check(fragment != null && fragment is CommentFragment)
-                fragment.viewModel.likeComment(
-                    true, position, item,
-                    likeCommentStatus = item.post.likeCommentStatus
-                )
+                item.realReplyId.let { id ->
+                    (ChildCommentPopupFragment().makeBundle(
+                        COMMENT_ID to id,
+                        CSRF_TOKEN to fragment.viewModel.csrfToken
+                    ) as ChildCommentPopupFragment).showIn(context as FragmentActivity)
+                }
             }
-        }
-        viewHolder.binding.btnThumbDown.setOnClickListener {
-            if (!isAlreadyLogin) {
-                showShortToast(R.string.login_first)
-                return@setOnClickListener
-            }
-            val position = viewHolder.bindingAdapterPosition
-            val item = getItem(position)
-            if (item.isChildComment) {
-                check(fragment != null && fragment is ChildCommentPopupFragment)
-                fragment.viewModel.likeChildComment(
-                    false, position, item,
-                    unlikeCommentStatus = item.post.unlikeCommentStatus
-                )
-            } else {
-                check(fragment != null && fragment is CommentFragment)
-                fragment.viewModel.likeComment(
-                    false, position, item,
-                    unlikeCommentStatus = item.post.unlikeCommentStatus
-                )
-            }
-        }
-        viewHolder.binding.btnReply.setOnClickListener {
-            if (!isAlreadyLogin) {
-                showShortToast(R.string.login_first)
-                return@setOnClickListener
-            }
-            val position = viewHolder.bindingAdapterPosition
-            val item = getItem(position)
+            viewHolder.binding.btnThumbUp.setOnClickListener {
+                if (!Preferences.isAlreadyLogin) {
+                    showShortToast(R.string.login_first)
+                    return@setOnClickListener
+                }
+                val position = viewHolder.bindingAdapterPosition
+                val item = getItem(position).notNull()
 
-            ReplyPopup(context).also { commentPopup ->
-                this.replyPopup = commentPopup
                 if (item.isChildComment) {
                     check(fragment != null && fragment is ChildCommentPopupFragment)
-                    fragment.apply {
-                        commentPopup.setOnSendListener {
-                            viewModel.postReply(
-                                checkNotNull(commentId), commentPopup.comment
-                            )
-                        }
-                    }
-                    commentPopup.hint = context.getString(R.string.reply_child_comment)
-                    commentPopup.initCommentPrefix(item.username)
+                    fragment.viewModel.likeChildComment(
+                        true, position, item,
+                        likeCommentStatus = item.post.likeCommentStatus
+                    )
                 } else {
                     check(fragment != null && fragment is CommentFragment)
-                    fragment.apply {
-                        commentPopup.setOnSendListener {
-                            viewModel.postReply(
-                                item.realReplyId,
-                                commentPopup.comment
-                            )
-                        }
-                    }
-                    commentPopup.hint = spannable {
-                        context.getString(R.string.reply).text()
-                        "@${item.username}".span {
-                            style(Typeface.BOLD)
-                        }
-                    }
+                    fragment.viewModel.likeComment(
+                        true, position, item,
+                        likeCommentStatus = item.post.likeCommentStatus
+                    )
                 }
-                XPopup.Builder(context).autoOpenSoftInput(true).asCustom(commentPopup).show()
+            }
+            viewHolder.binding.btnThumbDown.setOnClickListener {
+                if (!Preferences.isAlreadyLogin) {
+                    showShortToast(R.string.login_first)
+                    return@setOnClickListener
+                }
+                val position = viewHolder.bindingAdapterPosition
+                val item = getItem(position).notNull()
+                if (item.isChildComment) {
+                    check(fragment != null && fragment is ChildCommentPopupFragment)
+                    fragment.viewModel.likeChildComment(
+                        false, position, item,
+                        unlikeCommentStatus = item.post.unlikeCommentStatus
+                    )
+                } else {
+                    check(fragment != null && fragment is CommentFragment)
+                    fragment.viewModel.likeComment(
+                        false, position, item,
+                        unlikeCommentStatus = item.post.unlikeCommentStatus
+                    )
+                }
+            }
+            viewHolder.binding.btnReply.setOnClickListener {
+                if (!Preferences.isAlreadyLogin) {
+                    showShortToast(R.string.login_first)
+                    return@setOnClickListener
+                }
+                val position = viewHolder.bindingAdapterPosition
+                val item = getItem(position).notNull()
+
+                ReplyPopup(context).also { commentPopup ->
+                    this.replyPopup = commentPopup
+                    if (item.isChildComment) {
+                        check(fragment != null && fragment is ChildCommentPopupFragment)
+                        fragment.apply {
+                            commentPopup.setOnSendListener {
+                                viewModel.postReply(
+                                    checkNotNull(commentId), commentPopup.comment
+                                )
+                            }
+                        }
+                        commentPopup.hint = context.getString(R.string.reply_child_comment)
+                        commentPopup.initCommentPrefix(item.username)
+                    } else {
+                        check(fragment != null && fragment is CommentFragment)
+                        fragment.apply {
+                            commentPopup.setOnSendListener {
+                                viewModel.postReply(
+                                    item.realReplyId,
+                                    commentPopup.comment
+                                )
+                            }
+                        }
+                        commentPopup.hint = spannable {
+                            context.getString(R.string.reply).text()
+                            "@${item.username}".span {
+                                style(Typeface.BOLD)
+                            }
+                        }
+                    }
+                    XPopup.Builder(context).autoOpenSoftInput(true).asCustom(commentPopup).show()
+                }
             }
         }
     }

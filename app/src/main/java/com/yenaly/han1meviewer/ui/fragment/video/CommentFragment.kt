@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.ui.fragment.video
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_COMMENT_PREFIX
 import com.yenaly.han1meviewer.databinding.FragmentCommentBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.adapter.VideoCommentRvAdapter
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
@@ -30,17 +32,24 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/06/18 018 21:09
  */
-class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>() {
+class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>(),
+    StateLayoutMixin {
 
     private val commentTypePrefix by arguments(COMMENT_TYPE, VIDEO_COMMENT_PREFIX)
     private val commentAdapter by unsafeLazy {
-        VideoCommentRvAdapter(this).apply { setDiffCallback(VideoCommentRvAdapter.COMPARATOR) }
+        VideoCommentRvAdapter(this)
     }
     private val replyPopup by unsafeLazy {
         ReplyPopup(requireContext()).also { it.hint = getString(R.string.comment) }
     }
 
     override fun initData(savedInstanceState: Bundle?) {
+        binding.state.init {
+            onEmpty {
+                findViewById<TextView>(R.id.tv_empty).setText(R.string.comment_not_found)
+            }
+        }
+
         binding.rvComment.layoutManager = LinearLayoutManager(context)
         binding.rvComment.adapter = commentAdapter
         binding.srlComment.setOnRefreshListener {
@@ -75,11 +84,10 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
             whenStarted {
                 viewModel.videoCommentFlow.collect { state ->
                     binding.rvComment.isGone = state is WebsiteState.Error
-                    binding.errorTip.isVisible = state is WebsiteState.Error
                     when (state) {
                         is WebsiteState.Error -> {
                             binding.srlComment.finishRefresh()
-                            binding.errorTip.text = "🥺\n${state.throwable.message}"
+                            binding.state.showError(state.throwable)
                         }
 
                         is WebsiteState.Loading -> {
@@ -90,9 +98,13 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                             binding.srlComment.finishRefresh()
                             viewModel.csrfToken = state.info.csrfToken
                             viewModel.currentUserId = state.info.currentUserId
-                            commentAdapter.setDiffNewData(state.info.videoComment)
+                            commentAdapter.submitList(state.info.videoComment)
                             binding.rvComment.isGone = state.info.videoComment.isEmpty()
-                            binding.tvCommentNotFound.isVisible = state.info.videoComment.isEmpty()
+                            if (state.info.videoComment.isEmpty()) {
+                                binding.state.showEmpty()
+                            } else {
+                                binding.state.showContent()
+                            }
                         }
                     }
                 }

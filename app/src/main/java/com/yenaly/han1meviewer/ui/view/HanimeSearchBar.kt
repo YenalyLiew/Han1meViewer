@@ -14,8 +14,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.library.adapter4.BaseQuickAdapter
+import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.yenaly.han1meviewer.R
@@ -78,7 +78,7 @@ class HanimeSearchBar @JvmOverloads constructor(
         }
     }
 
-    var adapter: BaseQuickAdapter<SearchHistoryEntity, out BaseViewHolder>? = null
+    var adapter: BaseQuickAdapter<SearchHistoryEntity, out QuickViewHolder>? = null
         set(value) {
             field = value
             rvHistory.adapter = value
@@ -145,10 +145,10 @@ class HanimeSearchBar @JvmOverloads constructor(
     }
 
     var history
-        get() = adapter?.data ?: mutableListOf()
+        get() = adapter?.items.orEmpty()
         set(value) {
             adapter?.also {
-                it.setDiffNewData(value)
+                it.submitList(value)
             }
         }
 

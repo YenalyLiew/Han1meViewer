@@ -1,17 +1,19 @@
 package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.google.android.material.appbar.AppBarLayout
 import com.yenaly.han1meviewer.DATE_CODE
@@ -19,14 +21,19 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ActivityPreviewBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.adapter.HanimePreviewNewsRvAdapter
-import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
+import com.yenaly.han1meviewer.ui.adapter.HanimePreviewTourRvAdapter
+import com.yenaly.han1meviewer.ui.view.CenterLinearLayoutManager
 import com.yenaly.han1meviewer.ui.viewmodel.PreviewViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
+import com.yenaly.yenaly_libs.utils.appScreenWidth
+import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.AppBarLayoutStateChangeListener
+import com.yenaly.yenaly_libs.utils.view.innerRecyclerView
 import kotlinx.coroutines.launch
 import java.util.*
+
 
 /**
  * @project Hanime1
@@ -40,10 +47,37 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         private val animInterpolator = FastOutSlowInInterpolator()
     }
 
-    private val dateUtils by unsafeLazy { DateUtils() }
+    private val dateUtils = DateUtils()
 
-    private val tourAdapter by unsafeLazy { HanimeVideoRvAdapter() }
-    private val newsAdapter by unsafeLazy { HanimePreviewNewsRvAdapter() }
+    private val tourSimplifiedAdapter = HanimePreviewTourRvAdapter()
+    private val newsAdapter = HanimePreviewNewsRvAdapter()
+
+    private val tourLayoutManager by unsafeLazy {
+        object : CenterLinearLayoutManager(this@PreviewActivity) {
+
+            init {
+                orientation = HORIZONTAL
+                reverseLayout = false
+            }
+
+            override fun scrollVerticallyBy(
+                dy: Int,
+                recycler: RecyclerView.Recycler?,
+                state: RecyclerView.State?,
+            ): Int {
+                if (!binding.vpNews.isInTouchMode) {
+                    onScrollWhenInNonTouchMode(dy)
+                }
+                return super.scrollVerticallyBy(dy, recycler, state)
+            }
+
+            private fun onScrollWhenInNonTouchMode(dy: Int) {
+                if (dy > 0) {
+                    binding.appBar.setExpanded(false, true)
+                } else binding.appBar.setExpanded(true, true)
+            }
+        }
+    }
 
     override fun setUiStyle() {
     }
@@ -56,10 +90,8 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             it.setHomeActionContentDescription(R.string.back)
         }
 
-        binding.latestHanimeTour.title.setText(R.string.latest_hanime_tour)
-        binding.latestHanimeTour.subTitle.setText(R.string.this_month)
-        binding.latestHanimeNews.title.setText(R.string.latest_hanime_news)
-        binding.latestHanimeNews.subTitle.setText(R.string.introduction)
+        // binding.newsTitle.findViewById<TextView>(R.id.title).setText(R.string.latest_hanime_news)
+        // binding.newsTitle.findViewById<TextView>(R.id.sub_title).setText(R.string.introduction)
 
         binding.fabPrevious.setOnClickListener {
             viewModel.getHanimePreview(dateUtils.toPreviousDate().second)
@@ -68,79 +100,56 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             viewModel.getHanimePreview(dateUtils.toNextDate().second)
         }
 
-        binding.appBar.addOnOffsetChangedListener(object : AppBarLayoutStateChangeListener() {
-            private val fabList = arrayOf(binding.fabPrevious, binding.fabNext)
-            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
-                if (state == State.COLLAPSED) {
-                    fabList.forEach {
-                        it.animate()
-                            .setDuration(animDuration)
-                            .setInterpolator(animInterpolator)
-                            .alpha(0F)
-                            .withEndAction { it.isInvisible = true }
-                            .start()
-                    }
-                } else {
-                    fabList.forEach {
-                        it.animate()
-                            .setDuration(animDuration)
-                            .setInterpolator(animInterpolator)
-                            .alpha(1F)
-                            .withStartAction { it.isInvisible = false }
-                            .start()
+        binding.vpNews.adapter = newsAdapter
+
+        binding.rvTourSimplified.apply {
+            layoutManager = tourLayoutManager
+            adapter = tourSimplifiedAdapter
+            addItemDecoration(object : ItemDecoration() {
+                override fun getItemOffsets(
+                    outRect: Rect,
+                    view: View,
+                    parent: RecyclerView,
+                    state: RecyclerView.State,
+                ) {
+                    val position = parent.getChildViewHolder(view).bindingAdapterPosition
+                    if (position == 0 || position == state.itemCount - 1) {
+                        val elementWidth = resources.getDimension(
+                            R.dimen.video_cover_simplified_width_small
+                        )
+                        val elementMargin = 4.dp
+                        val padding = appScreenWidth / 2f - elementWidth / 2f - elementMargin
+                        if (position == 0) {
+                            outRect.left = padding.toInt()
+                        } else {
+                            outRect.right = padding.toInt()
+                        }
                     }
                 }
+            })
+        }
+
+        val linearSnapHelper = LinearSnapHelper()
+        linearSnapHelper.attachToRecyclerView(binding.rvTourSimplified)
+
+        tourSimplifiedAdapter.setOnItemClickListener { _, _, position ->
+            binding.vpNews.setCurrentItem(position, true)
+            binding.appBar.setExpanded(false, true)
+        }
+
+        binding.vpNews.innerRecyclerView?.isNestedScrollingEnabled = false
+        binding.vpNews.offscreenPageLimit = 20 // 被迫，要不然一堆高度问题
+        binding.vpNews.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                binding.rvTourSimplified.smoothScrollToPosition(position)
             }
         })
 
-        binding.latestHanimeTour.rv.apply {
-            layoutManager = object : LinearLayoutManager(this@PreviewActivity) {
+        initAnimation()
 
-                init {
-                    orientation = HORIZONTAL
-                    reverseLayout = false
-                }
-
-                override fun scrollVerticallyBy(
-                    dy: Int,
-                    recycler: RecyclerView.Recycler?,
-                    state: RecyclerView.State?,
-                ): Int {
-                    if (!binding.latestHanimeNews.rv.isInTouchMode) {
-                        onScrollWhenInNonTouchMode(dy)
-                    }
-                    return super.scrollVerticallyBy(dy, recycler, state)
-                }
-
-                private fun onScrollWhenInNonTouchMode(dy: Int) {
-                    if (dy > 0) {
-                        binding.appBar.setExpanded(false, true)
-                    } else binding.appBar.setExpanded(true, true)
-                }
-            }
-            adapter = tourAdapter
-        }
-        binding.latestHanimeNews.rv.apply {
-            layoutManager = LinearLayoutManager(this@PreviewActivity)
-            adapter = newsAdapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    this@PreviewActivity, DividerItemDecoration.VERTICAL
-                ).apply {
-                    setDrawable(getDrawable(R.drawable.line_divider)!!)
-                }
-            )
-        }
-        tourAdapter.setOnItemClickListener { _, _, position ->
-            val y = binding.latestHanimeNews.rv.getChildAt(position).y
-            binding.nsvPreview.fling(0)
-            binding.appBar.setExpanded(false, true)
-            binding.nsvPreview.smoothScrollTo(0, y.toInt())
-        }
-
-        binding.srlPreview.setOnRefreshListener {
-            viewModel.getHanimePreview(dateUtils.current.second)
-        }
+        //binding.srlPreview.setOnRefreshListener {
+        //    viewModel.getHanimePreview(dateUtils.current.second)
+        //}
     }
 
     @SuppressLint("SetTextI18n")
@@ -152,23 +161,23 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                     binding.appBar.setExpanded(state is WebsiteState.Success, true)
                     when (state) {
                         is WebsiteState.Error -> {
-                            binding.srlPreview.finishRefresh()
+                            //binding.srlPreview.finishRefresh()
                             supportActionBar?.title = "🥺\n${state.throwable.message}"
                         }
 
                         is WebsiteState.Loading -> {
-                            binding.srlPreview.autoRefresh()
+                            //binding.srlPreview.autoRefresh()
+                            viewModel.getHanimePreview(dateUtils.current.second)
                             binding.fabPrevious.isEnabled = false
                             binding.fabNext.isEnabled = false
                         }
 
                         is WebsiteState.Success -> {
-                            binding.srlPreview.finishRefresh()
-                            supportActionBar?.title =
-                                getString(
-                                    R.string.latest_hanime_list_monthly,
-                                    dateUtils.current.first
-                                )
+                            //binding.srlPreview.finishRefresh()
+                            binding.vpNews.setCurrentItem(0, false)
+                            supportActionBar?.title = getString(
+                                R.string.latest_hanime_list_monthly, dateUtils.current.first
+                            )
                             binding.fabPrevious.apply {
                                 isEnabled = state.info.hasPrevious
                                 text = dateUtils.getPreviousDate().first
@@ -180,8 +189,8 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                             binding.cover.load(state.info.headerPicUrl) {
                                 crossfade(true)
                             }
-                            tourAdapter.setList(state.info.latestHanime)
-                            newsAdapter.setList(state.info.previewInfo)
+                            newsAdapter.submitList(state.info.previewInfo)
+                            tourSimplifiedAdapter.submitList(state.info.latestHanime)
                         }
                     }
                 }
@@ -203,12 +212,38 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
 
             R.id.tb_comment -> {
                 startActivity<PreviewCommentActivity>(
-                    "date" to dateUtils.current.first,
-                    DATE_CODE to dateUtils.current.second
+                    "date" to dateUtils.current.first, DATE_CODE to dateUtils.current.second
                 )
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun initAnimation() {
+        binding.appBar.addOnOffsetChangedListener(object : AppBarLayoutStateChangeListener() {
+            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
+                when (state) {
+                    State.EXPANDED -> {
+                        binding.fabPrevious.animate().translationX(0F).setDuration(animDuration)
+                            .setInterpolator(animInterpolator).start()
+                        binding.fabNext.animate().translationX(0F).setDuration(animDuration)
+                            .setInterpolator(animInterpolator).start()
+                    }
+
+                    State.INTERMEDIATE -> {
+                        binding.fabPrevious.animate().translationX(-500F).setDuration(animDuration)
+                            .setInterpolator(animInterpolator).start()
+                        binding.fabNext.animate().translationX(500F).setDuration(animDuration)
+                            .setInterpolator(animInterpolator).start()
+
+                    }
+
+                    State.COLLAPSED -> {
+
+                    }
+                }
+            }
+        })
     }
 
     /**

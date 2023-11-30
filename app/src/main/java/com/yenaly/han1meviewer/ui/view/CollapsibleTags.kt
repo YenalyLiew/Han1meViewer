@@ -6,8 +6,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -19,6 +22,7 @@ import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
+import kotlinx.coroutines.launch
 
 /**
  * 可折叠 TAG 栏
@@ -38,13 +42,26 @@ class CollapsibleTags @JvmOverloads constructor(
     }
 
     /**
+     * 原本用来异步加载 Tag，但有这个必要吗？
+     *
+     * 每次创建还得多传一个 lifecycle，以后可能把这个砍了
+     */
+    var lifecycle: Lifecycle? = null
+
+    /**
      * 设置当前是否折叠，同时作为监听器，
      * 修改这里的值会改变折叠状态
      */
-    var isCollapsed = true
+    var isCollapsed = false
         set(value) {
             field = value
-            handleWhenCollapsed(value)
+            post { handleWhenCollapsed(value) }
+        }
+
+    var isCollapsedEnabled = true
+        set(value) {
+            field = value
+            toggleButton.isVisible = value
         }
 
     private var tagViewList: MutableList<Chip>? = null
@@ -72,9 +89,15 @@ class CollapsibleTags @JvmOverloads constructor(
         chipGroup = findViewById(R.id.tag_group)
 
         // default
-        chipGroup.visibility = GONE
+        toggleButton.isVisible = isCollapsedEnabled
+        chipGroup.visibility = VISIBLE
         toggleButton.setOnClickListener {
             isCollapsed = !isCollapsed
+        }
+
+        post {
+            toggleButton.animate().rotation(if (isCollapsed) 0F else 180F).setDuration(animDuration)
+                .setInterpolator(animInterpolator).start()
         }
     }
 
@@ -86,15 +109,18 @@ class CollapsibleTags @JvmOverloads constructor(
      *
      * @param tags 標籤列表
      */
-    fun setTags(tags: List<String>) = post {
-        setTagsInternal(tags)
+    fun setTags(tags: List<String>) {
+        post {
+            setTagsInternal(tags)
+        }
     }
 
     private fun setTagsInternal(tags: List<String>) {
-        tagViewList = tags.map { tag ->
-            (LayoutInflater.from(context)
-                .inflate(R.layout.item_video_tag_chip, this, false) as Chip)
-                .apply {
+        lifecycle?.coroutineScope?.launch {
+            tagViewList = tags.map { tag ->
+                (LayoutInflater.from(context).inflate(
+                    R.layout.item_video_tag_chip, this@CollapsibleTags, false
+                ) as Chip).apply {
                     text = tag
                     setOnClickListener {
                         context?.activity?.startActivity<SearchActivity>(ADVANCED_SEARCH_MAP to tag)
@@ -106,33 +132,24 @@ class CollapsibleTags @JvmOverloads constructor(
                         return@setOnLongClickListener true
                     }
                 }
-        }.toMutableList()
+            }.toMutableList()
+        }
     }
 
     private fun handleWhenCollapsed(isCollapsed: Boolean) {
-        toggleButton.animate()
-            .rotation(if (isCollapsed) 0F else 180F)
-            .setDuration(animDuration)
-            .setInterpolator(animInterpolator)
-            .start()
-
+        toggleButton.animate().rotation(if (isCollapsed) 0F else 180F).setDuration(animDuration)
+            .setInterpolator(animInterpolator).start()
 
         if (isCollapsed) {
-            chipGroup.animate()
-                .setDuration(animDuration)
-                .setInterpolator(animInterpolator)
-                .alpha(0F)
-                .withStartAction {
+            chipGroup.animate().setDuration(animDuration).setInterpolator(animInterpolator)
+                .alpha(0F).withStartAction {
                     collapseValueAnimator?.start()
                 }.withEndAction {
-                    chipGroup.visibility = GONE
+                    chipGroup.visibility = INVISIBLE
                 }.start()
         } else {
-            chipGroup.animate()
-                .setDuration(animDuration)
-                .setInterpolator(animInterpolator)
-                .alpha(1F)
-                .withStartAction {
+            chipGroup.animate().setDuration(animDuration).setInterpolator(animInterpolator)
+                .alpha(1F).withStartAction {
                     chipGroup.visibility = VISIBLE
                     expandValueAnimator?.start()
                 }.start()

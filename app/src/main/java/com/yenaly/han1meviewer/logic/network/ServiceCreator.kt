@@ -1,19 +1,20 @@
 package com.yenaly.han1meviewer.logic.network
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.yenaly.han1meviewer.HProxySelector
 import com.yenaly.han1meviewer.Preferences.loginCookie
 import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.han1meviewer.cookieMap
 import com.yenaly.han1meviewer.util.toCookieList
-import com.yenaly.yenaly_libs.utils.GsonUtil
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
@@ -33,7 +34,7 @@ object ServiceCreator {
 
     inline fun <reified T> createVersion(): T = Retrofit.Builder()
         .baseUrl("https://api.github.com/")
-        .addConverterFactory(GsonConverterFactory.create(GsonUtil.gson))
+        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .build()
         .create(T::class.java)
 

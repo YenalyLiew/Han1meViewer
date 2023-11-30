@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -19,15 +17,6 @@
             android:layout_marginTop="8dp"
             android:elevation="16dp" />
 
-        <TextView
-            android:id="@+id/error_tip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textSize="@dimen/err_tip_text_size"
-            android:visibility="gone"
-            tools:text="404 Not Found" />
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/search_srl"
@@ -43,11 +32,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="68dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/search_rv"
+            <com.drake.statelayout.StateLayout
+                android:id="@+id/state"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false" />
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/search_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false" />
+
+            </com.drake.statelayout.StateLayout>
 
             <com.scwang.smart.refresh.footer.ClassicsFooter
                 android:layout_width="match_parent"

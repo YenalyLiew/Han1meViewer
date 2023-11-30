@@ -7,11 +7,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentHKeyframesBinding
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
+import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.adapter.HKeyframesRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
-import com.yenaly.han1meviewer.util.resetEmptyView
+import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.decodeFromStringByBase64
@@ -29,7 +30,7 @@ import kotlin.concurrent.thread
  */
 class HKeyframesFragment :
     YenalyFragment<FragmentHKeyframesBinding, SettingsViewModel>(),
-    IToolbarFragment<SettingsActivity> {
+    IToolbarFragment<SettingsActivity>, StateLayoutMixin {
 
     private val adapter by unsafeLazy { HKeyframesRvAdapter() }
 
@@ -43,15 +44,14 @@ class HKeyframesFragment :
     override fun initData(savedInstanceState: Bundle?) {
         binding.rvKeyframe.layoutManager = LinearLayoutManager(context)
         binding.rvKeyframe.adapter = adapter
-        adapter.resetEmptyView(R.layout.layout_empty_view)
-        adapter.setDiffCallback(HKeyframesRvAdapter.COMPARATOR)
+        adapter.setStateViewLayout(R.layout.layout_empty_view)
     }
 
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllHKeyframes().flowWithLifecycle(lifecycle)
                 .collect { entity ->
-                    adapter.setDiffNewData(entity)
+                    adapter.submitList(entity)
                 }
         }
     }

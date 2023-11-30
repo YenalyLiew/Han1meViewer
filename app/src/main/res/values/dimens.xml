@@ -6,6 +6,8 @@
     <dimen name="video_cover_simplified_height_large">220dp</dimen>
     <dimen name="video_cover_simplified_width">120dp</dimen>
     <dimen name="video_cover_simplified_height">176dp</dimen>
+    <dimen name="video_cover_simplified_width_small">90dp</dimen>
+    <dimen name="video_cover_simplified_height_small">132dp</dimen>
     <dimen name="video_cover_height_small">72dp</dimen>
     <dimen name="video_cover_weight_small">128dp</dimen>
     <dimen name="video_cover_height_medium">96dp</dimen>

@@ -17,7 +17,7 @@ android {
         minSdk = Config.minSdk
         targetSdk = Config.targetSdk
         versionCode = createVersionCode()
-        versionName = versionCode.createVersionName(major = 0, minor = 12, patch = 0)
+        versionName = versionCode.createVersionName(major = 0, minor = 12, patch = 1)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -84,7 +84,7 @@ dependencies {
     // network
 
     implementation(Libs.Network.retrofit)
-    implementation(Libs.Network.converterGson)
+    implementation(Libs.Network.converterSerialization)
 
     // pic
 
@@ -109,11 +109,12 @@ dependencies {
     implementation(Libs.Core.RecyclerView.refreshHeaderMaterial)
     implementation(Libs.Core.RecyclerView.refreshFooterClassics)
     implementation(Libs.Core.RecyclerView.multiType)
-    implementation(Libs.Core.RecyclerView.baseRecyclerViewAdapterHelper3)
+    implementation(Libs.Core.RecyclerView.baseRecyclerViewAdapterHelper4)
     implementation(Libs.Core.TextView.expandableTextView)
     implementation(Libs.Spannable.spannableX)
     implementation(Libs.Jetpack.Preference.materialPreference)
     implementation(Libs.Activity.about)
+    implementation(Libs.View.stateLayout)
 
     ksp(Libs.Jetpack.roomCompiler)
 

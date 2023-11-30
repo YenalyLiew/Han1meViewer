@@ -6,8 +6,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
+import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.adapter.HanimeDownloadingRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
+import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
@@ -19,15 +21,15 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/08/01 001 17:45
  */
-class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewModel>() {
+class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewModel>(),
+    StateLayoutMixin {
 
     private val adapter by unsafeLazy { HanimeDownloadingRvAdapter(this) }
 
     override fun initData(savedInstanceState: Bundle?) {
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
-        adapter.setDiffCallback(HanimeDownloadingRvAdapter.COMPARATOR)
-        adapter.setEmptyView(R.layout.layout_empty_view)
+        adapter.setStateViewLayout(R.layout.layout_empty_view)
         binding.rvList.itemAnimator?.changeDuration = 0
     }
 
@@ -35,7 +37,7 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadAllDownloadingHanime().flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {
-                    adapter.setDiffNewData(it)
+                    adapter.submitList(it)
                 }
         }
     }

@@ -39,7 +39,7 @@ class SearchOptionsPopupFragment :
             arrayOf("全部", "裏番", "泡麵番", "Motion Anime", "3D動畫", "同人作品", "Cosplay")
 
         private val videoAttrTagArray =
-            arrayOf("無碼", "AI解碼", "1080p", "60FPS")
+            arrayOf("無碼", "AI解碼", "中文字幕", "1080p", "60FPS")
         private val relationshipTagArray =
             arrayOf("近親", "姐", "妹", "母", "女兒", "師生", "情侶", "青梅竹馬")
         private val characterSettingTagArray =
