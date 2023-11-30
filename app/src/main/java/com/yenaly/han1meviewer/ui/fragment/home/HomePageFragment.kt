@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.itxca.spannablex.spannable
@@ -21,17 +22,19 @@ import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentHomePageBinding
 import com.yenaly.han1meviewer.logic.model.HomePageModel
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
+import com.yenaly.han1meviewer.ui.adapter.RvWrapper.Companion.wrappedWith
+import com.yenaly.han1meviewer.ui.adapter.VideoColumnTitleAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.startActivity
-import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
 
 /**
@@ -40,37 +43,93 @@ import kotlinx.coroutines.launch
  * @time 2022/06/12 012 12:31
  */
 class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(),
-    IToolbarFragment<MainActivity> {
+    IToolbarFragment<MainActivity>, StateLayoutMixin {
 
-    private val latestHanimeAdapter by unsafeLazy {
-        HanimeVideoRvAdapter().apply {
-            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
-        }
-    }
+    private val latestHanimeAdapter = HanimeVideoRvAdapter()
+    private val latestReleaseAdapter = HanimeVideoRvAdapter()
+    private val latestUploadAdapter = HanimeVideoRvAdapter()
+    private val chineseSubtitleAdapter = HanimeVideoRvAdapter()
+    private val hanimeTheyWatchedAdapter = HanimeVideoRvAdapter()
+    private val hanimeCurrentAdapter = HanimeVideoRvAdapter()
+    private val hotHanimeMonthlyAdapter = HanimeVideoRvAdapter()
 
-    private val latestUploadAdapter by unsafeLazy {
-        HanimeVideoRvAdapter().apply {
-            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
+    private val concatAdapter = ConcatAdapter(
+        VideoColumnTitleAdapter(R.string.latest_hanime).apply {
+            onMoreHanimeListener = {
+                toSearchActivity(advancedSearchMapOf(HAdvancedSearch.GENRE to "裏番"))
+            }
+        },
+        latestHanimeAdapter.wrappedWith {
+            LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
+        },
+        VideoColumnTitleAdapter(R.string.latest_release).apply {
+            onMoreHanimeListener = {
+                toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "最新上市"))
+            }
+        },
+        latestReleaseAdapter.wrappedWith {
+            LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
+        },
+        VideoColumnTitleAdapter(R.string.latest_upload).apply {
+            onMoreHanimeListener = {
+                toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "最新上傳"))
+            }
+        },
+        latestUploadAdapter.wrappedWith {
+            LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
+        },
+        VideoColumnTitleAdapter(R.string.chinese_subtitle).apply {
+            onMoreHanimeListener = {
+                toSearchActivity(
+                    advancedSearchMapOf(
+                        HAdvancedSearch.TAGS to "中文字幕",
+                        HAdvancedSearch.SORT to "最新上傳"
+                    )
+                )
+            }
+        },
+        chineseSubtitleAdapter.wrappedWith {
+            LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
+        },
+        VideoColumnTitleAdapter(R.string.they_watched).apply {
+            onMoreHanimeListener = {
+                toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "他們在看"))
+            }
+        },
+        hanimeTheyWatchedAdapter.wrappedWith {
+            LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
+        },
+        VideoColumnTitleAdapter(R.string.ranking_today).apply {
+            onMoreHanimeListener = {
+                toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "本日排行"))
+            }
+        },
+        hanimeCurrentAdapter.wrappedWith {
+            LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
+        },
+        VideoColumnTitleAdapter(R.string.ranking_this_month).apply {
+            onMoreHanimeListener = {
+                toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "本月排行"))
+            }
+        },
+        hotHanimeMonthlyAdapter.wrappedWith {
+            LinearLayoutManager(
+                context, LinearLayoutManager.HORIZONTAL, false
+            )
         }
-    }
-
-    private val hotHanimeMonthlyAdapter by unsafeLazy {
-        HanimeVideoRvAdapter().apply {
-            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
-        }
-    }
-
-    private val hanimeCurrentAdapter by unsafeLazy {
-        HanimeVideoRvAdapter().apply {
-            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
-        }
-    }
-
-    private val hanimeTheyWatchedAdapter by unsafeLazy {
-        HanimeVideoRvAdapter().apply {
-            setDiffCallback(HanimeVideoRvAdapter.COMPARATOR)
-        }
-    }
+    )
 
     /**
      * 用於判斷是否需要 setExpanded，防止重複喚出 AppBar
@@ -82,30 +141,11 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
      */
     override fun initData(savedInstanceState: Bundle?) {
 
-        initTitle()
-
         (activity as MainActivity).setupToolbar()
+        binding.state.init()
 
-        binding.latestHanime.rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = latestHanimeAdapter
-        }
-        binding.latestUpload.rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = latestUploadAdapter
-        }
-        binding.hotHanimeMonthly.rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = hotHanimeMonthlyAdapter
-        }
-        binding.hanimeCurrent.rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = hanimeCurrentAdapter
-        }
-        binding.hanimeTheyWatched.rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = hanimeTheyWatchedAdapter
-        }
+        binding.rv.layoutManager = LinearLayoutManager(context)
+        binding.rv.adapter = concatAdapter
         binding.homePageSrl.apply {
             setOnRefreshListener {
                 isAfterRefreshing = false
@@ -121,33 +161,35 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         lifecycleScope.launch {
             whenStarted {
                 viewModel.homePageFlow.collect { state ->
-                    binding.homePageNsv.isGone = state !is WebsiteState.Success
+                    binding.rv.isGone = state !is WebsiteState.Success
                     binding.banner.isVisible =
                         state is WebsiteState.Success || binding.banner.isVisible // 只有在刚开始的时候是不可见的
-                    binding.errorTip.isVisible = state is WebsiteState.Error
                     if (!isAfterRefreshing) {
                         binding.appBar.setExpanded(state is WebsiteState.Success, true)
                     }
                     when (state) {
                         is WebsiteState.Loading -> {
                             binding.homePageSrl.autoRefresh()
-                            binding.homePageNsv.isGone = latestHanimeAdapter.data.isEmpty()
+                            binding.rv.isGone = latestHanimeAdapter.items.isEmpty()
                         }
 
                         is WebsiteState.Success -> {
                             isAfterRefreshing = true
                             binding.homePageSrl.finishRefresh()
                             initBanner(state.info)
-                            latestHanimeAdapter.setDiffNewData(state.info.latestHanime)
-                            latestUploadAdapter.setDiffNewData(state.info.latestUpload)
-                            hotHanimeMonthlyAdapter.setDiffNewData(state.info.hotHanimeMonthly)
-                            hanimeCurrentAdapter.setDiffNewData(state.info.hanimeCurrent)
-                            hanimeTheyWatchedAdapter.setDiffNewData(state.info.hanimeTheyWatched)
+                            latestHanimeAdapter.submitList(state.info.latestHanime)
+                            latestUploadAdapter.submitList(state.info.latestUpload)
+                            hotHanimeMonthlyAdapter.submitList(state.info.hotHanimeMonthly)
+                            hanimeCurrentAdapter.submitList(state.info.hanimeCurrent)
+                            hanimeTheyWatchedAdapter.submitList(state.info.hanimeTheyWatched)
+                            latestReleaseAdapter.submitList(state.info.latestRelease)
+                            chineseSubtitleAdapter.submitList(state.info.chineseSubtitle)
+                            binding.state.showContent()
                         }
 
                         is WebsiteState.Error -> {
                             binding.homePageSrl.finishRefresh()
-                            binding.errorTip.text = "🥺\n${state.throwable.message}"
+                            binding.state.showError(state.throwable)
                         }
                     }
                 }
@@ -157,39 +199,6 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-    }
-
-
-    private fun initTitle() {
-        binding.latestHanime.title.setText(R.string.latest_hanime)
-        binding.latestHanime.subTitle.setText(R.string.h_anime)
-        binding.latestHanime.title.setOnClickListener {
-            toSearchActivity(advancedSearchMapOf(HAdvancedSearch.GENRE to "裏番"))
-        }
-
-        binding.latestUpload.title.setText(R.string.latest_upload)
-        binding.latestUpload.subTitle.setText(R.string.fresh)
-        binding.latestUpload.title.setOnClickListener {
-            toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "最新上傳"))
-        }
-
-        binding.hotHanimeMonthly.title.setText(R.string.hot_video)
-        binding.hotHanimeMonthly.subTitle.setText(R.string.this_month)
-        binding.hotHanimeMonthly.title.setOnClickListener {
-            toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "本月排行"))
-        }
-
-        binding.hanimeCurrent.title.setText(R.string.hot_video_2)
-        binding.hanimeCurrent.subTitle.setText(R.string.current)
-        binding.hanimeCurrent.title.setOnClickListener {
-            toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "本日排行"))
-        }
-
-        binding.hanimeTheyWatched.title.setText(R.string.they_watched)
-        binding.hanimeTheyWatched.subTitle.setText(R.string.trends)
-        binding.hanimeTheyWatched.title.setOnClickListener {
-            toSearchActivity(advancedSearchMapOf(HAdvancedSearch.SORT to "他們在看"))
-        }
     }
 
     private fun initBanner(info: HomePageModel) {

@@ -6,10 +6,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
+import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.WatchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.util.notNull
+import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -21,7 +24,7 @@ import kotlinx.coroutines.launch
  * @time 2022/07/01 001 21:23
  */
 class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewModel>(),
-    IToolbarFragment<MainActivity> {
+    IToolbarFragment<MainActivity>, StateLayoutMixin {
 
     private val historyAdapter by unsafeLazy { WatchHistoryRvAdapter() }
 
@@ -33,10 +36,9 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
             adapter = historyAdapter
         }
         binding.srlPageList.finishRefreshWithNoMoreData()
-        historyAdapter.setDiffCallback(WatchHistoryRvAdapter.COMPARATOR)
-        historyAdapter.setEmptyView(R.layout.layout_empty_view)
+        historyAdapter.setStateViewLayout(R.layout.layout_empty_view)
         historyAdapter.setOnItemLongClickListener { _, _, position ->
-            val data = historyAdapter.getItem(position)
+            val data = historyAdapter.getItem(position).notNull()
             requireContext().showAlertDialog {
                 setTitle("刪除歷史記錄")
                 setMessage(getString(R.string.sure_to_delete_s_video, data.title))
@@ -54,7 +56,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
             viewModel.loadAllWatchHistories()
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect {
-                    historyAdapter.setDiffNewData(it)
+                    historyAdapter.submitList(it)
                 }
         }
     }
@@ -75,7 +77,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
                         setMessage("是否將影片觀看歷史記錄全部刪除🤔")
                         setPositiveButton("是的！") { _, _ ->
                             viewModel.deleteAllWatchHistories()
-                            historyAdapter.setList(null)
+                            historyAdapter.submitList(null)
                         }
                         setNegativeButton("算了！", null)
                     }

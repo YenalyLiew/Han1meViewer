@@ -1,22 +1,24 @@
 package com.yenaly.han1meviewer.ui.adapter
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import coil.load
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
+import com.chad.library.adapter4.BaseDifferAdapter
+import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.DATE_TIME_FORMAT
-import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadedBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.openDownloadedHanimeVideoLocally
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.TimeUtil
@@ -27,14 +29,16 @@ import com.yenaly.yenaly_libs.utils.startActivity
 /**
  * @project Han1meViewer
  * @author Yenaly Liew
- * @time 2022/08/06 006 12:31
+ * @time 2023/11/26 026 16:57
  */
 class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
-    BaseQuickAdapter<HanimeDownloadEntity, HanimeDownloadedRvAdapter.ViewHolder>(R.layout.item_hanime_downloaded) {
+    BaseDifferAdapter<HanimeDownloadEntity, HanimeDownloadedRvAdapter.ViewHolder>(COMPARATOR) {
 
-    inner class ViewHolder(view: View) : BaseDataBindingHolder<ItemHanimeDownloadedBinding>(view) {
-        val binding = dataBinding!!
+    init {
+        isStateViewEnable = true
     }
+
+    inner class ViewHolder(view: View) : DataBindingHolder<ItemHanimeDownloadedBinding>(view)
 
     companion object {
         val COMPARATOR = object : DiffUtil.ItemCallback<HanimeDownloadEntity>() {
@@ -54,8 +58,8 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun convert(holder: ViewHolder, item: HanimeDownloadEntity) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, item: HanimeDownloadEntity?) {
+        item.notNull()
         holder.binding.tvTitle.text = item.title
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
@@ -70,39 +74,49 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
         }
     }
 
-    override fun onItemViewHolderCreated(viewHolder: ViewHolder, viewType: Int) {
-        viewHolder.itemView.setOnClickListener {
-            val position = viewHolder.bindingAdapterPosition
-            val item = getItem(position)
-            context.activity?.startActivity<VideoActivity>(VIDEO_CODE to item.videoCode)
-        }
-        viewHolder.binding.btnDelete.setOnClickListener {
-            val position = viewHolder.bindingAdapterPosition
-            val item = getItem(position)
-            val file = item.videoUri.toUri().toFile()
-            context.showAlertDialog {
-                setTitle("你確定要刪除嗎？")
-                setMessage("你現在正要準備刪除" + "\n" + file.name)
-                setPositiveButton("沒錯") { _, _ ->
-                    if (file.exists()) file.delete()
-                    fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
-                }
-                setNegativeButton("算了", null)
+    override fun onCreateViewHolder(
+        context: Context,
+        parent: ViewGroup,
+        viewType: Int,
+    ): ViewHolder {
+        return ViewHolder(
+            ItemHanimeDownloadedBinding.inflate(
+                LayoutInflater.from(context), parent, false
+            ).root
+        ).also { viewHolder ->
+            viewHolder.itemView.setOnClickListener {
+                val position = viewHolder.bindingAdapterPosition
+                val item = getItem(position).notNull()
+                context.activity?.startActivity<VideoActivity>(VIDEO_CODE to item.videoCode)
             }
-        }
-        viewHolder.binding.btnLocalPlayback.setOnClickListener {
-            val position = viewHolder.bindingAdapterPosition
-            val item = getItem(position)
-            context.openDownloadedHanimeVideoLocally(item.videoUri, onFileNotFound = {
+            viewHolder.binding.btnDelete.setOnClickListener {
+                val position = viewHolder.bindingAdapterPosition
+                val item = getItem(position).notNull()
+                val file = item.videoUri.toUri().toFile()
                 context.showAlertDialog {
-                    setTitle("影片不存在")
-                    setMessage("影片已被刪除或移動，是否刪除該條目？")
-                    setPositiveButton("刪除") { _, _ ->
+                    setTitle("你確定要刪除嗎？")
+                    setMessage("你現在正要準備刪除" + "\n" + file.name)
+                    setPositiveButton("沒錯") { _, _ ->
+                        if (file.exists()) file.delete()
                         fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
                     }
-                    setNegativeButton("取消", null)
+                    setNegativeButton("算了", null)
                 }
-            })
+            }
+            viewHolder.binding.btnLocalPlayback.setOnClickListener {
+                val position = viewHolder.bindingAdapterPosition
+                val item = getItem(position).notNull()
+                context.openDownloadedHanimeVideoLocally(item.videoUri, onFileNotFound = {
+                    context.showAlertDialog {
+                        setTitle("影片不存在")
+                        setMessage("影片已被刪除或移動，是否刪除該條目？")
+                        setPositiveButton("刪除") { _, _ ->
+                            fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
+                        }
+                        setNegativeButton("取消", null)
+                    }
+                })
+            }
         }
     }
 }

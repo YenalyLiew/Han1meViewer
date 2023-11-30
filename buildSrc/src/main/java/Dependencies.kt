@@ -48,6 +48,10 @@ object Libs {
         }
     }
 
+    object View {
+        const val stateLayout = "com.github.liangjingkanji:StateLayout:1.4.2"
+    }
+
     object Spannable {
         const val spannableX = "com.itxca.spannablex:spannablex:1.0.4"
     }
@@ -61,6 +65,8 @@ object Libs {
     object Network {
         const val retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
         const val converterGson = "com.squareup.retrofit2:converter-gson:2.9.0"
+        const val converterSerialization =
+            "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
         const val dnsOverHttps = "com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0"
     }
 

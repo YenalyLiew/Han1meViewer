@@ -31,7 +31,7 @@ class ChildCommentPopupFragment :
     val csrfToken by arguments<String>(CSRF_TOKEN)
     val viewModel by viewModels<CommentViewModel>()
     private val replyAdapter by unsafeLazy {
-        VideoCommentRvAdapter(this).apply { setDiffCallback(VideoCommentRvAdapter.COMPARATOR) }
+        VideoCommentRvAdapter(this)
     }
 
     override fun initData(savedInstanceState: Bundle?, dialog: Dialog) {
@@ -58,7 +58,7 @@ class ChildCommentPopupFragment :
                         }
 
                         is WebsiteState.Success -> {
-                            replyAdapter.setDiffNewData(state.info.videoComment)
+                            replyAdapter.submitList(state.info.videoComment)
                         }
                     }
                 }

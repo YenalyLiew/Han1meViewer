@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.adapter
 
+import android.content.Context
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,8 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import coil.load
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.library.adapter4.BaseDifferAdapter
+import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
@@ -23,6 +24,7 @@ import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.fragment.home.HomePageFragment
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.copyTextToClipboard
 import com.yenaly.yenaly_libs.utils.dp
@@ -30,16 +32,15 @@ import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
- * @project Hanime1
+ * @project Han1meViewer
  * @author Yenaly Liew
- * @time 2022/06/16 016 11:04
+ * @time 2023/11/26 026 17:15
  */
-class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidthType is VIDEO_LAYOUT_MATCH_PARENT or VIDEO_LAYOUT_WRAP_CONTENT or nothing
-    BaseMultiItemQuickAdapter<HanimeInfoModel, BaseViewHolder>() {
+class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidthType is VIDEO_LAYOUT_MATCH_PARENT or VIDEO_LAYOUT_WRAP_CONTENT or nothing
+    BaseDifferAdapter<HanimeInfoModel, QuickViewHolder>(COMPARATOR) {
 
     init {
-        addItemType(HanimeInfoModel.NORMAL, R.layout.item_hanime_video)
-        addItemType(HanimeInfoModel.SIMPLIFIED, R.layout.item_hanime_video_simplified)
+        isStateViewEnable = true
     }
 
     companion object {
@@ -60,7 +61,12 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
         }
     }
 
-    override fun convert(holder: BaseViewHolder, item: HanimeInfoModel) {
+    override fun getItemViewType(position: Int, list: List<HanimeInfoModel>): Int {
+        return list[position].itemType
+    }
+
+    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfoModel?) {
+        item.notNull()
         when (holder.itemViewType) {
             HanimeInfoModel.SIMPLIFIED -> {
                 holder.getView<ImageView>(R.id.cover).load(item.coverUrl) {
@@ -115,66 +121,76 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) :  // videoWidt
         }
     }
 
-    override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
-        when (viewType) {
-            HanimeInfoModel.SIMPLIFIED -> {
-                when (context) {
-                    is SearchActivity -> viewHolder.getView<View>(R.id.linear).widthMatchParent()
+    override fun onCreateViewHolder(
+        context: Context,
+        parent: ViewGroup,
+        viewType: Int,
+    ): QuickViewHolder {
+        return if (viewType == HanimeInfoModel.NORMAL) {
+            QuickViewHolder(R.layout.item_hanime_video, parent)
+        } else {
+            QuickViewHolder(R.layout.item_hanime_video_simplified, parent)
+        }.also { viewHolder ->
+            when (viewType) {
+                HanimeInfoModel.SIMPLIFIED -> {
+                    when (context) {
+                        is SearchActivity -> viewHolder.getView<View>(R.id.linear)
+                            .widthMatchParent()
 
-                    is VideoActivity -> when (videoWidthType) {
-                        VIDEO_LAYOUT_MATCH_PARENT ->
-                            viewHolder.getView<View>(R.id.linear).widthMatchParent()
+                        is VideoActivity -> when (videoWidthType) {
+                            VIDEO_LAYOUT_MATCH_PARENT ->
+                                viewHolder.getView<View>(R.id.linear).widthMatchParent()
 
-                        VIDEO_LAYOUT_WRAP_CONTENT ->
-                            viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                            VIDEO_LAYOUT_WRAP_CONTENT ->
+                                viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                        }
                     }
                 }
-            }
 
-            HanimeInfoModel.NORMAL -> {
-                when (context) {
-                    is VideoActivity -> when (videoWidthType) {
-                        VIDEO_LAYOUT_MATCH_PARENT ->
-                            viewHolder.getView<View>(R.id.linear).widthMatchParent()
+                HanimeInfoModel.NORMAL -> {
+                    when (context) {
+                        is VideoActivity -> when (videoWidthType) {
+                            VIDEO_LAYOUT_MATCH_PARENT ->
+                                viewHolder.getView<View>(R.id.linear).widthMatchParent()
 
-                        VIDEO_LAYOUT_WRAP_CONTENT ->
-                            viewHolder.getView<View>(R.id.linear).widthWrapContent()
-                    }
+                            VIDEO_LAYOUT_WRAP_CONTENT ->
+                                viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                        }
 
-                    is MainActivity -> {
-                        val activity = context as MainActivity
-                        val fragment = activity.currentFragment
-                        if (fragment is HomePageFragment) {
-                            viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                        is MainActivity -> {
+                            val activity = context
+                            val fragment = activity.currentFragment
+                            if (fragment is HomePageFragment) {
+                                viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                            }
                         }
                     }
                 }
             }
-        }
-        viewHolder.itemView.apply {
-            if (context !is PreviewActivity) {
-                setOnClickListener {
-                    val position = viewHolder.bindingAdapterPosition
-                    val item = getItem(position)
-                    if (item.isPlaying) {
-                        // todo: strings.xml
-                        showShortToast("當前正在觀看該影片哦~")
-                    } else {
-                        val videoCode = item.videoCode
-                        context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
+            viewHolder.itemView.apply {
+                if (context !is PreviewActivity) {
+                    setOnClickListener {
+                        val position = viewHolder.bindingAdapterPosition
+                        val item = getItem(position).notNull()
+                        if (item.isPlaying) {
+                            // todo: strings.xml
+                            showShortToast("當前正在觀看該影片哦~")
+                        } else {
+                            val videoCode = item.videoCode
+                            context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
+                        }
                     }
-                }
-                setOnLongClickListener {
-                    val position = viewHolder.bindingAdapterPosition
-                    val item = getItem(position)
-                    copyTextToClipboard("${item.title}\n${getHanimeVideoLink(item.videoCode)}")
-                    showShortToast(R.string.copy_to_clipboard)
-                    return@setOnLongClickListener true
+                    setOnLongClickListener {
+                        val position = viewHolder.bindingAdapterPosition
+                        val item = getItem(position).notNull()
+                        copyTextToClipboard("${item.title}\n${getHanimeVideoLink(item.videoCode)}")
+                        showShortToast(R.string.copy_to_clipboard)
+                        return@setOnLongClickListener true
+                    }
                 }
             }
         }
     }
-
 
     private fun View.widthMatchParent() = apply {
         layoutParams = ViewGroup.LayoutParams(

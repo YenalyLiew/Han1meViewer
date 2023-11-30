@@ -29,3 +29,11 @@ fun View.setMargins(
     marginStart = start
     marginEnd = end
 }
+
+fun View.resize(
+    scaleX: Float,
+    scaleY: Float,
+) = updateLayoutParams {
+    width = (width * scaleX).toInt()
+    height = (height * scaleY).toInt()
+}

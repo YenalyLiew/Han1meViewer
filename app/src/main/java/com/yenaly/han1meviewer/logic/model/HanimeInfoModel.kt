@@ -1,7 +1,5 @@
 package com.yenaly.han1meviewer.logic.model
 
-import com.chad.library.adapter.base.entity.MultiItemEntity
-
 /**
  * @project Hanime1
  * @author Yenaly Liew
@@ -19,7 +17,7 @@ data class HanimeInfoModel(
 
     val isPlaying: Boolean = false, // for video playlist only.
 
-    override var itemType: Int
+    override var itemType: Int,
 ) : MultiItemEntity {
     companion object {
         const val NORMAL = 0

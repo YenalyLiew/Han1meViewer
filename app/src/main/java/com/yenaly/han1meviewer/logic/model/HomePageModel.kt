@@ -10,10 +10,12 @@ data class HomePageModel(
     val username: String?,
     val banner: Banner?,
     val latestHanime: MutableList<HanimeInfoModel>,
+    val latestRelease: MutableList<HanimeInfoModel>,
     val latestUpload: MutableList<HanimeInfoModel>,
-    val hotHanimeMonthly: MutableList<HanimeInfoModel>,
-    val hanimeCurrent: MutableList<HanimeInfoModel>,
+    val chineseSubtitle: MutableList<HanimeInfoModel>,
     val hanimeTheyWatched: MutableList<HanimeInfoModel>,
+    val hanimeCurrent: MutableList<HanimeInfoModel>,
+    val hotHanimeMonthly: MutableList<HanimeInfoModel>,
     // 首页TAG不想弄
 ) {
     data class Banner(

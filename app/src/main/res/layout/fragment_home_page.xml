@@ -116,71 +116,31 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/home_page_srl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <TextView
-                android:id="@+id/error_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textSize="@dimen/err_tip_text_size"
-                android:visibility="gone"
-                tools:text="404 Not Found" />
-
-            <com.scwang.smart.refresh.layout.SmartRefreshLayout
-                android:id="@+id/home_page_srl"
+            <com.scwang.smart.refresh.header.MaterialHeader
+                android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:layout_height="wrap_content" />
 
-                <com.scwang.smart.refresh.header.MaterialHeader
-                    android:id="@+id/header"
+            <com.drake.statelayout.StateLayout
+                android:id="@+id/state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.yenaly.yenaly_libs.base.view.RecyclerViewAtViewPager2
+                    android:id="@+id/rv"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent" />
 
-                <androidx.core.widget.NestedScrollView
-                    android:id="@+id/home_page_nsv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            </com.drake.statelayout.StateLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <include
-                            android:id="@+id/latest_hanime"
-                            layout="@layout/item_home_page" />
-
-                        <include
-                            android:id="@+id/latest_upload"
-                            layout="@layout/item_home_page" />
-
-                        <include
-                            android:id="@+id/hot_hanime_monthly"
-                            layout="@layout/item_home_page" />
-
-                        <include
-                            android:id="@+id/hanime_current"
-                            layout="@layout/item_home_page" />
-
-                        <include
-                            android:id="@+id/hanime_they_watched"
-                            layout="@layout/item_home_page" />
-
-                    </LinearLayout>
-
-                </androidx.core.widget.NestedScrollView>
-
-            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 </layout>

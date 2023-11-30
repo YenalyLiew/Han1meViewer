@@ -36,12 +36,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_page_list"
+
+            <com.drake.statelayout.StateLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:padding="8dp" />
+                android:id="@+id/state">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_page_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:padding="8dp" />
+
+            </com.drake.statelayout.StateLayout>
 
             <com.scwang.smart.refresh.footer.ClassicsFooter
                 android:layout_width="match_parent"

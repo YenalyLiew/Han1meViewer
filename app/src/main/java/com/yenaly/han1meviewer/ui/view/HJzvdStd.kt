@@ -37,8 +37,9 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
 import com.yenaly.han1meviewer.ui.adapter.HKeyframeRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.VideoSpeedAdapter
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.removeItself
-import com.yenaly.han1meviewer.util.resetEmptyView
+import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -168,7 +169,7 @@ class HJzvdStd @JvmOverloads constructor(
     var hKeyframe: HKeyframeEntity? = null
         set(value) {
             field = value
-            hKeyframeAdapter.setDiffNewData(value?.keyframes)
+            hKeyframeAdapter.submitList(value?.keyframes)
             hKeyframeAdapter.isLocal = value?.let { it.author == null } ?: true
         }
 
@@ -179,20 +180,19 @@ class HJzvdStd @JvmOverloads constructor(
     /**
      * 初始化關鍵H幀的 Adapter，最好不用 lazy
      *
-     * 但我還是最終用了 lazy，要不然首次 setList 收不到
+     * 但我還是最終用了 lazy，要不然首次 submitList 收不到
      */
     private fun initHKeyframeAdapter() = run {
         val videoCode = checkNotNull(this.videoCode) {
             "If you want to use HKeyframeAdapter, you must set videoCode first."
         }
         HKeyframeRvAdapter(videoCode).apply {
-            setDiffCallback(HKeyframeRvAdapter.COMPARATOR)
             setOnItemClickListener { _, _, position ->
-                val keyframe = getItem(position)
+                val keyframe = getItem(position).notNull()
                 mediaInterface.seekTo(keyframe.position)
                 startProgressTimer()
             }
-            resetEmptyView(
+            setStateViewLayout(
                 View.inflate(this@HJzvdStd.context, R.layout.layout_empty_view, null),
                 this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n請長按🥵添加關鍵H幀"
             )
@@ -603,6 +603,16 @@ class HJzvdStd @JvmOverloads constructor(
 }
 
 class HJZMediaSystem(jzvd: Jzvd) : JZMediaSystem(jzvd) {
+
+    // #issue-26: 有的手機長按快進會報錯，合理懷疑是不是因爲沒有加 post
+    override fun setSpeed(speed: Float) {
+        mMediaHandler.post {
+            val pp = mediaPlayer.playbackParams
+            pp.speed = speed
+            mediaPlayer.playbackParams = pp
+        }
+    }
+
     override fun onVideoSizeChanged(mediaPlayer: MediaPlayer?, width: Int, height: Int) {
         super.onVideoSizeChanged(mediaPlayer, width, height)
         val ratio = width.toFloat() / height // > 1 橫屏， < 1 竖屏

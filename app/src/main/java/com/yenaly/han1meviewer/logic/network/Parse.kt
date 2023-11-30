@@ -64,7 +64,9 @@ object Parse {
         } else null
 
         val latestHanimeClass = homePageParse.getOrNull(0)
+        val latestReleaseClass = homePageParse.getOrNull(1)
         val latestUploadClass = homePageParse.getOrNull(2)
+        val chineseSubtitleClass = homePageParse.getOrNull(3)
         val hotHanimeMonthlyClass = homePageParse.getOrNull(homePageParse.size - 2)
         val hanimeCurrentClass = homePageParse.getOrNull(homePageParse.size - 3)
         val hanimeTheyWatchedClass = homePageParse.getOrNull(4)
@@ -89,6 +91,13 @@ object Parse {
             )
         }
 
+        // for latest release
+        val latestReleaseList = mutableListOf<HanimeInfoModel>()
+        val latestReleaseItems = latestReleaseClass?.select("div[class^=card-mobile-panel]")
+        latestReleaseItems?.forEachStep2 { latestReleaseItem ->
+            latestReleaseList.add(hanimeNormalItemVer2(latestReleaseItem))
+        }
+
         // for latest upload
         val latestUploadList = mutableListOf<HanimeInfoModel>()
         val latestUploadItems = latestUploadClass?.select("div[class^=card-mobile-panel]")
@@ -96,20 +105,11 @@ object Parse {
             latestUploadList.add(hanimeNormalItemVer2(latestUploadItem))
         }
 
-        // for hot hanime monthly
-        val hotHanimeMonthlyList = mutableListOf<HanimeInfoModel>()
-        val hotHanimeMonthlyItems =
-            hotHanimeMonthlyClass?.select("div[class^=card-mobile-panel]")
-        hotHanimeMonthlyItems?.forEachStep2 { hotHanimeMonthlyItem ->
-            hotHanimeMonthlyList.add(hanimeNormalItemVer2(hotHanimeMonthlyItem))
-        }
-
-        // for hanime current
-        val hanimeCurrentList = mutableListOf<HanimeInfoModel>()
-        val hanimeCurrentItems =
-            hanimeCurrentClass?.select("div[class^=card-mobile-panel]")
-        hanimeCurrentItems?.forEachStep2 { hanimeCurrentItem ->
-            hanimeCurrentList.add(hanimeNormalItemVer2(hanimeCurrentItem))
+        // for chinese subtitle
+        val chineseSubtitleList = mutableListOf<HanimeInfoModel>()
+        val chineseSubtitleItems = chineseSubtitleClass?.select("div[class^=card-mobile-panel]")
+        chineseSubtitleItems?.forEachStep2 { chineseSubtitleItem ->
+            chineseSubtitleList.add(hanimeNormalItemVer2(chineseSubtitleItem))
         }
 
         // for hanime they watched
@@ -120,18 +120,33 @@ object Parse {
             hanimeTheyWatchedList.add(hanimeNormalItemVer2(hanimeTheyWatchedItem))
         }
 
-        Log.d("late_hani_list", latestHanimeList.toString())
-        Log.d("late_upload_list", latestUploadList.toString())
-        Log.d("hot_hani_month_list", hotHanimeMonthlyList.toString())
-        Log.d("hani_curr_list", hanimeCurrentList.toString())
-        Log.d("hani_they_watch_list", hanimeTheyWatchedList.toString())
+        // for hanime current
+        val hanimeCurrentList = mutableListOf<HanimeInfoModel>()
+        val hanimeCurrentItems =
+            hanimeCurrentClass?.select("div[class^=card-mobile-panel]")
+        hanimeCurrentItems?.forEachStep2 { hanimeCurrentItem ->
+            hanimeCurrentList.add(hanimeNormalItemVer2(hanimeCurrentItem))
+        }
+
+        // for hot hanime monthly
+        val hotHanimeMonthlyList = mutableListOf<HanimeInfoModel>()
+        val hotHanimeMonthlyItems =
+            hotHanimeMonthlyClass?.select("div[class^=card-mobile-panel]")
+        hotHanimeMonthlyItems?.forEachStep2 { hotHanimeMonthlyItem ->
+            hotHanimeMonthlyList.add(hanimeNormalItemVer2(hotHanimeMonthlyItem))
+        }
 
         // emit!
         return WebsiteState.Success(
             HomePageModel(
                 avatarUrl, username, banner = banner,
-                latestHanimeList, latestUploadList, hotHanimeMonthlyList,
-                hanimeCurrentList, hanimeTheyWatchedList
+                latestHanime = latestHanimeList,
+                latestRelease = latestReleaseList,
+                latestUpload = latestUploadList,
+                chineseSubtitle = chineseSubtitleList,
+                hanimeTheyWatched = hanimeTheyWatchedList,
+                hanimeCurrent = hanimeCurrentList,
+                hotHanimeMonthly = hotHanimeMonthlyList,
             )
         )
     }

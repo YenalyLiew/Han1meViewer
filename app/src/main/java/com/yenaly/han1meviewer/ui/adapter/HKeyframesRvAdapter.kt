@@ -1,16 +1,18 @@
 package com.yenaly.han1meviewer.ui.adapter
 
+import android.content.Context
 import android.text.method.LinkMovementMethod
 import android.util.Base64
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.jzvd.JZUtils
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.chad.library.adapter4.BaseDifferAdapter
+import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.google.android.material.button.MaterialButton
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
@@ -19,6 +21,7 @@ import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.copyToClipboard
@@ -31,10 +34,13 @@ import kotlinx.serialization.json.Json
 /**
  * @project Han1meViewer
  * @author Yenaly Liew
- * @time 2023/11/14 014 11:21
+ * @time 2023/11/26 026 17:42
  */
-class HKeyframesRvAdapter :
-    BaseQuickAdapter<HKeyframeEntity, BaseViewHolder>(R.layout.item_h_keyframes) {
+class HKeyframesRvAdapter : BaseDifferAdapter<HKeyframeEntity, QuickViewHolder>(COMPARATOR) {
+
+    init {
+        isStateViewEnable = true
+    }
 
     companion object {
         val COMPARATOR = object : DiffUtil.ItemCallback<HKeyframeEntity>() {
@@ -57,7 +63,8 @@ class HKeyframesRvAdapter :
         )
     }
 
-    override fun convert(holder: BaseViewHolder, item: HKeyframeEntity) {
+    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HKeyframeEntity?) {
+        item.notNull()
         holder.setText(R.id.tv_title, item.title)
         holder.setGone(R.id.btn_edit, item.author != null)
         holder.getView<TextView>(R.id.tv_video_code).apply {
@@ -80,23 +87,29 @@ class HKeyframesRvAdapter :
         }
     }
 
-    override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
-        viewHolder.getView<ImageButton>(R.id.btn_edit).apply {
-            setOnClickListener { view ->
-                val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position)
-                XPopup.Builder(view.context).atView(view).isDarkTheme(true).asAttachList(
-                    Array(editResArray.size) { idx -> view.context.getString(editResArray[idx]) },
-                    editResIconArray
-                ) { pos, _ ->
-                    when (pos) {
-                        0 -> modify(item) // 修改
+    override fun onCreateViewHolder(
+        context: Context,
+        parent: ViewGroup,
+        viewType: Int,
+    ): QuickViewHolder {
+        return QuickViewHolder(R.layout.item_h_keyframes, parent).also { viewHolder ->
+            viewHolder.getView<ImageButton>(R.id.btn_edit).apply {
+                setOnClickListener { view ->
+                    val position = viewHolder.bindingAdapterPosition
+                    val item = getItem(position).notNull()
+                    XPopup.Builder(view.context).atView(view).isDarkTheme(true).asAttachList(
+                        Array(editResArray.size) { idx -> view.context.getString(editResArray[idx]) },
+                        editResIconArray
+                    ) { pos, _ ->
+                        when (pos) {
+                            0 -> modify(item) // 修改
 
-                        1 -> delete(item) // 刪除
+                            1 -> delete(item) // 刪除
 
-                        2 -> share(item)  // 分享
-                    }
-                }.show()
+                            2 -> share(item)  // 分享
+                        }
+                    }.show()
+                }
             }
         }
     }
@@ -158,14 +171,18 @@ class HKeyframesRvAdapter :
 /**
  * @project Han1meViewer
  * @author Yenaly Liew
- * @time 2023/11/14 014 11:21
+ * @time 2023/11/26 026 17:42
  */
 class HKeyframeRvAdapter(
     private val videoCode: String,
     keyframe: HKeyframeEntity? = null,
-) : BaseQuickAdapter<HKeyframeEntity.Keyframe, BaseViewHolder>(
-    R.layout.item_h_keyframe, keyframe?.keyframes
+) : BaseDifferAdapter<HKeyframeEntity.Keyframe, QuickViewHolder>(
+    COMPARATOR, keyframe?.keyframes.orEmpty()
 ) {
+
+    init {
+        isStateViewEnable = true
+    }
 
     /**
      * 是否是本地关键帧
@@ -188,7 +205,12 @@ class HKeyframeRvAdapter(
         }
     }
 
-    override fun convert(holder: BaseViewHolder, item: HKeyframeEntity.Keyframe) {
+    override fun onBindViewHolder(
+        holder: QuickViewHolder,
+        position: Int,
+        item: HKeyframeEntity.Keyframe?,
+    ) {
+        item.notNull()
         holder.setText(R.id.tv_keyframe, JZUtils.stringForTime(item.position))
         holder.setText(R.id.tv_index, "#${holder.bindingAdapterPosition + 1}")
 
@@ -203,72 +225,77 @@ class HKeyframeRvAdapter(
         }
     }
 
-    override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
-        val context = this.context
-        viewHolder.getView<MaterialButton>(R.id.btn_edit).apply {
-            setOnClickListener {
-                val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position)
+    override fun onCreateViewHolder(
+        context: Context,
+        parent: ViewGroup,
+        viewType: Int,
+    ): QuickViewHolder {
+        return QuickViewHolder(R.layout.item_h_keyframe, parent).also { viewHolder ->
+            viewHolder.getView<MaterialButton>(R.id.btn_edit).apply {
+                setOnClickListener {
+                    val position = viewHolder.bindingAdapterPosition
+                    val item = getItem(position).notNull()
 
-                val view = View.inflate(context, R.layout.dialog_modify_h_keyframe, null)
-                val etPrompt = view.findViewById<TextView>(R.id.et_prompt)
-                val etPosition = view.findViewById<TextView>(R.id.et_position)
-                etPrompt.text = item.prompt
-                etPosition.text = item.position.toString()
+                    val view = View.inflate(context, R.layout.dialog_modify_h_keyframe, null)
+                    val etPrompt = view.findViewById<TextView>(R.id.et_prompt)
+                    val etPosition = view.findViewById<TextView>(R.id.et_position)
+                    etPrompt.text = item.prompt
+                    etPosition.text = item.position.toString()
 
-                context.showAlertDialog {
-                    setTitle(R.string.modify_h_keyframe)
-                    setView(view)
-                    setPositiveButton(R.string.confirm) { _, _ ->
-                        val prompt = etPrompt.text.toString()
-                        val pos = etPosition.text.toString().toLong()
-                        when (context) {
-                            is SettingsActivity -> {
-                                context.viewModel.modifyHKeyframe(
-                                    videoCode, item, HKeyframeEntity.Keyframe(
-                                        position = pos,
-                                        prompt = prompt
+                    context.showAlertDialog {
+                        setTitle(R.string.modify_h_keyframe)
+                        setView(view)
+                        setPositiveButton(R.string.confirm) { _, _ ->
+                            val prompt = etPrompt.text.toString()
+                            val pos = etPosition.text.toString().toLong()
+                            when (context) {
+                                is SettingsActivity -> {
+                                    context.viewModel.modifyHKeyframe(
+                                        videoCode, item, HKeyframeEntity.Keyframe(
+                                            position = pos,
+                                            prompt = prompt
+                                        )
                                     )
-                                )
-                                showShortToast("修改成功")
-                            }
+                                    showShortToast("修改成功")
+                                }
 
-                            is VideoActivity -> {
-                                context.viewModel.modifyHKeyframe(
-                                    videoCode, item, HKeyframeEntity.Keyframe(
-                                        position = pos,
-                                        prompt = prompt
+                                is VideoActivity -> {
+                                    context.viewModel.modifyHKeyframe(
+                                        videoCode, item, HKeyframeEntity.Keyframe(
+                                            position = pos,
+                                            prompt = prompt
+                                        )
                                     )
-                                )
-                                // showShortToast("修改成功") // 這裏不用提示，因為 VideoActivity 有 Flow 操控
+                                    // showShortToast("修改成功") // 這裏不用提示，因為 VideoActivity 有 Flow 操控
+                                }
                             }
                         }
+                        setNegativeButton(R.string.cancel, null)
                     }
-                    setNegativeButton(R.string.cancel, null)
                 }
             }
-        }
-        viewHolder.getView<MaterialButton>(R.id.btn_delete).apply {
-            setOnClickListener {
-                val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position)
-                it.context.showAlertDialog {
-                    setTitle(R.string.sure_to_delete)
-                    setMessage(JZUtils.stringForTime(item.position))
-                    setPositiveButton(R.string.confirm) { _, _ ->
-                        when (context) {
-                            is SettingsActivity -> {
-                                context.viewModel.removeHKeyframe(videoCode, item)
-                                showShortToast("刪除成功")
-                            }
+            viewHolder.getView<MaterialButton>(R.id.btn_delete).apply {
+                setOnClickListener {
+                    val position = viewHolder.bindingAdapterPosition
+                    val item = getItem(position).notNull()
+                    it.context.showAlertDialog {
+                        setTitle(R.string.sure_to_delete)
+                        setMessage(JZUtils.stringForTime(item.position))
+                        setPositiveButton(R.string.confirm) { _, _ ->
+                            when (context) {
+                                is SettingsActivity -> {
+                                    context.viewModel.removeHKeyframe(videoCode, item)
+                                    showShortToast("刪除成功")
+                                }
 
-                            is VideoActivity -> {
-                                context.viewModel.removeHKeyframe(videoCode, item)
-                                // showShortToast("刪除成功") // 這裏不用提示，因為 VideoActivity 有 Flow 操控
+                                is VideoActivity -> {
+                                    context.viewModel.removeHKeyframe(videoCode, item)
+                                    // showShortToast("刪除成功") // 這裏不用提示，因為 VideoActivity 有 Flow 操控
+                                }
                             }
                         }
+                        setNegativeButton(R.string.cancel, null)
                     }
-                    setNegativeButton(R.string.cancel, null)
                 }
             }
         }

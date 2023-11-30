@@ -54,6 +54,8 @@ dependencies {
     implementation(Libs.Jetpack.startupRuntime)
     implementation(Libs.Parse.gson)
 
+    implementation(Libs.Spannable.spannableX)
+
     testImplementation(Libs.Test.junit)
 
     androidTestImplementation(Libs.Test.testJunit)

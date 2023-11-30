@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,12 +12,13 @@ import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeMyListVideoAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.fragment.LoginNeededFragmentMixin
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
-import com.yenaly.han1meviewer.util.resetEmptyView
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.showShortToast
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
  * @time 2022/07/04 004 22:43
  */
 class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewModel>(),
-    IToolbarFragment<MainActivity>, LoginNeededFragmentMixin {
+    IToolbarFragment<MainActivity>, LoginNeededFragmentMixin, StateLayoutMixin {
 
     private var page: Int
         set(value) {
@@ -41,22 +41,16 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
     private val adapter by unsafeLazy { HanimeMyListVideoAdapter() }
 
-    private val errView by unsafeLazy {
-        LayoutInflater.from(context).inflate(
-            R.layout.layout_empty_view,
-            adapter.recyclerViewOrNull,
-            false
-        )
-    }
-
     override fun initData(savedInstanceState: Bundle?) {
         checkLogin()
         (activity as MainActivity).setupToolbar()
 
+        binding.state.init()
+
         getNewMyFavVideo()
 
         adapter.setOnItemLongClickListener { _, _, position ->
-            val item = adapter.getItem(position)
+            val item = adapter.getItem(position).notNull()
             requireContext().showAlertDialog {
                 setTitle("刪除喜歡")
                 setMessage(getString(R.string.sure_to_delete_s_video, item.title))
@@ -94,18 +88,18 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                             binding.srlPageList.finishRefresh()
                             binding.srlPageList.finishLoadMore(false)
                             // set error view
-                            adapter.resetEmptyView(errView, "🥺\n${state.throwable.message}")
+                            binding.state.showError(state.throwable)
                         }
 
                         is PageLoadingState.Loading -> {
-                            adapter.removeEmptyView()
-                            if (adapter.data.isEmpty()) binding.srlPageList.autoRefreshAnimationOnly()
+                            adapter.stateView = null
+                            if (adapter.items.isEmpty()) binding.srlPageList.autoRefreshAnimationOnly()
                         }
 
                         is PageLoadingState.NoMoreData -> {
                             binding.srlPageList.finishLoadMoreWithNoMoreData()
-                            Log.d("empty", adapter.data.isEmpty().toString())
-                            if (adapter.data.isEmpty()) adapter.setEmptyView(R.layout.layout_empty_view)
+                            Log.d("empty", adapter.items.isEmpty().toString())
+                            if (adapter.items.isEmpty()) binding.state.showEmpty()
                         }
 
                         is PageLoadingState.Success -> {
@@ -113,7 +107,8 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                             binding.srlPageList.finishRefresh()
                             binding.srlPageList.finishLoadMore(true)
                             viewModel.csrfToken = state.info.csrfToken
-                            adapter.addData(state.info.hanimeInfo)
+                            adapter.addAll(state.info.hanimeInfo)
+                            binding.state.showContent()
                         }
                     }
                 }
@@ -152,7 +147,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
     private fun getNewMyFavVideo() {
         page = 1
-        adapter.data.clear()
+        adapter.items = emptyList()
         getMyFavVideo()
     }
 

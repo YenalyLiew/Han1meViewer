@@ -57,6 +57,7 @@ class VideoIntroductionFragment :
         binding.playlist.rv.isNestedScrollingEnabled = true
         binding.playlist.title.setText(R.string.series_video)
         binding.relatedHanime.title.setText(R.string.related_video)
+        binding.tags.lifecycle = viewLifecycleOwner.lifecycle
 
         binding.relatedHanime.rv.layoutManager =
             FixedGridLayoutManager(context, VIDEO_IN_ONE_LINE)
@@ -88,13 +89,13 @@ class VideoIntroductionFragment :
                             binding.tags.setTags(state.info.tags)
                             if (state.info.playlist != null) {
                                 binding.playlist.subTitle.text = state.info.playlist.playlistName
-                                playlistAdapter.setList(state.info.playlist.video)
+                                playlistAdapter.submitList(state.info.playlist.video)
                             } else {
                                 binding.playlist.root.isGone = true
                             }
                             binding.relatedHanime.rv.layoutManager =
                                 state.info.relatedHanimes.buildFlexibleGridLayoutManager()
-                            relatedAdapter.setList(state.info.relatedHanimes)
+                            relatedAdapter.submitList(state.info.relatedHanimes)
                             initArtist(state.info.artist)
                             initDownloadButton(state.info)
                             initFunctionBar(state.info)
