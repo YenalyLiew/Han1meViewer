@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Typeface
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.PlaybackParams
 import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
 import android.util.AttributeSet
@@ -42,10 +43,9 @@ import com.yenaly.han1meviewer.util.removeItself
 import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
-import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import java.util.Timer
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 /**
  * @project Hanime1
@@ -235,11 +235,8 @@ class HJzvdStd @JvmOverloads constructor(
                 when (e.action) {
                     MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                         if (mediaInterface.isPlaying) {
-                            if (setSpeedInternal(videoSpeed * userDefLongPressSpeedTimes)) {
-                                isSpeedGestureDetected = true
-                            } else {
-                                showShortToast(R.string.long_press_speed_not_supported)
-                            }
+                            setSpeedInternal(videoSpeed * userDefLongPressSpeedTimes)
+                            isSpeedGestureDetected = true
                         }
                     }
                 }
@@ -369,8 +366,8 @@ class HJzvdStd @JvmOverloads constructor(
         Log.i(TAG, "onTouch surfaceContainer actionMove [" + this.hashCode() + "] ")
         val deltaX = x - mDownX
         var deltaY = y - mDownY
-        val absDeltaX = abs(deltaX)
-        val absDeltaY = abs(deltaY)
+        val absDeltaX = deltaX.absoluteValue
+        val absDeltaY = deltaY.absoluteValue
         // 此處進行了修改，未全屏也能調節進度
         if (screen != SCREEN_TINY && !isSpeedGestureDetected) {
             //拖动的是NavigationBar和状态栏
@@ -592,18 +589,15 @@ class HJzvdStd @JvmOverloads constructor(
     }
 
     /**
-     * 这个 setSpeed 的 bug 太多了，不同机型效果不一定相同，不得不套个 try catch。
+     * 这个 setSpeed 的 bug 太多了，不同机型效果不一定相同，不得不套个 try-catch。 (previous)
+     *
+     * PS: 套 try-catch 没用，因为在 post 里面，所以还是会报错，只能在调用的地方 try-catch 了。
      *
      * #issue-28 就是这个问题，如果我在 [HJZMediaSystem] 中 setSpeed 方法里加的判断不起作用，
      * 那么那个机型就先别用这个功能了。
      */
-    private fun setSpeedInternal(speed: Float): Boolean {
-        return try {
-            mediaInterface.setSpeed(speed)
-            true
-        } catch (e: IllegalArgumentException) {
-            false
-        }
+    private fun setSpeedInternal(speed: Float) {
+        mediaInterface.setSpeed(speed)
     }
 
     /**
@@ -625,12 +619,20 @@ class HJzvdStd @JvmOverloads constructor(
 class HJZMediaSystem(jzvd: Jzvd) : JZMediaSystem(jzvd) {
 
     // #issue-26: 有的手機長按快進會報錯，合理懷疑是不是因爲沒有加 post
+    // #issue-28: 有的平板长按快进也会报错，结果是 IllegalArgumentException，很奇怪，两次 try-catch 处理试试。
     override fun setSpeed(speed: Float) {
         mMediaHandler.post {
-            val pp = mediaPlayer.playbackParams
-            if (speed >= 0f) {
-                pp.speed = speed
+            try {
+                val pp = mediaPlayer.playbackParams
+                pp.speed = speed.absoluteValue
                 mediaPlayer.playbackParams = pp
+            } catch (e: IllegalArgumentException) {
+                try {
+                    val opp = PlaybackParams().setSpeed(speed.absoluteValue)
+                    mediaPlayer.playbackParams = opp
+                } catch (e: IllegalArgumentException) {
+                    e.printStackTrace()
+                }
             }
         }
     }
