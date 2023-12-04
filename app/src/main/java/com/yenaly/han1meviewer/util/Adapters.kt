@@ -5,6 +5,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import com.yenaly.han1meviewer.R
+import com.yenaly.yenaly_libs.utils.applicationContext
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -31,7 +32,7 @@ fun com.chad.library.adapter4.BaseQuickAdapter<*, *>.setStateViewLayout(
     text: String? = null,
 ) {
     view.findViewById<TextView>(R.id.tv_empty).text =
-        text ?: context.getString(R.string.here_is_empty)
+        text ?: applicationContext.getString(R.string.here_is_empty)
     stateView = view
 }
 
