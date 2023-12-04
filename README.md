@@ -12,7 +12,8 @@ An unofficial Hanime1.me Application for Android.
 
 Android version must be no less than 7.0 to be used.
 
-This project is intended solely for code learning purposes. Commercial use is strictly prohibited.
+This project is intended solely for purposes of learning codes. Commercial use is strictly
+prohibited.
 
 ![download times](https://img.shields.io/github/downloads/YenalyLiew/Han1meViewer/total)
 
@@ -92,13 +93,17 @@ This project is intended solely for code learning purposes. Commercial use is st
 
 还在因为不能和影片内「顶点」同步，而不停地记着「顶点」的时刻然后看进度条卡时间同步吗？
 
-现在你可能不需要了。如果你开启了该功能（默认开启），并且在影片内**手动标记**每一个关键H帧，它会在 5-30s 前在屏幕**左上角**倒计时提醒（可调整）。在 0-1s 时，会精确到一位小数，方便你更好的控制时间。
+现在你可能不需要了。如果你开启了该功能（默认开启），并且在影片内**手动标记**每一个关键H帧，它会在 5-30s
+前在屏幕**左上角**倒计时提醒（可调整）。在 0-1s 时，会精确到一位小数，方便你更好的控制时间。
 
 你还可以将你标记的分享给其他人，别人只需要点击右上角的添加就可以一键导入。
 
-此外，还提供了**共享关键H帧集**。这些关键H帧是内置于软件里的，来源于贡献者在 GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，暂时不考虑服务器在线共享之类的，~~前提是有贡献者来帮忙补充~~。
+此外，还提供了**共享关键H帧集**。这些关键H帧是内置于软件里的，来源于贡献者在 GitHub
+上的补充。目前是随着版本更新来更新共享关键H帧集，暂时不考虑服务器在线共享之类的，~~
+前提是有贡献者来帮忙补充~~。
 
-如果你想贡献关键H帧，请点击 [这里](https://github.com/YenalyLiew/Han1meViewer/blob/master/app/src/main/assets/h_keyframes/README.md) 查看应该怎么做。
+如果你想贡献关键H帧，请点击 [这里](https://github.com/YenalyLiew/Han1meViewer/blob/master/app/src/main/assets/h_keyframes/README.md)
+查看应该怎么做。
 
 ## 存在问题
 
@@ -115,6 +120,12 @@ This project is intended solely for code learning purposes. Commercial use is st
 ~~PS：你还真给我大改了。。~~
 
 ## 更新内容
+
+### v0.12.2
+
+**[修复]** 打开 存在关键H帧的影片 时崩溃的问题。
+
+**[修复?]** 部分手机长按快进崩溃的问题。
 
 ### v0.12.1
 
