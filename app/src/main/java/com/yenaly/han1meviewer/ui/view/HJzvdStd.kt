@@ -42,6 +42,7 @@ import com.yenaly.han1meviewer.util.removeItself
 import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
+import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import java.util.Timer
 import kotlin.math.abs
@@ -192,10 +193,6 @@ class HJzvdStd @JvmOverloads constructor(
                 mediaInterface.seekTo(keyframe.position)
                 startProgressTimer()
             }
-            setStateViewLayout(
-                View.inflate(this@HJzvdStd.context, R.layout.layout_empty_view, null),
-                this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n請長按🥵添加關鍵H幀"
-            )
         }
     }
 
@@ -238,8 +235,11 @@ class HJzvdStd @JvmOverloads constructor(
                 when (e.action) {
                     MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                         if (mediaInterface.isPlaying) {
-                            mediaInterface.setSpeed(videoSpeed * userDefLongPressSpeedTimes)
-                            isSpeedGestureDetected = true
+                            if (setSpeedInternal(videoSpeed * userDefLongPressSpeedTimes)) {
+                                isSpeedGestureDetected = true
+                            } else {
+                                showShortToast(R.string.long_press_speed_not_supported)
+                            }
                         }
                     }
                 }
@@ -284,7 +284,7 @@ class HJzvdStd @JvmOverloads constructor(
                 when (event.action) {
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                         if (isSpeedGestureDetected) {
-                            mediaInterface.setSpeed(videoSpeed)
+                            setSpeedInternal(videoSpeed)
                             isSpeedGestureDetected = false
                         }
                     }
@@ -582,8 +582,28 @@ class HJzvdStd @JvmOverloads constructor(
             animationStyle = cn.jzvd.R.style.pop_animation
         }
         rv.layoutManager = LinearLayoutManager(v.context)
-        rv.adapter = hKeyframeAdapter
+        val adapter = hKeyframeAdapter
+        rv.adapter = adapter
+        adapter.setStateViewLayout(
+            View.inflate(v.context, R.layout.layout_empty_view, null),
+            this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n請長按🥵添加關鍵H幀"
+        )
         popup.showAtLocation(textureViewContainer, Gravity.END, 0, 0)
+    }
+
+    /**
+     * 这个 setSpeed 的 bug 太多了，不同机型效果不一定相同，不得不套个 try catch。
+     *
+     * #issue-28 就是这个问题，如果我在 [HJZMediaSystem] 中 setSpeed 方法里加的判断不起作用，
+     * 那么那个机型就先别用这个功能了。
+     */
+    private fun setSpeedInternal(speed: Float): Boolean {
+        return try {
+            mediaInterface.setSpeed(speed)
+            true
+        } catch (e: IllegalArgumentException) {
+            false
+        }
     }
 
     /**
@@ -608,8 +628,10 @@ class HJZMediaSystem(jzvd: Jzvd) : JZMediaSystem(jzvd) {
     override fun setSpeed(speed: Float) {
         mMediaHandler.post {
             val pp = mediaPlayer.playbackParams
-            pp.speed = speed
-            mediaPlayer.playbackParams = pp
+            if (speed >= 0f) {
+                pp.speed = speed
+                mediaPlayer.playbackParams = pp
+            }
         }
     }
 

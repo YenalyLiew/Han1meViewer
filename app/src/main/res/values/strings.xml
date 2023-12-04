@@ -175,4 +175,5 @@
     <string name="chinese_subtitle">中文字幕</string>
     <string name="ranking_today">本日排行</string>
     <string name="ranking_this_month">本月排行</string>
+    <string name="long_press_speed_not_supported">您的設備暫時不支援長按快進</string>
 </resources>
