@@ -19,6 +19,11 @@
         tools:replace="android:label"
         tools:targetApi="34">
 
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.yenaly.han1meviewer.fileProvider"

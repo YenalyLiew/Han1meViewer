@@ -7,6 +7,7 @@ import com.itxca.spannablex.spannable
 import com.yenaly.yenaly_libs.ActivitiesManager
 import com.yenaly.yenaly_libs.R
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
+import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.intentExtra
 import com.yenaly.yenaly_libs.utils.sp
 
@@ -44,6 +45,9 @@ class YenalyCrashDialogActivity : FrameActivity() {
             }
             .setNegativeButton(R.string.yenaly_exit_app) { _, _ ->
                 ActivitiesManager.exit(killProcess = true)
+            }
+            .setNeutralButton(R.string.yenaly_copy) { _, _ ->
+                yenalyThrowable.copyToClipboard()
             }
             .show()
     }
