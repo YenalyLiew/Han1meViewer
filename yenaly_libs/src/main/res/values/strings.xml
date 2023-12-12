@@ -5,4 +5,6 @@
     <string name="yenaly_restart_app">重启软件</string>
     <string name="yenaly_exit_app">关闭软件</string>
     <string name="yenaly_loading">正在加载中</string>
+    <string name="yenaly_copy_to_clipboard">复制到剪贴板</string>
+    <string name="yenaly_copy">复制</string>
 </resources>
