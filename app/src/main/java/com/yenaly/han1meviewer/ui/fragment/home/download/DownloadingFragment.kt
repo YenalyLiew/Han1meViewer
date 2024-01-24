@@ -1,17 +1,22 @@
 package com.yenaly.han1meviewer.ui.fragment.home.download
 
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
+import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeDownloadingRvAdapter
+import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
 import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.unsafeLazy
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
@@ -22,11 +27,13 @@ import kotlinx.coroutines.launch
  * @time 2022/08/01 001 17:45
  */
 class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewModel>(),
-    StateLayoutMixin {
+    IToolbarFragment<MainActivity>, StateLayoutMixin {
 
     private val adapter by unsafeLazy { HanimeDownloadingRvAdapter(this) }
 
     override fun initData(savedInstanceState: Bundle?) {
+        (activity as MainActivity).setupToolbar()
+
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         adapter.setStateViewLayout(R.layout.layout_empty_view)
@@ -39,6 +46,46 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
                 .collect {
                     adapter.submitList(it)
                 }
+        }
+    }
+
+    // #issue-44: 一键返回主页提议
+    override fun MainActivity.setupToolbar() {
+        this@DownloadingFragment.addMenu(
+            R.menu.menu_downloading_toolbar,
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        ) {
+            when (it.itemId) {
+                R.id.tb_start_all -> {
+                    adapter.items.forEachIndexed { index, entity ->
+                        if (!entity.isDownloading) {
+                            entity.isDownloading = true
+                            adapter.continueWork(entity)
+                            adapter.notifyItemChanged(index)
+                        }
+                    }
+                    return@addMenu true
+                }
+
+                R.id.tb_pause_all -> {
+                    adapter.items.forEachIndexed { index, entity ->
+                        if (entity.isDownloading) {
+                            entity.isDownloading = false
+                            with(adapter) {
+                                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                                    WorkManager.getInstance(applicationContext)
+                                        .cancelUniqueWorkAndPause(entity)
+                                }
+                            }
+                            adapter.notifyItemChanged(index)
+                        }
+                    }
+                    return@addMenu true
+
+                }
+            }
+            return@addMenu false
         }
     }
 }

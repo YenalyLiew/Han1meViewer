@@ -341,7 +341,10 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
             R.menu.menu_playlist_toolbar, viewLifecycleOwner
         ) { menuItem ->
             when (menuItem.itemId) {
-                R.id.tb_open_drawer -> dlPlaylist.openDrawer(GravityCompat.END)
+                R.id.tb_open_drawer -> {
+                    dlPlaylist.openDrawer(GravityCompat.END)
+                    return@addMenu true
+                }
             }
             return@addMenu false
         }

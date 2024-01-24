@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tb_start_all"
+        android:icon="@drawable/ic_baseline_play_arrow_24_tintwhite"
+        android:showAsAction="always"
+        android:title="@string/start_all" />
+    <item
+        android:id="@+id/tb_pause_all"
+        android:icon="@drawable/ic_baseline_pause_24_tintwhite"
+        android:showAsAction="always"
+        android:title="@string/pause_all" />
+</menu>

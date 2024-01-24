@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.ui.activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +40,13 @@ import kotlinx.coroutines.launch
 class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     ScreenRotateUtil.OrientationChangeListener {
 
+    companion object {
+        /**
+         * 用於保存當前正在播放的VideoActivity
+         */
+        val currentVideoActivitySet = linkedSetOf<VideoActivity>()
+    }
+
     private val commentViewModel by viewModels<CommentViewModel>()
 
     private val videoCode by intentExtra<String>(VIDEO_CODE)
@@ -54,6 +62,9 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                 videoCodeByWebsite = it.getQueryParameter("v")
             }
         }
+
+        currentVideoActivitySet += this
+        Log.d("CurrentVideoActivitySet", "$this was added.")
 
         (videoCodeByWebsite ?: videoCode!!).let {
             viewModel.videoCode = it
@@ -157,6 +168,8 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
         // 可能需要把ScreenRotateUtil的listener置null，但置null可能会崩溃
         ScreenRotateUtil.getInstance(this).stop()
         Jzvd.releaseAllVideos()
+        currentVideoActivitySet -= this
+        Log.d("CurrentVideoActivitySet", "$this was removed.")
     }
 
     override fun orientationChange(orientation: Int) {

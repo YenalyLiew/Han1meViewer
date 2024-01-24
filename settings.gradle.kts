@@ -14,5 +14,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Han1meViewer"
-include(":app")
-include(":yenaly_libs")
+include(":app", ":yenaly_libs")

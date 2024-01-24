@@ -6,17 +6,17 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 
 fun showShortToast(text: String?) {
-    Toast.makeText(applicationContext, "$appName: $text", Toast.LENGTH_SHORT).show()
+    Toast.makeText(applicationContext, "$text", Toast.LENGTH_SHORT).show()
 }
 
 fun showLongToast(text: String?) {
-    Toast.makeText(applicationContext, "$appName: $text", Toast.LENGTH_LONG).show()
+    Toast.makeText(applicationContext, "$text", Toast.LENGTH_LONG).show()
 }
 
 fun showShortToast(@StringRes text: Int) {
     Toast.makeText(
         applicationContext,
-        "$appName: ${applicationContext.getString(text)}",
+        applicationContext.getString(text),
         Toast.LENGTH_SHORT
     ).show()
 }
@@ -24,7 +24,7 @@ fun showShortToast(@StringRes text: Int) {
 fun showLongToast(@StringRes text: Int) {
     Toast.makeText(
         applicationContext,
-        "$appName: ${applicationContext.getString(text)}",
+        applicationContext.getString(text),
         Toast.LENGTH_LONG
     ).show()
 }

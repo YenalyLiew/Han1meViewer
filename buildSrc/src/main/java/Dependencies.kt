@@ -1,7 +1,7 @@
 object Libs {
 
     object Activity {
-        const val about = "com.drakeet.about:about:2.5.1"
+        const val about = "com.drakeet.about:about:2.5.2"
     }
 
     object Core {
@@ -21,10 +21,10 @@ object Libs {
             const val baseRecyclerViewAdapterHelper3 =
                 "io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14"
             const val baseRecyclerViewAdapterHelper4 =
-                "io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.0"
-            const val refreshLayoutKernel = "io.github.scwang90:refresh-layout-kernel:2.0.5"
-            const val refreshHeaderMaterial = "io.github.scwang90:refresh-header-material:2.0.5"
-            const val refreshFooterClassics = "io.github.scwang90:refresh-footer-classics:2.0.5"
+                "io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.3"
+            const val refreshLayoutKernel = "io.github.scwang90:refresh-layout-kernel:2.1.0"
+            const val refreshHeaderMaterial = "io.github.scwang90:refresh-header-material:2.1.0"
+            const val refreshFooterClassics = "io.github.scwang90:refresh-footer-classics:2.1.0"
             const val multiType = "com.drakeet.multitype:multitype:4.3.0"
         }
     }
@@ -33,14 +33,14 @@ object Libs {
         const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
         const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
         const val lifecycleLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
-        const val roomRuntime = "androidx.room:room-runtime:2.6.0"
-        const val roomKtx = "androidx.room:room-ktx:2.6.0"
-        const val roomCompiler = "androidx.room:room-compiler:2.6.0" // ksp
-        const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:2.7.5"
-        const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:2.7.5"
+        const val roomRuntime = "androidx.room:room-runtime:2.6.1"
+        const val roomKtx = "androidx.room:room-ktx:2.6.1"
+        const val roomCompiler = "androidx.room:room-compiler:2.6.1" // ksp
+        const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:2.7.6"
+        const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:2.7.6"
         const val preferenceKtx = "androidx.preference:preference-ktx:1.2.1"
-        const val workRuntime = "androidx.work:work-runtime:2.8.1"
-        const val workRuntimeKtx = "androidx.work:work-runtime-ktx:2.8.1"
+        const val workRuntime = "androidx.work:work-runtime:2.9.0"
+        const val workRuntimeKtx = "androidx.work:work-runtime-ktx:2.9.0"
         const val startupRuntime = "androidx.startup:startup-runtime:1.1.1"
 
         object Preference {
@@ -57,7 +57,7 @@ object Libs {
     }
 
     object Parse {
-        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1"
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
         const val gson = "com.google.code.gson:gson:2.9.0"
         const val jsoup = "org.jsoup:jsoup:1.14.3"
     }
@@ -67,21 +67,22 @@ object Libs {
         const val converterGson = "com.squareup.retrofit2:converter-gson:2.9.0"
         const val converterSerialization =
             "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
+        const val okHttp = "com.squareup.okhttp3:okhttp:4.12.0"
         const val dnsOverHttps = "com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0"
     }
 
     object Pic {
-        const val coil = "io.coil-kt:coil:2.1.0"
+        const val coil = "io.coil-kt:coil:2.5.0"
         const val glide = "com.github.bumptech.glide:glide:4.16.0"
     }
 
     object Popup {
         const val xPopup = "com.github.li-xiaojun:XPopup:2.9.19"
-        const val xPopupExt = "com.github.li-xiaojun:XPopupExt:0.0.8"
+        const val xPopupExt = "com.github.li-xiaojun:XPopupExt:1.0.1"
     }
 
     object Video {
-        const val jiaoziVideoPlayer = "cn.jzvd:jiaozivideoplayer:7.7.0"
+        const val jiaoziVideoPlayer = "cn.jzvd:jiaozivideoplayer:7.7.2.3300"
     }
 
     object Permission {

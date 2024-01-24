@@ -36,10 +36,11 @@ class HanimeDownloadWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     companion object {
-        const val TAG = "hanime_download_worker"
+        const val TAG = "HanimeDownloadWorker"
 
         const val RESPONSE_INTERVAL = 500L
 
+        const val DELETE = "delete"
         const val QUALITY = "quality"
         const val DOWNLOAD_URL = "download_url"
         const val HANIME_NAME = "hanime_name"
@@ -58,13 +59,16 @@ class HanimeDownloadWorker(
     private val videoCode by inputData(VIDEO_CODE, EMPTY_STRING)
     private val coverUrl by inputData(COVER_URL, EMPTY_STRING)
 
+    private val delete by inputData(DELETE, false)
+
     private val downloadId = Random.nextInt()
     private val successId = Random.nextInt()
     private val failId = Random.nextInt()
 
     override suspend fun doWork(): Result {
+        if (delete) return Result.success()
         if (runAttemptCount > 2) {
-            return Result.failure(workDataOf(FAILED_REASON to "下載失敗三回啊三回！"))
+            return Result.failure(workDataOf(FAILED_REASON to "下載 $hanimeName 失敗多次！"))
         }
         setForeground(createForegroundInfo())
         return download()
@@ -151,23 +155,23 @@ class HanimeDownloadWorker(
                     showSuccessNotification()
                     return@withContext Result.success()
                 } else {
-                    showFailureNotification(response.message)
-                    return@withContext Result.failure(workDataOf(FAILED_REASON to response.message))
+                    Log.d("${TAG}_FailRetry", response.message)
+                    return@withContext Result.retry()
                 }
             } catch (e: Exception) {
-                // cancellation exception block 是代表用户暂停
                 if (e !is CancellationException) {
                     showFailureNotification(e.message ?: "未知下載錯誤")
                     return@withContext Result.failure(workDataOf(FAILED_REASON to e.message))
                 }
+                // cancellation exception block 是代表用户暂停
                 return@withContext Result.success()
             } finally {
-                raf?.close()
-                response?.close()
-                body?.close()
                 entity.isDownloading = false
                 Log.d(TAG, entity.toString())
                 DatabaseRepo.HanimeDownload.update(entity)
+                raf?.close()
+                response?.close()
+                body?.close()
             }
         }
     }

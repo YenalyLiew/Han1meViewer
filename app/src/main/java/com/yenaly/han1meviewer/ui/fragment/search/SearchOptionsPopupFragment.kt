@@ -240,6 +240,7 @@ class SearchOptionsPopupFragment :
                 .setYearRange(SEARCH_YEAR_RANGE_START, SEARCH_YEAR_RANGE_END)
                 .setDefaultDate(date)
                 .setTimePickerListener(object : TimePickerListener {
+                    override fun onCancel() = Unit
                     override fun onTimeChanged(date: Date) = Unit
 
                     override fun onTimeConfirm(date: Date, view: View?) {

@@ -95,21 +95,21 @@ object Parse {
         val latestReleaseList = mutableListOf<HanimeInfoModel>()
         val latestReleaseItems = latestReleaseClass?.select("div[class^=card-mobile-panel]")
         latestReleaseItems?.forEachStep2 { latestReleaseItem ->
-            latestReleaseList.add(hanimeNormalItemVer2(latestReleaseItem))
+            hanimeNormalItemVer2(latestReleaseItem)?.let(latestReleaseList::add)
         }
 
         // for latest upload
         val latestUploadList = mutableListOf<HanimeInfoModel>()
         val latestUploadItems = latestUploadClass?.select("div[class^=card-mobile-panel]")
         latestUploadItems?.forEachStep2 { latestUploadItem ->
-            latestUploadList.add(hanimeNormalItemVer2(latestUploadItem))
+            hanimeNormalItemVer2(latestUploadItem)?.let(latestUploadList::add)
         }
 
         // for chinese subtitle
         val chineseSubtitleList = mutableListOf<HanimeInfoModel>()
         val chineseSubtitleItems = chineseSubtitleClass?.select("div[class^=card-mobile-panel]")
         chineseSubtitleItems?.forEachStep2 { chineseSubtitleItem ->
-            chineseSubtitleList.add(hanimeNormalItemVer2(chineseSubtitleItem))
+            hanimeNormalItemVer2(chineseSubtitleItem)?.let(chineseSubtitleList::add)
         }
 
         // for hanime they watched
@@ -117,7 +117,7 @@ object Parse {
         val hanimeTheyWatchedItems =
             hanimeTheyWatchedClass?.select("div[class^=card-mobile-panel]")
         hanimeTheyWatchedItems?.forEachStep2 { hanimeTheyWatchedItem ->
-            hanimeTheyWatchedList.add(hanimeNormalItemVer2(hanimeTheyWatchedItem))
+            hanimeNormalItemVer2(hanimeTheyWatchedItem)?.let(hanimeTheyWatchedList::add)
         }
 
         // for hanime current
@@ -125,7 +125,7 @@ object Parse {
         val hanimeCurrentItems =
             hanimeCurrentClass?.select("div[class^=card-mobile-panel]")
         hanimeCurrentItems?.forEachStep2 { hanimeCurrentItem ->
-            hanimeCurrentList.add(hanimeNormalItemVer2(hanimeCurrentItem))
+            hanimeNormalItemVer2(hanimeCurrentItem)?.let(hanimeCurrentList::add)
         }
 
         // for hot hanime monthly
@@ -133,7 +133,7 @@ object Parse {
         val hotHanimeMonthlyItems =
             hotHanimeMonthlyClass?.select("div[class^=card-mobile-panel]")
         hotHanimeMonthlyItems?.forEachStep2 { hotHanimeMonthlyItem ->
-            hotHanimeMonthlyList.add(hanimeNormalItemVer2(hotHanimeMonthlyItem))
+            hanimeNormalItemVer2(hotHanimeMonthlyItem)?.let(hotHanimeMonthlyList::add)
         }
 
         // emit!
@@ -247,16 +247,18 @@ object Parse {
     }
 
     // 每一个正常视频单元
-    private fun hanimeNormalItemVer2(hanimeSearchItem: Element): HanimeInfoModel {
+    // #issue-38: 解析錯誤，原來是加廣告了！所以遇到無法處理的直接返回null。
+    private fun hanimeNormalItemVer2(hanimeSearchItem: Element): HanimeInfoModel? {
         val title =
             hanimeSearchItem.selectFirst("div[class=card-mobile-title]")?.text()
-                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "title") // title
+                .logIfParseNull(Parse::hanimeNormalItemVer2.name, "title") // title
         val coverUrl =
             hanimeSearchItem.select("img").getOrNull(1)?.absUrl("src")
-                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "coverUrl") // coverUrl
+                .logIfParseNull(Parse::hanimeNormalItemVer2.name, "coverUrl") // coverUrl
         val videoCode =
             hanimeSearchItem.previousElementSibling()?.absUrl("href")?.toVideoCode()
-                .throwIfParseNull(Parse::hanimeNormalItemVer2.name, "videoCode") // videoCode
+                .logIfParseNull(Parse::hanimeNormalItemVer2.name, "videoCode") // videoCode
+        if (title == null || coverUrl == null || videoCode == null) return null
         val durationAndViews = hanimeSearchItem.select("div[class=card-mobile-duration]")
         val mDuration = durationAndViews.getOrNull(0)?.text() // 改了
         val views = durationAndViews.getOrNull(1)?.text() // 改了
@@ -274,13 +276,14 @@ object Parse {
     }
 
     // 每一个简化版视频单元
-    private fun hanimeSimplifiedItem(hanimeSearchItem: Element): HanimeInfoModel {
+    private fun hanimeSimplifiedItem(hanimeSearchItem: Element): HanimeInfoModel? {
         val videoCode = hanimeSearchItem.attr("href").toVideoCode()
-            .throwIfParseNull(Parse::hanimeSimplifiedItem.name, "videoCode")
+            .logIfParseNull(Parse::hanimeSimplifiedItem.name, "videoCode")
         val coverUrl = hanimeSearchItem.selectFirst("img")?.attr("src")
-            .throwIfParseNull(Parse::hanimeSimplifiedItem.name, "coverUrl")
+            .logIfParseNull(Parse::hanimeSimplifiedItem.name, "coverUrl")
         val title = hanimeSearchItem.selectFirst("div[class=home-rows-videos-title]")?.text()
-            .throwIfParseNull(Parse::hanimeSimplifiedItem.name, "title")
+            .logIfParseNull(Parse::hanimeSimplifiedItem.name, "title")
+        if (videoCode == null || coverUrl == null || title == null) return null
         return HanimeInfoModel(
             title = title,
             coverUrl = coverUrl,
@@ -300,7 +303,7 @@ object Parse {
             return PageLoadingState.NoMoreData
         } else {
             hanimeSearchItems.forEachStep2 { hanimeSearchItem ->
-                hanimeSearchList.add(hanimeNormalItemVer2(hanimeSearchItem))
+                hanimeNormalItemVer2(hanimeSearchItem)?.let(hanimeSearchList::add)
             }
         }
         Log.d("search_result", "$hanimeSearchList")
@@ -316,7 +319,7 @@ object Parse {
         if (hanimeSearchItems.isEmpty()) {
             return PageLoadingState.NoMoreData
         } else hanimeSearchItems.forEach { hanimeSearchItem ->
-            hanimeSearchList.add(hanimeSimplifiedItem(hanimeSearchItem))
+            hanimeSimplifiedItem(hanimeSearchItem)?.let(hanimeSearchList::add)
         }
         return PageLoadingState.Success(hanimeSearchList)
     }
@@ -456,7 +459,7 @@ object Parse {
             } else {
                 children?.forEachStep2 { each ->
                     val item = each.select("div[class^=card-mobile-panel]")[0]
-                    relatedAnimeList.add(hanimeNormalItemVer2(item))
+                    hanimeNormalItemVer2(item)?.let(relatedAnimeList::add)
                 }
             }
         }
@@ -850,7 +853,11 @@ object Parse {
      * 得到 Element 的 child，如果 index 超出範圍，就返回 null
      */
     private fun Element.childOrNull(index: Int): Element? {
-        return if (index in 0 until childrenSize()) child(index) else null
+        return try {
+            child(index)
+        } catch (e: IndexOutOfBoundsException) {
+            null
+        }
     }
 
     /**
