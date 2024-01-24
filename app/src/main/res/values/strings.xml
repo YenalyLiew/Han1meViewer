@@ -176,4 +176,6 @@
     <string name="ranking_today">本日排行</string>
     <string name="ranking_this_month">本月排行</string>
     <string name="long_press_speed_not_supported">您的設備暫時不支援長按快進</string>
+    <string name="start_all">全部開始</string>
+    <string name="pause_all">全部暫停</string>
 </resources>

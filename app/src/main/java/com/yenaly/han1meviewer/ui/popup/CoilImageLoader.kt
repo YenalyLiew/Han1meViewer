@@ -34,7 +34,7 @@ internal class CoilImageLoader(@DrawableRes private val errImgRes: Int = 0) : XP
         uri: Any,
         popupView: ImageViewerPopupView,
         snapshot: PhotoView,
-        progressBar: ProgressBar
+        progressBar: ProgressBar,
     ): View {
         progressBar.isVisible = true
         val photoView = PhotoView(popupView.context).apply {
@@ -78,7 +78,7 @@ internal class CoilImageLoader(@DrawableRes private val errImgRes: Int = 0) : XP
 
     @OptIn(ExperimentalCoilApi::class)
     override fun getImageFile(context: Context, uri: Any): File? {
-        return context.imageLoader.diskCache?.get(uri.toString())?.use { snapshot ->
+        return context.imageLoader.diskCache?.openSnapshot(uri.toString())?.use { snapshot ->
             snapshot.data.toFile()
         }
     }

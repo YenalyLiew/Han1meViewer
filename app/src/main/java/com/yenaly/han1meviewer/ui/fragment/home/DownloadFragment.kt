@@ -9,7 +9,6 @@ import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
-import com.yenaly.yenaly_libs.utils.view.addOnTabSelectedListener
 import com.yenaly.yenaly_libs.utils.view.attach
 import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
 
@@ -39,13 +38,6 @@ class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, Downloa
 
         binding.tabLayout.attach(binding.viewPager) { tab, position ->
             tab.setText(tabNameArray[position])
-        }
-
-        binding.tabLayout.addOnTabSelectedListener {
-            when (it.position) {
-                0 -> binding.toolbar.menu.setGroupVisible(0, false)
-                1 -> binding.toolbar.menu.setGroupVisible(0, true)
-            }
         }
     }
 

@@ -13,6 +13,7 @@ import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.DATE_TIME_FORMAT
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadedBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
@@ -96,11 +97,11 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
                 context.showAlertDialog {
                     setTitle("你確定要刪除嗎？")
                     setMessage("你現在正要準備刪除" + "\n" + file.name)
-                    setPositiveButton("沒錯") { _, _ ->
+                    setPositiveButton(R.string.confirm) { _, _ ->
                         if (file.exists()) file.delete()
                         fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
                     }
-                    setNegativeButton("算了", null)
+                    setNegativeButton(R.string.cancel, null)
                 }
             }
             viewHolder.binding.btnLocalPlayback.setOnClickListener {
@@ -110,10 +111,10 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
                     context.showAlertDialog {
                         setTitle("影片不存在")
                         setMessage("影片已被刪除或移動，是否刪除該條目？")
-                        setPositiveButton("刪除") { _, _ ->
+                        setPositiveButton(R.string.delete) { _, _ ->
                             fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
                         }
-                        setNegativeButton("取消", null)
+                        setNegativeButton(R.string.cancel, null)
                     }
                 })
             }

@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnLongClickListener
+import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -36,6 +37,7 @@ import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
+import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.adapter.HKeyframeRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.VideoSpeedAdapter
 import com.yenaly.han1meviewer.util.notNull
@@ -166,6 +168,7 @@ class HJzvdStd @JvmOverloads constructor(
     private lateinit var tvSpeed: TextView
     private lateinit var tvKeyframe: TextView
     private lateinit var tvTimer: TextView
+    private lateinit var btnGoHome: ImageView
 
     var hKeyframe: HKeyframeEntity? = null
         set(value) {
@@ -250,9 +253,11 @@ class HJzvdStd @JvmOverloads constructor(
         tvSpeed = findViewById(R.id.tv_speed)
         tvKeyframe = findViewById(R.id.tv_keyframe)
         tvTimer = findViewById(R.id.tv_timer)
+        btnGoHome = findViewById(R.id.go_home)
         tvSpeed.setOnClickListener(this)
         tvKeyframe.setOnClickListener(this)
         tvKeyframe.setOnLongClickListener(this)
+        btnGoHome.setOnClickListener(this)
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
@@ -308,6 +313,7 @@ class HJzvdStd @JvmOverloads constructor(
         tvKeyframe.isVisible = false
         titleTextView.isInvisible = true
         tvTimer.isInvisible = true
+        btnGoHome.isVisible = true
     }
 
     override fun setScreenFullscreen() {
@@ -315,6 +321,7 @@ class HJzvdStd @JvmOverloads constructor(
         tvSpeed.isVisible = true
         if (isHKeyframeEnabled) tvKeyframe.isVisible = true
         titleTextView.isVisible = true
+        // btnGoHome.isVisible = false
     }
 
     override fun clickBack() {
@@ -339,6 +346,7 @@ class HJzvdStd @JvmOverloads constructor(
         when (v.id) {
             R.id.tv_speed -> clickSpeed()
             R.id.tv_keyframe -> onKeyframeClickListener?.invoke(v)
+            R.id.go_home -> clickGoHome()
         }
     }
 
@@ -586,6 +594,12 @@ class HJzvdStd @JvmOverloads constructor(
             this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n請長按🥵添加關鍵H幀"
         )
         popup.showAtLocation(textureViewContainer, Gravity.END, 0, 0)
+    }
+
+    fun clickGoHome() {
+        VideoActivity.currentVideoActivitySet.forEach {
+            it.finish()
+        }
     }
 
     /**

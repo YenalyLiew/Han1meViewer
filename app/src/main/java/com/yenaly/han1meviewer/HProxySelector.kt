@@ -43,6 +43,24 @@ class HProxySelector : ProxySelector() {
         fun validatePort(port: Int): Boolean {
             return port in 0..65535
         }
+
+        // #issue-39: 代理沒有應用到 WebView 上，只能通過此種方式來全局代理。
+        fun rebuildNetwork() {
+            val properties = System.getProperties()
+            when (Preferences.proxyType) {
+                TYPE_HTTP, TYPE_SOCKS -> {
+                    properties["proxySet"] = true.toString()
+                    properties["proxyHost"] = Preferences.proxyIp
+                    properties["proxyPort"] = Preferences.proxyPort.toString()
+                }
+
+                else -> {
+                    properties["proxySet"] = false.toString()
+                    properties["proxyHost"] = ""
+                    properties["proxyPort"] = ""
+                }
+            }
+        }
     }
 
     private fun updateProxy() {

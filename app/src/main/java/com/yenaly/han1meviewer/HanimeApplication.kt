@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer
 
+import android.util.Log
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkInfo
@@ -35,6 +36,7 @@ class HanimeApplication : YenalyApplication() {
     override fun onCreate() {
         super.onCreate()
         DynamicColors.applyToActivitiesIfAvailable(this)
+        HProxySelector.rebuildNetwork()
 
         val channel = NotificationChannelCompat.Builder(
             DOWNLOAD_NOTIFICATION_CHANNEL,
@@ -50,7 +52,10 @@ class HanimeApplication : YenalyApplication() {
                         WorkInfo.State.FAILED -> {
                             val err =
                                 workInfo.outputData.getString(HanimeDownloadWorker.FAILED_REASON)
-                            err?.let(::showShortToast)
+                            err?.let {
+                                showShortToast(it)
+                                Log.d("DownloadWorkInfo", it)
+                            }
                         }
 
                         else -> Unit

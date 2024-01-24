@@ -123,6 +123,14 @@
             android:scaleType="centerInside"
             android:src="@drawable/jz_click_back_selector" />
 
+        <ImageView
+            android:id="@+id/go_home"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/outline_home_24" />
+
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"

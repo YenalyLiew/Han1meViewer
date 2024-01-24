@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
 
     override fun initData(savedInstanceState: Bundle?) {
         (activity as MainActivity).setupToolbar()
+
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         adapter.setStateViewLayout(R.layout.layout_empty_view)
@@ -55,7 +57,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menu.clear()
-                menuInflater.inflate(R.menu.menu_download_toolbar, menu)
+                menuInflater.inflate(R.menu.menu_downloaded_toolbar, menu)
                 menu.findItem(fv.currentSortOptionId).isChecked = true
             }
 
@@ -64,7 +66,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
                 menuItem.isChecked = true
                 return loadAllSortedDownloadedHanime()
             }
-        }, viewLifecycleOwner)
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     // #issue-18: 添加下载区排序

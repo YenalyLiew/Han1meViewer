@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toFile
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -25,11 +26,14 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadingBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
+import com.yenaly.han1meviewer.util.await
 import com.yenaly.han1meviewer.util.createDownloadName
 import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.utils.formatFileSize
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * @project Han1meViewer
@@ -98,8 +102,10 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                 val item = getItem(pos).notNull()
                 if (item.isDownloading) {
                     item.isDownloading = false
-                    WorkManager.getInstance(context.applicationContext)
-                        .cancelUniqueWorkAndPause(item)
+                    fragment.viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        WorkManager.getInstance(context.applicationContext)
+                            .cancelUniqueWorkAndPause(item)
+                    }
                 } else {
                     item.isDownloading = true
                     continueWork(item)
@@ -116,18 +122,20 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                             item.title, item.quality
                         )
                     )
-                    setPositiveButton("沒錯") { _, _ ->
-                        WorkManager.getInstance(context.applicationContext)
-                            .cancelUniqueWorkAndDelete(item)
+                    setPositiveButton(R.string.confirm) { _, _ ->
+                        fragment.viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                            WorkManager.getInstance(context.applicationContext)
+                                .cancelUniqueWorkAndDelete(item)
+                        }
                     }
-                    setNegativeButton("算了", null)
+                    setNegativeButton(R.string.cancel, null)
                 }
             }
         }
     }
 
 
-    private fun MaterialButton.handleStartButton(isDownloading: Boolean) {
+    fun MaterialButton.handleStartButton(isDownloading: Boolean) {
         if (isDownloading) {
             setText(R.string.pause)
             setIconResource(R.drawable.ic_baseline_pause_24)
@@ -137,7 +145,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         }
     }
 
-    private fun continueWork(entity: HanimeDownloadEntity) {
+    fun continueWork(entity: HanimeDownloadEntity) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -158,21 +166,41 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
             .enqueue()
     }
 
-    private fun WorkManager.cancelUniqueWorkAndDelete(
+    private suspend fun WorkManager.cancelUniqueWorkAndDelete(
         entity: HanimeDownloadEntity,
         workName: String = entity.videoCode,
     ) {
-        cancelUniqueWork(workName)
+        cancelOrReplaceUniqueWork(entity, workName)
         val file = entity.videoUri.toUri().toFile()
         if (file.exists()) file.delete()
         fragment.viewModel.deleteDownloadHanimeBy(entity.videoCode, entity.quality)
     }
 
-    private fun WorkManager.cancelUniqueWorkAndPause(
+    suspend fun WorkManager.cancelUniqueWorkAndPause(
         entity: HanimeDownloadEntity,
         workName: String = entity.videoCode,
     ) {
-        cancelUniqueWork(workName)
+        cancelOrReplaceUniqueWork(entity, workName)
         fragment.viewModel.updateDownloadHanime(entity)
+    }
+
+    private suspend fun WorkManager.cancelOrReplaceUniqueWork(
+        entity: HanimeDownloadEntity,
+        workName: String = entity.videoCode,
+    ) {
+        val op = cancelUniqueWork(workName)
+        try {
+            op.result.await()
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            // 必須另闢蹊徑，通過替換的方式來刪除，要不然無法真正地取消。
+            val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
+                .addTag(HanimeDownloadWorker.TAG)
+                .setInputData(workDataOf(HanimeDownloadWorker.DELETE to true))
+                .build()
+            WorkManager.getInstance(context.applicationContext)
+                .beginUniqueWork(workName, ExistingWorkPolicy.REPLACE, downloadRequest)
+                .enqueue()
+        }
     }
 }

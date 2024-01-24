@@ -17,25 +17,25 @@
             android:layout_marginTop="8dp"
             android:elevation="16dp" />
 
-
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/search_srl"
+        <com.drake.statelayout.StateLayout
+            android:id="@+id/state"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingHorizontal="8dp"
-            android:paddingTop="68dp"
-            android:paddingBottom="8dp">
+            android:layout_height="match_parent">
 
-            <com.scwang.smart.refresh.header.MaterialHeader
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/search_srl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="68dp" />
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="68dp"
+                android:paddingBottom="8dp">
 
-            <com.drake.statelayout.StateLayout
-                android:id="@+id/state"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                <com.scwang.smart.refresh.header.MaterialHeader
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="68dp" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/search_rv"
@@ -43,13 +43,14 @@
                     android:layout_height="match_parent"
                     android:clipToPadding="false" />
 
-            </com.drake.statelayout.StateLayout>
 
-            <com.scwang.smart.refresh.footer.ClassicsFooter
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <com.scwang.smart.refresh.footer.ClassicsFooter
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+        </com.drake.statelayout.StateLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

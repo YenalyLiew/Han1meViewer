@@ -5,8 +5,8 @@ import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("plugin.serialization")
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
-    kotlin("plugin.serialization") version "1.9.20"
 }
 
 android {
@@ -17,7 +17,7 @@ android {
         minSdk = Config.minSdk
         targetSdk = Config.targetSdk
         versionCode = createVersionCode()
-        versionName = versionCode.createVersionName(major = 0, minor = 12, patch = 4)
+        versionName = versionCode.createVersionName(major = 0, minor = 12, patch = 5)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

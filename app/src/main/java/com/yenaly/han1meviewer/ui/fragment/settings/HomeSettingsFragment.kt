@@ -322,6 +322,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                             putInt(PROXY_PORT, port)
                         }
                         // 重建相关联的所有网络请求
+                        HProxySelector.rebuildNetwork()
                         HanimeNetwork.rebuildNetwork()
                         proxyPref.summary = generateProxySummary(proxyType, ip, port)
                         dialog.dismiss()
