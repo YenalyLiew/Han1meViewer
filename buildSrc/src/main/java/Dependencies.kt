@@ -22,9 +22,9 @@ object Libs {
                 "io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14"
             const val baseRecyclerViewAdapterHelper4 =
                 "io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.3"
-            const val refreshLayoutKernel = "io.github.scwang90:refresh-layout-kernel:2.1.0"
-            const val refreshHeaderMaterial = "io.github.scwang90:refresh-header-material:2.1.0"
-            const val refreshFooterClassics = "io.github.scwang90:refresh-footer-classics:2.1.0"
+            const val refreshLayoutKernel = "io.github.scwang90:refresh-layout-kernel:2.0.5"
+            const val refreshHeaderMaterial = "io.github.scwang90:refresh-header-material:2.0.5"
+            const val refreshFooterClassics = "io.github.scwang90:refresh-footer-classics:2.0.5"
             const val multiType = "com.drakeet.multitype:multitype:4.3.0"
         }
     }
