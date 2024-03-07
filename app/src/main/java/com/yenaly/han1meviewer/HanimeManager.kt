@@ -40,7 +40,11 @@ internal fun getHanimeVideoLink(videoCode: String) = HANIME_BASE_URL + "watch?v=
 internal fun getHanimeVideoDownloadLink(videoCode: String) =
     HANIME_BASE_URL + "download?v=" + videoCode
 
-internal val videoUrlRegex = Regex("""hanime1\.me/watch\?v=(\d+)""")
+internal val videoUrlRegex = when (HANIME_BASE_URL) {
+    HANIME_MAIN_BASE_URL -> Regex("""hanime1\.me/watch\?v=(\d+)""")
+    HANIME_ALTER_BASE_URL -> Regex("""hanime1\.com/watch\?v=(\d+)""")
+    else -> throw IllegalStateException("This URL has not been handled.")
+}
 
 internal fun String.toVideoCode() = videoUrlRegex.find(this)?.groupValues?.get(1)
 

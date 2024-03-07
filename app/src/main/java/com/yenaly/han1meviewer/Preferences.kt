@@ -71,6 +71,10 @@ internal object Preferences {
     val videoLanguage: String
         get() = preferenceSp.getString(HomeSettingsFragment.VIDEO_LANGUAGE, "zh-CHT") ?: "zh-CHT"
 
+    val baseUrl: String
+        get() = preferenceSp.getString(HomeSettingsFragment.DOMAIN_NAME, HANIME_MAIN_BASE_URL)
+            ?: HANIME_MAIN_BASE_URL
+
     // 關鍵H幀 相關
 
     val whenCountdownRemind: Int

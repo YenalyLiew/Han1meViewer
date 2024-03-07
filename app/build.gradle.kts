@@ -17,7 +17,7 @@ android {
         minSdk = Config.minSdk
         targetSdk = Config.targetSdk
         versionCode = createVersionCode()
-        versionName = versionCode.createVersionName(major = 0, minor = 12, patch = 5)
+        versionName = versionCode.createVersionName(major = 0, minor = 12, patch = 6)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -112,7 +112,6 @@ dependencies {
     implementation(Libs.Core.RecyclerView.baseRecyclerViewAdapterHelper4)
     implementation(Libs.Core.TextView.expandableTextView)
     implementation(Libs.Spannable.spannableX)
-    implementation(Libs.Jetpack.Preference.materialPreference)
     implementation(Libs.Activity.about)
     implementation(Libs.View.stateLayout)
 
@@ -122,8 +121,4 @@ dependencies {
 
     androidTestImplementation(Libs.Test.testJunit)
     androidTestImplementation(Libs.Test.testEspressoCore)
-}
-
-configurations.all {
-    exclude(group = "androidx.appcompat", module = "appcompat")
 }

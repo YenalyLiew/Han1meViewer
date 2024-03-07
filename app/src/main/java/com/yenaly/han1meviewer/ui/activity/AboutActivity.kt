@@ -72,7 +72,8 @@ class AboutActivity : AbsAboutActivity() {
                 Card(
                     """
                 Hanime1的非官方客戶端，提供了等同Hanime1網站的大部分功能。
-                而且添加了一些独特的功能。
+                并且提供了一些獨特的功能。
+                請注意：本軟體僅供學習使用，軟體作者與網站擁有者無關。
             """.trimIndent()
                 )
             )

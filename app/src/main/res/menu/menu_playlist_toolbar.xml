@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/tb_open_drawer"
         android:icon="@drawable/baseline_format_list_bulleted_24"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/open_playlist_drawer" />
 </menu>
