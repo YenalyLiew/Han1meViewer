@@ -14,8 +14,9 @@ import android.webkit.WebViewClient
 import androidx.core.os.BuildCompat.PrereleaseSdkCheck
 import androidx.databinding.DataBindingUtil
 import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.HANIME_BASE_URL
+import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
 import com.yenaly.han1meviewer.HANIME_LOGIN_URL
+import com.yenaly.han1meviewer.HANIME_MAIN_BASE_URL
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.han1meviewer.databinding.ActivityLoginBinding
@@ -97,7 +98,9 @@ class LoginActivity : FrameActivity() {
                     view: WebView,
                     request: WebResourceRequest,
                 ): Boolean {
-                    if (request.isRedirect && request.url.toString() == HANIME_BASE_URL) {
+                    val isSameUrl = request.url.toString() == HANIME_MAIN_BASE_URL ||
+                            request.url.toString() == HANIME_ALTER_BASE_URL
+                    if (request.isRedirect && isSameUrl) {
                         val url = request.url
                         val cookieManager = CookieManager.getInstance().getCookie(url.host)
                         Log.d("login_cookie", cookieManager.toString())

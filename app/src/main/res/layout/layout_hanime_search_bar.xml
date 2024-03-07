@@ -42,7 +42,7 @@
             android:inputType="text"
             android:singleLine="true"
             android:textColor="@color/black"
-            android:textColorHint="@color/material_grey_700" />
+            android:textColorHint="@color/grey_700" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tag"

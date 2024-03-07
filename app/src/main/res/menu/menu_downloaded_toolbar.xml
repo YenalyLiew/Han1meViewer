@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/tb_sort"
         android:icon="@drawable/baseline_sort_24"
-        android:showAsAction="ifRoom"
-        android:title="@string/sort_option">
+        android:title="@string/sort_option"
+        app:showAsAction="ifRoom">
 
         <menu>
 

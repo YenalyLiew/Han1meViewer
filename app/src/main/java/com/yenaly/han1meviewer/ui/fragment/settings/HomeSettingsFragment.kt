@@ -18,6 +18,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HA1_GITHUB_FORUM_URL
 import com.yenaly.han1meviewer.HA1_GITHUB_ISSUE_URL
+import com.yenaly.han1meviewer.HA1_GITHUB_RELEASES_URL
+import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
+import com.yenaly.han1meviewer.HANIME_ALTER_HOSTNAME
+import com.yenaly.han1meviewer.HANIME_MAIN_BASE_URL
+import com.yenaly.han1meviewer.HANIME_MAIN_HOSTNAME
 import com.yenaly.han1meviewer.HProxySelector
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
@@ -26,6 +31,7 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
+import com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
 import com.yenaly.han1meviewer.util.checkNeedUpdate
 import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
@@ -42,7 +48,6 @@ import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
-import rikka.preference.SimpleMenuPreference
 import kotlin.concurrent.thread
 
 /**
@@ -69,10 +74,11 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         const val PROXY_PORT = "proxy_port"
         const val SUBMIT_BUG = "submit_bug"
         const val FORUM = "forum"
+        const val DOMAIN_NAME = "domain_name"
     }
 
     private val videoLanguage
-            by safePreference<SimpleMenuPreference>(VIDEO_LANGUAGE)
+            by safePreference<MaterialDialogPreference>(VIDEO_LANGUAGE)
     private val playerSettings
             by safePreference<Preference>(PLAYER_SETTINGS)
     private val hKeyframeSettings
@@ -91,10 +97,14 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             by safePreference<Preference>(SUBMIT_BUG)
     private val forum
             by safePreference<Preference>(FORUM)
+    private val domainName
+            by safePreference<MaterialDialogPreference>(DOMAIN_NAME)
 
     private val proxyDialog by unsafeLazy {
         ProxyDialog(proxy, R.layout.dialog_proxy)
     }
+
+    private var checkUpdateTimes = 0
 
     override fun onStart() {
         super.onStart()
@@ -114,11 +124,11 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 if (newValue != Preferences.videoLanguage) {
                     requireContext().showAlertDialog {
                         setTitle("注意！")
-                        setMessage("修改影片語言需要重新程式")
-                        setPositiveButton("確認") { _, _ ->
+                        setMessage("修改影片語言需要重啟程式")
+                        setPositiveButton(R.string.confirm) { _, _ ->
                             ActivitiesManager.restart(killProcess = false)
                         }
-                        setNegativeButton("取消", null)
+                        setNegativeButton(R.string.cancel, null)
                     }
                 }
                 return@setOnPreferenceChangeListener true
@@ -221,6 +231,25 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             }
 
         }
+        domainName.apply {
+            entries = arrayOf(HANIME_MAIN_HOSTNAME, HANIME_ALTER_HOSTNAME)
+            entryValues = arrayOf(HANIME_MAIN_BASE_URL, HANIME_ALTER_BASE_URL)
+            if (value == null) setValueIndex(0)
+
+            setOnPreferenceChangeListener { _, newValue ->
+                if (newValue != Preferences.baseUrl) {
+                    requireContext().showAlertDialog {
+                        setTitle("注意！")
+                        setMessage("修改域名需要重啟程式")
+                        setPositiveButton(R.string.confirm) { _, _ ->
+                            ActivitiesManager.restart(killProcess = false)
+                        }
+                        setNegativeButton(R.string.cancel, null)
+                    }
+                }
+                return@setOnPreferenceChangeListener true
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -234,9 +263,12 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 viewModel.versionFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
+                            checkUpdateTimes++
                             update.setSummary(R.string.check_update_failed)
                             update.setOnPreferenceClickListener {
-                                viewModel.getLatestVersion()
+                                if (checkUpdateTimes > 2) {
+                                    showUpdateFailedDialog()
+                                } else viewModel.getLatestVersion()
                                 return@setOnPreferenceClickListener true
                             }
                         }
@@ -262,6 +294,23 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                     }
                 }
             }
+        }
+    }
+
+    private fun showUpdateFailedDialog() {
+        requireContext().showAlertDialog {
+            setTitle("別檢查了！別檢查了！")
+            setMessage(
+                """
+                更新介面走的是 Github，所以每天有下載限制，如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。
+                
+                還有我竟然發現有人竟然花錢買這軟體，真沒必要哈！
+            """.trimIndent()
+            )
+            setPositiveButton("帶我去下載") { _, _ ->
+                browse(HA1_GITHUB_RELEASES_URL)
+            }
+            setNegativeButton(R.string.cancel, null)
         }
     }
 

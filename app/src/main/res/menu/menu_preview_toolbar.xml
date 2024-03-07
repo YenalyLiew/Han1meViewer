@@ -6,6 +6,6 @@
         android:id="@+id/tb_comment"
         android:icon="@drawable/ic_baseline_comment_24"
         android:title="@string/comment"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />
 
 </menu>

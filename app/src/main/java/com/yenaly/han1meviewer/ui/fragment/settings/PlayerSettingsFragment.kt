@@ -8,8 +8,8 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.HJzvdStd
+import com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
-import rikka.preference.SimpleMenuPreference
 
 /**
  * @project Han1meViewer
@@ -29,11 +29,11 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
     private val showBottomProgressPref
             by safePreference<SwitchPreferenceCompat>(SHOW_BOTTOM_PROGRESS)
     private val playerSpeed
-            by safePreference<SimpleMenuPreference>(PLAYER_SPEED)
+            by safePreference<MaterialDialogPreference>(PLAYER_SPEED)
     private val slideSensitivity
             by safePreference<SeekBarPreference>(SLIDE_SENSITIVITY)
     private val longPressSpeedTimesPref
-            by safePreference<SimpleMenuPreference>(LONG_PRESS_SPEED_TIMES)
+            by safePreference<MaterialDialogPreference>(LONG_PRESS_SPEED_TIMES)
 
     override fun onStart() {
         super.onStart()

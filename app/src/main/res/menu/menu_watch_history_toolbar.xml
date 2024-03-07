@@ -5,13 +5,13 @@
     <item
         android:id="@+id/tb_delete"
         android:icon="@drawable/ic_baseline_delete_24"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/delete" />
 
     <item
         android:id="@+id/tb_help"
         android:icon="@drawable/ic_baseline_help_24"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/help" />
 
 </menu>

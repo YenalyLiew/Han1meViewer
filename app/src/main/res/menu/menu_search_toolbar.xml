@@ -5,5 +5,5 @@
         android:id="@+id/tb_cancel_all_tags"
         android:icon="@drawable/ic_baseline_cancel_24"
         android:title="@string/cancel_all_tags"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
 </menu>

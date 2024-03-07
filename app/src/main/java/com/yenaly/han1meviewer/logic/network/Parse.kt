@@ -674,7 +674,7 @@ object Parse {
     fun playlists(body: String): WebsiteState<PlaylistsModel> {
         val parseBody = Jsoup.parse(body).body()
         val csrfToken = parseBody.selectFirst("input[name=_token]")?.attr("value")
-        val lists = parseBody.select("div[class~=single-playlist-wrapper]")
+        val lists = parseBody.select("div[class~=single-user-playlist]")
         val playlists = mutableListOf<PlaylistsModel.Playlist>()
         lists.forEach {
             val listCode = it.childOrNull(0)?.absUrl("href")?.substringAfter('=')
