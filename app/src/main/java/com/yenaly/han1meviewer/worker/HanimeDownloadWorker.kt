@@ -6,6 +6,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import androidx.work.*
 import com.yenaly.han1meviewer.*
@@ -52,6 +53,8 @@ class HanimeDownloadWorker(
         const val PROGRESS = "progress"
         const val FAILED_REASON = "failed_reason"
     }
+
+    private val notificationManager = NotificationManagerCompat.from(context)
 
     private val hanimeName by inputData(HANIME_NAME, EMPTY_STRING)
     private val downloadUrl by inputData(DOWNLOAD_URL, EMPTY_STRING)

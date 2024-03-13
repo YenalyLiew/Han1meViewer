@@ -7,12 +7,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BuildCompat.PrereleaseSdkCheck
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
 import com.yenaly.han1meviewer.HANIME_LOGIN_URL
@@ -20,14 +26,22 @@ import com.yenaly.han1meviewer.HANIME_MAIN_BASE_URL
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.han1meviewer.databinding.ActivityLoginBinding
+import com.yenaly.han1meviewer.logic.NetworkRepo
+import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.login
 import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
 import com.yenaly.yenaly_libs.utils.SystemStatusUtil
+import com.yenaly.yenaly_libs.utils.showShortToast
+import com.yenaly.yenaly_libs.utils.unsafeLazy
+import kotlinx.coroutines.launch
 
 class LoginActivity : FrameActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+
+
+    private val dialog by unsafeLazy { LoginDialog(R.layout.dialog_login) }
 
     override fun setUiStyle() {
         SystemStatusUtil.fullScreen(window, true)
@@ -111,7 +125,81 @@ class LoginActivity : FrameActivity() {
                     }
                     return super.shouldOverrideUrlLoading(view, request)
                 }
+
+                @Suppress("OVERRIDE_DEPRECATION")
+                override fun onReceivedError(
+                    view: WebView?,
+                    errorCode: Int,
+                    description: String?,
+                    failingUrl: String?,
+                ) {
+                    binding.srlLogin.finishRefresh()
+                    dialog.show()
+                }
             }
+        }
+    }
+
+    inner class LoginDialog(@LayoutRes layoutRes: Int) {
+        private val etUsername: TextInputEditText
+        private val etPassword: TextInputEditText
+
+        private val dialog: AlertDialog
+
+        private val username get() = etUsername.text?.toString().orEmpty()
+        private val password get() = etPassword.text?.toString().orEmpty()
+
+        init {
+            val view = View.inflate(this@LoginActivity, layoutRes, null)
+            etUsername = view.findViewById(R.id.et_username)
+            etPassword = view.findViewById(R.id.et_password)
+            dialog = MaterialAlertDialogBuilder(this@LoginActivity)
+                .setView(view)
+                .setCancelable(false)
+                .setTitle(R.string.try_login_here)
+                .setPositiveButton(R.string.login, null)
+                .setNegativeButton(R.string.cancel, null)
+                .create()
+            dialog.setOnShowListener {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                    handleLogin()
+                }
+            }
+        }
+
+        private fun handleLogin() {
+            lifecycleScope.launch {
+                NetworkRepo.login(username, password).collect { state ->
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled =
+                        state !is WebsiteState.Loading
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled =
+                        state !is WebsiteState.Loading
+                    when (state) {
+                        WebsiteState.Loading -> Unit
+
+                        is WebsiteState.Error -> {
+                            state.throwable.printStackTrace()
+                            if (state.throwable is IllegalStateException) {
+                                showShortToast(R.string.account_or_password_wrong)
+                            } else {
+                                showShortToast(R.string.login_failed)
+                            }
+                        }
+
+                        is WebsiteState.Success -> {
+                            login(state.info)
+                            setResult(RESULT_OK)
+                            dialog.dismiss()
+                            showShortToast(R.string.login_successful)
+                            finish()
+                        }
+                    }
+                }
+            }
+        }
+
+        fun show() {
+            dialog.show()
         }
     }
 }

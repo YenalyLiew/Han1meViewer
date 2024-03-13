@@ -24,6 +24,14 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
 
+        <action
+            android:id="@+id/action_homeSettingsFragment_to_networkSettingsFragment"
+            app:destination="@id/networkSettingsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+
     </fragment>
 
     <fragment
@@ -57,5 +65,9 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
     </fragment>
+
+    <fragment
+        android:id="@+id/networkSettingsFragment"
+        android:name="com.yenaly.han1meviewer.ui.fragment.settings.NetworkSettingsFragment" />
 
 </navigation>

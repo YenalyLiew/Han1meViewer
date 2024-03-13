@@ -1,17 +1,10 @@
 package com.yenaly.han1meviewer.logic.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.yenaly.han1meviewer.HProxySelector
-import com.yenaly.han1meviewer.Preferences.loginCookie
 import com.yenaly.han1meviewer.USER_AGENT
-import com.yenaly.han1meviewer.cookieMap
-import com.yenaly.han1meviewer.util.toCookieList
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
 import okhttp3.Call
-import okhttp3.Cookie
-import okhttp3.CookieJar
-import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -26,6 +19,12 @@ import kotlin.coroutines.resumeWithException
  * @time 2022/06/08 008 22:35
  */
 object ServiceCreator {
+
+    // 怪不得無法更新呢！
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
+
     inline fun <reified T> create(baseUrl: String): T = Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(okHttpClient)
@@ -34,7 +33,7 @@ object ServiceCreator {
 
     inline fun <reified T> createVersion(): T = Retrofit.Builder()
         .baseUrl("https://api.github.com/")
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
         .create(T::class.java)
 
@@ -56,24 +55,17 @@ object ServiceCreator {
      */
     private fun buildOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val request =
                     chain.request().newBuilder().addHeader("User-Agent", USER_AGENT).build()
                 return@addInterceptor chain.proceed(request)
             }
-            .cookieJar(object : CookieJar {
-                override fun loadForRequest(url: HttpUrl): List<Cookie> {
-                    return cookieMap?.get(url.host) ?: loginCookie.toCookieList(url.host)
-                }
-
-                override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-                    cookieMap?.put(url.host, cookies)
-                }
-            })
+            .cookieJar(HCookieJar())
             .proxySelector(HProxySelector())
+            .dns(HDns())
             .build()
     }
 

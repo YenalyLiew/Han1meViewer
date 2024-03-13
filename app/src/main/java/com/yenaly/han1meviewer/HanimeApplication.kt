@@ -9,6 +9,7 @@ import com.google.android.material.color.DynamicColors
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.yenaly.han1meviewer.logic.network.HProxySelector
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyApplication
 import com.yenaly.yenaly_libs.utils.showShortToast
@@ -42,7 +43,7 @@ class HanimeApplication : YenalyApplication() {
             DOWNLOAD_NOTIFICATION_CHANNEL,
             NotificationManagerCompat.IMPORTANCE_HIGH
         ).setName("Hanime Download").build()
-        notificationManager.createNotificationChannel(channel)
+        NotificationManagerCompat.from(this).createNotificationChannel(channel)
 
         WorkManager.getInstance(this)
             .getWorkInfosByTagLiveData(HanimeDownloadWorker.TAG)

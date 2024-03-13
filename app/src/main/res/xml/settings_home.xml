@@ -33,16 +33,10 @@
 
     <PreferenceCategory app:title="@string/network">
 
-        <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
-            app:icon="@drawable/baseline_link_24"
-            app:key="domain_name"
-            app:title="@string/domain_name"
-            app:useSimpleSummaryProvider="true" />
-
         <Preference
             app:icon="@drawable/ic_baseline_language_24"
-            app:key="proxy"
-            app:title="@string/proxy" />
+            app:key="network_settings"
+            app:title="@string/network_settings" />
 
     </PreferenceCategory>
 

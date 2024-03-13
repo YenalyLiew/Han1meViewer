@@ -2,9 +2,9 @@ package com.yenaly.yenaly_libs
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Process
 import android.util.Log
 import com.yenaly.yenaly_libs.utils.applicationContext
+import kotlin.system.exitProcess
 
 /**
  * @author Yenaly Liew
@@ -83,7 +83,7 @@ object ActivitiesManager {
     @JvmStatic
     fun exit(killProcess: Boolean = true) {
         finishAll()
-        if (killProcess) Process.killProcess(Process.myPid())
+        if (killProcess) exitProcess(0)
         Log.i(TAG, "exit")
     }
 
@@ -95,6 +95,6 @@ object ActivitiesManager {
         checkNotNull(intent) { "Intent is null" }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         applicationContext.startActivity(intent)
-        if (killProcess) Process.killProcess(Process.myPid())
+        if (killProcess) exitProcess(0)
     }
 }

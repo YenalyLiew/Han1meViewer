@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+        app:iconSpaceReserved="false"
+        app:key="domain_name"
+        app:title="@string/domain_name"
+        app:useSimpleSummaryProvider="true" />
+
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="proxy"
+        app:title="@string/proxy" />
+
+    <SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
+        app:key="use_built_in_hosts"
+        app:summary="@string/use_built_in_hosts_summary"
+        app:title="@string/use_built_in_hosts" />
+
+</PreferenceScreen>

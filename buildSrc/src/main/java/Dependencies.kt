@@ -7,8 +7,8 @@ object Libs {
     object Core {
         const val coreKtx = "androidx.core:core-ktx:1.12.0"
         const val appCompat = "androidx.appcompat:appcompat:1.6.1"
-        const val material = "com.google.android.material:material:1.10.0"
-        const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
+        const val material = "com.google.android.material:material:1.11.0"
+        const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
         const val fragmentKtx = "androidx.fragment:fragment-ktx:1.6.2"
         const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.4"
         const val recyclerView = "androidx.recyclerview:recyclerview:1.3.2"
@@ -30,14 +30,14 @@ object Libs {
     }
 
     object Jetpack {
-        const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
-        const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
-        const val lifecycleLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+        const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
+        const val lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
+        const val lifecycleLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:2.7.0"
         const val roomRuntime = "androidx.room:room-runtime:2.6.1"
         const val roomKtx = "androidx.room:room-ktx:2.6.1"
         const val roomCompiler = "androidx.room:room-compiler:2.6.1" // ksp
-        const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:2.7.6"
-        const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:2.7.6"
+        const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:2.7.7"
+        const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:2.7.7"
         const val preferenceKtx = "androidx.preference:preference-ktx:1.2.1"
         const val workRuntime = "androidx.work:work-runtime:2.9.0"
         const val workRuntimeKtx = "androidx.work:work-runtime-ktx:2.9.0"
@@ -57,9 +57,9 @@ object Libs {
     }
 
     object Parse {
-        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
         const val gson = "com.google.code.gson:gson:2.9.0"
-        const val jsoup = "org.jsoup:jsoup:1.14.3"
+        const val jsoup = "org.jsoup:jsoup:1.17.2"
     }
 
     object Network {
@@ -72,7 +72,7 @@ object Libs {
     }
 
     object Pic {
-        const val coil = "io.coil-kt:coil:2.5.0"
+        const val coil = "io.coil-kt:coil:2.6.0"
         const val glide = "com.github.bumptech.glide:glide:4.16.0"
     }
 

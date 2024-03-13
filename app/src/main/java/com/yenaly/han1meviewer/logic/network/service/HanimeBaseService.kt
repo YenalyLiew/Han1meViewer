@@ -26,16 +26,28 @@ interface HanimeBaseService {
         @Query("month") month: Int? = null,
         @Query("duration") duration: String? = null,
         @Query("tags[]") tags: Set<String> = emptySet(),
-        @Query("brands[]") brands: Set<String> = emptySet()
+        @Query("brands[]") brands: Set<String> = emptySet(),
     ): Response<ResponseBody>
 
     @GET("watch")
     suspend fun getHanimeVideo(
-        @Query("v") videoCode: String
+        @Query("v") videoCode: String,
     ): Response<ResponseBody>
 
     @GET("previews/{date}")
     suspend fun getHanimePreview(
-        @Path("date") date: String // 类似 202206. 202012
+        @Path("date") date: String, // 类似 202206. 202012
     ): Response<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("login")
+    suspend fun login(
+        @Field("_token") csrfToken: String?,
+        @Field("email") email: String,
+        @Field("password") password: String,
+        @Header("X-CSRF-TOKEN") csrfToken_1: String? = csrfToken,
+    ): Response<ResponseBody>
+
+    @GET("login")
+    suspend fun loginPage(): Response<ResponseBody>
 }

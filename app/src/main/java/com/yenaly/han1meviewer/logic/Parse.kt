@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.logic.network
+package com.yenaly.han1meviewer.logic
 
 import android.util.Log
 import com.yenaly.han1meviewer.DATE_FORMAT
@@ -37,6 +37,12 @@ object Parse {
     object Regex {
         val videoSource = Regex("""const source = '(.+)'""")
         val viewAndUploadTime = Regex("""觀看次數：(.+)次 *(\d{4}-\d{2}-\d{2})""")
+    }
+
+    fun extractTokenFromLoginPage(body: String): String {
+        val parseBody = Jsoup.parse(body).body()
+        return parseBody.selectFirst("input[name=_token]")?.attr("value")
+            ?: throw ParseException("Can't find csrf token from login page.")
     }
 
     fun homePageVer2(body: String): WebsiteState<HomePageModel> {
@@ -471,11 +477,9 @@ object Parse {
         val videos = videoClass?.children()
         if (!videos.isNullOrEmpty()) {
             videos.forEach { source ->
-                if (source != null) {
-                    val resolution = source.attr("size") + "P"
-                    val sourceUrl = source.absUrl("src")
-                    hanimeResolution.parseResolution(resolution, sourceUrl)
-                } else return@forEach
+                val resolution = source.attr("size") + "P"
+                val sourceUrl = source.absUrl("src")
+                hanimeResolution.parseResolution(resolution, sourceUrl)
             }
         } else {
             val playerDivWrapper = parseBody.selectFirst("div[id=player-div-wrapper]")
