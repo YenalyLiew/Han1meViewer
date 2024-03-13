@@ -1,39 +1,29 @@
 package com.yenaly.han1meviewer.util
 
+import android.util.Log
 import com.yenaly.han1meviewer.Preferences
-import com.yenaly.han1meviewer.cookieMap
 import okhttp3.Cookie
 
 @JvmInline
 value class CookieString(val cookie: String)
 
 /**
- * 單純爲了[cookieMap]而作的函數。
- *
- * 第一次運行該函數后，會將string轉化成[cookieMap]；
- * 第二次及多次運行會直接返回map中的結果，該函數的功能部分會失效。
- *
- * 主要用於[CookieJar][okhttp3.CookieJar]，最好不要用到其他地方。
+ * 主要用於 [HCookieJar][com.yenaly.han1meviewer.logic.network.HCookieJar]，最好不要用到其他地方。
  */
-internal fun CookieString.toCookieList(domain: String): List<Cookie> {
-    if (cookie.isEmpty()) {
-        return preferencesCookieList(domain)
-    }
-    cookieMap?.let { map ->
-        return map[domain] ?: preferencesCookieList(domain)
-    }
+internal fun CookieString.toLoginCookieList(domain: String): List<Cookie> {
     val cookieList = mutableListOf<Cookie>().also {
         it += preferencesCookieList(domain)
     }
     cookie.split(';').forEach { cookie ->
         val name = cookie.substringBefore('=').trim()
-        val value = cookie.substringAfter('=').trim()
-        cookieList += Cookie.Builder().domain(domain).name(name).value(value).build()
+        if (name.equals("hanime1_session", ignoreCase = true)) {
+            val value = cookie.substringAfter('=').trim()
+            cookieList += Cookie.Builder().domain(domain).name(name).value(value).build()
+        }
     }
-    cookieMap = mutableMapOf<String, List<Cookie>>().also { map ->
-        map[domain] = cookieList
+    return cookieList.also {
+        Log.d("CookieString", "toCookieList: $it")
     }
-    return cookieList
 }
 
 /**

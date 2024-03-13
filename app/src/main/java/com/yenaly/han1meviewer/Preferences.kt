@@ -2,20 +2,16 @@ package com.yenaly.han1meviewer
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.yenaly.han1meviewer.logic.network.HProxySelector
 import com.yenaly.han1meviewer.ui.fragment.settings.HKeyframeSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment
+import com.yenaly.han1meviewer.ui.fragment.settings.NetworkSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.PlayerSettingsFragment
 import com.yenaly.han1meviewer.ui.view.HJzvdStd
 import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.getSpValue
 import com.yenaly.yenaly_libs.utils.putSpValue
-import okhttp3.Cookie
-
-/**
- * cookie的map
- */
-internal var cookieMap: MutableMap<String, List<Cookie>>? = null
 
 internal object Preferences {
     /**
@@ -72,8 +68,11 @@ internal object Preferences {
         get() = preferenceSp.getString(HomeSettingsFragment.VIDEO_LANGUAGE, "zh-CHT") ?: "zh-CHT"
 
     val baseUrl: String
-        get() = preferenceSp.getString(HomeSettingsFragment.DOMAIN_NAME, HANIME_MAIN_BASE_URL)
+        get() = preferenceSp.getString(NetworkSettingsFragment.DOMAIN_NAME, HANIME_MAIN_BASE_URL)
             ?: HANIME_MAIN_BASE_URL
+
+    val useBuiltInHosts: Boolean
+        get() = preferenceSp.getBoolean(NetworkSettingsFragment.USE_BUILT_IN_HOSTS, false)
 
     // 關鍵H幀 相關
 
@@ -111,13 +110,13 @@ internal object Preferences {
 
     val proxyType: Int
         get() = preferenceSp.getInt(
-            HomeSettingsFragment.PROXY_TYPE,
+            NetworkSettingsFragment.PROXY_TYPE,
             HProxySelector.TYPE_SYSTEM
         )
 
     val proxyIp: String
-        get() = preferenceSp.getString(HomeSettingsFragment.PROXY_IP, EMPTY_STRING).orEmpty()
+        get() = preferenceSp.getString(NetworkSettingsFragment.PROXY_IP, EMPTY_STRING).orEmpty()
 
     val proxyPort: Int
-        get() = preferenceSp.getInt(HomeSettingsFragment.PROXY_PORT, -1)
+        get() = preferenceSp.getInt(NetworkSettingsFragment.PROXY_PORT, -1)
 }

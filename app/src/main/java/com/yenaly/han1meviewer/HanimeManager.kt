@@ -3,17 +3,11 @@ package com.yenaly.han1meviewer
 import android.graphics.Color
 import android.graphics.Typeface
 import android.webkit.CookieManager
-import androidx.core.app.NotificationManagerCompat
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.Preferences.loginCookie
+import com.yenaly.han1meviewer.logic.network.HCookieJar
 import com.yenaly.han1meviewer.util.CookieString
-import com.yenaly.yenaly_libs.utils.applicationContext
-import com.yenaly.yenaly_libs.utils.unsafeLazy
-
-// android
-
-internal val notificationManager by unsafeLazy { NotificationManagerCompat.from(applicationContext) }
 
 // base
 
@@ -42,7 +36,7 @@ internal fun getHanimeVideoDownloadLink(videoCode: String) =
 
 internal val videoUrlRegex = when (HANIME_BASE_URL) {
     HANIME_MAIN_BASE_URL -> Regex("""hanime1\.me/watch\?v=(\d+)""")
-    HANIME_ALTER_BASE_URL -> Regex("""hanime1\.com/watch\?v=(\d+)""")
+    HANIME_ALTER_BASE_URL -> Regex("""hanime1\.(?:com|me)/watch\?v=(\d+)""")
     else -> throw IllegalStateException("This URL has not been handled.")
 }
 
@@ -53,7 +47,7 @@ internal fun String.toVideoCode() = videoUrlRegex.find(this)?.groupValues?.get(1
 internal fun logout() {
     isAlreadyLogin = false
     loginCookie = CookieString(EMPTY_STRING)
-    cookieMap = null
+    HCookieJar.cookieMap.clear()
     CookieManager.getInstance().removeAllCookies(null)
 }
 

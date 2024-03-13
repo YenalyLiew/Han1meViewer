@@ -201,8 +201,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                 }
                 headerUsername.text = "未登錄"
                 headerAvatar.setOnClickListener {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    loginDataLauncher.launch(intent)
+                    gotoLoginActivity()
                 }
             }
         }
@@ -220,12 +219,16 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             loginNeededFragmentList.forEach {
                 binding.nvMain.menu.findItem(it).setOnMenuItemClickListener {
                     showShortToast(R.string.login_first)
-                    val intent = Intent(this, LoginActivity::class.java)
-                    loginDataLauncher.launch(intent)
+                    gotoLoginActivity()
                     return@setOnMenuItemClickListener false
                 }
             }
         }
+    }
+
+    private fun gotoLoginActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        loginDataLauncher.launch(intent)
     }
 
     /**

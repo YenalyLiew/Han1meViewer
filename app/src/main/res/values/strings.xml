@@ -179,4 +179,14 @@
     <string name="start_all">全部開始</string>
     <string name="pause_all">全部暫停</string>
     <string name="domain_name">域名</string>
+    <string name="use_built_in_hosts">應用內建 Hosts</string>
+    <string name="network_settings">網路設定</string>
+    <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\nVPN？那是什麽？</string>
+    <string name="username">賬號</string>
+    <string name="password">密碼</string>
+    <string name="try_login_here">試試在這裏登入</string>
+    <string name="email">電郵</string>
+    <string name="login_failed">登入失敗</string>
+    <string name="login_successful">登入成功</string>
+    <string name="account_or_password_wrong">賬戶或密碼可能錯誤</string>
 </resources>

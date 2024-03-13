@@ -3,30 +3,17 @@ package com.yenaly.han1meviewer.ui.fragment.settings
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.edit
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
-import com.google.android.material.chip.ChipGroup
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HA1_GITHUB_FORUM_URL
 import com.yenaly.han1meviewer.HA1_GITHUB_ISSUE_URL
 import com.yenaly.han1meviewer.HA1_GITHUB_RELEASES_URL
-import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
-import com.yenaly.han1meviewer.HANIME_ALTER_HOSTNAME
-import com.yenaly.han1meviewer.HANIME_MAIN_BASE_URL
-import com.yenaly.han1meviewer.HANIME_MAIN_HOSTNAME
-import com.yenaly.han1meviewer.HProxySelector
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
@@ -46,7 +33,6 @@ import com.yenaly.yenaly_libs.utils.folderSize
 import com.yenaly.yenaly_libs.utils.formatFileSize
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
-import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
@@ -68,13 +54,9 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         const val ABOUT = "about"
         const val DOWNLOAD_PATH = "download_path"
         const val CLEAR_CACHE = "clear_cache"
-        const val PROXY = "proxy"
-        const val PROXY_TYPE = "proxy_type"
-        const val PROXY_IP = "proxy_ip"
-        const val PROXY_PORT = "proxy_port"
         const val SUBMIT_BUG = "submit_bug"
         const val FORUM = "forum"
-        const val DOMAIN_NAME = "domain_name"
+        const val NETWORK_SETTINGS = "network_settings"
     }
 
     private val videoLanguage
@@ -91,18 +73,12 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             by safePreference<LongClickablePreference>(DOWNLOAD_PATH)
     private val clearCache
             by safePreference<Preference>(CLEAR_CACHE)
-    private val proxy
-            by safePreference<Preference>(PROXY)
     private val submitBug
             by safePreference<Preference>(SUBMIT_BUG)
     private val forum
             by safePreference<Preference>(FORUM)
-    private val domainName
-            by safePreference<MaterialDialogPreference>(DOMAIN_NAME)
-
-    private val proxyDialog by unsafeLazy {
-        ProxyDialog(proxy, R.layout.dialog_proxy)
-    }
+    private val networkSettings
+            by safePreference<Preference>(NETWORK_SETTINGS)
 
     private var checkUpdateTimes = 0
 
@@ -123,10 +99,11 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             setOnPreferenceChangeListener { _, newValue ->
                 if (newValue != Preferences.videoLanguage) {
                     requireContext().showAlertDialog {
+                        setCancelable(false)
                         setTitle("注意！")
-                        setMessage("修改影片語言需要重啟程式")
+                        setMessage("修改影片語言需要重啟程式，否則不起作用！")
                         setPositiveButton(R.string.confirm) { _, _ ->
-                            ActivitiesManager.restart(killProcess = false)
+                            ActivitiesManager.restart(killProcess = true)
                         }
                         setNegativeButton(R.string.cancel, null)
                     }
@@ -206,48 +183,22 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 return@setOnPreferenceClickListener true
             }
         }
-        proxy.apply {
-            summary = generateProxySummary(
-                Preferences.proxyType,
-                Preferences.proxyIp,
-                Preferences.proxyPort
-            )
-            setOnPreferenceClickListener {
-                proxyDialog.show()
-                return@setOnPreferenceClickListener true
-            }
-        }
         submitBug.apply {
             setOnPreferenceClickListener {
                 browse(HA1_GITHUB_ISSUE_URL)
                 return@setOnPreferenceClickListener true
             }
-
         }
         forum.apply {
             setOnPreferenceClickListener {
                 browse(HA1_GITHUB_FORUM_URL)
                 return@setOnPreferenceClickListener true
             }
-
         }
-        domainName.apply {
-            entries = arrayOf(HANIME_MAIN_HOSTNAME, HANIME_ALTER_HOSTNAME)
-            entryValues = arrayOf(HANIME_MAIN_BASE_URL, HANIME_ALTER_BASE_URL)
-            if (value == null) setValueIndex(0)
-
-            setOnPreferenceChangeListener { _, newValue ->
-                if (newValue != Preferences.baseUrl) {
-                    requireContext().showAlertDialog {
-                        setTitle("注意！")
-                        setMessage("修改域名需要重啟程式")
-                        setPositiveButton(R.string.confirm) { _, _ ->
-                            ActivitiesManager.restart(killProcess = false)
-                        }
-                        setNegativeButton(R.string.cancel, null)
-                    }
-                }
-                return@setOnPreferenceChangeListener true
+        networkSettings.apply {
+            setOnPreferenceClickListener {
+                findNavController().navigate(R.id.action_homeSettingsFragment_to_networkSettingsFragment)
+                return@setOnPreferenceClickListener true
             }
         }
     }
@@ -302,9 +253,9 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             setTitle("別檢查了！別檢查了！")
             setMessage(
                 """
-                更新介面走的是 Github，所以每天有下載限制，如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。
+                更新接口走的是 Github，所以每天有下載限制，如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。
                 
-                還有我竟然發現有人竟然花錢買這軟體，真沒必要哈！
+                還有我竟然發現有人花錢買這 APP，真沒必要哈！
             """.trimIndent()
             )
             setPositiveButton("帶我去下載") { _, _ ->
@@ -324,134 +275,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
     }
 
-    private fun generateProxySummary(type: Int, ip: String, port: Int): CharSequence {
-        return when (type) {
-            HProxySelector.TYPE_DIRECT -> getString(R.string.direct)
-            HProxySelector.TYPE_SYSTEM -> getString(R.string.system_proxy)
-            HProxySelector.TYPE_HTTP -> getString(R.string.http_proxy, ip, port)
-            HProxySelector.TYPE_SOCKS -> getString(R.string.socks_proxy, ip, port)
-            else -> getString(R.string.direct)
-        }
-    }
-
     override fun SettingsActivity.setupToolbar() {
         supportActionBar!!.setTitle(R.string.settings)
-    }
-
-    inner class ProxyDialog(proxyPref: Preference, @LayoutRes layoutRes: Int) {
-
-        private val dialog: AlertDialog
-
-        private val cgTypes: ChipGroup
-        private val etIp: TextInputEditText
-        private val etPort: TextInputEditText
-
-        init {
-            val view = View.inflate(context, layoutRes, null)
-            cgTypes = view.findViewById(R.id.cg_types)
-            etIp = view.findViewById(R.id.et_ip)
-            etPort = view.findViewById(R.id.et_port)
-            initView()
-            dialog = MaterialAlertDialogBuilder(proxyPref.context)
-                .setView(view)
-                .setTitle(R.string.proxy)
-                .setPositiveButton(R.string.confirm, null) // Set to null. We override the onclick.
-                .setNegativeButton(R.string.cancel, null)
-                .create()
-            dialog.setOnShowListener {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                    val ip = etIp.text?.toString().orEmpty()
-                    val port = etPort.text?.toString()?.toIntOrNull() ?: -1
-                    val isValid = checkValid(ip, port)
-                    if (isValid) {
-                        val proxyType = proxyType
-                        Preferences.preferenceSp.edit(commit = true) {
-                            putInt(PROXY_TYPE, proxyType)
-                            putString(PROXY_IP, ip)
-                            putInt(PROXY_PORT, port)
-                        }
-                        // 重建相关联的所有网络请求
-                        HProxySelector.rebuildNetwork()
-                        HanimeNetwork.rebuildNetwork()
-                        proxyPref.summary = generateProxySummary(proxyType, ip, port)
-                        dialog.dismiss()
-                    } else {
-                        showShortToast("Invalid IP(v4) or Port(0..65535)")
-                    }
-                }
-            }
-        }
-
-        private fun initView() {
-            when (Preferences.proxyType) {
-                HProxySelector.TYPE_DIRECT -> cgTypes.check(R.id.chip_direct)
-                HProxySelector.TYPE_SYSTEM -> cgTypes.check(R.id.chip_system_proxy)
-                HProxySelector.TYPE_HTTP -> cgTypes.check(R.id.chip_http)
-                HProxySelector.TYPE_SOCKS -> cgTypes.check(R.id.chip_socks)
-            }
-            val prefIp = Preferences.proxyIp
-            val prefPort = Preferences.proxyPort
-            if (prefIp.isNotBlank() && prefPort != -1) {
-                etIp.setText(prefIp)
-                etPort.setText(prefPort.toString())
-            }
-            enableView(cgTypes.checkedChipId)
-            cgTypes.setOnCheckedStateChangeListener { _, checkedIds ->
-                enableView(checkedIds.first())
-            }
-        }
-
-        private val proxyType: Int
-            get() = when (cgTypes.checkedChipId) {
-                R.id.chip_direct -> HProxySelector.TYPE_DIRECT
-                R.id.chip_system_proxy -> HProxySelector.TYPE_SYSTEM
-                R.id.chip_http -> HProxySelector.TYPE_HTTP
-                R.id.chip_socks -> HProxySelector.TYPE_SOCKS
-                else -> HProxySelector.TYPE_DIRECT
-            }
-
-        private fun checkValid(ip: String, port: Int): Boolean {
-            return when (proxyType) {
-                HProxySelector.TYPE_DIRECT, HProxySelector.TYPE_SYSTEM -> true
-                HProxySelector.TYPE_HTTP, HProxySelector.TYPE_SOCKS -> {
-                    HProxySelector.validateIp(ip) && HProxySelector.validatePort(port)
-                }
-
-                else -> false
-            }
-        }
-
-        private fun enableView(@IdRes checkedId: Int) {
-            when (checkedId) {
-                R.id.chip_direct -> {
-                    etIp.isEnabled = false
-                    etPort.isEnabled = false
-                    etIp.text = null
-                    etPort.text = null
-                }
-
-                R.id.chip_system_proxy -> {
-                    etIp.isEnabled = false
-                    etPort.isEnabled = false
-                    etIp.text = null
-                    etPort.text = null
-                }
-
-                R.id.chip_http -> {
-                    etIp.isEnabled = true
-                    etPort.isEnabled = true
-                }
-
-                R.id.chip_socks -> {
-                    etIp.isEnabled = true
-                    etPort.isEnabled = true
-                }
-            }
-        }
-
-        fun show() {
-            initView()
-            dialog.show()
-        }
     }
 }

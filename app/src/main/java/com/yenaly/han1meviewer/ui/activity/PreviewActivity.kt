@@ -189,8 +189,8 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                             binding.cover.load(state.info.headerPicUrl) {
                                 crossfade(true)
                             }
-                            newsAdapter.submitList(state.info.previewInfo)
                             tourSimplifiedAdapter.submitList(state.info.latestHanime)
+                            newsAdapter.submitList(state.info.previewInfo)
                         }
                     }
                 }
