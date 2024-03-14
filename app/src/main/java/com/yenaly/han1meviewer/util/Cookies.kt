@@ -15,8 +15,8 @@ internal fun CookieString.toLoginCookieList(domain: String): List<Cookie> {
         it += preferencesCookieList(domain)
     }
     cookie.split(';').forEach { cookie ->
-        val name = cookie.substringBefore('=').trim()
-        if (name.equals("hanime1_session", ignoreCase = true)) {
+        if (cookie.isNotBlank()) {
+            val name = cookie.substringBefore('=').trim()
             val value = cookie.substringAfter('=').trim()
             cookieList += Cookie.Builder().domain(domain).name(name).value(value).build()
         }

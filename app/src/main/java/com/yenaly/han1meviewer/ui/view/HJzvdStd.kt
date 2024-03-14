@@ -13,6 +13,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -239,6 +240,7 @@ class HJzvdStd @JvmOverloads constructor(
                     MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                         if (mediaInterface.isPlaying) {
                             setSpeedInternal(videoSpeed * userDefLongPressSpeedTimes)
+                            textureViewContainer.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                             isSpeedGestureDetected = true
                         }
                     }
@@ -254,6 +256,7 @@ class HJzvdStd @JvmOverloads constructor(
         tvKeyframe = findViewById(R.id.tv_keyframe)
         tvTimer = findViewById(R.id.tv_timer)
         btnGoHome = findViewById(R.id.go_home)
+        textureViewContainer.isHapticFeedbackEnabled = true
         tvSpeed.setOnClickListener(this)
         tvKeyframe.setOnClickListener(this)
         tvKeyframe.setOnLongClickListener(this)

@@ -51,7 +51,13 @@ internal fun logout() {
     CookieManager.getInstance().removeAllCookies(null)
 }
 
-internal fun login(cookie: CookieString) {
+internal fun login(cookies: String) {
     isAlreadyLogin = true
-    loginCookie = cookie
+    loginCookie = CookieString(cookies)
+}
+
+internal fun login(cookies: List<String>) {
+    login(cookies.joinToString(";") {
+        it.substringBefore(';')
+    })
 }

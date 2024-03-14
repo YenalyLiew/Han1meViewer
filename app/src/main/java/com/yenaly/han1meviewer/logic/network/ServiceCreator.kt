@@ -2,12 +2,15 @@ package com.yenaly.han1meviewer.logic.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.yenaly.han1meviewer.USER_AGENT
+import com.yenaly.yenaly_libs.utils.applicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
 import okhttp3.Call
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
@@ -24,6 +27,11 @@ object ServiceCreator {
     val json = Json {
         ignoreUnknownKeys = true
     }
+
+    val cache = Cache(
+        directory = File(applicationContext.cacheDir, "http_cache"),
+        maxSize = 10 * 1024 * 1024
+    )
 
     inline fun <reified T> create(baseUrl: String): T = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -63,6 +71,7 @@ object ServiceCreator {
                     chain.request().newBuilder().addHeader("User-Agent", USER_AGENT).build()
                 return@addInterceptor chain.proceed(request)
             }
+            .cache(cache)
             .cookieJar(HCookieJar())
             .proxySelector(HProxySelector())
             .dns(HDns())

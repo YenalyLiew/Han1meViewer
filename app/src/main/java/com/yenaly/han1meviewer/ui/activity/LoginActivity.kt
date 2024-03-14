@@ -29,7 +29,6 @@ import com.yenaly.han1meviewer.databinding.ActivityLoginBinding
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.login
-import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
 import com.yenaly.yenaly_libs.utils.SystemStatusUtil
 import com.yenaly.yenaly_libs.utils.showShortToast
@@ -39,7 +38,6 @@ import kotlinx.coroutines.launch
 class LoginActivity : FrameActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-
 
     private val dialog by unsafeLazy { LoginDialog(R.layout.dialog_login) }
 
@@ -71,11 +69,11 @@ class LoginActivity : FrameActivity() {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeActionContentDescription(R.string.back)
         }
+        initWebView()
         binding.srlLogin.setOnRefreshListener {
             binding.wvLogin.loadUrl(HANIME_LOGIN_URL)
         }
         binding.srlLogin.autoRefresh()
-        initWebView()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -118,7 +116,7 @@ class LoginActivity : FrameActivity() {
                         val url = request.url
                         val cookieManager = CookieManager.getInstance().getCookie(url.host)
                         Log.d("login_cookie", cookieManager.toString())
-                        login(CookieString(cookieManager))
+                        login(cookieManager)
                         setResult(RESULT_OK)
                         finish()
                         return true
