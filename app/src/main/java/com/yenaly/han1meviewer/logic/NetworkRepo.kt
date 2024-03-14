@@ -16,7 +16,6 @@ import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.util.CookieString
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -308,17 +307,18 @@ object NetworkRepo {
 
     fun login(email: String, password: String) = flow {
         // 首先获取token
-        val loginPage = HanimeNetwork.hanimeService.loginPage()
+        val loginPage = HanimeNetwork.hanimeService.getLoginPage()
         val token = loginPage.body()?.string()?.let(Parse::extractTokenFromLoginPage)
-
         val req = HanimeNetwork.hanimeService.login(token, email, password)
         if (req.isSuccessful) {
             // 再次获取登录页面，如果失败则返回 cookie
             // 因为登录成功再次访问 login 会 404，这是判断是否登录成功的方法
-            val loginPageAgain = HanimeNetwork.hanimeService.loginPage()
+            val loginPageAgain = HanimeNetwork.hanimeService.getLoginPage()
             if (loginPageAgain.code() == 404) {
                 // Cookie 會返回 XSRF-TOKEN 和 hanime1_session，我們只需要後者
-                emit(WebsiteState.Success(CookieString(req.raw().headers["Set-Cookie"]!!)))
+                // 错误的，还需要 remember_web 字段！但我没找到！
+                Log.d("login_headers", req.headers().toMultimap().toString())
+                emit(WebsiteState.Success(req.headers().values("Set-Cookie")))
             } else {
                 emit(WebsiteState.Error(IllegalStateException("賬戶或密碼可能錯誤")))
             }

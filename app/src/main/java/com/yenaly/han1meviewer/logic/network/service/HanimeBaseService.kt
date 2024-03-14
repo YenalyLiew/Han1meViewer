@@ -49,5 +49,5 @@ interface HanimeBaseService {
     ): Response<ResponseBody>
 
     @GET("login")
-    suspend fun loginPage(): Response<ResponseBody>
+    suspend fun getLoginPage(): Response<ResponseBody>
 }
