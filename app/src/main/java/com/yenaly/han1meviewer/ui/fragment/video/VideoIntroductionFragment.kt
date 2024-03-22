@@ -59,6 +59,18 @@ class VideoIntroductionFragment :
         binding.relatedHanime.title.setText(R.string.related_video)
         binding.tags.lifecycle = viewLifecycleOwner.lifecycle
 
+        // #issue-80: 长按复制功能请求
+        binding.title.setOnLongClickListener {
+            binding.title.text.copyToClipboard()
+            showShortToast(R.string.copy_to_clipboard)
+            return@setOnLongClickListener true
+        }
+        binding.chineseTitle.setOnLongClickListener {
+            binding.chineseTitle.text.copyToClipboard()
+            showShortToast(R.string.copy_to_clipboard)
+            return@setOnLongClickListener true
+        }
+
         binding.relatedHanime.rv.layoutManager =
             FixedGridLayoutManager(context, VIDEO_IN_ONE_LINE)
         binding.playlist.rv.layoutManager =
@@ -258,7 +270,7 @@ class VideoIntroductionFragment :
             shareText(shareText, "長按分享可以複製到剪貼簿中")
         }
         binding.btnShare.setOnLongClickListener {
-            copyTextToClipboard(shareText)
+            shareText.copyToClipboard()
             showShortToast(R.string.copy_to_clipboard)
             return@setOnLongClickListener true
         }
