@@ -12,6 +12,19 @@ plugins {
 android {
     compileSdk = Config.compileSdk
 
+    // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
+    val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD")
+        ?: File(projectDir.path + "/keystore/ha1_keystore_password.txt").readText()
+
+    val signConfig = signingConfigs.create("release") {
+        storeFile = File(projectDir.path + "/keystore/Han1meViewerKeystore.jks")
+        storePassword = signPwd
+        keyAlias = "yenaly"
+        keyPassword = signPwd
+        enableV3Signing = true
+        enableV4Signing = true
+    }
+
     defaultConfig {
         applicationId = "com.yenaly.han1meviewer"
         minSdk = Config.minSdk
@@ -24,7 +37,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            postprocessing {
+                isRemoveUnusedCode = true
+                isObfuscate = false // 不混淆
+                isOptimizeCode = true
+                isRemoveUnusedResources = true
+            }
+            signingConfig = signConfig
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -35,6 +54,10 @@ android {
                     output.outputFileName = "Han1meViewer-v${defaultConfig.versionName}.apk"
                 }
             }
+        }
+        debug {
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
         }
     }
     buildFeatures {
