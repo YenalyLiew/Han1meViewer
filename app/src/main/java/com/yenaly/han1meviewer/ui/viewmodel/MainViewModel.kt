@@ -7,7 +7,7 @@ import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HomePageModel
-import com.yenaly.han1meviewer.logic.model.VersionModel
+import com.yenaly.han1meviewer.logic.model.github.Latest
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : YenalyViewModel(application), IVersionViewModel {
 
     private val _versionFlow =
-        MutableSharedFlow<WebsiteState<VersionModel>>(replay = 0)
+        MutableSharedFlow<WebsiteState<Latest?>>(replay = 0)
     val versionFlow = _versionFlow.asSharedFlow()
 
     private val _homePageFlow =

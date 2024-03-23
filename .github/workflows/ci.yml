@@ -29,6 +29,7 @@ jobs:
         run: ./gradlew assembleRelease
         env:
           HA1_KEYSTORE_PASSWORD: ${{ secrets.HA1_KEYSTORE_PASSWORD }}
+          HA1_GITHUB_TOKEN: ${{ secrets.HA1_GITHUB_TOKEN }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

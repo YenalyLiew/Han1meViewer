@@ -8,6 +8,12 @@ import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.Preferences.loginCookie
 import com.yenaly.han1meviewer.logic.network.HCookieJar
 import com.yenaly.han1meviewer.util.CookieString
+import kotlinx.serialization.json.Json
+
+@JvmField
+val HJson = Json {
+    ignoreUnknownKeys = true
+}
 
 // base
 

@@ -14,7 +14,6 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
-import com.permissionx.guolindev.PermissionX
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
@@ -27,6 +26,7 @@ import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
+import com.yenaly.han1meviewer.util.requestPostNotificationPermission
 import com.yenaly.han1meviewer.util.setDrawableTop
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
@@ -34,6 +34,7 @@ import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.*
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
 import kotlinx.coroutines.launch
+import kotlinx.datetime.format
 
 /**
  * @project Hanime1
@@ -94,8 +95,8 @@ class VideoIntroductionFragment :
                             videoData = state.info
 
                             initTitle(state.info)
-                            binding.uploadTime.text =
-                                TimeUtil.date2String(state.info.uploadTime, DATE_FORMAT)
+                            binding.uploadTime.text = state.info.uploadTime
+                                ?.format(LOCAL_DATE_FORMAT)
                             binding.views.text = "${state.info.views.toString()}次"
                             binding.tvIntroduction.setContent(state.info.introduction)
                             binding.tags.setTags(state.info.tags)
@@ -327,41 +328,27 @@ class VideoIntroductionFragment :
         }
     }
 
-    private inline fun requestNotificationPermission(crossinline then: () -> Unit) {
-        PermissionX.init(this).permissions(PermissionX.permission.POST_NOTIFICATIONS)
-            .onExplainRequestReason { scope, deniedList ->
-                scope.showRequestReasonDialog(
-                    deniedList,
-                    getString(R.string.reason_for_download_notification),
-                    getString(R.string.allow), getString(R.string.deny)
-                )
-            }.request { allGranted, _, _ ->
-                if (!allGranted) showShortToast(R.string.msg_deny_download_notification)
-                then.invoke()
-            }
-    }
+    private suspend fun enqueueDownloadWork(videoData: HanimeVideoModel) {
+        requireContext().requestPostNotificationPermission()
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val data = workDataOf(
+            HanimeDownloadWorker.QUALITY to checkedQuality,
+            HanimeDownloadWorker.DOWNLOAD_URL to videoData.videoUrls[checkedQuality]!!,
+            HanimeDownloadWorker.HANIME_NAME to videoData.title,
+            HanimeDownloadWorker.VIDEO_CODE to viewModel.videoCode,
+            HanimeDownloadWorker.COVER_URL to videoData.coverUrl,
+        )
+        val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
+            .addTag(HanimeDownloadWorker.TAG)
+            .setConstraints(constraints)
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(applicationContext)
+            .beginUniqueWork(viewModel.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
+            .enqueue()
 
-    private fun enqueueDownloadWork(videoData: HanimeVideoModel) {
-        requestNotificationPermission {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-            val data = workDataOf(
-                HanimeDownloadWorker.QUALITY to checkedQuality,
-                HanimeDownloadWorker.DOWNLOAD_URL to videoData.videoUrls[checkedQuality]!!,
-                HanimeDownloadWorker.HANIME_NAME to videoData.title,
-                HanimeDownloadWorker.VIDEO_CODE to viewModel.videoCode,
-                HanimeDownloadWorker.COVER_URL to videoData.coverUrl,
-            )
-            val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
-                .addTag(HanimeDownloadWorker.TAG)
-                .setConstraints(constraints)
-                .setInputData(data)
-                .build()
-            WorkManager.getInstance(applicationContext)
-                .beginUniqueWork(viewModel.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
-                .enqueue()
-        }
     }
 
     private fun List<HanimeInfoModel>.buildFlexibleGridLayoutManager(): GridLayoutManager {

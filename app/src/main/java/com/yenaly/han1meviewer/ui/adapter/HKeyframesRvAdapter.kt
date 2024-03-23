@@ -125,7 +125,7 @@ class HKeyframesRvAdapter : BaseDifferAdapter<HKeyframeEntity, QuickViewHolder>(
         context.showAlertDialog {
             setTitle(R.string.share_to_other)
             setMessage("複製以下内容，分享給其他人，可以透過頂部右側添加按鈕來將其存入設備：\n$toContent")
-            setPositiveButton(R.string.copy) { _, _ ->
+            setPositiveButton(R.string.copy_) { _, _ ->
                 toContent.copyToClipboard()
                 showShortToast(R.string.copy_to_clipboard)
             }

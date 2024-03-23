@@ -23,12 +23,12 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
 import com.yenaly.han1meviewer.hanimeSpannable
-import com.yenaly.han1meviewer.logic.model.VersionModel
+import com.yenaly.han1meviewer.logic.model.github.Release
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
-import com.yenaly.han1meviewer.util.checkNeedUpdate
 import com.yenaly.han1meviewer.util.showAlertDialog
+import com.yenaly.han1meviewer.util.showUpdateDialog
 import com.yenaly.han1meviewer.videoUrlRegex
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
@@ -98,8 +98,8 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             whenStarted {
                 viewModel.versionFlow.collect {
                     if (it is WebsiteState.Success) {
-                        if (checkNeedUpdate(it.info.tagName)) {
-                            showUpdateDialog(it.info)
+                        it.info?.let { release ->
+                            showUpdateDialog(release)
                         }
                     }
                 }
@@ -134,17 +134,18 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     // todo: 有時間轉移到 strings.xml
-    private fun showUpdateDialog(versionInfo: VersionModel) {
+    @Deprecated("No reasons.")
+    private fun showUpdateDialog(releaseInfo: Release) {
         val msg = spannable {
             "檢測到新版本：".text()
             newline()
-            versionInfo.tagName.span {
+            releaseInfo.tagName.span {
                 style(Typeface.BOLD)
             }
             newline()
             "更新内容：".text()
             newline()
-            versionInfo.body.span {
+            releaseInfo.body.span {
                 style(Typeface.BOLD)
             }
         }
@@ -152,7 +153,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             setTitle("檢測到新版本！")
             setMessage(msg)
             setPositiveButton("去下載！") { _, _ ->
-                browse(versionInfo.assets.first().browserDownloadURL)
+                browse(releaseInfo.assets.first().browserDownloadURL)
             }
             setNeutralButton("忽略", null)
         }

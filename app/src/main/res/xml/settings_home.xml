@@ -40,17 +40,34 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/update">
+
+        <Preference
+            app:icon="@drawable/ic_baseline_update_24"
+            app:key="update"
+            app:title="@string/check_update" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="use_ci_update_channel"
+            app:summary="@string/use_ci_update_channel_summary"
+            app:title="@string/use_ci_update_channel" />
+
+        <SeekBarPreference
+            android:max="30"
+            app:key="update_popup_interval_days"
+            app:min="0"
+            app:title="@string/update_popup_interval_days" />
+
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/other">
 
         <Preference
             app:icon="@drawable/ic_baseline_clear_all_24"
             app:key="clear_cache"
             app:title="@string/clear_cache" />
-
-        <Preference
-            app:icon="@drawable/ic_baseline_update_24"
-            app:key="update"
-            app:title="@string/check_update" />
 
         <Preference
             app:icon="@drawable/baseline_bug_report_24"

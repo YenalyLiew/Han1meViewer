@@ -1,6 +1,6 @@
 package com.yenaly.han1meviewer.logic.network.service
 
-import com.yenaly.han1meviewer.logic.model.VersionModel
+import com.yenaly.han1meviewer.logic.model.github.Release
 import retrofit2.http.GET
 
 /**
@@ -10,5 +10,5 @@ import retrofit2.http.GET
  */
 interface HanimeVersionService {
     @GET("repos/YenalyLiew/Han1meViewer/releases/latest")
-    suspend fun getLatestVersion(): VersionModel
+    suspend fun getLatestVersion(): Release
 }

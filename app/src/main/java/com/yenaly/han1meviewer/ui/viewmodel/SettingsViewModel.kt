@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
-import com.yenaly.han1meviewer.logic.model.VersionModel
+import com.yenaly.han1meviewer.logic.model.github.Latest
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
@@ -23,13 +23,13 @@ class SettingsViewModel(application: Application) : YenalyViewModel(application)
     IVersionViewModel {
 
     private val _versionFlow =
-        MutableStateFlow<WebsiteState<VersionModel>>(WebsiteState.Loading)
-    val versionFlow = _versionFlow.asStateFlow()
+        MutableSharedFlow<WebsiteState<Latest?>>()
+    val versionFlow = _versionFlow.asSharedFlow()
 
     override fun getLatestVersion() {
         viewModelScope.launch {
-            NetworkRepo.getLatestVersion().collect {
-                _versionFlow.value = it
+            NetworkRepo.getLatestVersion(forceCheck = true).collect {
+                _versionFlow.emit(it)
             }
         }
     }

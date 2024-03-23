@@ -1,5 +1,6 @@
 package com.yenaly.yenaly_libs
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
@@ -11,6 +12,7 @@ import kotlin.system.exitProcess
  * @time 2023/08/15 015 19:36
  */
 @Suppress("unused")
+@SuppressLint("StaticFieldLeak")
 object ActivitiesManager {
 
     private const val TAG = "ActivitiesManager"
@@ -18,7 +20,8 @@ object ActivitiesManager {
     private val activities = linkedSetOf<Activity>()
 
     @JvmStatic
-    val currentActivity: Activity? get() = activities.lastOrNull()
+    var currentActivity: Activity? = null
+        internal set
 
     @JvmStatic
     fun push(activity: Activity) {

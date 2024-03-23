@@ -1,7 +1,7 @@
 package com.yenaly.han1meviewer.logic.model
 
 import com.yenaly.han1meviewer.ResolutionLinkMap
-import java.util.Date
+import kotlinx.datetime.LocalDate
 
 /**
  * @project Hanime1
@@ -13,7 +13,7 @@ data class HanimeVideoModel(
     val coverUrl: String,
     val chineseTitle: String?,
     val introduction: String?,
-    val uploadTime: Date?,
+    val uploadTime: LocalDate?,
     val views: String?,
 
     // resolution to video url
@@ -46,6 +46,12 @@ data class HanimeVideoModel(
         favTimes?.let { favTimes = it - 1 }
         isFav = false
     }
+
+    // 為保證兼容性，不能直接用天數
+    val uploadTimeMillis: Long
+        get() = uploadTime?.let {
+            it.toEpochDays().toLong() * 24 * 60 * 60 * 1000
+        } ?: 0L
 
     data class MyList(
         var isWatchLater: Boolean,
