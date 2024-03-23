@@ -56,6 +56,10 @@ object Libs {
         const val spannableX = "com.itxca.spannablex:spannablex:1.0.4"
     }
 
+    object Datetime {
+        const val datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2"
+    }
+
     object Parse {
         const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
         const val gson = "com.google.code.gson:gson:2.9.0"

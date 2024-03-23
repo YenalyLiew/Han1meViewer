@@ -18,4 +18,8 @@ data class WatchHistoryEntity(
     var videoCode: String,
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-)
+) {
+
+    val releaseDateDays: Int
+        get() = (releaseDate / (24 * 60 * 60 * 1000)).toInt()
+}

@@ -81,7 +81,9 @@
     <string name="other">其他</string>
     <string name="about">關於</string>
     <string name="check_update">檢查更新</string>
+    <string name="new_version_found">已發現新版本</string>
     <string name="checking_update">檢查更新中…</string>
+    <string name="update_content">更新內容</string>
     <string name="check_update_failed">檢查更新失敗，點擊重試</string>
     <string name="check_update_success">當前有新版本：%s，點擊查看</string>
     <string name="current_version">當前版本：%s</string>
@@ -90,6 +92,7 @@
     <string name="search_placeholder">今天想看點什麽呢</string>
 
     <string name="downloading">正在下載</string>
+    <string name="downloading_update_percent">正在下載更新 %d%%</string>
     <string name="downloaded">已下載</string>
     <string name="start_download">開始下載</string>
     <string name="cancel_download">取消下載</string>
@@ -104,8 +107,6 @@
     <string name="clear_cache">清除快取</string>
     <string name="cache_occupy">快取佔用</string>
 
-    <string name="reason_for_download_notification">請同意通知權限，及時收到下載訊息！</string>
-    <string name="msg_deny_download_notification">進行或完成時不會通知哦</string>
     <string name="allow">准許</string>
     <string name="deny">一邊去</string>
     <string name="no_video_links_found">未發現影片連結</string>
@@ -166,7 +167,7 @@
     <string name="edit">修改</string>
     <string name="title">標題</string>
     <string name="video_code">影片代號</string>
-    <string name="copy">複製</string>
+    <string name="copy_">複製</string>
     <string name="add">添加</string>
     <string name="h_keyframes_shared_by_other_detected">檢測到他人分享的關鍵H幀</string>
     <string name="h_keyframes_shared_by_other_not_detected">未檢測到他人分享的關鍵H幀</string>
@@ -190,4 +191,20 @@
     <string name="login_successful">登入成功</string>
     <string name="account_or_password_wrong">賬戶或密碼可能錯誤</string>
     <string name="login_tips">該方法只能保持登入 2 個小時… 還是推薦使用網頁登入，\n但網頁是不走 Hosts 的，所以可能需要 VPN。</string>
+    <string name="ignore">忽略</string>
+    <string name="update">更新</string>
+    <string name="use_ci_update_channel">採用 CI 更新頻道</string>
+    <string name="use_ci_update_channel_summary">CI 更新頻道能更快地取得最新變更\n但不保證穩定性</string>
+    <string name="update_popup_interval_days">檢查更新彈窗間隔天數</string>
+    <string name="update_failed">更新失敗</string>
+    <string name="update_download_background">在背景下載更新</string>
+    <string name="allow_install_from_unknown_app_sources">准許當前 App 來源安裝</string>
+    <string name="reason_for_allow_install_from_unknown_app_sources">別擔心，這只是爲了更新。\n你如果不放心，可以直接去 Github 上下載。</string>
+    <string name="go_to_settings">前往設定</string>
+    <string name="allow_post_notification">准許發送通知</string>
+    <string name="reason_for_download_notification">請同意通知權限，及時收到下載訊息！</string>
+    <string name="msg_deny_download_notification">進行或完成時不會通知哦</string>
+    <string name="at_any_time">隨時</string>
+    <string name="which_days">%d天</string>
+    <string name="last_update_popup_check_time">最近更新彈窗時刻：%s</string>
 </resources>

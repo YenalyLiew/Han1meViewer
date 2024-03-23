@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.logic.model
+package com.yenaly.han1meviewer.logic.model.github
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * @time 2022/09/09 009 21:24
  */
 @Serializable
-data class VersionModel(
+data class Release(
     val url: String,
 
     @SerialName("assets_url")

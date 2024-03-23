@@ -25,12 +25,15 @@ open class YenalyApplication : Application(), Application.ActivityLifecycleCallb
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         ActivitiesManager.push(activity)
+        ActivitiesManager.currentActivity = activity
     }
 
     override fun onActivityStarted(activity: Activity) {
+        ActivitiesManager.currentActivity = activity
     }
 
     override fun onActivityResumed(activity: Activity) {
+        ActivitiesManager.currentActivity = activity
     }
 
     override fun onActivityPaused(activity: Activity) {

@@ -8,16 +8,18 @@ import androidx.recyclerview.widget.DiffUtil
 import coil.load
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
-import com.yenaly.han1meviewer.DATE_FORMAT
-import com.yenaly.han1meviewer.DATE_TIME_FORMAT
+import com.yenaly.han1meviewer.LOCAL_DATE_TIME_FORMAT
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemWatchHistoryBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.util.notNull
-import com.yenaly.yenaly_libs.utils.TimeUtil
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.startActivity
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * @project Han1meViewer
@@ -60,8 +62,12 @@ class WatchHistoryRvAdapter :
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
         }
-        holder.binding.tvAddedTime.text = TimeUtil.millis2String(item.watchDate, DATE_TIME_FORMAT)
-        holder.binding.tvReleaseDate.text = TimeUtil.millis2String(item.releaseDate, DATE_FORMAT)
+        holder.binding.tvAddedTime.text =
+            Instant.fromEpochMilliseconds(item.watchDate).toLocalDateTime(
+                TimeZone.currentSystemDefault()
+            ).format(LOCAL_DATE_TIME_FORMAT)
+        // 不打算顯示發佈日期，所以不用設置
+        holder.binding.tvReleaseDate.text = null
         holder.binding.tvTitle.text = item.title
     }
 

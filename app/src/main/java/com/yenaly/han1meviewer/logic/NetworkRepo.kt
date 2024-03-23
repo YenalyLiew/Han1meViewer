@@ -12,6 +12,7 @@ import com.yenaly.han1meviewer.logic.model.ModifiedPlaylistArguments
 import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.model.VideoCommentArguments
 import com.yenaly.han1meviewer.logic.model.VideoCommentModel
+import com.yenaly.han1meviewer.logic.network.HUpdater
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
@@ -287,9 +288,9 @@ object NetworkRepo {
 
     //<editor-fold desc="Version">
 
-    fun getLatestVersion() = flow {
+    fun getLatestVersion(forceCheck: Boolean = false) = flow {
         emit(WebsiteState.Loading)
-        val versionInfo = HanimeNetwork.versionService.getLatestVersion()
+        val versionInfo = HUpdater.checkForUpdate(forceCheck)
         emit(WebsiteState.Success(versionInfo))
     }.catch { e ->
         when (e) {
@@ -306,6 +307,7 @@ object NetworkRepo {
     //<editor-fold desc="Base">
 
     fun login(email: String, password: String) = flow {
+        emit(WebsiteState.Loading)
         // 首先获取token
         val loginPage = HanimeNetwork.hanimeService.getLoginPage()
         val token = loginPage.body()?.string()?.let(Parse::extractTokenFromLoginPage)

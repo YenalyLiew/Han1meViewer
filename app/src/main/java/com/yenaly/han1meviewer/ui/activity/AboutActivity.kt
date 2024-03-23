@@ -12,8 +12,8 @@ import com.drakeet.about.Card
 import com.drakeet.about.Category
 import com.drakeet.about.Contributor
 import com.google.android.material.appbar.AppBarLayout
+import com.yenaly.han1meviewer.BuildConfig
 import com.yenaly.han1meviewer.R
-import com.yenaly.yenaly_libs.utils.appLocalVersionName
 import com.yenaly.yenaly_libs.utils.showSnackBar
 
 /**
@@ -62,7 +62,7 @@ class AboutActivity : AbsAboutActivity() {
             showSnackBar(eggArray[clickIconTimes++ % eggArray.size])
         }
         slogan.setText(R.string.app_slogan)
-        version.text = "v$appLocalVersionName"
+        version.text = "v${BuildConfig.VERSION_NAME}"
     }
 
     override fun onItemsCreated(items: MutableList<Any>) {

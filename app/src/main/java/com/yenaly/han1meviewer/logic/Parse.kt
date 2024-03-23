@@ -1,9 +1,9 @@
 package com.yenaly.han1meviewer.logic
 
 import android.util.Log
-import com.yenaly.han1meviewer.DATE_FORMAT
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.HanimeResolution
+import com.yenaly.han1meviewer.LOCAL_DATE_FORMAT
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
@@ -18,7 +18,7 @@ import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.toVideoCode
-import com.yenaly.yenaly_libs.utils.TimeUtil
+import kotlinx.datetime.LocalDate
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -354,7 +354,7 @@ object Parse {
             Regex.viewAndUploadTime.find(it)?.groups
         }
         val uploadTime = uploadTimeWithViewsGroups?.get(2)?.value?.let { time ->
-            TimeUtil.string2Date(time, DATE_FORMAT)
+            LocalDate.parse(time, LOCAL_DATE_FORMAT)
         }
 
         val views = uploadTimeWithViewsGroups?.get(1)?.value

@@ -2,6 +2,9 @@ package com.yenaly.han1meviewer
 
 import com.yenaly.yenaly_libs.utils.appScreenWidth
 import com.yenaly.yenaly_libs.utils.applicationContext
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format.char
 
 /**
  * 我觉得空字符串写出来太逆天了，所以搞了个常量
@@ -10,9 +13,16 @@ const val EMPTY_STRING = ""
 
 // 标准时间格式
 
-const val DATE_FORMAT = "yyyy-MM-dd"
+/* yyyy-MM-dd */
+@JvmField
+val LOCAL_DATE_FORMAT = LocalDate.Formats.ISO
 
-const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
+/* yyyy-MM-dd HH:mm */
+@JvmField
+val LOCAL_DATE_TIME_FORMAT = LocalDateTime.Format {
+    date(LocalDate.Formats.ISO); char(' ')
+    hour(); char(':'); minute()
+}
 
 // 网络基本设置
 
@@ -96,13 +106,17 @@ val HANIME_LOGIN_URL = HANIME_BASE_URL + "login"
 
 // github url
 
-const val HA1_GITHUB_URL = "https://github.com/YenalyLiew/Han1meViewer/"
+const val HA1_GITHUB_URL = "https://github.com/YenalyLiew/Han1meViewer"
 
-const val HA1_GITHUB_ISSUE_URL = HA1_GITHUB_URL + "issues"
+const val HA1_GITHUB_ISSUE_URL = "$HA1_GITHUB_URL/issues"
 
-const val HA1_GITHUB_FORUM_URL = HA1_GITHUB_URL + "discussions"
+const val HA1_GITHUB_FORUM_URL = "$HA1_GITHUB_URL/discussions"
 
-const val HA1_GITHUB_RELEASES_URL = HA1_GITHUB_URL + "releases"
+const val HA1_GITHUB_RELEASES_URL = "$HA1_GITHUB_URL/releases"
+
+const val HA1_GITHUB_API_URL = "https://api.github.com/repos/YenalyLiew/Han1meViewer"
+
+const val HA1_API_LATEST_RELEASE_URL = "$HA1_GITHUB_API_URL/releases/latest"
 
 // for Shared Preference
 
@@ -113,3 +127,9 @@ const val ALREADY_LOGIN = "already_login"
 // Notification
 
 const val DOWNLOAD_NOTIFICATION_CHANNEL = "download_channel"
+
+const val UPDATE_NOTIFICATION_CHANNEL = "update_channel"
+
+// File
+
+const val FILE_PROVIDER_AUTHORITY = "${BuildConfig.APPLICATION_ID}.fileProvider"

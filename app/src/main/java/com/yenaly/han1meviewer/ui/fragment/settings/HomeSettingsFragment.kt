@@ -8,7 +8,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
+import androidx.preference.SeekBarPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.itxca.spannablex.spannable
+import com.yenaly.han1meviewer.BuildConfig
 import com.yenaly.han1meviewer.HA1_GITHUB_FORUM_URL
 import com.yenaly.han1meviewer.HA1_GITHUB_ISSUE_URL
 import com.yenaly.han1meviewer.HA1_GITHUB_RELEASES_URL
@@ -20,13 +23,12 @@ import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
-import com.yenaly.han1meviewer.util.checkNeedUpdate
 import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
 import com.yenaly.han1meviewer.util.showAlertDialog
+import com.yenaly.han1meviewer.util.showUpdateDialog
 import com.yenaly.yenaly_libs.ActivitiesManager
 import com.yenaly.yenaly_libs.base.preference.LongClickablePreference
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
-import com.yenaly.yenaly_libs.utils.appLocalVersionName
 import com.yenaly.yenaly_libs.utils.browse
 import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.folderSize
@@ -34,6 +36,11 @@ import com.yenaly.yenaly_libs.utils.formatFileSize
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.toLocalDateTime
 import kotlin.concurrent.thread
 
 /**
@@ -57,6 +64,10 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         const val SUBMIT_BUG = "submit_bug"
         const val FORUM = "forum"
         const val NETWORK_SETTINGS = "network_settings"
+
+        const val LAST_UPDATE_POPUP_TIME = "last_update_popup_time"
+        const val UPDATE_POPUP_INTERVAL_DAYS = "update_popup_interval_days"
+        const val USE_CI_UPDATE_CHANNEL = "use_ci_update_channel"
     }
 
     private val videoLanguage
@@ -67,6 +78,10 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             by safePreference<Preference>(H_KEYFRAME_SETTINGS)
     private val update
             by safePreference<Preference>(UPDATE)
+    private val useCIUpdateChannel
+            by safePreference<SwitchPreferenceCompat>(USE_CI_UPDATE_CHANNEL)
+    private val updatePopupIntervalDays
+            by safePreference<SeekBarPreference>(UPDATE_POPUP_INTERVAL_DAYS)
     private val about
             by safePreference<Preference>(ABOUT)
     private val downloadPath
@@ -125,7 +140,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 append(" ")
                 append(getString(R.string.hanime_app_name))
             }
-            summary = getString(R.string.current_version, "v${appLocalVersionName}")
+            summary = getString(R.string.current_version, "v${BuildConfig.VERSION_NAME}")
             setOnPreferenceClickListener {
                 startActivity<AboutActivity>()
                 return@setOnPreferenceClickListener true
@@ -201,6 +216,19 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 return@setOnPreferenceClickListener true
             }
         }
+        useCIUpdateChannel.apply {
+            setOnPreferenceChangeListener { _, _ ->
+                viewModel.getLatestVersion()
+                return@setOnPreferenceChangeListener true
+            }
+        }
+        updatePopupIntervalDays.apply {
+            summary = Preferences.updatePopupIntervalDays.toIntervalDaysPrettyString()
+            setOnPreferenceChangeListener { _, newValue ->
+                summary = (newValue as Int).toIntervalDaysPrettyString()
+                return@setOnPreferenceChangeListener true
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -230,16 +258,18 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                         }
 
                         is WebsiteState.Success -> {
-                            if (checkNeedUpdate(state.info.tagName)) {
-                                update.summary =
-                                    getString(R.string.check_update_success, state.info.tagName)
-                                update.setOnPreferenceClickListener {
-                                    browse(state.info.assets.first().browserDownloadURL)
-                                    return@setOnPreferenceClickListener true
-                                }
-                            } else {
+                            if (state.info == null) {
                                 update.setSummary(R.string.already_latest_update)
                                 update.onPreferenceClickListener = null
+                            } else {
+                                update.summary =
+                                    getString(R.string.check_update_success, state.info.version)
+                                update.setOnPreferenceClickListener {
+                                    viewLifecycleOwner.lifecycleScope.launch {
+                                        it.context.showUpdateDialog(state.info)
+                                    }
+                                    return@setOnPreferenceClickListener true
+                                }
                             }
                         }
                     }
@@ -273,6 +303,18 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             " ".text()
             getString(R.string.cache_occupy).text()
         }
+    }
+
+    private fun Int.toIntervalDaysPrettyString(): String {
+        return when (this) {
+            0 -> getString(R.string.at_any_time)
+            else -> getString(R.string.which_days, this)
+        } + "\n" + getString(
+            R.string.last_update_popup_check_time,
+            Instant.fromEpochSeconds(Preferences.lastUpdatePopupTime)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .format(LocalDateTime.Formats.ISO)
+        )
     }
 
     override fun SettingsActivity.setupToolbar() {

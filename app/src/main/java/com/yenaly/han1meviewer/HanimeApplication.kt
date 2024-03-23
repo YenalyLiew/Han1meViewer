@@ -1,18 +1,20 @@
 package com.yenaly.han1meviewer
 
-import android.util.Log
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.color.DynamicColors
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.yenaly.han1meviewer.logic.network.HProxySelector
+import com.yenaly.han1meviewer.worker.HUpdateWorker
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyApplication
-import com.yenaly.yenaly_libs.utils.showShortToast
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * @project Hanime1
@@ -39,29 +41,37 @@ class HanimeApplication : YenalyApplication() {
         DynamicColors.applyToActivitiesIfAvailable(this)
         HProxySelector.rebuildNetwork()
 
-        val channel = NotificationChannelCompat.Builder(
+        initNotificationChannel()
+        initWorkManager()
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun initWorkManager() {
+        // 取消，防止每次启动都有残留的更新任务
+        WorkManager.getInstance(this).pruneWork()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            HUpdateWorker.collectOutput(this@HanimeApplication)
+        }
+
+        GlobalScope.launch(Dispatchers.Main) {
+            HanimeDownloadWorker.collectOutput(this@HanimeApplication)
+        }
+    }
+
+    private fun initNotificationChannel() {
+        val nm = NotificationManagerCompat.from(this)
+
+        val hanimeDownloadChannel = NotificationChannelCompat.Builder(
             DOWNLOAD_NOTIFICATION_CHANNEL,
             NotificationManagerCompat.IMPORTANCE_HIGH
         ).setName("Hanime Download").build()
-        NotificationManagerCompat.from(this).createNotificationChannel(channel)
+        nm.createNotificationChannel(hanimeDownloadChannel)
 
-        WorkManager.getInstance(this)
-            .getWorkInfosByTagLiveData(HanimeDownloadWorker.TAG)
-            .observeForever { workInfos ->
-                workInfos.forEach { workInfo ->
-                    when (workInfo.state) {
-                        WorkInfo.State.FAILED -> {
-                            val err =
-                                workInfo.outputData.getString(HanimeDownloadWorker.FAILED_REASON)
-                            err?.let {
-                                showShortToast(it)
-                                Log.d("DownloadWorkInfo", it)
-                            }
-                        }
-
-                        else -> Unit
-                    }
-                }
-            }
+        val appUpdateChannel = NotificationChannelCompat.Builder(
+            UPDATE_NOTIFICATION_CHANNEL,
+            NotificationManagerCompat.IMPORTANCE_HIGH
+        ).setName("App Update").build()
+        nm.createNotificationChannel(appUpdateChannel)
     }
 }

@@ -31,9 +31,19 @@ import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.AppBarLayoutStateChangeListener
 import com.yenaly.yenaly_libs.utils.view.innerRecyclerView
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
-
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * @project Hanime1
@@ -94,10 +104,10 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         // binding.newsTitle.findViewById<TextView>(R.id.sub_title).setText(R.string.introduction)
 
         binding.fabPrevious.setOnClickListener {
-            viewModel.getHanimePreview(dateUtils.toPreviousDate().second)
+            viewModel.getHanimePreview(dateUtils.toPrevDate().format(DateUtils.FORMATTED_FORMAT))
         }
         binding.fabNext.setOnClickListener {
-            viewModel.getHanimePreview(dateUtils.toNextDate().second)
+            viewModel.getHanimePreview(dateUtils.toNextDate().format(DateUtils.FORMATTED_FORMAT))
         }
 
         binding.vpNews.adapter = newsAdapter
@@ -167,7 +177,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
 
                         is WebsiteState.Loading -> {
                             //binding.srlPreview.autoRefresh()
-                            viewModel.getHanimePreview(dateUtils.current.second)
+                            viewModel.getHanimePreview(dateUtils.current.format(DateUtils.FORMATTED_FORMAT))
                             binding.fabPrevious.isEnabled = false
                             binding.fabNext.isEnabled = false
                         }
@@ -176,20 +186,23 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                             //binding.srlPreview.finishRefresh()
                             binding.vpNews.setCurrentItem(0, false)
                             supportActionBar?.title = getString(
-                                R.string.latest_hanime_list_monthly, dateUtils.current.first
+                                R.string.latest_hanime_list_monthly,
+                                dateUtils.current.format(DateUtils.NORMAL_FORMAT)
                             )
                             binding.fabPrevious.apply {
                                 isEnabled = state.info.hasPrevious
-                                text = dateUtils.getPreviousDate().first
+                                text = dateUtils.prevDate.format(DateUtils.NORMAL_FORMAT)
                             }
                             binding.fabNext.apply {
                                 isEnabled = state.info.hasNext
-                                text = dateUtils.getNextDate().first
+                                text = dateUtils.nextDate.format(DateUtils.NORMAL_FORMAT)
                             }
                             binding.cover.load(state.info.headerPicUrl) {
                                 crossfade(true)
                             }
                             tourSimplifiedAdapter.submitList(state.info.latestHanime)
+                            // 有時候 tour 無法順利加載出來，加點延遲反而就好了，哈哈
+                            delay(100)
                             newsAdapter.submitList(state.info.previewInfo)
                         }
                     }
@@ -212,7 +225,8 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
 
             R.id.tb_comment -> {
                 startActivity<PreviewCommentActivity>(
-                    "date" to dateUtils.current.first, DATE_CODE to dateUtils.current.second
+                    "date" to dateUtils.current.format(DateUtils.NORMAL_FORMAT),
+                    DATE_CODE to dateUtils.current.format(DateUtils.FORMATTED_FORMAT)
                 )
             }
         }
@@ -249,56 +263,52 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
     /**
      * 单纯给这个用的DateUtils
      */
-    private inner class DateUtils {
+    private class DateUtils {
 
-        // 2022/2 to 202202 后者传参有用
-        var current: Pair</* 普通日期 */String, /* 格式化后的日期 */String> = getCurrentDate()
+        companion object {
+            /**
+             * 2022/2
+             */
+            val NORMAL_FORMAT = LocalDateTime.Format {
+                year(); char('/'); monthNumber(Padding.NONE)
+            }
+
+            /**
+             * 202202
+             */
+            val FORMATTED_FORMAT = LocalDateTime.Format {
+                year(); monthNumber()
+            }
+        }
+
+        // 當前顯示的日期
+        var current: LocalDateTime = currentDate
             private set
 
-        // get 和 to 的区别：get不覆盖current，to覆盖
+        val currentDate: LocalDateTime
+            get() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-        fun getCurrentDate(): Pair<String, String> {
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH) + 1
-            return "${year}/${month}" to (if (month < 10) "${year}0${month}" else "$year$month")
-        }
+        val prevDate: LocalDateTime
+            get() {
+                val instant = current.toInstant(TimeZone.currentSystemDefault())
+                return instant.minus(1, DateTimeUnit.MONTH, TimeZone.currentSystemDefault())
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+            }
 
-        fun getPreviousDate(): Pair<String, String> {
-            val calendar = Calendar.getInstance()
-            val year = current.second.substring(0, 4).toInt()
-            val month = current.second.substring(4, 6).toInt()
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month - 1)
-            calendar.add(Calendar.MONTH, -1)
-            val previousYear = calendar.get(Calendar.YEAR)
-            val previousMonth = calendar.get(Calendar.MONTH) + 1
-            return "${previousYear}/${previousMonth}" to (if (previousMonth < 10) {
-                "${previousYear}0${previousMonth}"
-            } else "$previousYear$previousMonth")
-        }
+        val nextDate: LocalDateTime
+            get() {
+                val instant = current.toInstant(TimeZone.currentSystemDefault())
+                return instant.plus(1, DateTimeUnit.MONTH, TimeZone.currentSystemDefault())
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+            }
 
-        fun getNextDate(): Pair<String, String> {
-            val calendar = Calendar.getInstance()
-            val year = current.second.substring(0, 4).toInt()
-            val month = current.second.substring(4, 6).toInt()
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month - 1)
-            calendar.add(Calendar.MONTH, 1)
-            val nextYear = calendar.get(Calendar.YEAR)
-            val nextMonth = calendar.get(Calendar.MONTH) + 1
-            return "${nextYear}/${nextMonth}" to (if (nextMonth < 10) {
-                "${nextYear}0${nextMonth}"
-            } else "$nextYear$nextMonth")
-        }
-
-        fun toPreviousDate(): Pair<String, String> {
-            current = getPreviousDate()
+        fun toPrevDate(): LocalDateTime {
+            current = prevDate
             return current
         }
 
-        fun toNextDate(): Pair<String, String> {
-            current = getNextDate()
+        fun toNextDate(): LocalDateTime {
+            current = nextDate
             return current
         }
     }

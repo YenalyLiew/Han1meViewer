@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import Config.Version.createVersionCode
 import Config.Version.createVersionName
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
@@ -9,12 +11,22 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.23-1.0.19"
 }
 
+val isRelease: Boolean
+    get() = gradle.startParameter.taskNames.any { it.contains("Release") }
+
 android {
     compileSdk = Config.compileSdk
+
+    val commitSha = if (isRelease) providers.exec {
+        commandLine = "git rev-parse --short=7 HEAD".split(' ')
+    }.standardOutput.asText.get().trim() else "8ea5a9c" // 方便调试
 
     // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
     val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD")
         ?: File(projectDir.path + "/keystore/ha1_keystore_password.txt").readText()
+
+    val githubToken = System.getenv("HA1_GITHUB_TOKEN")
+        ?: File(projectDir.path + "/ha1_github_token.txt").readText()
 
     val signConfig = signingConfigs.create("release") {
         storeFile = File(projectDir.path + "/keystore/Han1meViewerKeystore.jks")
@@ -29,10 +41,15 @@ android {
         applicationId = "com.yenaly.han1meviewer"
         minSdk = Config.minSdk
         targetSdk = Config.targetSdk
-        versionCode = createVersionCode()
+        versionCode = if (isRelease) createVersionCode() else 1 // 方便调试
         versionName = versionCode.createVersionName(major = 0, minor = 13, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "COMMIT_SHA", "\"$commitSha\"")
+        buildConfigField("String", "VERSION_NAME", "\"${versionName}\"")
+        buildConfigField("int", "VERSION_CODE", "$versionCode")
+        buildConfigField("String", "HA1_GITHUB_TOKEN", "\"${githubToken}\"")
     }
 
     buildTypes {
@@ -45,8 +62,7 @@ android {
             }
             signingConfig = signConfig
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
             applicationVariants.all variant@{
                 this@variant.outputs.all output@{
@@ -99,6 +115,10 @@ dependencies {
     implementation(Libs.Jetpack.workRuntime)
     implementation(Libs.Jetpack.workRuntimeKtx)
 
+    // datetime
+
+    implementation(Libs.Datetime.datetime)
+
     // parse
 
     implementation(Libs.Parse.serialization)
@@ -121,10 +141,6 @@ dependencies {
     // video
 
     implementation(Libs.Video.jiaoziVideoPlayer)
-
-    // permission
-
-    implementation(Libs.Permission.permissionX)
 
     // view
 

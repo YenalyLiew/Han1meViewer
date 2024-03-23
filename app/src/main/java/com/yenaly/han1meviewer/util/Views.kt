@@ -1,7 +1,6 @@
 package com.yenaly.han1meviewer.util
 
 import android.app.Activity
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.Button
 import androidx.annotation.DrawableRes
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yenaly.han1meviewer.FROM_VIDEO_TAG
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
@@ -44,10 +42,6 @@ internal fun ChipGroup.createTags(tags: List<String>) {
  */
 fun View.removeItself() {
     (parent as? ViewGroup)?.removeView(this)
-}
-
-internal inline fun Context.showAlertDialog(action: MaterialAlertDialogBuilder.() -> Unit) {
-    MaterialAlertDialogBuilder(this).apply(action).show()
 }
 
 internal fun Button.setDrawableTop(@DrawableRes drawableRes: Int) {

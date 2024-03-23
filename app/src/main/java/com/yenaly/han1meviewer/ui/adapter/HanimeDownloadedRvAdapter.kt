@@ -12,7 +12,7 @@ import coil.load
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.DATE_TIME_FORMAT
+import com.yenaly.han1meviewer.LOCAL_DATE_TIME_FORMAT
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadedBinding
@@ -22,10 +22,13 @@ import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
 import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.openDownloadedHanimeVideoLocally
 import com.yenaly.han1meviewer.util.showAlertDialog
-import com.yenaly.yenaly_libs.utils.TimeUtil
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.formatFileSize
 import com.yenaly.yenaly_libs.utils.startActivity
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * @project Han1meViewer
@@ -65,7 +68,10 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
         }
-        holder.binding.tvAddedTime.text = TimeUtil.millis2String(item.addDate, DATE_TIME_FORMAT)
+        holder.binding.tvAddedTime.text =
+            Instant.fromEpochMilliseconds(item.addDate).toLocalDateTime(
+                TimeZone.currentSystemDefault()
+            ).format(LOCAL_DATE_TIME_FORMAT)
         holder.binding.tvQuality.text = spannable {
             item.quality.text()
             " | ".span {

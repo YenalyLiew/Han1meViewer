@@ -6,8 +6,11 @@ import android.os.Environment
 import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.core.net.toUri
+import com.yenaly.han1meviewer.FILE_PROVIDER_AUTHORITY
 import com.yenaly.yenaly_libs.utils.applicationContext
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 
 internal val hanimeVideoLocalFolder get() = applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
 
@@ -38,10 +41,36 @@ internal fun Context.openDownloadedHanimeVideoLocally(
         return
     }
     val fileUri = FileProvider.getUriForFile(
-        this, "com.yenaly.han1meviewer.fileProvider", videoFile
+        this, FILE_PROVIDER_AUTHORITY, videoFile
     )
     val intent = Intent(Intent.ACTION_VIEW)
     intent.setDataAndType(fileUri, "video/*")
     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     startActivity(intent)
+}
+
+/**
+ * copyTo with progress
+ */
+fun InputStream.copyTo(
+    out: OutputStream,
+    contentLength: Long,
+    bufferSize: Int = DEFAULT_BUFFER_SIZE,
+    progress: ((Int) -> Unit)? = null,
+): Long {
+    var bytesCopied: Long = 0
+    val buffer = ByteArray(bufferSize)
+    var bytes = read(buffer)
+    var percent = 0
+    while (bytes >= 0) {
+        out.write(buffer, 0, bytes)
+        bytesCopied += bytes
+        val newPercent = (bytesCopied * 100 / contentLength).toInt()
+        if (newPercent != percent) {
+            percent = newPercent
+            progress?.invoke(percent)
+        }
+        bytes = read(buffer)
+    }
+    return bytesCopied
 }

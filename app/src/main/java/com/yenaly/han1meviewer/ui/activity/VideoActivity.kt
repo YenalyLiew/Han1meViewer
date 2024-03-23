@@ -28,7 +28,6 @@ import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.ScreenRotateUtil
-import com.yenaly.yenaly_libs.utils.TimeUtil
 import com.yenaly.yenaly_libs.utils.browse
 import com.yenaly.yenaly_libs.utils.intentExtra
 import com.yenaly.yenaly_libs.utils.makeBundle
@@ -36,6 +35,7 @@ import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.view.attach
 import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     ScreenRotateUtil.OrientationChangeListener {
@@ -113,10 +113,11 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                                 crossfade(true)
                             }
                             // 將觀看記錄保存數據庫
-                            val releaseDate = TimeUtil.date2Millis(state.info.uploadTime)
                             val entity = WatchHistoryEntity(
-                                state.info.coverUrl, state.info.title,
-                                releaseDate, System.currentTimeMillis(),
+                                state.info.coverUrl,
+                                state.info.title,
+                                state.info.uploadTimeMillis,
+                                Clock.System.now().toEpochMilliseconds(),
                                 viewModel.videoCode
                             )
                             viewModel.insertWatchHistory(entity)

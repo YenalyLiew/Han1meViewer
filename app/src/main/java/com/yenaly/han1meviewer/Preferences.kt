@@ -13,7 +13,7 @@ import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.getSpValue
 import com.yenaly.yenaly_libs.utils.putSpValue
 
-internal object Preferences {
+object Preferences {
     /**
      * [Preference][androidx.preference.PreferenceFragmentCompat]自帶的SP
      */
@@ -37,6 +37,18 @@ internal object Preferences {
     var loginCookie
         get() = CookieString(getSpValue(LOGIN_COOKIE, EMPTY_STRING))
         set(value) = putSpValue(LOGIN_COOKIE, value.cookie)
+
+    // 更新 相關
+
+    var lastUpdatePopupTime
+        get() = getSpValue(HomeSettingsFragment.LAST_UPDATE_POPUP_TIME, 0L)
+        set(value) = putSpValue(HomeSettingsFragment.LAST_UPDATE_POPUP_TIME, value)
+
+    val updatePopupIntervalDays
+        get() = preferenceSp.getInt(HomeSettingsFragment.UPDATE_POPUP_INTERVAL_DAYS, 0)
+
+    val useCIUpdateChannel
+        get() = preferenceSp.getBoolean(HomeSettingsFragment.USE_CI_UPDATE_CHANNEL, false)
 
     // 設定 相關
 

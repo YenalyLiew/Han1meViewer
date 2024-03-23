@@ -14,9 +14,9 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.network.ServiceCreator
-import com.yenaly.han1meviewer.logic.network.ServiceCreator.await
+import com.yenaly.han1meviewer.util.await
 import com.yenaly.han1meviewer.util.getDownloadedHanimeFile
-import com.yenaly.yenaly_libs.utils.unsafeLazy
+import com.yenaly.yenaly_libs.utils.showShortToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
@@ -34,7 +34,7 @@ import kotlin.random.Random
 class HanimeDownloadWorker(
     private val context: Context,
     workerParams: WorkerParameters,
-) : CoroutineWorker(context, workerParams) {
+) : CoroutineWorker(context, workerParams), WorkerMixin {
 
     companion object {
         const val TAG = "HanimeDownloadWorker"
@@ -52,6 +52,29 @@ class HanimeDownloadWorker(
 
         const val PROGRESS = "progress"
         const val FAILED_REASON = "failed_reason"
+
+        /**
+         * This function is used to collect the output of the download task
+         */
+        suspend fun collectOutput(context: Context) {
+            WorkManager.getInstance(context)
+                .getWorkInfosByTagFlow(TAG)
+                .collect { workInfos ->
+                    workInfos.forEach { workInfo ->
+                        when (workInfo.state) {
+                            WorkInfo.State.FAILED -> {
+                                val err =
+                                    workInfo.outputData.getString(FAILED_REASON)
+                                err?.let {
+                                    showShortToast(it)
+                                }
+                            }
+
+                            else -> Unit
+                        }
+                    }
+                }
+        }
     }
 
     private val notificationManager = NotificationManagerCompat.from(context)
@@ -183,7 +206,8 @@ class HanimeDownloadWorker(
         return ForegroundInfo(
             downloadId,
             NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setOngoing(true)
                 .setContentTitle("正在下載：${hanimeName}")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText("$progress%")
@@ -230,17 +254,5 @@ class HanimeDownloadWorker(
                 .setContentText("下載失敗：${hanimeName}\n原因為：${errMsg}")
                 .build()
         )
-    }
-
-    @Suppress("UNCHECKED_CAST", "SameParameterValue")
-    private fun <T : Any> inputData(key: String, def: T): Lazy<T> = unsafeLazy {
-        when (def) {
-            is String -> (inputData.getString(key) ?: def) as T
-            is Int -> inputData.getInt(key, def) as T
-            is Long -> inputData.getLong(key, def) as T
-            is Boolean -> inputData.getBoolean(key, def) as T
-            is Float -> inputData.getFloat(key, def) as T
-            else -> throw IllegalArgumentException("Unsupported type")
-        }
     }
 }
