@@ -284,7 +284,7 @@
     <string name="cache_empty">當前快取為空，無需清理哦</string>
     <string name="do_not_check_update_again">別再檢查更新了！</string>
     <string name="take_me_to_download">帶我去下載</string>
-    <string name="d_speed_times">%d倍</string>
+    <string name="d_speed_times">%.1f倍</string>
     <string name="high">高</string>
     <string name="moderately_high">較高</string>
     <string name="moderate">適中</string>
