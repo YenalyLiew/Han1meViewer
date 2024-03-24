@@ -284,7 +284,7 @@
     <string name="cache_empty">当前缓存为空，无需清理哦</string>
     <string name="do_not_check_update_again">别再检查更新了！</string>
     <string name="take_me_to_download">带我去下载</string>
-    <string name="d_speed_times">%d倍</string>
+    <string name="d_speed_times">%.1f倍</string>
     <string name="high">高</string>
     <string name="moderately_high">较高</string>
     <string name="moderate">适中</string>

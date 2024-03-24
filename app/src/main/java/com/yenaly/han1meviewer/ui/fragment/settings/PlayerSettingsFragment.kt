@@ -59,16 +59,16 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
         }
         longPressSpeedTimesPref.apply {
             entries = arrayOf(
-                getString(R.string.d_speed_times, 1),
-                getString(R.string.d_speed_times, 1.5),
-                getString(R.string.d_speed_times, 2),
-                "${getString(R.string.d_speed_times, 2.5)} (${getString(R.string.default_)})",
-                getString(R.string.d_speed_times, 2.8),
-                getString(R.string.d_speed_times, 3),
-                getString(R.string.d_speed_times, 3.2),
-                getString(R.string.d_speed_times, 3.5),
-                getString(R.string.d_speed_times, 3.8),
-                getString(R.string.d_speed_times, 4)
+                getString(R.string.d_speed_times, 1f),
+                getString(R.string.d_speed_times, 1.5f),
+                getString(R.string.d_speed_times, 2f),
+                "${getString(R.string.d_speed_times, 2.5f)} (${getString(R.string.default_)})",
+                getString(R.string.d_speed_times, 2.8f),
+                getString(R.string.d_speed_times, 3f),
+                getString(R.string.d_speed_times, 3.2f),
+                getString(R.string.d_speed_times, 3.5f),
+                getString(R.string.d_speed_times, 3.8f),
+                getString(R.string.d_speed_times, 4f)
             )
             entryValues = arrayOf(
                 "1", "1.5", "2", "2.5", "2.8",
