@@ -11,6 +11,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
+import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
 import com.yenaly.han1meviewer.HANIME_ALTER_HOSTNAME
 import com.yenaly.han1meviewer.HANIME_MAIN_BASE_URL
@@ -75,7 +76,10 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
             }
         }
         domainName.apply {
-            entries = arrayOf("$HANIME_MAIN_HOSTNAME (預設)", "$HANIME_ALTER_HOSTNAME (備用)")
+            entries = arrayOf(
+                "$HANIME_MAIN_HOSTNAME (${getString(R.string.default_)})",
+                "$HANIME_ALTER_HOSTNAME (${getString(R.string.alternative)})"
+            )
             entryValues = arrayOf(HANIME_MAIN_BASE_URL, HANIME_ALTER_BASE_URL)
             if (value == null) setValueIndex(0)
 
@@ -84,18 +88,8 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
                 if (newValue != origin) {
                     requireContext().showAlertDialog {
                         setCancelable(false)
-                        setTitle("注意！")
-                        setMessage(buildString {
-                            appendLine("修改域名需要重啟程式，否則不起作用！")
-                            appendLine("不同域名不共通 Cookie，所以更換域名後需要重新進行登入操作。")
-                            append("所以除 hanime1.me 以外的域名可能在某些時間段會重定向回 hanime1.me，")
-                            appendLine("這可能導致 Cookie 失效。")
-                            appendLine()
-                            appendLine("建議如下：")
-                            appendLine("· 無VPN用戶，使用 hanime1.me 並開啟內建 Hosts")
-                            appendLine("· 日本用戶，使用 hanime1.com")
-                            appendLine("· 其他地區用戶，使用 hanime1.me 並關閉內建 Hosts")
-                        })
+                        setTitle(R.string.attention)
+                        setMessage(R.string.domain_change_tips)
                         setPositiveButton(R.string.confirm) { _, _ ->
                             logout()
                             ActivitiesManager.restart(killProcess = true)
@@ -112,8 +106,8 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
             setOnPreferenceChangeListener { _, _ ->
                 requireContext().showAlertDialog {
                     setCancelable(false)
-                    setTitle("注意！")
-                    setMessage("更改需要重啟程式，否則不起作用！")
+                    setTitle(R.string.attention)
+                    setMessage(getString(R.string.restart_or_not_working, EMPTY_STRING))
                     setPositiveButton(R.string.confirm) { _, _ ->
                         ActivitiesManager.restart(killProcess = true)
                     }

@@ -1,6 +1,5 @@
 package com.yenaly.han1meviewer.ui.fragment.video
 
-import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
 import androidx.core.view.isGone
@@ -9,15 +8,31 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
-import com.yenaly.han1meviewer.*
+import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
+import com.yenaly.han1meviewer.HAdvancedSearch
+import com.yenaly.han1meviewer.HanimeResolution
+import com.yenaly.han1meviewer.LOCAL_DATE_FORMAT
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
+import com.yenaly.han1meviewer.UsingCautiously
+import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE
+import com.yenaly.han1meviewer.VIDEO_LAYOUT_MATCH_PARENT
+import com.yenaly.han1meviewer.VIDEO_LAYOUT_WRAP_CONTENT
+import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
+import com.yenaly.han1meviewer.getHanimeVideoDownloadLink
+import com.yenaly.han1meviewer.getHanimeVideoLink
 import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
 import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
@@ -31,7 +46,13 @@ import com.yenaly.han1meviewer.util.setDrawableTop
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyFragment
-import com.yenaly.yenaly_libs.utils.*
+import com.yenaly.yenaly_libs.utils.applicationContext
+import com.yenaly.yenaly_libs.utils.browse
+import com.yenaly.yenaly_libs.utils.copyToClipboard
+import com.yenaly.yenaly_libs.utils.shareText
+import com.yenaly.yenaly_libs.utils.showShortToast
+import com.yenaly.yenaly_libs.utils.startActivity
+import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
 import kotlinx.coroutines.launch
 import kotlinx.datetime.format
@@ -80,7 +101,6 @@ class VideoIntroductionFragment :
         binding.relatedHanime.rv.adapter = relatedAdapter
     }
 
-    @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             whenStarted {
@@ -97,7 +117,8 @@ class VideoIntroductionFragment :
                             initTitle(state.info)
                             binding.uploadTime.text = state.info.uploadTime
                                 ?.format(LOCAL_DATE_FORMAT)
-                            binding.views.text = "${state.info.views.toString()}次"
+                            binding.views.text =
+                                getString(R.string.s_view_times, state.info.views.toString())
                             binding.tvIntroduction.setContent(state.info.introduction)
                             binding.tags.setTags(state.info.tags)
                             if (state.info.playlist != null) {
@@ -125,17 +146,17 @@ class VideoIntroductionFragment :
                 viewModel.addToFavVideoFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
-                            showShortToast("喜歡失敗")
+                            showShortToast(R.string.fav_failed)
                         }
 
                         is WebsiteState.Loading -> Unit
                         is WebsiteState.Success -> {
                             if (videoData.isFav) {
-                                showShortToast("取消喜歡")
+                                showShortToast(R.string.cancel_fav)
                                 videoData.decrementFavTime()
                                 handleFavButton(false)
                             } else {
-                                showShortToast("添加喜歡")
+                                showShortToast(R.string.add_to_fav)
                                 videoData.incrementFavTime()
                                 handleFavButton(true)
                             }
@@ -154,8 +175,8 @@ class VideoIntroductionFragment :
                     }
                     // 没下完或下過了
                     if (!entity.isDownloaded) {
-                        if (entity.isDownloading) showShortToast("正在下載中...")
-                        else showShortToast("已經在佇列中...")
+                        if (entity.isDownloading) showShortToast(R.string.downloading_now)
+                        else showShortToast(R.string.already_in_queue)
                         return@collect
                     }
                 }
@@ -167,7 +188,7 @@ class VideoIntroductionFragment :
                 viewModel.modifyMyListFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
-                            showShortToast("操作失敗")
+                            showShortToast(R.string.add_failed)
                         }
 
                         is WebsiteState.Loading -> Unit
@@ -176,7 +197,7 @@ class VideoIntroductionFragment :
                             checkNotNull(videoData.myList?.myListInfo?.get(index)).let {
                                 it.isSelected = !it.isSelected
                             }
-                            showShortToast("操作成功")
+                            showShortToast(R.string.add_success)
                         }
                     }
                 }
@@ -192,10 +213,10 @@ class VideoIntroductionFragment :
     private fun handleFavButton(isFav: Boolean) {
         if (isFav) {
             binding.btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_24)
-            binding.btnAddToFav.text = "已喜歡"
+            binding.btnAddToFav.setText(R.string.liked)
         } else {
             binding.btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_border_24)
-            binding.btnAddToFav.text = "加入喜歡"
+            binding.btnAddToFav.setText(R.string.add_to_fav)
         }
     }
 
@@ -268,7 +289,7 @@ class VideoIntroductionFragment :
         val shareText =
             title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -"
         binding.btnShare.setOnClickListener {
-            shareText(shareText, "長按分享可以複製到剪貼簿中")
+            shareText(shareText, getString(R.string.long_press_share_to_copy))
         }
         binding.btnShare.setOnLongClickListener {
             shareText.copyToClipboard()
@@ -285,7 +306,7 @@ class VideoIntroductionFragment :
                 .atView(it)
                 .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
                     if (key == HanimeResolution.RES_UNKNOWN) {
-                        showShortToast("暫時無法從這裏下載！")
+                        showShortToast(R.string.cannot_download_here)
                         browse(getHanimeVideoDownloadLink(viewModel.videoCode))
                     } else notifyDownload(videoData.title, key) {
                         checkedQuality = key
@@ -299,30 +320,30 @@ class VideoIntroductionFragment :
 
     private fun notifyDownload(title: String, quality: String, action: () -> Unit) {
         val notifyMsg = spannable {
-            "將要下載的影片詳情如下".text()
+            getString(R.string.download_video_detail_below).text()
             newline(2)
-            "名稱：".text()
+            getString(R.string.name_with_colon).text()
             newline()
             title.span {
                 style(Typeface.BOLD)
             }
             newline()
-            "畫質：".text()
+            getString(R.string.quality_with_colon).text()
             newline()
             quality.span {
                 style(Typeface.BOLD)
             }
             newline(2)
-            "下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裏有詳細儲存路徑。".text()
+            getString(R.string.after_download_tips).text()
         }
         requireContext().showAlertDialog {
-            setTitle("確定要下載嗎？")
+            setTitle(R.string.sure_to_download)
             setMessage(notifyMsg)
-            setPositiveButton("是的") { _, _ ->
+            setPositiveButton(R.string.sure) { _, _ ->
                 action.invoke()
             }
-            setNegativeButton("算了吧", null)
-            setNeutralButton("轉到官方") { _, _ ->
+            setNegativeButton(R.string.no, null)
+            setNeutralButton(R.string.go_to_official) { _, _ ->
                 browse(getHanimeVideoDownloadLink(viewModel.videoCode))
             }
         }

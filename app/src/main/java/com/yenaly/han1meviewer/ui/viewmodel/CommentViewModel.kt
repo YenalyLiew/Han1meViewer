@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.CommentPlace
 import com.yenaly.han1meviewer.logic.model.VideoCommentArguments
@@ -131,21 +132,21 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
     fun handleCommentLike(args: VideoCommentArguments, adapter: VideoCommentRvAdapter) {
         if (args.isPositive) {
             if (args.comment.post.likeCommentStatus) {
-                showShortToast("取消點讚成功！")
+                showShortToast(R.string.cancel_thumb_up_success)
                 args.comment.incrementLikesCount(cancel = true)
                 adapter.notifyItemChanged(args.commentPosition)
             } else {
-                showShortToast("點讚成功！")
+                showShortToast(R.string.thumb_up_success)
                 args.comment.incrementLikesCount(cancel = false)
                 adapter.notifyItemChanged(args.commentPosition)
             }
         } else {
             if (args.comment.post.unlikeCommentStatus) {
-                showShortToast("取消點踩成功！")
+                showShortToast(R.string.cancel_thumb_down_success)
                 args.comment.decrementLikesCount(cancel = true)
                 adapter.notifyItemChanged(args.commentPosition)
             } else {
-                showShortToast("點踩成功！")
+                showShortToast(R.string.thumb_down_success)
                 args.comment.decrementLikesCount(cancel = false)
                 adapter.notifyItemChanged(args.commentPosition)
             }

@@ -2,7 +2,6 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,13 +16,11 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.android.material.snackbar.Snackbar
-import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
 import com.yenaly.han1meviewer.hanimeSpannable
-import com.yenaly.han1meviewer.logic.model.github.Release
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
@@ -112,50 +109,11 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     // todo: 有時間轉移到 strings.xml
-    @Deprecated("To SnackBar")
-    private fun showFindRelatedLinkDialog(videoCode: String) {
-        showAlertDialog {
-            setTitle("新發現！")
-            setMessage("檢測到剪貼簿裏存在Hanime1相關連結")
-            setPositiveButton("進入！") { _, _ ->
-                startActivity<VideoActivity>(VIDEO_CODE to videoCode)
-            }
-            setNegativeButton("算了吧", null)
-        }
-    }
-
-    // todo: 有時間轉移到 strings.xml
     private fun showFindRelatedLinkSnackBar(videoCode: String) {
-        showSnackBar("檢測到剪貼簿裏存在Hanime1相關連結", Snackbar.LENGTH_LONG) {
-            setAction("進入！") {
+        showSnackBar(R.string.detect_ha1_related_link_in_clipboard, Snackbar.LENGTH_LONG) {
+            setAction(R.string.enter) {
                 startActivity<VideoActivity>(VIDEO_CODE to videoCode)
             }
-        }
-    }
-
-    // todo: 有時間轉移到 strings.xml
-    @Deprecated("No reasons.")
-    private fun showUpdateDialog(releaseInfo: Release) {
-        val msg = spannable {
-            "檢測到新版本：".text()
-            newline()
-            releaseInfo.tagName.span {
-                style(Typeface.BOLD)
-            }
-            newline()
-            "更新内容：".text()
-            newline()
-            releaseInfo.body.span {
-                style(Typeface.BOLD)
-            }
-        }
-        showAlertDialog {
-            setTitle("檢測到新版本！")
-            setMessage(msg)
-            setPositiveButton("去下載！") { _, _ ->
-                browse(releaseInfo.assets.first().browserDownloadURL)
-            }
-            setNeutralButton("忽略", null)
         }
     }
 
@@ -167,13 +125,13 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             if (isAlreadyLogin) {
                 headerAvatar.setOnClickListener {
                     showAlertDialog {
-                        setTitle("你確定要登出嗎？")
-                        setPositiveButton("是的") { _, _ ->
+                        setTitle(R.string.sure_to_logout)
+                        setPositiveButton(R.string.sure) { _, _ ->
                             logout()
                             initHeaderView()
                             initMenu()
                         }
-                        setNegativeButton("算了吧", null)
+                        setNegativeButton(R.string.no, null)
                     }
                 }
                 lifecycleScope.launch {
@@ -200,7 +158,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                     crossfade(true)
                     transformations(CircleCropTransformation())
                 }
-                headerUsername.text = "未登錄"
+                headerUsername.setText(R.string.not_logged_in)
                 headerAvatar.setOnClickListener {
                     gotoLoginActivity()
                 }

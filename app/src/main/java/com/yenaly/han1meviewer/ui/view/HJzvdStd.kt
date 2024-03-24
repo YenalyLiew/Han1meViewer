@@ -154,7 +154,7 @@ class HJzvdStd @JvmOverloads constructor(
         set(value) {
             field = value
             if (value == DEF_SPEED_INDEX) {
-                tvSpeed.text = "倍速"
+                tvSpeed.text = context.getString(R.string.speed)
             } else {
                 tvSpeed.text = speedStringArray[value]
             }
@@ -594,7 +594,8 @@ class HJzvdStd @JvmOverloads constructor(
         rv.adapter = adapter
         adapter.setStateViewLayout(
             View.inflate(v.context, R.layout.layout_empty_view, null),
-            this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n請長按🥵添加關鍵H幀"
+            this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n"
+                    + this@HJzvdStd.context.getString(R.string.long_press_to_add_h_keyframe)
         )
         popup.showAtLocation(textureViewContainer, Gravity.END, 0, 0)
     }

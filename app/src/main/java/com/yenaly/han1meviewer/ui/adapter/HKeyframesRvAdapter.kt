@@ -123,8 +123,8 @@ class HKeyframesRvAdapter : BaseDifferAdapter<HKeyframeEntity, QuickViewHolder>(
             append("<<<")
         }
         context.showAlertDialog {
-            setTitle(R.string.share_to_other)
-            setMessage("複製以下内容，分享給其他人，可以透過頂部右側添加按鈕來將其存入設備：\n$toContent")
+            setTitle(R.string.share_to_others)
+            setMessage(context.getString(R.string.share_to_others_tip, toContent))
             setPositiveButton(R.string.copy_) { _, _ ->
                 toContent.copyToClipboard()
                 showShortToast(R.string.copy_to_clipboard)
@@ -256,7 +256,7 @@ class HKeyframeRvAdapter(
                                             prompt = prompt
                                         )
                                     )
-                                    showShortToast("修改成功")
+                                    showShortToast(R.string.modify_success)
                                 }
 
                                 is VideoActivity -> {
@@ -285,7 +285,7 @@ class HKeyframeRvAdapter(
                             when (context) {
                                 is SettingsActivity -> {
                                     context.viewModel.removeHKeyframe(videoCode, item)
-                                    showShortToast("刪除成功")
+                                    showShortToast(R.string.delete_success)
                                 }
 
                                 is VideoActivity -> {

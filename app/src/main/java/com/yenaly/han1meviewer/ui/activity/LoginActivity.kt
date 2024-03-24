@@ -188,7 +188,7 @@ class LoginActivity : FrameActivity() {
                             login(state.info)
                             setResult(RESULT_OK)
                             dialog.dismiss()
-                            showShortToast(R.string.login_successful)
+                            showShortToast(R.string.login_success)
                             finish()
                         }
                     }

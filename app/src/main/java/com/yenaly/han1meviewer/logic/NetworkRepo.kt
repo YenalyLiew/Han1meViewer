@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.logic
 import android.util.Log
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.exception.CloudFlareBlockedException
 import com.yenaly.han1meviewer.logic.exception.HanimeNotFoundException
 import com.yenaly.han1meviewer.logic.exception.IPBlockedException
@@ -17,6 +18,7 @@ import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.yenaly_libs.utils.applicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -286,7 +288,7 @@ object NetworkRepo {
 
     //</editor-fold>
 
-    //<editor-fold desc="Version">
+    //<editor-fold desc="Base">
 
     fun getLatestVersion(forceCheck: Boolean = false) = flow {
         emit(WebsiteState.Loading)
@@ -301,10 +303,6 @@ object NetworkRepo {
             }
         }
     }.flowOn(Dispatchers.IO)
-
-    //</editor-fold>
-
-    //<editor-fold desc="Base">
 
     fun login(email: String, password: String) = flow {
         emit(WebsiteState.Loading)
@@ -322,11 +320,11 @@ object NetworkRepo {
                 Log.d("login_headers", req.headers().toMultimap().toString())
                 emit(WebsiteState.Success(req.headers().values("Set-Cookie")))
             } else {
-                emit(WebsiteState.Error(IllegalStateException("賬戶或密碼可能錯誤")))
+                emit(WebsiteState.Error(IllegalStateException(getString(R.string.account_or_password_wrong))))
             }
         } else {
             // 雙重保險
-            emit(WebsiteState.Error(IllegalStateException("賬戶或密碼可能錯誤")))
+            emit(WebsiteState.Error(IllegalStateException(getString(R.string.account_or_password_wrong))))
         }
     }.catch { e ->
         emit(WebsiteState.Error(handleException(e)))
@@ -399,20 +397,20 @@ object NetworkRepo {
             403 -> if (!body.isNullOrBlank()) {
                 when {
                     "you have been blocked" in body ->
-                        throw IPBlockedException("不要使用日本IP地址!!!")
+                        throw IPBlockedException(getString(R.string.do_not_use_japan_ip))
 
                     "Just a moment" in body ->
-                        throw CloudFlareBlockedException("看到這裏説明他們網站加固了，能不能恢復只能聽天命了...")
+                        throw CloudFlareBlockedException(getString(R.string.website_blocked_msg))
 
                     else ->
-                        throw HanimeNotFoundException("可能不存在") // 主要出現在影片界面，當你v數不大時會報403
+                        throw HanimeNotFoundException(getString(R.string.video_might_not_exist)) // 主要出現在影片界面，當你v數不大時會報403
                 }
             } else throw IllegalStateException("$code ${message()}")
 
-            500 -> throw HanimeNotFoundException("可能不存在") // 主要出現在影片界面，當你v數很大時會報500
+            500 -> throw HanimeNotFoundException(getString(R.string.video_might_not_exist)) // 主要出現在影片界面，當你v數很大時會報500
 
             404 -> if (!isAlreadyLogin) {
-                throw IllegalStateException("當前未登入")
+                throw IllegalStateException(getString(R.string.not_logged_in_currently))
             } else throw IllegalStateException("$code ${message()}")
 
             else -> throw IllegalStateException("$code ${message()}")
@@ -424,12 +422,12 @@ object NetworkRepo {
             is CancellationException -> throw e
             is ParseException -> {
                 e.printStackTrace()
-                ParseException("可能這個網址解析起來不大一樣...")
+                ParseException(getString(R.string.parse_error_msg))
             }
 
             is SSLHandshakeException -> {
                 e.printStackTrace()
-                SSLHandshakeException("可能是你的網路不穩定，多刷新！")
+                SSLHandshakeException(getString(R.string.network_instable_msg))
             }
 
             else -> {
@@ -440,4 +438,6 @@ object NetworkRepo {
     }
 
     //</editor-fold>
+
+    private fun getString(resId: Int) = applicationContext.getString(resId)
 }

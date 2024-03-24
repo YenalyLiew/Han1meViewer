@@ -94,7 +94,13 @@ class HanimeDownloadWorker(
     override suspend fun doWork(): Result {
         if (delete) return Result.success()
         if (runAttemptCount > 2) {
-            return Result.failure(workDataOf(FAILED_REASON to "下載 $hanimeName 失敗多次！"))
+            return Result.failure(
+                workDataOf(
+                    FAILED_REASON to context.getString(
+                        R.string.download_s_failed_many_times, hanimeName
+                    )
+                )
+            )
         }
         setForeground(createForegroundInfo())
         return download()
@@ -186,7 +192,9 @@ class HanimeDownloadWorker(
                 }
             } catch (e: Exception) {
                 if (e !is CancellationException) {
-                    showFailureNotification(e.message ?: "未知下載錯誤")
+                    showFailureNotification(
+                        e.message ?: context.getString(R.string.unknown_download_error)
+                    )
                     return@withContext Result.failure(workDataOf(FAILED_REASON to e.message))
                 }
                 // cancellation exception block 是代表用户暂停
@@ -208,7 +216,7 @@ class HanimeDownloadWorker(
             NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setOngoing(true)
-                .setContentTitle("正在下載：${hanimeName}")
+                .setContentTitle(context.getString(R.string.downloading_s, hanimeName))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText("$progress%")
                 .setProgress(100, progress, false)
@@ -225,9 +233,9 @@ class HanimeDownloadWorker(
         notificationManager.notify(
             successId, NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_baseline_check_circle_24)
-                .setContentTitle("下載任務已完成！")
+                .setContentTitle(context.getString(R.string.download_task_completed))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentText("下載完畢：${hanimeName}")
+                .setContentText(context.getString(R.string.download_completed_s, hanimeName))
                 .build()
         )
     }
@@ -237,9 +245,9 @@ class HanimeDownloadWorker(
         notificationManager.notify(
             failId, NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_baseline_cancel_24)
-                .setContentTitle("該檔案已存在！")
+                .setContentTitle(context.getString(R.string.this_data_exists))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentText("下載失敗：${fileName} 已存在")
+                .setContentText(context.getString(R.string.download_failed_s_exists, fileName))
                 .build()
         )
     }
@@ -249,9 +257,14 @@ class HanimeDownloadWorker(
         notificationManager.notify(
             failId, NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_baseline_cancel_24)
-                .setContentTitle("下載任務失敗！")
+                .setContentTitle(context.getString(R.string.download_task_failed))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentText("下載失敗：${hanimeName}\n原因為：${errMsg}")
+                .setContentText(
+                    context.getString(
+                        R.string.download_task_failed_s_reason_s,
+                        hanimeName, errMsg
+                    )
+                )
                 .build()
         )
     }

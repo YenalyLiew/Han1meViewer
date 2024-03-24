@@ -116,10 +116,12 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                 val pos = viewHolder.bindingAdapterPosition
                 val item = getItem(pos).notNull()
                 context.showAlertDialog {
-                    setTitle("你確定要刪除嗎？")
+                    setTitle(R.string.sure_to_delete)
                     setMessage(
-                        "你現在正要準備刪除" + "\n" + createDownloadName(
-                            item.title, item.quality
+                        context.getString(
+                            R.string.prepare_to_delete_s, createDownloadName(
+                                item.title, item.quality
+                            )
                         )
                     )
                     setPositiveButton(R.string.confirm) { _, _ ->

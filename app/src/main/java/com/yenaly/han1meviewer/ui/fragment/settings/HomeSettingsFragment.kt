@@ -106,7 +106,10 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         videoLanguage.apply {
 
             // 從 xml 轉移至此
-            entries = arrayOf("繁體中文", "簡體中文")
+            entries = arrayOf(
+                getString(R.string.traditional_chinese),
+                getString(R.string.simplified_chinese)
+            )
             entryValues = arrayOf("zh-CHT", "zh-CHS")
             // 不能直接用 defaultValue 设置，没效果
             if (value == null) setValueIndex(0)
@@ -115,8 +118,13 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 if (newValue != Preferences.videoLanguage) {
                     requireContext().showAlertDialog {
                         setCancelable(false)
-                        setTitle("注意！")
-                        setMessage("修改影片語言需要重啟程式，否則不起作用！")
+                        setTitle(R.string.attention)
+                        setMessage(
+                            getString(
+                                R.string.restart_or_not_working,
+                                getString(R.string.video_language)
+                            )
+                        )
                         setPositiveButton(R.string.confirm) { _, _ ->
                             ActivitiesManager.restart(killProcess = true)
                         }
@@ -151,11 +159,12 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             summary = path
             setOnPreferenceClickListener {
                 requireContext().showAlertDialog {
-                    setTitle("不允許更改")
+                    setTitle(R.string.not_allow_to_change)
                     setMessage(
-                        "詳細位置：${path}\n" + "長按選項可以複製！"
+                        getString(R.string.detailed_path_s, path) + "\n"
+                                + getString(R.string.long_press_pref_to_copy)
                     )
-                    setPositiveButton("OK", null)
+                    setPositiveButton(R.string.ok, null)
                 }
                 return@setOnPreferenceClickListener true
             }
@@ -173,20 +182,20 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             setOnPreferenceClickListener {
                 if (folderSize != 0L) {
                     context.showAlertDialog {
-                        setTitle("請再次確認一遍")
-                        setMessage("確定要清除快取嗎？")
+                        setTitle(R.string.sure_to_clear)
+                        setMessage(R.string.sure_to_clear_cache)
                         setPositiveButton(R.string.confirm) { _, _ ->
                             thread {
                                 if (cacheDir?.deleteRecursively() == true) {
                                     folderSize = cacheDir.folderSize
                                     activity?.runOnUiThread {
-                                        showShortToast("清除成功")
+                                        showShortToast(R.string.clear_success)
                                         summary = generateClearCacheSummary(folderSize)
                                     }
                                 } else {
                                     folderSize = cacheDir.folderSize
                                     activity?.runOnUiThread {
-                                        showShortToast("清除發生意外")
+                                        showShortToast(R.string.clear_failed)
                                         summary = generateClearCacheSummary(folderSize)
                                     }
                                 }
@@ -194,7 +203,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                         }
                         setNegativeButton(R.string.cancel, null)
                     }
-                } else showShortToast("當前快取為空，無需清理哦")
+                } else showShortToast(R.string.cache_empty)
                 return@setOnPreferenceClickListener true
             }
         }
@@ -280,15 +289,9 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
 
     private fun showUpdateFailedDialog() {
         requireContext().showAlertDialog {
-            setTitle("別檢查了！別檢查了！")
-            setMessage(
-                """
-                更新接口走的是 Github，所以每天有下載限制，如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。
-                
-                還有我竟然發現有人花錢買這 APP，真沒必要哈！
-            """.trimIndent()
-            )
-            setPositiveButton("帶我去下載") { _, _ ->
+            setTitle(R.string.do_not_check_update_again)
+            setMessage(R.string.update_failed_tips)
+            setPositiveButton(R.string.take_me_to_download) { _, _ ->
                 browse(HA1_GITHUB_RELEASES_URL)
             }
             setNegativeButton(R.string.cancel, null)

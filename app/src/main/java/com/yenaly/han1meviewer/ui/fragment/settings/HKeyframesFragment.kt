@@ -68,13 +68,12 @@ class HKeyframesFragment :
                         context?.showAlertDialog {
                             setTitle(R.string.h_keyframes_shared_by_other_detected)
                             setMessage(
-                                """
-                                注意：如果你也有和對方相同代號的關鍵H幀，那麼你自己的將會被覆蓋。
-                                
-                                標題：${entity.title}
-                                代號：${entity.videoCode}
-                                有 ${entity.keyframes.size} 個時刻
-                            """.trimIndent()
+                                getString(
+                                    R.string.shared_h_keyframe_detected_msg,
+                                    entity.title,
+                                    entity.videoCode,
+                                    entity.keyframes.size
+                                )
                             )
                             setPositiveButton(R.string.confirm) { _, _ ->
                                 viewModel.insertHKeyframes(entity.copy(lastModifiedTime = System.currentTimeMillis()))

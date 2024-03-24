@@ -115,7 +115,7 @@ class HKeyframeSettingsFragment : YenalySettingsFragment(R.xml.settings_h_keyfra
         return buildString {
             val countdown = this@toPrettyCountdownRemindString
             append(getString(R.string.will_remind_before_d_seconds, countdown))
-            if (countdown == HJzvdStd.DEF_COUNTDOWN_SEC) append("（預設）")
+            if (countdown == HJzvdStd.DEF_COUNTDOWN_SEC) append(" (${getString(R.string.default_)})")
         }
     }
 
