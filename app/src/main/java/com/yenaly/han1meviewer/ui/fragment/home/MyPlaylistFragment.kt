@@ -84,13 +84,13 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         binding.statePlaylist.init {
             loadingLayout = R.layout.layout_empty_view
             onLoading {
-                findViewById<TextView>(R.id.tv_empty).text = "加載中..."
+                findViewById<TextView>(R.id.tv_empty).setText(R.string.loading)
             }
         }
         binding.statePageList.init {
             loadingLayout = R.layout.layout_empty_view
             onLoading {
-                findViewById<TextView>(R.id.tv_empty).text = "請從右向左滑動選擇列表"
+                findViewById<TextView>(R.id.tv_empty).setText(R.string.slide_to_choose_list)
             }
         }
 
@@ -112,8 +112,8 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         adapter.setOnItemLongClickListener { _, _, position ->
             val item = adapter.getItem(position).notNull()
             requireContext().showAlertDialog {
-                setTitle("刪除播放清單")
-                setMessage(getString(R.string.sure_to_delete_s_video, item.title))
+                setTitle(R.string.delete_playlist)
+                setMessage(getString(R.string.sure_to_delete_s, item.title))
                 setPositiveButton(R.string.confirm) { _, _ ->
                     listCode?.let { listCode ->
                         viewModel.deletePlaylist(listCode, item.videoCode, position)
@@ -129,7 +129,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         }
         binding.btnNewPlaylist.setOnClickListener {
             requireContext().showAlertDialog {
-                setTitle("創建新清單")
+                setTitle(R.string.create_new_playlist)
                 val etView = LayoutInflater.from(context)
                     .inflate(R.layout.dialog_playlist_modify_edit_text, null)
                 val etTitle = etView.findViewById<EditText>(R.id.et_title)
@@ -251,7 +251,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
             viewModel.deletePlaylistFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
-                        showShortToast("刪除失敗！")
+                        showShortToast(R.string.delete_failed)
                     }
 
                     is WebsiteState.Loading -> {
@@ -259,7 +259,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
 
                     is WebsiteState.Success -> {
                         val index = state.info
-                        showShortToast("刪除成功！")
+                        showShortToast(R.string.delete_failed)
                         adapter.removeAt(index)
                     }
                 }
@@ -270,14 +270,14 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
             viewModel.modifyPlaylistFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
-                        showShortToast("修改失敗！")
+                        showShortToast(R.string.modify_failed)
                     }
 
                     is WebsiteState.Loading -> {
                     }
 
                     is WebsiteState.Success -> {
-                        showShortToast("修改成功！")
+                        showShortToast(R.string.modify_success)
                         if (state.info.isDeleted) {
                             listCode = null
                             listTitle = null
@@ -298,12 +298,12 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
             viewModel.createPlaylistFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
-                        showShortToast("添加失敗！")
+                        showShortToast(R.string.add_failed)
                     }
 
                     is WebsiteState.Loading -> Unit
                     is WebsiteState.Success -> {
-                        showShortToast("添加成功！")
+                        showShortToast(R.string.add_success)
                         viewModel.getPlaylists()
                     }
                 }

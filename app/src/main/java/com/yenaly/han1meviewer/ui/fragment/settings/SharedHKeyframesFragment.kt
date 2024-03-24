@@ -34,10 +34,7 @@ class SharedHKeyframesFragment :
     override fun initData(savedInstanceState: Bundle?) {
         binding.rvKeyframe.layoutManager = LinearLayoutManager(context)
         binding.rvKeyframe.adapter = adapter
-        adapter.setStateViewLayout(R.layout.layout_empty_view, buildString {
-            appendLine(getString(R.string.here_is_empty))
-            append("還沒有好心人共享，如果想貢獻非常歡迎！")
-        })
+        adapter.setStateViewLayout(R.layout.layout_empty_view, getString(R.string.here_is_empty))
     }
 
     override fun bindDataObservers() {

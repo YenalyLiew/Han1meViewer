@@ -1,6 +1,5 @@
 package com.yenaly.han1meviewer.ui.fragment.video
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.TextView
 import androidx.core.view.isGone
@@ -62,7 +61,7 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                     id,
                     viewModel.code, commentTypePrefix, replyPopup.comment
                 )
-            } ?: showShortToast("出了點小問題...")
+            } ?: showShortToast(R.string.there_is_a_small_issue)
         }
         binding.btnComment.setOnClickListener {
             XPopup.Builder(context).autoOpenSoftInput(true)
@@ -78,7 +77,6 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         }
     }
 
-    @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         lifecycleScope.launch {
             whenStarted {
@@ -116,15 +114,15 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                 viewModel.postCommentFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
-                            showShortToast("發送失敗！")
+                            showShortToast(R.string.send_failed)
                         }
 
                         is WebsiteState.Loading -> {
-                            showShortToast("發表評論中")
+                            showShortToast(R.string.sending_comment)
                         }
 
                         is WebsiteState.Success -> {
-                            showShortToast("發送成功！")
+                            showShortToast(R.string.send_success)
                             viewModel.getComment(commentTypePrefix, viewModel.code)
                             replyPopup.dismiss()
                         }
@@ -138,15 +136,15 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                 viewModel.postReplyFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
-                            showShortToast("發送失敗！")
+                            showShortToast(R.string.send_failed)
                         }
 
                         is WebsiteState.Loading -> {
-                            showShortToast("發表回覆中")
+                            showShortToast(R.string.sending_reply)
                         }
 
                         is WebsiteState.Success -> {
-                            showShortToast("發送成功！")
+                            showShortToast(R.string.send_success)
                             viewModel.getComment(commentTypePrefix, viewModel.code)
                             commentAdapter.replyPopup?.dismiss()
                         }

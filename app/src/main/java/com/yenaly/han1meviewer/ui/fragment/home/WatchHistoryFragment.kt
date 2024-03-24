@@ -40,8 +40,8 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
         historyAdapter.setOnItemLongClickListener { _, _, position ->
             val data = historyAdapter.getItem(position).notNull()
             requireContext().showAlertDialog {
-                setTitle("刪除歷史記錄")
-                setMessage(getString(R.string.sure_to_delete_s_video, data.title))
+                setTitle(R.string.delete_history)
+                setMessage(getString(R.string.sure_to_delete_s, data.title))
                 setPositiveButton(R.string.confirm) { _, _ ->
                     viewModel.deleteWatchHistory(data)
                 }
@@ -73,22 +73,22 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
                 R.id.tb_delete -> {
                     // todo: strings.xml
                     requireContext().showAlertDialog {
-                        setTitle("看這裏！")
-                        setMessage("是否將影片觀看歷史記錄全部刪除🤔")
-                        setPositiveButton("是的！") { _, _ ->
+                        setTitle(R.string.sure_to_delete)
+                        setMessage(R.string.sure_to_delete_all_histories)
+                        setPositiveButton(R.string.sure) { _, _ ->
                             viewModel.deleteAllWatchHistories()
                             historyAdapter.submitList(null)
                         }
-                        setNegativeButton("算了！", null)
+                        setNegativeButton(R.string.no, null)
                     }
                     return@addMenu true
                 }
 
                 R.id.tb_help -> {
                     requireContext().showAlertDialog {
-                        setTitle("使用注意！")
-                        setMessage("長按可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！")
-                        setPositiveButton("OK", null)
+                        setTitle(R.string.attention)
+                        setMessage(R.string.long_press_to_delete_all_histories)
+                        setPositiveButton(R.string.ok, null)
                     }
                     return@addMenu true
                 }

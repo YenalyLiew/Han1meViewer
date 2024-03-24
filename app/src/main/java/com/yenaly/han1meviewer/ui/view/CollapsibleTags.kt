@@ -127,8 +127,7 @@ class CollapsibleTags @JvmOverloads constructor(
                     }
                     setOnLongClickListener {
                         tag.copyToClipboard()
-                        // todo: strings.xml
-                        showShortToast("「$tag」已複製到剪貼簿")
+                        showShortToast(context.getString(R.string.s_copy_to_clipboard, tag))
                         return@setOnLongClickListener true
                     }
                 }

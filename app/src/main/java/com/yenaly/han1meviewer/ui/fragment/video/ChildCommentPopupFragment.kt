@@ -8,6 +8,7 @@ import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.COMMENT_ID
 import com.yenaly.han1meviewer.CSRF_TOKEN
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.PopUpFragmentChildCommentBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.adapter.VideoCommentRvAdapter
@@ -49,7 +50,7 @@ class ChildCommentPopupFragment :
                 viewModel.videoReplyFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
-                            showShortToast("加載回覆失敗了捏")
+                            showShortToast(R.string.load_reply_failed)
                             dialog.dismiss()
                         }
 
@@ -70,15 +71,15 @@ class ChildCommentPopupFragment :
                 viewModel.postReplyFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
-                            showShortToast("發送失敗！")
+                            showShortToast(R.string.send_failed)
                         }
 
                         is WebsiteState.Loading -> {
-                            showShortToast("發表回覆中")
+                            showShortToast(R.string.sending_reply)
                         }
 
                         is WebsiteState.Success -> {
-                            showShortToast("發送成功！")
+                            showShortToast(R.string.send_success)
                             viewModel.getCommentReply(commentId!!)
                             replyAdapter.replyPopup?.dismiss()
                         }

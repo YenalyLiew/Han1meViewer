@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.Preferences
+import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
@@ -28,7 +29,7 @@ import kotlin.math.abs
  * @author Yenaly Liew
  * @time 2022/06/17 017 19:01
  */
-class VideoViewModel(application: Application) : YenalyViewModel(application) {
+class VideoViewModel(private val application: Application) : YenalyViewModel(application) {
 
     companion object {
         /**
@@ -133,13 +134,18 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
                 this@VideoViewModel.hKeyframes?.keyframes?.forEach { keyframeInDb ->
                     if (abs(keyframeInDb.position - hKeyframe.position) < MIN_H_KEYFRAME_SAVE_INTERVAL) {
                         Log.d("append_hkeyframe", "time conflict: $keyframeInDb")
-                        _modifyHKeyframeFlow.emit(false to "間隔太短，必須大於${MIN_H_KEYFRAME_SAVE_INTERVAL / 1_000L}s")
+                        _modifyHKeyframeFlow.emit(
+                            false to application.getString(
+                                R.string.interval_must_greater_than_d,
+                                MIN_H_KEYFRAME_SAVE_INTERVAL / 1_000L
+                            )
+                        )
                         return@run
                     }
                 }
                 DatabaseRepo.HKeyframe.appendKeyframe(videoCode, title, hKeyframe)
                 Log.d("append_hkeyframe", "$hKeyframe DONE!")
-                _modifyHKeyframeFlow.emit(true to "添加成功")
+                _modifyHKeyframeFlow.emit(true to application.getString(R.string.add_success))
             }
         }
     }
@@ -148,7 +154,7 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             DatabaseRepo.HKeyframe.removeKeyframe(videoCode, hKeyframe)
             Log.d("remove_hkeyframe", "$hKeyframe DONE!")
-            _modifyHKeyframeFlow.emit(true to "刪除成功")
+            _modifyHKeyframeFlow.emit(true to application.getString(R.string.delete_success))
         }
     }
 
@@ -159,7 +165,7 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
         viewModelScope.launch {
             DatabaseRepo.HKeyframe.modifyKeyframe(videoCode, oldKeyframe, keyframe)
             Log.d("modify_hkeyframe", "$keyframe DONE!")
-            _modifyHKeyframeFlow.emit(true to "修改成功")
+            _modifyHKeyframeFlow.emit(true to application.getString(R.string.modify_success))
         }
     }
 }

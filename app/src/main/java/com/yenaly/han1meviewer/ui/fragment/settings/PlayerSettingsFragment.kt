@@ -59,8 +59,16 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
         }
         longPressSpeedTimesPref.apply {
             entries = arrayOf(
-                "1倍", "1.5倍", "2倍", "2.5倍（預設）", "2.8倍",
-                "3倍", "3.2倍", "3.5倍", "3.8倍", "4倍"
+                getString(R.string.d_speed_times, 1),
+                getString(R.string.d_speed_times, 1.5),
+                getString(R.string.d_speed_times, 2),
+                "${getString(R.string.d_speed_times, 2.5)} (${getString(R.string.default_)})",
+                getString(R.string.d_speed_times, 2.8),
+                getString(R.string.d_speed_times, 3),
+                getString(R.string.d_speed_times, 3.2),
+                getString(R.string.d_speed_times, 3.5),
+                getString(R.string.d_speed_times, 3.8),
+                getString(R.string.d_speed_times, 4)
             )
             entryValues = arrayOf(
                 "1", "1.5", "2", "2.5", "2.8",
@@ -75,13 +83,13 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
      */
     private fun @receiver:IntRange(from = 1, to = 9) Int.toPrettySensitivityString(): String {
         val pretty = when (this) {
-            1, 2 -> "高"
-            3, 4 -> "較高"
-            5 -> "適中"
-            6 -> "稍低"
-            7 -> "較低"
-            8 -> "低"
-            9 -> "極低"
+            1, 2 -> getString(R.string.high)
+            3, 4 -> getString(R.string.moderately_high)
+            5 -> getString(R.string.moderate)
+            6 -> getString(R.string.slightly_low)
+            7 -> getString(R.string.low)
+            8 -> getString(R.string.very_low)
+            9 -> getString(R.string.extremely_low)
             else -> throw IllegalStateException("Invalid sensitivity value: $this")
         }
         return getString(R.string.current_slide_sensitivity, pretty)

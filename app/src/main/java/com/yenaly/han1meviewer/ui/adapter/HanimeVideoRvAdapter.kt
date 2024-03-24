@@ -173,8 +173,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                         val position = viewHolder.bindingAdapterPosition
                         val item = getItem(position).notNull()
                         if (item.isPlaying) {
-                            // todo: strings.xml
-                            showShortToast("當前正在觀看該影片哦~")
+                            showShortToast(R.string.watching_this_video_now)
                         } else {
                             val videoCode = item.videoCode
                             context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)

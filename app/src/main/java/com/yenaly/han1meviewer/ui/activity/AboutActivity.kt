@@ -95,6 +95,14 @@ class AboutActivity : AbsAboutActivity() {
                     "https://github.com/rurires"
                 )
             )
+            add(
+                Contributor(
+                    0,
+                    "NeKoOuO",
+                    "Contributor",
+                    "https://github.com/NeKoOuO"
+                )
+            )
         }
     }
 }

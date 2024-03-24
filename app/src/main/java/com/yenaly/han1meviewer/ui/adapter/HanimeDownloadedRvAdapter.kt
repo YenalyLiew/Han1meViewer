@@ -101,8 +101,8 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
                 val item = getItem(position).notNull()
                 val file = item.videoUri.toUri().toFile()
                 context.showAlertDialog {
-                    setTitle("你確定要刪除嗎？")
-                    setMessage("你現在正要準備刪除" + "\n" + file.name)
+                    setTitle(R.string.sure_to_delete)
+                    setMessage(context.getString(R.string.prepare_to_delete_s, file.name))
                     setPositiveButton(R.string.confirm) { _, _ ->
                         if (file.exists()) file.delete()
                         fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
@@ -115,8 +115,8 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
                 val item = getItem(position).notNull()
                 context.openDownloadedHanimeVideoLocally(item.videoUri, onFileNotFound = {
                     context.showAlertDialog {
-                        setTitle("影片不存在")
-                        setMessage("影片已被刪除或移動，是否刪除該條目？")
+                        setTitle(R.string.video_not_exist)
+                        setMessage(R.string.video_deleted_sure_to_delete_item)
                         setPositiveButton(R.string.delete) { _, _ ->
                             fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
                         }

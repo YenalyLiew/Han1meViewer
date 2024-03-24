@@ -100,7 +100,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
                             if (state.info.videoUrls.isEmpty()) {
                                 binding.videoPlayer.startButton.setOnClickListener {
-                                    showShortToast("無法得到該影片的播放連接，即將轉向瀏覽器")
+                                    showShortToast(R.string.fail_to_get_video_link)
                                     browse(getHanimeVideoLink(viewModel.videoCode))
                                 }
                             } else {
@@ -125,7 +125,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
                         is VideoLoadingState.NoContent -> {
                             // todo: 有時間轉移到 strings.xml
-                            showShortToast("可能該影片不存在")
+                            showShortToast(R.string.video_might_not_exist)
                             finish()
                         }
                     }
@@ -229,10 +229,10 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             if (!binding.videoPlayer.mediaInterface.isPlaying) {
                 val currentPosition = binding.videoPlayer.currentPositionWhenPlaying
                 it.context.showAlertDialog {
-                    setTitle("加入關鍵H幀")
+                    setTitle(R.string.add_to_h_keyframe)
                     setMessage(buildString {
-                        appendLine("確定要將當前時刻加入關鍵H幀嗎？")
-                        append("當前時刻：${currentPosition}ms")
+                        appendLine(getString(R.string.sure_to_add_to_h_keyframe))
+                        append(getString(R.string.current_position_d_ms, currentPosition))
                     })
                     setPositiveButton(R.string.confirm) { _, _ ->
                         viewModel.appendHKeyframe(
@@ -247,7 +247,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                     setNegativeButton(R.string.cancel, null)
                 }
             } else {
-                showShortToast("先暫停再長按")
+                showShortToast(R.string.pause_then_long_press)
             }
         }
     }

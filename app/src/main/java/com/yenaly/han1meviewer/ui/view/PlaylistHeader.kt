@@ -45,7 +45,8 @@ class PlaylistHeader @JvmOverloads constructor(
     var description: String? = null
         set(value) {
             field = value
-            tvDesc.text = if (!value.isNullOrEmpty()) value else "您似乎還沒有寫介紹..."
+            tvDesc.text =
+                if (!value.isNullOrEmpty()) value else context.getString(R.string.no_description)
         }
 
     var onChangedListener: ((title: String, desc: String) -> Unit)? = null
@@ -56,7 +57,7 @@ class PlaylistHeader @JvmOverloads constructor(
     private fun init() {
         btnDelete.setOnClickListener {
             context.showAlertDialog {
-                setTitle("刪除該播放清單")
+                setTitle(R.string.delete_the_playlist)
                 setMessage(R.string.sure_to_delete)
                 setPositiveButton(R.string.confirm) { _, _ ->
                     onDeleteActionListener?.invoke()
@@ -66,7 +67,7 @@ class PlaylistHeader @JvmOverloads constructor(
         }
         btnEdit.setOnClickListener {
             context.showAlertDialog {
-                setTitle("修改標題或介紹")
+                setTitle(R.string.modify_title_or_desc)
                 val etView =
                     LayoutInflater.from(context)
                         .inflate(R.layout.dialog_playlist_modify_edit_text, null)

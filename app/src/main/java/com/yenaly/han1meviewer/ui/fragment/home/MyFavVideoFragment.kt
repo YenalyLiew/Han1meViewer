@@ -52,8 +52,8 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
         adapter.setOnItemLongClickListener { _, _, position ->
             val item = adapter.getItem(position).notNull()
             requireContext().showAlertDialog {
-                setTitle("刪除喜歡")
-                setMessage(getString(R.string.sure_to_delete_s_video, item.title))
+                setTitle(R.string.delete_fav)
+                setMessage(getString(R.string.sure_to_delete_s, item.title))
                 setPositiveButton(R.string.confirm) { _, _ ->
                     viewModel.deleteMyFavVideo(item.videoCode, position)
                 }
@@ -119,7 +119,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
             viewModel.deleteMyFavVideoFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
-                        showShortToast("刪除失敗！")
+                        showShortToast(R.string.delete_failed)
                         state.throwable.printStackTrace()
                     }
 
@@ -128,7 +128,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
                     is WebsiteState.Success -> {
                         val index = state.info
-                        showShortToast("刪除成功！")
+                        showShortToast(R.string.delete_success)
                         adapter.removeAt(index)
                     }
                 }
@@ -162,9 +162,9 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
             when (menuItem.itemId) {
                 R.id.tb_help -> {
                     requireContext().showAlertDialog {
-                        setTitle("使用注意！")
-                        setMessage("长按可以取消喜歡！")
-                        setPositiveButton("OK", null)
+                        setTitle(R.string.attention)
+                        setMessage(R.string.long_press_to_cancel_fav)
+                        setPositiveButton(R.string.ok, null)
                     }
                     return@addMenu true
                 }
