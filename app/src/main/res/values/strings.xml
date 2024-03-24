@@ -178,8 +178,7 @@
     <string name="domain_name">域名</string>
     <string name="use_built_in_hosts">應用內建 Hosts</string>
     <string name="network_settings">網路設定</string>
-    <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\n
-VPN？那是什麽？</string>
+    <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\nVPN？那是什麽？</string>
     <string name="username">賬號</string>
     <string name="password">密碼</string>
     <string name="try_login_here">試試在這裏登入</string>
@@ -187,19 +186,16 @@ VPN？那是什麽？</string>
     <string name="login_failed">登入失敗</string>
     <string name="login_success">登入成功</string>
     <string name="account_or_password_wrong">賬戶或密碼可能錯誤</string>
-    <string name="login_tips">該方法只能保持登入 2 個小時… 還是推薦使用網頁登入，\n
-但網頁是不走 Hosts 的，所以可能需要 VPN。</string>
+    <string name="login_tips">該方法只能保持登入 2 個小時… 還是推薦使用網頁登入，\n但網頁是不走 Hosts 的，所以可能需要 VPN。</string>
     <string name="ignore">忽略</string>
     <string name="update">更新</string>
     <string name="use_ci_update_channel">採用 CI 更新頻道</string>
-    <string name="use_ci_update_channel_summary">CI 更新頻道能更快地取得最新變更\n
-但不保證穩定性</string>
+    <string name="use_ci_update_channel_summary">CI 更新頻道能更快地取得最新變更\n但不保證穩定性</string>
     <string name="update_popup_interval_days">檢查更新彈窗間隔天數</string>
     <string name="update_failed">更新失敗</string>
     <string name="update_download_background">在背景下載更新</string>
     <string name="allow_install_from_unknown_app_sources">准許當前 App 來源安裝</string>
-    <string name="reason_for_allow_install_from_unknown_app_sources">別擔心，這只是爲了更新。\n
-你如果不放心，可以直接去 Github 上下載。</string>
+    <string name="reason_for_allow_install_from_unknown_app_sources">別擔心，這只是爲了更新。\n你如果不放心，可以直接去 Github 上下載。</string>
     <string name="go_to_settings">前往設定</string>
     <string name="allow_post_notification">准許發送通知</string>
     <string name="reason_for_download_notification">請同意通知權限，及時收到下載訊息！</string>
@@ -296,8 +292,7 @@ VPN？那是什麽？</string>
     <string name="low">低</string>
     <string name="very_low">很低</string>
     <string name="extremely_low">極低</string>
-    <string name="update_failed_tips">更新接口走的是 Github，所以每天有下載限制，如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。\n
-\n
+    <string name="update_failed_tips">如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。\n\n
 還有我竟然發現有人花錢買這 APP，真沒必要哈！</string>
     <string name="shared_h_keyframe_detected_msg">注意：如果你也有和對方相同代號的關鍵H幀，那麼你自己的將會被覆蓋。\n
 \n

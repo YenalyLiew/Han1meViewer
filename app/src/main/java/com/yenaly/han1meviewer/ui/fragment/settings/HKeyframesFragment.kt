@@ -73,7 +73,7 @@ class HKeyframesFragment :
                                     entity.title,
                                     entity.videoCode,
                                     entity.keyframes.size
-                                )
+                                ).trimIndent()
                             )
                             setPositiveButton(R.string.confirm) { _, _ ->
                                 viewModel.insertHKeyframes(entity.copy(lastModifiedTime = System.currentTimeMillis()))

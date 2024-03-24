@@ -89,7 +89,7 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
                     requireContext().showAlertDialog {
                         setCancelable(false)
                         setTitle(R.string.attention)
-                        setMessage(R.string.domain_change_tips)
+                        setMessage(getString(R.string.domain_change_tips).trimIndent())
                         setPositiveButton(R.string.confirm) { _, _ ->
                             logout()
                             ActivitiesManager.restart(killProcess = true)
