@@ -21,7 +21,6 @@ import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.use
-import org.json.JSONObject
 import java.io.File
 import java.net.InetAddress
 import java.util.zip.ZipInputStream
@@ -33,6 +32,13 @@ import kotlin.time.Duration.Companion.days
  * @time 2024/03/21 021 08:28
  */
 object HUpdater {
+
+    private const val DEFAULT_BRANCH = "master"
+
+    /**
+     * Regex to match multiple line feeds to a single line feed
+     */
+    private val linefeedRegex = Regex("\\n{2,}")
 
     private val updaterClient = OkHttpClient.Builder()
         .dns(UpdateDns)
@@ -51,11 +57,13 @@ object HUpdater {
         if (forceCheck || now > lastCheckTime + interval.days) {
             if (Preferences.useCIUpdateChannel) {
                 val curSha = BuildConfig.COMMIT_SHA
-                val apiReq = request(HA1_GITHUB_API_URL)
-                val branch = apiReq.body?.string()?.let(::JSONObject)?.getString("default_branch")
-                    ?: return null
+                // 特殊情况下才用注释部分，一般情况下 branch 都是固定的，要不然多一次
+                // request 会对我的 API Token 造成负担。
+                // val apiReq = request(HA1_GITHUB_API_URL)
+                // val branch = apiReq.body?.string()?.let(::JSONObject)?.getString("default_branch")
+                //     ?: return null
                 val workflowRunsUrl =
-                    "$HA1_GITHUB_API_URL/actions/workflows/ci.yml/runs?branch=$branch&event=push&status=success&per_page=1"
+                    "$HA1_GITHUB_API_URL/actions/workflows/ci.yml/runs?branch=$DEFAULT_BRANCH&event=push&status=success&per_page=1"
                 val workflowRun = request(workflowRunsUrl).parseAs<WorkflowRuns>()
                     ?.workflowRuns?.firstOrNull() ?: return null
 
@@ -69,9 +77,7 @@ object HUpdater {
                     val changelog = runSuspendCatching {
                         val commitCompUrl = "$HA1_GITHUB_API_URL/compare/$curSha...$shortSha"
                         val res = request(commitCompUrl).parseAs<CommitComparison>()
-                        res?.commits?.joinToString("\n") { commit ->
-                            "${commit.commit.message} (@${commit.commit.author.name})"
-                        }
+                        res?.commits?.toChangelogPrettyString()
                     }.getOrNull() ?: workflowRun.title
                     return Latest("$shortSha (CI)", changelog, archiveUrl)
                 }
@@ -128,6 +134,13 @@ object HUpdater {
             .header("Authorization", "Bearer ${BuildConfig.HA1_GITHUB_TOKEN}")
             .build()
         return updaterClient.newCall(req).await()
+    }
+
+    private fun List<CommitComparison.Commit>.toChangelogPrettyString(): String {
+        return reversed().joinToString("\n\n") { commit ->
+            val message = commit.commit.message.replace(linefeedRegex, "\n")
+            "↓ (@${commit.commit.author.name})\n$message"
+        }
     }
 
     object UpdateDns : Dns {
