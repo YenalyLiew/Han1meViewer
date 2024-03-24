@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="hanime_app_name" tools:ignore="Typos">Han1meViewer</string>
+    <string name="hanime_app_name" translatable="false" tools:ignore="Typos">Han1meViewer</string>
     <string name="home_page">主頁</string>
     <string name="h_anime">H動漫</string>
     <string name="latest_hanime">最新裏番</string>
@@ -216,7 +216,7 @@
     <string name="not_logged_in">未登入</string>
     <string name="modify_success">修改成功</string>
     <string name="modify_title_or_desc">修改標題或介紹</string>
-    <string name="fail_to_get_video_link">無法得到該影片的播放連接，即將轉向瀏覽器</string>
+    <string name="fail_to_get_video_link">無法得到該影片的播放連結，即將轉向瀏覽器</string>
     <string name="delete_success">刪除成功</string>
     <string name="video_might_not_exist">可能該影片不存在</string>
     <string name="video_not_exist">該影片不存在</string>
