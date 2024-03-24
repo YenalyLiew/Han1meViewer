@@ -290,7 +290,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
     private fun showUpdateFailedDialog() {
         requireContext().showAlertDialog {
             setTitle(R.string.do_not_check_update_again)
-            setMessage(R.string.update_failed_tips)
+            setMessage(getString(R.string.update_failed_tips).trimIndent())
             setPositiveButton(R.string.take_me_to_download) { _, _ ->
                 browse(HA1_GITHUB_RELEASES_URL)
             }
