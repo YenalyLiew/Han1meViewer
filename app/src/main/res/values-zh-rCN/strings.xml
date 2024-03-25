@@ -126,10 +126,6 @@
     <string name="port">端口</string>
     <string name="direct">直接连接</string>
     <string name="system_proxy">系统代理</string>
-    <string name="http">HTTP</string>
-    <string name="http_proxy">HTTP %s:%d</string>
-    <string name="socks">SOCKS</string>
-    <string name="socks_proxy">SOCKS %s:%d</string>
     <string name="host_or_ipv4">Host 或 IPv4</string>
     <string name="sort_by_date_ascending">时间正排序</string>
     <string name="sort_by_date_descending">时间反排序</string>

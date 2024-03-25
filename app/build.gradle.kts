@@ -23,13 +23,13 @@ android {
 
     // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
     val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD")
-        ?: File(projectDir.path + "/keystore/ha1_keystore_password.txt").readText()
+        ?: project.file("/keystore/ha1_keystore_password.txt").readText()
 
     val githubToken = System.getenv("HA1_GITHUB_TOKEN")
-        ?: File(projectDir.path + "/ha1_github_token.txt").readText()
+        ?: project.file("/ha1_github_token.txt").readText()
 
     val signConfig = signingConfigs.create("release") {
-        storeFile = File(projectDir.path + "/keystore/Han1meViewerKeystore.jks")
+        storeFile = project.file("/keystore/Han1meViewerKeystore.jks")
         storePassword = signPwd
         keyAlias = "yenaly"
         keyPassword = signPwd
@@ -42,7 +42,7 @@ android {
         minSdk = Config.minSdk
         targetSdk = Config.targetSdk
         versionCode = if (isRelease) createVersionCode() else 1 // 方便调试
-        versionName = versionCode.createVersionName(major = 0, minor = 13, patch = 0)
+        versionName = versionCode.createVersionName(major = 0, minor = 14, patch = 0)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

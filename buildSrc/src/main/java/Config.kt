@@ -1,6 +1,6 @@
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.TimeZone
+import java.time.Clock
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * @author Yenaly Liew
@@ -25,9 +25,8 @@ object Config {
             return version.also { println("Version Name: $it") }
         }
 
-        fun createVersionCode() = SimpleDateFormat("yyMMddHH").let {
-            it.timeZone = TimeZone.getTimeZone("UTC")
-            it.format(Date()).toInt()
-        }.also { println("Version Code: $it") }
+        fun createVersionCode() = LocalDateTime.now(Clock.systemUTC()).format(
+            DateTimeFormatter.ofPattern("yyMMddHH")
+        ).toInt().also { println("Version Code: $it") }
     }
 }
