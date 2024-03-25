@@ -137,7 +137,7 @@ object HUpdater {
     }
 
     private fun List<CommitComparison.Commit>.toChangelogPrettyString(): String {
-        return reversed().joinToString("\n\n") { commit ->
+        return distinct().reversed().joinToString("\n\n") { commit ->
             val message = commit.commit.message.replace(linefeedRegex, "\n")
             "↓ (@${commit.commit.author.name})\n$message"
         }
