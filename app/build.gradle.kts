@@ -2,6 +2,7 @@
 
 import Config.Version.createVersionCode
 import Config.Version.createVersionName
+import Config.lastCommitSha
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
 plugins {
@@ -17,16 +18,14 @@ val isRelease: Boolean
 android {
     compileSdk = Config.compileSdk
 
-    val commitSha = if (isRelease) providers.exec {
-        commandLine = "git rev-parse --short=7 HEAD".split(' ')
-    }.standardOutput.asText.get().trim() else "8ea5a9c" // 方便调试
+    val commitSha = if (isRelease) lastCommitSha else "8ea5a9c" // 方便调试
 
     // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
     val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD")
         ?: project.file("/keystore/ha1_keystore_password.txt").readText()
 
-    val githubToken = System.getenv("HA1_GITHUB_TOKEN")
-        ?: project.file("/ha1_github_token.txt").readText()
+    val githubToken =
+        System.getenv("HA1_GITHUB_TOKEN") ?: project.file("/ha1_github_token.txt").readText()
 
     val signConfig = signingConfigs.create("release") {
         storeFile = project.file("/keystore/Han1meViewerKeystore.jks")

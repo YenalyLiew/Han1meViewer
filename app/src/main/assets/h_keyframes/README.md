@@ -10,8 +10,9 @@
 前在屏幕**左上角**倒计时提醒（可调整）。在 0-1s 时，会精确到一位小数，方便你更好的控制时间。
 
 此外，还提供了**共享关键H帧集**。这些关键H帧是内置于软件里的，来源于贡献者在 GitHub
-上的补充。目前是随着版本更新来更新共享关键H帧集，暂时不考虑服务器在线共享之类的（太危险），~~前提是有贡献者来帮忙补充~~。
-[共享关键庫](https://github.com/YenalyLiew/Han1meViewer/blob/master/app/src/main/assets/h_keyframes)
+上的补充。目前是随着版本更新来更新共享关键H帧集，暂时不考虑服务器在线共享之类的（太危险），
+~~前提是有贡献者来帮忙补充~~。
+[共享关键库位置](https://github.com/YenalyLiew/Han1meViewer/blob/master/app/src/main/assets/h_keyframes)
 
 ## 须知
 

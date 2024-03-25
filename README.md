@@ -2,18 +2,17 @@
 
 ![Han1meViewer](https://socialify.git.ci/YenalyLiew/Han1meViewer/image?description=1&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fgithub.com%2FYenalyLiew%2FHan1meViewer%2Fblob%2Fmaster%2Ficon%2Ficon_han1me_viewer-rurires.png%3Fraw%3Dtrue&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
 
-这是一个 [Hanime1](https://hanime1.me/) Android 平台的非官方浏览器。
+这是 [Hanime1](https://hanime1.me/) Android 平台的非官方浏览器。
 
 Android 版本必须不小于 7.0 才能使用。
 
-本项目仅用于学习和交流代码，不可闭源，严禁商用。
+本项目仅用于学习和交流代码，不可闭源。
 
 An unofficial Hanime1.me Application for Android.
 
 Android version must be no less than 7.0 to be used.
 
-This project is intended solely for purposes of learning codes. Commercial use is strictly
-prohibited.
+This project is intended solely for purposes of learning codes.
 
 ![download times](https://img.shields.io/github/downloads/YenalyLiew/Han1meViewer/total)
 
@@ -105,7 +104,7 @@ GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，
 如果你想贡献关键H帧，请点击 [这里](https://github.com/YenalyLiew/Han1meViewer/blob/master/app/src/main/assets/h_keyframes/README.md)
 查看应该怎么做。
 
-## 存在问题
+## 需要注意的问题
 
 本软件和网站深度绑定，如果网站不能用，软件 100% 用不了。除非你下载过影片，那可以看。
 
@@ -114,8 +113,6 @@ GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，
 只要该网站大改，我就得花很长时间去重解析网页，这个时候软件就不能用。
 
 如果跳转到了反诈页面（某些地区把网站 ban 了），去改其他 DNS，多半是被劫持了！
-
-~~PS：你还真给我大改了。。~~
 
 ## 常见问题
 
@@ -147,9 +144,20 @@ GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，
   更新接口走的是 Github，所以每天有下载限制，如果**你发现软件有重大问题但是提示更新失败**，请**直接**去
   Github Releases 界面查看是否有最新版下载。
 
+- **什么是 CI 更新频道，我开跟不开有何区别？**
+
+  CI 代表每次提交代码后会自动构建一个新版本，开启后软件内会立即响应并提供最快速的更新。
+  你可以选择开启这个频道，但是**不保证稳定**。
+  但假如说你遇到 bug，我修复后你可以立即获取到，而不需要我专门发布新版本。
+
+  你可以把 CI 更新频道理解为**测试版**，但 CI 更新的初衷主要是为了能**最快地获取到最新关键H帧**。
+  如果你不需要，可以关闭。
+
 - **你里面那个代理是什么？为什么我用了没梯子效果？**
 
   首先你要知道我那个**代理 ≠ 内置梯子**，是给特殊人群用的。你正常使用是需要自备梯子的。如果你懂，你也不会问这个问题；如果你不懂，那说明这个功能应该跟你没啥关系。
+
+  在 v0.13.0 中，新增**应用内置 Hosts**功能，可以让你**直连**网站。
 
 - **下载影片，但一段时间内没下载一直暂停，结果下一次继续之后总是弹错误通知怎么办？**
 
@@ -158,11 +166,23 @@ GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，
 
 ## 更新内容
 
+### v0.14.0
+
+**[新增]** CI 更新频道。现在可以在设置里选择更新频道了，有稳定版和 CI 版两个频道。并且可以调整更新弹窗间隔。
+
+**[新增]** 简体中文界面，但默认仍为繁体中文。
+
+**[新增]** 标题及副标题长按可以复制。
+
+**[新增]** Contributor @NeKoOuO 。
+
+**[新增]** @NeKoOuO 提供的部分影片的关键H帧！开启共享帧集就可立即使用！
+
 ### v0.13.0
 
 **[新增]** 重磅！应用内置 Hosts 功能，可以让你直连网站。
 
-**[新增]** [@NeKoOuO](https://github.com/NeKoOuO) 提供的部分影片的关键H帧！开启共享帧集就可立即使用！
+**[新增]** @NeKoOuO 提供的部分影片的关键H帧！开启共享帧集就可立即使用！
 
 **[新增]** 本地登入功能。如果登入网页连接失败，等出现错误提示之后，会自动弹出一个登入框，可以从那里尝试登入。
 注意：该方法为备用方法，只能保持登入状态 2 个小时，所以还是建议尽可能使用网页登入。
