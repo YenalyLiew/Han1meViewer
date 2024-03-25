@@ -1,3 +1,4 @@
+import org.gradle.api.Project
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -29,4 +30,9 @@ object Config {
             DateTimeFormatter.ofPattern("yyMMddHH")
         ).toInt().also { println("Version Code: $it") }
     }
+
+    val Project.lastCommitSha: String
+        get() = providers.exec {
+            commandLine = "git rev-parse --short=7 HEAD".split(' ')
+        }.standardOutput.asText.get().trim()
 }
