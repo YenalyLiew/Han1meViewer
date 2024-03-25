@@ -106,7 +106,7 @@
     <string name="deny">拒绝</string>
     <string name="no_video_links_found">未发现影片链接</string>
     <string name="child_comment">子评论</string>
-    <string name="search_options_tips">长按某单元可以清除当前你所选单元的所有tag</string>
+    <string name="search_options_tips">长按某单元可以清除当前你所选单元的所有标签</string>
     <string name="pause">暂停</string>
     <string name="continues">继续</string>
     <string name="jump_to_webpage">转到网页</string>
@@ -134,7 +134,7 @@
     <string name="h_keyframe_settings">关键H帧设置</string>
     <string name="h_keyframes_enable">关键H帧，启动！</string>
     <string name="h_keyframes_enable_tip">该功能关闭后并不会删除你的历史数据</string>
-    <string name="h_keyframes_disable_tip">开启后，播放器顶部会有相关部件显示</string>
+    <string name="h_keyframes_disable_tip">开启后，播放器顶部会显示🥵</string>
     <string name="h_keyframe_title_prefix">影片代码：</string>
     <string name="manage">管理</string>
     <string name="h_keyframe_manage">关键H帧管理</string>
@@ -152,7 +152,7 @@
     <string name="forum">讨论区</string>
     <string name="forum_summary">欢迎来吐槽，如果有重要信息也会发布到这里</string>
     <string name="submit_bug">提交 BUG</string>
-    <string name="submit_bug_summary">出 BUG 了就来提交个 issue 吧</string>
+    <string name="submit_bug_summary">出 BUG 了就来提交个 Issue 吧</string>
     <string name="position_ms">位置 (ms)</string>
     <string name="prompt">提示</string>
     <string name="modify_h_keyframe">修改关键H帧</string>
@@ -214,7 +214,7 @@
     <string name="modify_title_or_desc">修改标题或介绍</string>
     <string name="fail_to_get_video_link">无法得到该影片的播放链接，即将转向浏览器</string>
     <string name="delete_success">删除成功</string>
-    <string name="video_might_not_exist">可能该影片不存在</string>
+    <string name="video_might_not_exist">该影片可能不存在</string>
     <string name="video_not_exist">该影片不存在</string>
     <string name="add_to_h_keyframe">加入关键H帧</string>
     <string name="sure_to_add_to_h_keyframe">确定要将当前时刻加入关键H帧吗？</string>
@@ -270,7 +270,7 @@
     <string name="name_with_colon">名称：</string>
     <string name="quality_with_colon">画质：</string>
     <string name="after_download_tips">下载完毕后可以在「下载」界面找到下载后的影片，「设置」界面里有详细存储路径。</string>
-    <string name="traditional_chinese">繁体中文</string>
+    <string name="traditional_chinese">正体中文</string>
     <string name="simplified_chinese">简体中文</string>
     <string name="restart_or_not_working">修改%s需要重启程序，否则不起作用！</string>
     <string name="sure_to_clear">确定要清除吗？</string>
