@@ -22,13 +22,13 @@ android {
 
     // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
     val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD")
-        ?: project.file("/keystore/ha1_keystore_password.txt").readText()
+        ?: File(projectDir, "keystore/ha1_keystore_password.txt").readText()
 
     val githubToken =
-        System.getenv("HA1_GITHUB_TOKEN") ?: project.file("/ha1_github_token.txt").readText()
+        System.getenv("HA1_GITHUB_TOKEN") ?: File(projectDir, "ha1_github_token.txt").readText()
 
     val signConfig = signingConfigs.create("release") {
-        storeFile = project.file("/keystore/Han1meViewerKeystore.jks")
+        storeFile = File(projectDir, "keystore/Han1meViewerKeystore.jks")
         storePassword = signPwd
         keyAlias = "yenaly"
         keyPassword = signPwd
