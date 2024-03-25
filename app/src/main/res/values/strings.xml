@@ -156,7 +156,7 @@
     <string name="forum">討論區</string>
     <string name="forum_summary">歡迎來吐槽，如果有重要資訊也會發佈到這裡</string>
     <string name="submit_bug">提交 BUG</string>
-    <string name="submit_bug_summary">出 BUG 了就來提交個 Issue 吧</string>
+    <string name="submit_bug_summary">出 BUG 了就來提交個 issue 吧</string>
     <string name="position_ms">位置 (ms)</string>
     <string name="prompt">提示</string>
     <string name="modify_h_keyframe">修改關鍵H幀</string>
