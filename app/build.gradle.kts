@@ -22,13 +22,14 @@ android {
 
     // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
     val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD")
-        ?: File(projectDir, "keystore/ha1_keystore_password.txt").readText()
+        ?: File(projectDir, "keystore/ha1_keystore_password.txt").checkIfExists()?.readText()
 
     val githubToken =
-        System.getenv("HA1_GITHUB_TOKEN") ?: File(projectDir, "ha1_github_token.txt").readText()
+        System.getenv("HA1_GITHUB_TOKEN")
+            ?: File(projectDir, "ha1_github_token.txt").checkIfExists()?.readText()
 
     val signConfig = signingConfigs.create("release") {
-        storeFile = File(projectDir, "keystore/Han1meViewerKeystore.jks")
+        storeFile = File(projectDir, "keystore/Han1meViewerKeystore.jks").checkIfExists()
         storePassword = signPwd
         keyAlias = "yenaly"
         keyPassword = signPwd
@@ -53,12 +54,7 @@ android {
 
     buildTypes {
         release {
-            postprocessing {
-                isRemoveUnusedCode = true
-                isObfuscate = false // 不混淆
-                isOptimizeCode = true
-                isRemoveUnusedResources = true
-            }
+            isMinifyEnabled = false // 被迫 false，混淆会导致无法获取父类泛型
             signingConfig = signConfig
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
@@ -72,6 +68,9 @@ android {
         }
         debug {
             isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
             applicationIdSuffix = ".debug"
         }
     }
@@ -160,3 +159,8 @@ dependencies {
     androidTestImplementation(Libs.Test.testJunit)
     androidTestImplementation(Libs.Test.testEspressoCore)
 }
+
+/**
+ * This function is used to check if a file exists and is a file.
+ */
+fun File.checkIfExists(): File? = if (exists() && isFile) this else null
