@@ -27,7 +27,7 @@
     <string name="sort_option_able_reset">排序方式（復選可取消）</string>
     <string name="cancel_all_tags">取消所有tag</string>
     <string name="alert">提示</string>
-    <string name="alert_cancel_all_tags">確認將會取消你所選的所有tag</string>
+    <string name="alert_cancel_all_tags">確認將會取消你所選的所有Tag</string>
     <string name="confirm">確認</string>
     <string name="cancel">取消</string>
     <string name="content_tag">內容標籤</string>
@@ -67,7 +67,7 @@
     <string name="watch_history">觀看歷史</string>
     <string name="login">登入</string>
     <string name="delete">刪除</string>
-    <string name="here_is_empty">這裏是空空的…</string>
+    <string name="here_is_empty">這裡空空的…</string>
     <string name="play_list">播放清單</string>
     <string name="add_to_fav">加入喜歡</string>
     <string name="share">分享</string>
@@ -102,11 +102,11 @@
     <string name="reply_warning">（輸入欄消失後輸入文字也會消失）</string>
     <string name="clear_cache">清除快取</string>
     <string name="cache_occupy">快取佔用</string>
-    <string name="allow">准許</string>
-    <string name="deny">一邊去</string>
+    <string name="allow">允許</string>
+    <string name="deny">拒絕</string>
     <string name="no_video_links_found">未發現影片連結</string>
     <string name="child_comment">子評論</string>
-    <string name="search_options_tips">長按某單元可以清除當前你所選單元的所有tag</string>
+    <string name="search_options_tips">長按某單元可以清除當前你所選單元的所有Tag</string>
     <string name="pause">暫停</string>
     <string name="continues">繼續</string>
     <string name="jump_to_webpage">轉到網頁</string>
@@ -137,8 +137,8 @@
     <string name="sort_by_alphabet_descending">字母反排序</string>
     <string name="h_keyframe_settings">關鍵H幀設定</string>
     <string name="h_keyframes_enable">關鍵H幀，啟動！</string>
-    <string name="h_keyframes_enable_tip">該功能關閉後並不會刪除你的歷史數據</string>
-    <string name="h_keyframes_disable_tip">開啟後，播放器頂部會有相關部件顯示</string>
+    <string name="h_keyframes_enable_tip">該功能關閉後並不會刪除你的歷史資料</string>
+    <string name="h_keyframes_disable_tip">開啟後，播放器頂部會顯示🥵</string>
     <string name="h_keyframe_title_prefix">影片代號：</string>
     <string name="manage">管理</string>
     <string name="h_keyframe_manage">關鍵H幀管理</string>
@@ -152,11 +152,11 @@
     <string name="shared_h_keyframes_enable_tip">採用好心人上傳到 Github 的關鍵H幀集</string>
     <string name="shared">共享</string>
     <string name="shared_h_keyframes_use_first">優先採用共享關鍵H幀集</string>
-    <string name="shared_h_keyframes_use_first_tip">當共享集和本地集都存在某一影片的關鍵H幀時，優先采用共享集</string>
+    <string name="shared_h_keyframes_use_first_tip">當共享集和本地集都存在某一影片的關鍵H幀時，優先採用共享集</string>
     <string name="forum">討論區</string>
-    <string name="forum_summary">歡迎來吐槽，如果有重要訊息也會發佈到這裏</string>
+    <string name="forum_summary">歡迎來吐槽，如果有重要資訊也會發佈到這裡</string>
     <string name="submit_bug">提交 BUG</string>
-    <string name="submit_bug_summary">出 BUG 了就來提交個 issue 吧</string>
+    <string name="submit_bug_summary">出 BUG 了就來提交個 Issue 吧</string>
     <string name="position_ms">位置 (ms)</string>
     <string name="prompt">提示</string>
     <string name="modify_h_keyframe">修改關鍵H幀</string>
@@ -172,32 +172,32 @@
     <string name="chinese_subtitle">中文字幕</string>
     <string name="ranking_today">本日排行</string>
     <string name="ranking_this_month">本月排行</string>
-    <string name="long_press_speed_not_supported">您的設備暫時不支援長按快進</string>
+    <string name="long_press_speed_not_supported">您的設備暫時不支援長按快轉</string>
     <string name="start_all">全部開始</string>
     <string name="pause_all">全部暫停</string>
     <string name="domain_name">域名</string>
     <string name="use_built_in_hosts">應用內建 Hosts</string>
     <string name="network_settings">網路設定</string>
     <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\nVPN？那是什麽？</string>
-    <string name="username">賬號</string>
+    <string name="username">帳號</string>
     <string name="password">密碼</string>
-    <string name="try_login_here">試試在這裏登入</string>
-    <string name="email">電郵</string>
+    <string name="try_login_here">試試在這裡登入</string>
+    <string name="email">電子郵件</string>
     <string name="login_failed">登入失敗</string>
     <string name="login_success">登入成功</string>
-    <string name="account_or_password_wrong">賬戶或密碼可能錯誤</string>
+    <string name="account_or_password_wrong">帳號或密碼可能錯誤</string>
     <string name="login_tips">該方法只能保持登入 2 個小時… 還是推薦使用網頁登入，\n但網頁是不走 Hosts 的，所以可能需要 VPN。</string>
     <string name="ignore">忽略</string>
     <string name="update">更新</string>
-    <string name="use_ci_update_channel">採用 CI 更新頻道</string>
+    <string name="use_ci_update_channel">使用 CI 更新通道。</string>
     <string name="use_ci_update_channel_summary">CI 更新頻道能更快地取得最新變更\n但不保證穩定性</string>
     <string name="update_popup_interval_days">檢查更新彈窗間隔天數</string>
     <string name="update_failed">更新失敗</string>
     <string name="update_download_background">在背景下載更新</string>
-    <string name="allow_install_from_unknown_app_sources">准許當前 App 來源安裝</string>
-    <string name="reason_for_allow_install_from_unknown_app_sources">別擔心，這只是爲了更新。\n你如果不放心，可以直接去 Github 上下載。</string>
+    <string name="allow_install_from_unknown_app_sources">允許當前 App 來源安裝</string>
+    <string name="reason_for_allow_install_from_unknown_app_sources">不用擔心，這只是為了更新。\n你如果不放心，可以直接去 Github 上下載。</string>
     <string name="go_to_settings">前往設定</string>
-    <string name="allow_post_notification">准許發送通知</string>
+    <string name="allow_post_notification">允許發送通知</string>
     <string name="reason_for_download_notification">請同意通知權限，及時收到下載訊息！</string>
     <string name="msg_deny_download_notification">進行或完成時不會通知哦</string>
     <string name="at_any_time">隨時</string>
@@ -208,7 +208,7 @@
     <string name="delete_playlist">刪除播放清單</string>
     <string name="delete_the_playlist">刪除該播放清單</string>
     <string name="s_copy_to_clipboard">「%1$s」已複製到剪貼簿</string>
-    <string name="detect_ha1_related_link_in_clipboard">檢測到剪貼簿裏存在Hanime1相關連結</string>
+    <string name="detect_ha1_related_link_in_clipboard">檢測到剪貼簿裡存在Hanime1相關連結</string>
     <string name="enter">進入</string>
     <string name="sure_to_logout">你確定要登出嗎？</string>
     <string name="sure">是的</string>
@@ -216,9 +216,9 @@
     <string name="not_logged_in">未登入</string>
     <string name="modify_success">修改成功</string>
     <string name="modify_title_or_desc">修改標題或介紹</string>
-    <string name="fail_to_get_video_link">無法得到該影片的播放連結，即將轉向瀏覽器</string>
+    <string name="fail_to_get_video_link">無法取得該影片的播放連結，將會跳轉瀏覽器。</string>
     <string name="delete_success">刪除成功</string>
-    <string name="video_might_not_exist">可能該影片不存在</string>
+    <string name="video_might_not_exist">該影片可能不存在</string>
     <string name="video_not_exist">該影片不存在</string>
     <string name="add_to_h_keyframe">加入關鍵H幀</string>
     <string name="sure_to_add_to_h_keyframe">確定要將當前時刻加入關鍵H幀嗎？</string>
@@ -233,7 +233,7 @@
     <string name="delete_failed">刪除失敗</string>
     <string name="delete_fav">刪除喜歡</string>
     <string name="attention">注意！</string>
-    <string name="long_press_to_cancel_fav">长按可以取消喜歡！</string>
+    <string name="long_press_to_cancel_fav">長按可以取消喜歡！</string>
     <string name="ok">好的</string>
     <string name="modify_failed">修改失敗</string>
     <string name="add_failed">添加失敗</string>
@@ -244,17 +244,17 @@
     <string name="slide_to_choose_list">請從右向左滑動選擇列表</string>
     <string name="create_new_playlist">創建新清單</string>
     <string name="delete_watch_later">刪除待看</string>
-    <string name="long_press_to_cancel_watch_later">长按可以取消待看！</string>
+    <string name="long_press_to_cancel_watch_later">長按可以取消待看！</string>
     <string name="delete_history">刪除歷史記錄</string>
     <string name="sure_to_delete_all_histories">是否將影片觀看歷史記錄全部刪除🤔</string>
     <string name="long_press_to_delete_all_histories">長按可以刪除歷史記錄哦，右上角的刪除按鈕是負責刪除全部歷史記錄的！</string>
     <string name="speed">倍速</string>
     <string name="cancel_thumb_up_success">取消點讚成功！</string>
     <string name="thumb_up_success">點讚成功！</string>
-    <string name="cancel_thumb_down_success">取消點踩成功！</string>
-    <string name="thumb_down_success">點踩成功！</string>
+    <string name="cancel_thumb_down_success">取消倒讚成功！</string>
+    <string name="thumb_down_success">倒讚成功！</string>
     <string name="interval_must_greater_than_d">間隔太短，必須大於%ds</string>
-    <string name="load_reply_failed">加載回覆失敗了捏</string>
+    <string name="load_reply_failed">加載回覆失敗捏</string>
     <string name="send_failed">發送失敗！</string>
     <string name="sending_reply">發表回覆中</string>
     <string name="send_success">發送成功！</string>
@@ -266,15 +266,15 @@
     <string name="already_in_queue">已經在佇列中…</string>
     <string name="s_view_times">%1$s次</string>
     <string name="liked">已喜歡</string>
-    <string name="cannot_download_here">暫時無法從這裏下載！</string>
+    <string name="cannot_download_here">暫時無法從這裡下載！</string>
     <string name="long_press_share_to_copy">長按分享可以複製到剪貼簿中</string>
     <string name="sure_to_download">確定要下載嗎？</string>
-    <string name="go_to_official">轉到官方</string>
+    <string name="go_to_official">轉到官網</string>
     <string name="download_video_detail_below">將要下載的影片詳情如下</string>
     <string name="name_with_colon">名稱：</string>
     <string name="quality_with_colon">畫質：</string>
     <string name="after_download_tips">下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裏有詳細儲存路徑。</string>
-    <string name="traditional_chinese">繁體中文</string>
+    <string name="traditional_chinese">正體中文</string>
     <string name="simplified_chinese">簡體中文</string>
     <string name="restart_or_not_working">修改%s需要重啟程式，否則不起作用！</string>
     <string name="sure_to_clear">確定要清除嗎？</string>
@@ -293,7 +293,7 @@
     <string name="very_low">很低</string>
     <string name="extremely_low">極低</string>
     <string name="update_failed_tips">如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。\n\n
-還有我竟然發現有人花錢買這 APP，真沒必要哈！</string>
+還有我竟然發現有人花錢買這 APP，真沒必要！</string>
     <string name="shared_h_keyframe_detected_msg">注意：如果你也有和對方相同代號的關鍵H幀，那麼你自己的將會被覆蓋。\n
 \n
 標題：%1$s\n
@@ -308,7 +308,7 @@
 · 日本用戶，使用 hanime1.com\n
 · 其他地區用戶，使用 hanime1.me 並關閉內建 Hosts</string>
     <string name="do_not_use_japan_ip">不要使用日本IP地址!!!</string>
-    <string name="website_blocked_msg">看到這裏説明他們網站加固了，能不能恢復只能聽天命了…</string>
+    <string name="website_blocked_msg">看到這裡説明他們網站加固了，能不能恢復只能聽天命了…</string>
     <string name="not_logged_in_currently">當前未登入</string>
     <string name="parse_error_msg">可能這個網址解析起來不大一樣…</string>
     <string name="network_instable_msg">可能是你的網路不穩定，多刷新！</string>
