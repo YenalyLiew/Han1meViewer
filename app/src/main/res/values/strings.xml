@@ -148,7 +148,7 @@
     <string name="will_remind_before_d_seconds">將會在 %d 秒前倒計時提醒</string>
     <string name="shared_h_keyframes_enable">採用共享關鍵H幀集</string>
     <string name="shared_h_keyframe_manage">共享關鍵H幀管理</string>
-    <string name="shared_h_keyframe_manage_tip">歡迎到GitHub上面提交你的關鍵H幀，如果不會提交討論區有教學文供參考</string>
+    <string name="shared_h_keyframe_manage_tip">歡迎到 GitHub 上面提交你的關鍵H幀，如果不會提交討論區有教學文供參考</string>
     <string name="shared_h_keyframes_enable_tip">採用好心人上傳到 Github 的關鍵H幀集</string>
     <string name="shared">共享</string>
     <string name="shared_h_keyframes_use_first">優先採用共享關鍵H幀集</string>
