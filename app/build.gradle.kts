@@ -29,14 +29,14 @@ android {
         projectDir, "ha1_github_token.txt"
     ).checkIfExists()?.readText().orEmpty()
 
-    val signConfig = signingConfigs.create("release") {
+    val signConfig = if (isRelease) signingConfigs.create("release") {
         storeFile = File(projectDir, "keystore/Han1meViewerKeystore.jks").checkIfExists()
         storePassword = signPwd
         keyAlias = "yenaly"
         keyPassword = signPwd
         enableV3Signing = true
         enableV4Signing = true
-    }
+    } else null
 
     defaultConfig {
         applicationId = "com.yenaly.han1meviewer"
@@ -56,7 +56,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false // 被迫 false，混淆会导致无法获取父类泛型
-            signingConfig = if (isRelease) signConfig else null
+            signingConfig = signConfig
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
