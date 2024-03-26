@@ -21,12 +21,13 @@ android {
     val commitSha = if (isRelease) lastCommitSha else "8ea5a9c" // 方便调试
 
     // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
-    val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD")
-        ?: File(projectDir, "keystore/ha1_keystore_password.txt").checkIfExists()?.readText()
+    val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD") ?: File(
+        projectDir, "keystore/ha1_keystore_password.txt"
+    ).checkIfExists()?.readText().orEmpty()
 
-    val githubToken =
-        System.getenv("HA1_GITHUB_TOKEN")
-            ?: File(projectDir, "ha1_github_token.txt").checkIfExists()?.readText()
+    val githubToken = System.getenv("HA1_GITHUB_TOKEN") ?: File(
+        projectDir, "ha1_github_token.txt"
+    ).checkIfExists()?.readText().orEmpty()
 
     val signConfig = signingConfigs.create("release") {
         storeFile = File(projectDir, "keystore/Han1meViewerKeystore.jks").checkIfExists()
