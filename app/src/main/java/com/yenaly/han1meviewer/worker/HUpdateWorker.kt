@@ -118,7 +118,7 @@ class HUpdateWorker(
                 .setOngoing(true)
                 .setContentTitle(context.getString(R.string.downloading_update_percent, progress))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-
+                .setSilent(true)
                 .setProgress(100, progress, false)
                 .build(),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

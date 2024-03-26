@@ -216,6 +216,7 @@ class HanimeDownloadWorker(
             NotificationCompat.Builder(context, DOWNLOAD_NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setOngoing(true)
+                .setSilent(true)
                 .setContentTitle(context.getString(R.string.downloading_s, hanimeName))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText("$progress%")
