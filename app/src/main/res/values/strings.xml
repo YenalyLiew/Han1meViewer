@@ -32,7 +32,7 @@
     <string name="cancel">取消</string>
     <string name="content_tag">內容標籤</string>
     <string name="pair_widely">廣泛配對</string>
-    <string name="pair_widely_alert">較多結果，較不精準。配對所有包含任何一個選擇的標籤的影片，而非全部標籤。</string>
+    <string name="pair_widely_alert">較多結果，較不精準。配對所有包含任何一個選擇的標籤的影片，而非全部標籤</string>
     <string name="reset">重置</string>
     <string name="save">保存</string>
     <string name="save_and_search">保存並搜索</string>
@@ -148,7 +148,7 @@
     <string name="will_remind_before_d_seconds">將會在 %d 秒前倒計時提醒</string>
     <string name="shared_h_keyframes_enable">採用共享關鍵H幀集</string>
     <string name="shared_h_keyframe_manage">共享關鍵H幀管理</string>
-    <string name="shared_h_keyframe_manage_tip">無法自己修改，修改在需要在 Github 上 Pull Request，並隨版本更新入資料庫，暫時是這樣的</string>
+    <string name="shared_h_keyframe_manage_tip">歡迎到 GitHub 上面提交你的關鍵H幀，如果不會提交討論區有教學文供參考</string>
     <string name="shared_h_keyframes_enable_tip">採用好心人上傳到 Github 的關鍵H幀集</string>
     <string name="shared">共享</string>
     <string name="shared_h_keyframes_use_first">優先採用共享關鍵H幀集</string>
@@ -186,7 +186,7 @@
     <string name="login_failed">登入失敗</string>
     <string name="login_success">登入成功</string>
     <string name="account_or_password_wrong">帳號或密碼可能錯誤</string>
-    <string name="login_tips">該方法只能保持登入 2 個小時… 還是推薦使用網頁登入，\n但網頁是不走 Hosts 的，所以可能需要 VPN。</string>
+    <string name="login_tips">該方法只能保持登入 2 個小時… 還是推薦使用網頁登入，\n但網頁是不走 Hosts 的，所以可能需要 VPN</string>
     <string name="ignore">忽略</string>
     <string name="update">更新</string>
     <string name="use_ci_update_channel">使用 CI 更新通道。</string>
@@ -195,7 +195,7 @@
     <string name="update_failed">更新失敗</string>
     <string name="update_download_background">在背景下載更新</string>
     <string name="allow_install_from_unknown_app_sources">允許當前 App 來源安裝</string>
-    <string name="reason_for_allow_install_from_unknown_app_sources">不用擔心，這只是為了更新。\n你如果不放心，可以直接去 Github 上下載。</string>
+    <string name="reason_for_allow_install_from_unknown_app_sources">不用擔心，這只是為了更新。\n你如果不放心，可以直接去 Github 上下載</string>
     <string name="go_to_settings">前往設定</string>
     <string name="allow_post_notification">允許發送通知</string>
     <string name="reason_for_download_notification">請同意通知權限，及時收到下載訊息！</string>
@@ -216,7 +216,7 @@
     <string name="not_logged_in">未登入</string>
     <string name="modify_success">修改成功</string>
     <string name="modify_title_or_desc">修改標題或介紹</string>
-    <string name="fail_to_get_video_link">無法取得該影片的播放連結，將會跳轉瀏覽器。</string>
+    <string name="fail_to_get_video_link">無法取得該影片的播放連結，將會跳轉瀏覽器</string>
     <string name="delete_success">刪除成功</string>
     <string name="video_might_not_exist">該影片可能不存在</string>
     <string name="video_not_exist">該影片不存在</string>
@@ -273,7 +273,7 @@
     <string name="download_video_detail_below">將要下載的影片詳情如下</string>
     <string name="name_with_colon">名稱：</string>
     <string name="quality_with_colon">畫質：</string>
-    <string name="after_download_tips">下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裏有詳細儲存路徑。</string>
+    <string name="after_download_tips">下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裏有詳細儲存路徑</string>
     <string name="traditional_chinese">正體中文</string>
     <string name="simplified_chinese">簡體中文</string>
     <string name="restart_or_not_working">修改%s需要重啟程式，否則不起作用！</string>
@@ -292,16 +292,16 @@
     <string name="low">低</string>
     <string name="very_low">很低</string>
     <string name="extremely_low">極低</string>
-    <string name="update_failed_tips">如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載。\n\n
+    <string name="update_failed_tips">如果你發現軟體有重大問題但是提示更新失敗，請直接去 Github Releases 介面查看是否有最新版下載\n\n
 還有我竟然發現有人花錢買這 APP，真沒必要！</string>
-    <string name="shared_h_keyframe_detected_msg">注意：如果你也有和對方相同代號的關鍵H幀，那麼你自己的將會被覆蓋。\n
+    <string name="shared_h_keyframe_detected_msg">注意：如果你也有和對方相同代號的關鍵H幀，那麼你自己的將會被覆蓋\n
 \n
 標題：%1$s\n
 代號：%2$s\n
 有 %3$d 個時刻</string>
     <string name="domain_change_tips">修改域名需要重啟程式，否則不起作用！\n
 不同域名不共通 Cookie，所以更換域名後需要重新進行登入操作。\n
-所以除 hanime1.me 以外的域名可能在某些時間段會重定向回 hanime1.me，這可能導致 Cookie 失效。\n
+所以除 hanime1.me 以外的域名可能在某些時間段會重定向回 hanime1.me，這可能導致 Cookie 失效\n
 \n
 建議如下：\n
 · 無VPN用戶，使用 hanime1.me 並開啟內建 Hosts\n
