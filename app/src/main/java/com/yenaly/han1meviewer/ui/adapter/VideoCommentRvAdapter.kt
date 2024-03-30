@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -21,7 +22,7 @@ import com.yenaly.han1meviewer.CSRF_TOKEN
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemVideoCommentBinding
-import com.yenaly.han1meviewer.logic.model.VideoCommentModel
+import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.ui.fragment.video.ChildCommentPopupFragment
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup
@@ -35,7 +36,7 @@ import com.yenaly.yenaly_libs.utils.showShortToast
  * @time 2023/11/26 026 16:19
  */
 class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
-    BaseDifferAdapter<VideoCommentModel.VideoComment, VideoCommentRvAdapter.ViewHolder>(COMPARATOR) {
+    BaseDifferAdapter<VideoComments.VideoComment, VideoCommentRvAdapter.ViewHolder>(COMPARATOR) {
 
     init {
         isStateViewEnable = true
@@ -44,17 +45,17 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
     var replyPopup: ReplyPopup? = null
 
     companion object {
-        val COMPARATOR = object : DiffUtil.ItemCallback<VideoCommentModel.VideoComment>() {
+        val COMPARATOR = object : DiffUtil.ItemCallback<VideoComments.VideoComment>() {
             override fun areItemsTheSame(
-                oldItem: VideoCommentModel.VideoComment,
-                newItem: VideoCommentModel.VideoComment,
+                oldItem: VideoComments.VideoComment,
+                newItem: VideoComments.VideoComment,
             ): Boolean {
                 return oldItem.realReplyId == newItem.realReplyId
             }
 
             override fun areContentsTheSame(
-                oldItem: VideoCommentModel.VideoComment,
-                newItem: VideoCommentModel.VideoComment,
+                oldItem: VideoComments.VideoComment,
+                newItem: VideoComments.VideoComment,
             ): Boolean {
                 return oldItem == newItem
             }
@@ -66,7 +67,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int,
-        item: VideoCommentModel.VideoComment?,
+        item: VideoComments.VideoComment?,
     ) {
         item.notNull()
 
@@ -83,14 +84,14 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         holder.binding.btnViewMoreReplies.isVisible = item.hasMoreReplies
         holder.binding.btnThumbUp.text = item.realLikesCount.toString()
         holder.binding.btnThumbUp.icon = if (item.post.likeCommentStatus) {
-            context.getDrawable(R.drawable.ic_baseline_thumb_up_alt_24)
+            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_up_alt_24)
         } else {
-            context.getDrawable(R.drawable.ic_baseline_thumb_up_off_alt_24)
+            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_up_off_alt_24)
         }
         holder.binding.btnThumbDown.icon = if (item.post.unlikeCommentStatus) {
-            context.getDrawable(R.drawable.ic_baseline_thumb_down_alt_24)
+            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_down_alt_24)
         } else {
-            context.getDrawable(R.drawable.ic_baseline_thumb_down_off_alt_24)
+            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_down_off_alt_24)
         }
     }
 

@@ -1,10 +1,10 @@
 package com.yenaly.han1meviewer.logic.network
 
 import com.yenaly.han1meviewer.HANIME_BASE_URL
+import com.yenaly.han1meviewer.logic.network.service.HGitHubService
 import com.yenaly.han1meviewer.logic.network.service.HanimeBaseService
 import com.yenaly.han1meviewer.logic.network.service.HanimeCommentService
 import com.yenaly.han1meviewer.logic.network.service.HanimeMyListService
-import com.yenaly.han1meviewer.logic.network.service.HanimeVersionService
 
 /**
  * @project Hanime1
@@ -14,7 +14,7 @@ import com.yenaly.han1meviewer.logic.network.service.HanimeVersionService
 object HanimeNetwork {
     var hanimeService = _hanimeService
         private set
-    var versionService = _versionService
+    var githubService = _githubService
         private set
     var commentService = _commentService
         private set
@@ -23,7 +23,7 @@ object HanimeNetwork {
 
     private val _hanimeService get() = ServiceCreator.create<HanimeBaseService>(HANIME_BASE_URL)
 
-    private val _versionService get() = ServiceCreator.createVersion<HanimeVersionService>()
+    private val _githubService get() = ServiceCreator.createGitHubApi<HGitHubService>()
 
     private val _commentService get() = ServiceCreator.create<HanimeCommentService>(HANIME_BASE_URL)
 
@@ -32,7 +32,7 @@ object HanimeNetwork {
     fun rebuildNetwork() {
         ServiceCreator.rebuildOkHttpClient()
         hanimeService = _hanimeService
-        versionService = _versionService
+        githubService = _githubService
         commentService = _commentService
         myListService = _myListService
     }

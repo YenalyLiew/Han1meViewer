@@ -23,7 +23,7 @@ import java.io.File
  * @author Yenaly Liew
  * @time 2022/08/26 026 22:00
  */
-internal class CoilImageLoader(@DrawableRes private val errImgRes: Int = 0) : XPopupImageLoader {
+class CoilImageLoader(@DrawableRes private val errImgRes: Int = 0) : XPopupImageLoader {
 
     override fun loadSnapshot(uri: Any, snapshot: PhotoView, srcView: ImageView?) {
         snapshot.load(uri)

@@ -7,8 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.android.material.snackbar.Snackbar
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
@@ -23,6 +25,7 @@ import com.yenaly.han1meviewer.databinding.ActivityMainBinding
 import com.yenaly.han1meviewer.hanimeSpannable
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.util.showUpdateDialog
@@ -30,6 +33,7 @@ import com.yenaly.han1meviewer.videoUrlRegex
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 /**
  * @project Hanime1
@@ -92,10 +96,11 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun bindDataObservers() {
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.versionFlow.collect {
-                    if (it is WebsiteState.Success) {
-                        it.info?.let { release ->
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                AppViewModel.versionFlow.collect { state ->
+                    if (state is WebsiteState.Success && Preferences.isUpdateDialogVisible) {
+                        state.info?.let { release ->
+                            Preferences.lastUpdatePopupTime = Clock.System.now().epochSeconds
                             showUpdateDialog(release)
                         }
                     }
@@ -135,7 +140,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                     }
                 }
                 lifecycleScope.launch {
-                    whenStarted {
+                    repeatOnLifecycle(Lifecycle.State.CREATED) {
                         viewModel.homePageFlow.collect { state ->
                             if (state is WebsiteState.Success) {
                                 headerAvatar.load(state.info.avatarUrl) {

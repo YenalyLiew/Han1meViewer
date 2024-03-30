@@ -4,15 +4,20 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.logic.NetworkRepo
+import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.logic.model.ModifiedPlaylistArguments
-import com.yenaly.han1meviewer.logic.model.MyListItemsModel
+import com.yenaly.han1meviewer.logic.model.MyListItems
 import com.yenaly.han1meviewer.logic.model.MyListType
-import com.yenaly.han1meviewer.logic.model.PlaylistsModel
+import com.yenaly.han1meviewer.logic.model.Playlists
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -29,26 +34,48 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
     var watchLaterPage = 1
     var favVideoPage = 1
 
-    private val _watchLaterFlow: MutableSharedFlow<PageLoadingState<MyListItemsModel>> =
-        MutableSharedFlow()
-    val watchLaterFlow = _watchLaterFlow.asSharedFlow()
+    private val _watchLaterStateFlow: MutableStateFlow<PageLoadingState<MyListItems>> =
+        MutableStateFlow(PageLoadingState.Loading)
+    val watchLaterStateFlow = _watchLaterStateFlow.asStateFlow()
 
-    private val _favVideoFlow: MutableSharedFlow<PageLoadingState<MyListItemsModel>> =
-        MutableSharedFlow()
-    val favVideoFlow = _favVideoFlow.asSharedFlow()
+    private val _watchLaterFlow = MutableStateFlow(emptyList<HanimeInfo>())
+    val watchLaterFlow = _watchLaterFlow.asStateFlow()
+
+    private val _favVideoStateFlow: MutableStateFlow<PageLoadingState<MyListItems>> =
+        MutableStateFlow(PageLoadingState.Loading)
+    val favVideoStateFlow = _favVideoStateFlow.asStateFlow()
+
+    private val _favVideoFlow = MutableStateFlow(emptyList<HanimeInfo>())
+    val favVideoFlow = _favVideoFlow.asStateFlow()
 
     fun getMyWatchLaterItems(page: Int) {
         viewModelScope.launch {
-            NetworkRepo.getMyListItems(page, MyListType.WATCH_LATER).collect { list ->
-                _watchLaterFlow.emit(list)
+            NetworkRepo.getMyListItems(page, MyListType.WATCH_LATER).collect { state ->
+                val prev = _watchLaterStateFlow.getAndUpdate { state }
+                if (prev is PageLoadingState.Loading) _watchLaterFlow.value = emptyList()
+                _watchLaterFlow.update { prevList ->
+                    when (state) {
+                        is PageLoadingState.Success -> prevList + state.info.hanimeInfo
+                        is PageLoadingState.Loading -> emptyList()
+                        else -> prevList
+                    }
+                }
             }
         }
     }
 
     fun getMyFavVideoItems(page: Int) {
         viewModelScope.launch {
-            NetworkRepo.getMyListItems(page, MyListType.FAV_VIDEO).collect { list ->
-                _favVideoFlow.emit(list)
+            NetworkRepo.getMyListItems(page, MyListType.FAV_VIDEO).collect { state ->
+                val prev = _favVideoStateFlow.getAndUpdate { state }
+                if (prev is PageLoadingState.Loading) _favVideoFlow.value = emptyList()
+                _favVideoFlow.update { prevList ->
+                    when (state) {
+                        is PageLoadingState.Success -> prevList + state.info.hanimeInfo
+                        is PageLoadingState.Loading -> emptyList()
+                        else -> prevList
+                    }
+                }
             }
         }
     }
@@ -63,19 +90,33 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
 
     fun deleteMyWatchLater(videoCode: String, position: Int) {
         viewModelScope.launch {
-            NetworkRepo.deleteMyListItems(MyListType.WATCH_LATER, videoCode, position, csrfToken)
-                .collect {
-                    _deleteMyWatchLaterFlow.emit(it)
+            NetworkRepo.deleteMyListItems(
+                MyListType.WATCH_LATER, videoCode,
+                position, csrfToken
+            ).collect {
+                _deleteMyWatchLaterFlow.emit(it)
+                _watchLaterFlow.update { list ->
+                    if (it is WebsiteState.Success) {
+                        list.toMutableList().apply { removeAt(position) }
+                    } else list
                 }
+            }
         }
     }
 
     fun deleteMyFavVideo(videoCode: String, position: Int) {
         viewModelScope.launch {
-            NetworkRepo.deleteMyListItems(MyListType.FAV_VIDEO, videoCode, position, csrfToken)
-                .collect {
-                    _deleteMyFavVideoFlow.emit(it)
+            NetworkRepo.deleteMyListItems(
+                MyListType.FAV_VIDEO, videoCode,
+                position, csrfToken
+            ).collect {
+                _deleteMyFavVideoFlow.emit(it)
+                _favVideoFlow.update { list ->
+                    if (it is WebsiteState.Success) {
+                        list.toMutableList().apply { removeAt(position) }
+                    } else list
                 }
+            }
         }
     }
 
@@ -89,36 +130,52 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
     var playlistDesc: String? = null
 
     private val _playlistsFlow =
-        MutableSharedFlow<WebsiteState<PlaylistsModel>>()
-    val playlistsFlow = _playlistsFlow.asSharedFlow()
+        MutableStateFlow<WebsiteState<Playlists>>(WebsiteState.Loading)
+    val playlistsFlow = _playlistsFlow.asStateFlow()
 
     fun getPlaylists() {
         viewModelScope.launch {
             NetworkRepo.getPlaylists().collect {
-                _playlistsFlow.emit(it)
+                _playlistsFlow.value = it
             }
         }
     }
 
-    private val _playlistFlow: MutableSharedFlow<PageLoadingState<MyListItemsModel>> =
-        MutableSharedFlow()
-    val playlistFlow = _playlistFlow.asSharedFlow()
+    private val _playlistStateFlow =
+        MutableStateFlow<PageLoadingState<MyListItems>>(PageLoadingState.Loading)
+    val playlistStateFlow = _playlistStateFlow.asStateFlow()
+
+    private val _playlistFlow = MutableStateFlow(emptyList<HanimeInfo>())
+    val playlistFlow = _playlistFlow.asStateFlow()
 
     fun getPlaylistItems(page: Int, listCode: String) {
         viewModelScope.launch {
-            NetworkRepo.getMyListItems(page, listCode).collect {
-                _playlistFlow.emit(it)
+            NetworkRepo.getMyListItems(page, listCode).collect { state ->
+                val prev = _playlistStateFlow.getAndUpdate { state }
+                if (prev is PageLoadingState.Loading) _playlistFlow.value = emptyList()
+                _playlistFlow.update { prevList ->
+                    when (state) {
+                        is PageLoadingState.Success -> prevList + state.info.hanimeInfo
+                        is PageLoadingState.Loading -> emptyList()
+                        else -> prevList
+                    }
+                }
             }
         }
     }
 
-    private val _deletePlaylistFlow = MutableSharedFlow<WebsiteState<Int>>()
-    val deletePlaylistFlow = _deletePlaylistFlow.asSharedFlow()
+    private val _deleteFromPlaylistFlow = MutableSharedFlow<WebsiteState<Int>>()
+    val deleteFromPlaylistFlow = _deleteFromPlaylistFlow.asSharedFlow()
 
-    fun deletePlaylist(listCode: String, videoCode: String, position: Int) {
+    fun deleteFromPlaylist(listCode: String, videoCode: String, position: Int) {
         viewModelScope.launch {
             NetworkRepo.deleteMyListItems(listCode, videoCode, position, csrfToken).collect {
-                _deletePlaylistFlow.emit(it)
+                _deleteFromPlaylistFlow.emit(it)
+                _playlistFlow.update { prevList ->
+                    if (it is WebsiteState.Success) {
+                        prevList.toMutableList().apply { removeAt(position) }
+                    } else prevList
+                }
             }
         }
     }
@@ -130,6 +187,9 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
         viewModelScope.launch {
             NetworkRepo.modifyPlaylist(listCode, title, desc, delete, csrfToken).collect {
                 _modifyPlaylistFlow.emit(it)
+                if (delete) {
+                    clearMyListItems(listCode)
+                }
             }
         }
     }
@@ -146,4 +206,12 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
     }
 
     //</editor-fold>
+
+    fun clearMyListItems(typeOrCode: Any?) {
+        when (typeOrCode) {
+            MyListType.WATCH_LATER -> _watchLaterStateFlow.update { PageLoadingState.Loading }
+            MyListType.FAV_VIDEO -> _favVideoStateFlow.update { PageLoadingState.Loading }
+            else -> _playlistStateFlow.update { PageLoadingState.Loading }
+        }
+    }
 }

@@ -8,7 +8,7 @@ import kotlinx.datetime.LocalDate
  * @author Yenaly Liew
  * @time 2022/06/11 011 20:30
  */
-data class HanimeVideoModel(
+data class HanimeVideo(
     val title: String,
     val coverUrl: String,
     val chineseTitle: String?,
@@ -28,7 +28,7 @@ data class HanimeVideoModel(
      * 注意，這裏的playlist是指該影片的系列影片，並非用戶的播放清單
      */
     val playlist: Playlist?,
-    val relatedHanimes: List<HanimeInfoModel>,
+    val relatedHanimes: List<HanimeInfo>,
     val artist: Artist?,
 
     var favTimes: Int?,
@@ -69,7 +69,7 @@ data class HanimeVideoModel(
 
     data class Playlist(
         val playlistName: String?,
-        val video: List<HanimeInfoModel>,
+        val video: List<HanimeInfo>,
     )
 
     data class Artist(

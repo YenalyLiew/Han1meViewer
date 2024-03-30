@@ -12,17 +12,17 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 
-internal val hanimeVideoLocalFolder get() = applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+val hanimeVideoLocalFolder get() = applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
 
-internal fun createDownloadName(title: String, quality: String, suffix: String = "mp4") =
+fun createDownloadName(title: String, quality: String, suffix: String = "mp4") =
     "${title}_${quality}.${suffix}"
 
-internal fun getDownloadedHanimeFile(title: String, quality: String, suffix: String = "mp4"): File {
+fun getDownloadedHanimeFile(title: String, quality: String, suffix: String = "mp4"): File {
     return File(hanimeVideoLocalFolder, createDownloadName(title, quality, suffix))
 }
 
 @Deprecated("不用了")
-internal fun checkDownloadedHanimeFile(startsWith: String): Boolean {
+fun checkDownloadedHanimeFile(startsWith: String): Boolean {
     return hanimeVideoLocalFolder?.let { folder ->
         folder.listFiles()?.any { it.name.startsWith(startsWith) }
     } ?: false
@@ -31,7 +31,7 @@ internal fun checkDownloadedHanimeFile(startsWith: String): Boolean {
 /**
  * Must be Activity Context!
  */
-internal fun Context.openDownloadedHanimeVideoLocally(
+fun Context.openDownloadedHanimeVideoLocally(
     uri: String,
     onFileNotFound: (() -> Unit)? = null,
 ) {

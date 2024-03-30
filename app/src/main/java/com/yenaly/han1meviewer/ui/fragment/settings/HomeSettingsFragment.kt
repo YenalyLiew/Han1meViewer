@@ -4,8 +4,9 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.SeekBarPreference
@@ -22,6 +23,7 @@ import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
 import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
 import com.yenaly.han1meviewer.util.showAlertDialog
@@ -227,7 +229,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
         useCIUpdateChannel.apply {
             setOnPreferenceChangeListener { _, _ ->
-                viewModel.getLatestVersion()
+                AppViewModel.getLatestVersion()
                 return@setOnPreferenceChangeListener true
             }
         }
@@ -247,8 +249,8 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
 
     private fun initFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
-                viewModel.versionFlow.collect { state ->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                AppViewModel.versionFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Error -> {
                             checkUpdateTimes++
@@ -256,7 +258,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                             update.setOnPreferenceClickListener {
                                 if (checkUpdateTimes > 2) {
                                     showUpdateFailedDialog()
-                                } else viewModel.getLatestVersion()
+                                } else AppViewModel.getLatestVersion()
                                 return@setOnPreferenceClickListener true
                             }
                         }

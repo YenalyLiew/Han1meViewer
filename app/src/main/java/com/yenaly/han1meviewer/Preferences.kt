@@ -12,6 +12,9 @@ import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.getSpValue
 import com.yenaly.yenaly_libs.utils.putSpValue
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlin.time.Duration.Companion.days
 
 object Preferences {
     /**
@@ -49,6 +52,15 @@ object Preferences {
 
     val useCIUpdateChannel
         get() = preferenceSp.getBoolean(HomeSettingsFragment.USE_CI_UPDATE_CHANNEL, false)
+
+    // Check if show update dialog.
+    val isUpdateDialogVisible: Boolean
+        get() {
+            val now = Clock.System.now()
+            val lastCheckTime = Instant.fromEpochSeconds(lastUpdatePopupTime)
+            val interval = updatePopupIntervalDays
+            return now > lastCheckTime + interval.days
+        }
 
     // 設定 相關
 

@@ -12,7 +12,7 @@ import com.yenaly.han1meviewer.logic.model.CommentPlace
 import com.yenaly.han1meviewer.logic.model.ModifiedPlaylistArguments
 import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.model.VideoCommentArguments
-import com.yenaly.han1meviewer.logic.model.VideoCommentModel
+import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.logic.network.HUpdater
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
@@ -92,7 +92,7 @@ object NetworkRepo {
                     throw IllegalArgumentException("typeOrId must be String or MyListType")
             }
         },
-        action = Parse::myListItems
+        action = { Parse.myListItems(it, typeOrCode) }
     )
 
     fun deleteMyListItems(
@@ -266,7 +266,7 @@ object NetworkRepo {
         commentLikesSum: Int,
         likeCommentStatus: Boolean, // 你之前有沒有點過讚，1是0否
         unlikeCommentStatus: Boolean, // 你之前有沒有點過踩，1是0否
-        commentPosition: Int, comment: VideoCommentModel.VideoComment,
+        commentPosition: Int, comment: VideoComments.VideoComment,
     ) = websiteIOFlow(
         request = {
             HanimeNetwork.commentService.likeComment(
@@ -290,7 +290,7 @@ object NetworkRepo {
 
     //<editor-fold desc="Base">
 
-    fun getLatestVersion(forceCheck: Boolean = false) = flow {
+    fun getLatestVersion(forceCheck: Boolean = true) = flow {
         emit(WebsiteState.Loading)
         val versionInfo = HUpdater.checkForUpdate(forceCheck)
         emit(WebsiteState.Success(versionInfo))
@@ -340,7 +340,6 @@ object NetworkRepo {
         permittedSuccessCode: IntArray? = null,
         action: (String) -> WebsiteState<T>,
     ) = flow {
-        emit(WebsiteState.Loading)
         val requestResult = request.invoke()
         val resultBody = requestResult.body()?.string()
         val permitted = permittedSuccessCode?.contains(requestResult.code()) == true
@@ -360,7 +359,6 @@ object NetworkRepo {
         request: suspend () -> Response<ResponseBody>,
         action: (String) -> PageLoadingState<T>,
     ) = flow {
-        emit(PageLoadingState.Loading)
         val requestResult = request.invoke()
         val resultBody = requestResult.body()?.string()
         if (requestResult.isSuccessful && resultBody != null) {
@@ -379,7 +377,6 @@ object NetworkRepo {
         request: suspend () -> Response<ResponseBody>,
         action: (String) -> VideoLoadingState<T>,
     ) = flow {
-        emit(VideoLoadingState.Loading)
         val requestResult = request.invoke()
         val resultBody = requestResult.body()?.string()
         if (requestResult.isSuccessful && resultBody != null) {

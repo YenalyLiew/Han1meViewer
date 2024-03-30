@@ -6,15 +6,15 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.CommentPlace
 import com.yenaly.han1meviewer.logic.model.VideoCommentArguments
-import com.yenaly.han1meviewer.logic.model.VideoCommentModel
+import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.ui.adapter.VideoCommentRvAdapter
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import com.yenaly.yenaly_libs.utils.showShortToast
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -29,12 +29,18 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
     var csrfToken: String? = null
     var currentUserId: String? = null
 
-    private val _videoCommentFlow =
-        MutableStateFlow<WebsiteState<VideoCommentModel>>(WebsiteState.Loading)
+    private val _videoCommentStateFlow =
+        MutableStateFlow<WebsiteState<VideoComments>>(WebsiteState.Loading)
+    val videoCommentStateFlow = _videoCommentStateFlow.asStateFlow()
+
+    private val _videoReplyStateFlow =
+        MutableStateFlow<WebsiteState<VideoComments>>(WebsiteState.Loading)
+    val videoReplyStateFlow = _videoReplyStateFlow.asStateFlow()
+
+    private val _videoCommentFlow = MutableStateFlow(emptyList<VideoComments.VideoComment>())
     val videoCommentFlow = _videoCommentFlow.asStateFlow()
 
-    private val _videoReplyFlow =
-        MutableStateFlow<WebsiteState<VideoCommentModel>>(WebsiteState.Loading)
+    private val _videoReplyFlow = MutableStateFlow(emptyList<VideoComments.VideoComment>())
     val videoReplyFlow = _videoReplyFlow.asStateFlow()
 
     private val _postCommentFlow =
@@ -51,16 +57,33 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
 
     fun getComment(type: String, code: String) {
         viewModelScope.launch {
-            NetworkRepo.getComments(type, code).collect { comment ->
-                _videoCommentFlow.value = comment
+            _videoCommentStateFlow.value = WebsiteState.Loading
+            NetworkRepo.getComments(type, code).collect { state ->
+                _videoCommentStateFlow.value = state
+                _videoCommentFlow.update { prevList ->
+                    when (state) {
+                        is WebsiteState.Success -> state.info.videoComment
+                        is WebsiteState.Loading -> emptyList()
+                        else -> prevList
+                    }
+                }
             }
         }
     }
 
     fun getCommentReply(commentId: String) {
         viewModelScope.launch {
-            NetworkRepo.getCommentReply(commentId).collect { reply ->
-                _videoReplyFlow.value = reply
+            // 每次获取评论回复时，都会重新加载
+            _videoReplyStateFlow.value = WebsiteState.Loading
+            NetworkRepo.getCommentReply(commentId).collect { state ->
+                _videoReplyStateFlow.value = state
+                _videoReplyFlow.update { prevList ->
+                    when (state) {
+                        is WebsiteState.Success -> state.info.videoComment
+                        is WebsiteState.Loading -> emptyList()
+                        else -> prevList
+                    }
+                }
             }
         }
     }
@@ -89,7 +112,7 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
 
     fun likeComment(
         isPositive: Boolean, commentPosition: Int,
-        comment: VideoCommentModel.VideoComment, likeCommentStatus: Boolean = false,
+        comment: VideoComments.VideoComment, likeCommentStatus: Boolean = false,
         unlikeCommentStatus: Boolean = false,
     ) = likeCommentInternal(
         CommentPlace.COMMENT, isPositive, commentPosition,
@@ -98,7 +121,7 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
 
     fun likeChildComment(
         isPositive: Boolean, commentPosition: Int,
-        comment: VideoCommentModel.VideoComment, likeCommentStatus: Boolean = false,
+        comment: VideoComments.VideoComment, likeCommentStatus: Boolean = false,
         unlikeCommentStatus: Boolean = false,
     ) = likeCommentInternal(
         CommentPlace.CHILD_COMMENT, isPositive, commentPosition,
@@ -109,7 +132,7 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
         commentPlace: CommentPlace,
         isPositive: Boolean,
         commentPosition: Int,
-        comment: VideoCommentModel.VideoComment,
+        comment: VideoComments.VideoComment,
         likeCommentStatus: Boolean = false,
         unlikeCommentStatus: Boolean = false,
     ) {
@@ -125,30 +148,47 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
                 likeCommentStatus,
                 unlikeCommentStatus,
                 commentPosition, comment
-            ).collect(_commentLikeFlow::emit)
+            ).collect { argState ->
+                _commentLikeFlow.emit(argState)
+                if (argState is WebsiteState.Success) {
+                    when (commentPlace) {
+                        CommentPlace.COMMENT -> _videoCommentFlow.update { prevList ->
+                            prevList.toMutableList().apply {
+                                this[commentPosition].handleCommentLike(argState.info)
+                            }
+                        }
+
+                        CommentPlace.CHILD_COMMENT -> _videoReplyFlow.update { prevList ->
+                            prevList.toMutableList().apply {
+                                this[commentPosition].handleCommentLike(argState.info)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
-    fun handleCommentLike(args: VideoCommentArguments, adapter: VideoCommentRvAdapter) {
+    private fun VideoComments.VideoComment.handleCommentLike(args: VideoCommentArguments) {
+        if (args.isPositive) {
+            this.incrementLikesCount(cancel = post.likeCommentStatus)
+        } else {
+            this.decrementLikesCount(cancel = post.unlikeCommentStatus)
+        }
+    }
+
+    fun handleCommentLike(args: VideoCommentArguments) {
         if (args.isPositive) {
             if (args.comment.post.likeCommentStatus) {
                 showShortToast(R.string.cancel_thumb_up_success)
-                args.comment.incrementLikesCount(cancel = true)
-                adapter.notifyItemChanged(args.commentPosition)
             } else {
                 showShortToast(R.string.thumb_up_success)
-                args.comment.incrementLikesCount(cancel = false)
-                adapter.notifyItemChanged(args.commentPosition)
             }
         } else {
             if (args.comment.post.unlikeCommentStatus) {
                 showShortToast(R.string.cancel_thumb_down_success)
-                args.comment.decrementLikesCount(cancel = true)
-                adapter.notifyItemChanged(args.commentPosition)
             } else {
                 showShortToast(R.string.thumb_down_success)
-                args.comment.decrementLikesCount(cancel = false)
-                adapter.notifyItemChanged(args.commentPosition)
             }
         }
     }

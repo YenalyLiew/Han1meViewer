@@ -19,7 +19,7 @@ import com.yenaly.yenaly_libs.utils.startActivity
  * dynamically create tag chips.
  */
 @Deprecated("Use [CollapsibleTags] instead.")
-internal fun ChipGroup.createTags(tags: List<String>) {
+fun ChipGroup.createTags(tags: List<String>) {
     for (tag in tags) {
         val chip = LayoutInflater.from(context)
             .inflate(R.layout.item_video_tag_chip, this, false) as Chip
@@ -44,6 +44,6 @@ fun View.removeItself() {
     (parent as? ViewGroup)?.removeView(this)
 }
 
-internal fun Button.setDrawableTop(@DrawableRes drawableRes: Int) {
+fun Button.setDrawableTop(@DrawableRes drawableRes: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, drawableRes, 0, 0)
 }
