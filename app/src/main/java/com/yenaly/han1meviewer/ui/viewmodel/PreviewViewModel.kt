@@ -3,7 +3,7 @@ package com.yenaly.han1meviewer.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.logic.NetworkRepo
-import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
+import com.yenaly.han1meviewer.logic.model.HanimePreview
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 class PreviewViewModel(application: Application) : YenalyViewModel(application) {
 
     private val _previewFlow =
-        MutableStateFlow<WebsiteState<HanimePreviewModel>>(WebsiteState.Loading)
+        MutableStateFlow<WebsiteState<HanimePreview>>(WebsiteState.Loading)
     val previewFlow = _previewFlow.asStateFlow()
 
     fun getHanimePreview(date: String) {

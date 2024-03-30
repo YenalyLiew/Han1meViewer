@@ -11,7 +11,7 @@ import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
-import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
+import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.activity
@@ -22,31 +22,31 @@ import com.yenaly.yenaly_libs.utils.startActivity
  * @author Yenaly Liew
  * @time 2023/11/26 026 16:38
  */
-class HanimeMyListVideoAdapter : BaseDifferAdapter<HanimeInfoModel, QuickViewHolder>(COMPARATOR) {
+class HanimeMyListVideoAdapter : BaseDifferAdapter<HanimeInfo, QuickViewHolder>(COMPARATOR) {
 
     init {
         isStateViewEnable = true
     }
 
     companion object {
-        val COMPARATOR = object : DiffUtil.ItemCallback<HanimeInfoModel>() {
+        val COMPARATOR = object : DiffUtil.ItemCallback<HanimeInfo>() {
             override fun areItemsTheSame(
-                oldItem: HanimeInfoModel,
-                newItem: HanimeInfoModel,
+                oldItem: HanimeInfo,
+                newItem: HanimeInfo,
             ): Boolean {
                 return oldItem.videoCode == newItem.videoCode
             }
 
             override fun areContentsTheSame(
-                oldItem: HanimeInfoModel,
-                newItem: HanimeInfoModel,
+                oldItem: HanimeInfo,
+                newItem: HanimeInfo,
             ): Boolean {
                 return oldItem == newItem
             }
         }
     }
 
-    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfoModel?) {
+    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfo?) {
         item.notNull()
         holder.getView<TextView>(R.id.title).text = item.title
         holder.getView<ImageView>(R.id.cover).load(item.coverUrl) {

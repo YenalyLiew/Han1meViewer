@@ -1,7 +1,6 @@
 package com.yenaly.han1meviewer.util
 
 import com.google.common.util.concurrent.ListenableFuture
-import com.yenaly.han1meviewer.HJson
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
@@ -65,11 +64,6 @@ suspend fun Call.await(): Response {
         })
         continuation.invokeOnCancellation { cancel() }
     }
-}
-
-
-inline fun <reified T> Response.parseAs(): T? {
-    return body?.string()?.let(HJson::decodeFromString)
 }
 
 /**

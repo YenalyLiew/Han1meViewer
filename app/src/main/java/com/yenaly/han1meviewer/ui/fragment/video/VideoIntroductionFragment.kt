@@ -4,8 +4,9 @@ import android.graphics.Typeface
 import android.os.Bundle
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Constraints
@@ -33,8 +34,8 @@ import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
 import com.yenaly.han1meviewer.getHanimeVideoDownloadLink
 import com.yenaly.han1meviewer.getHanimeVideoLink
-import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
-import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
+import com.yenaly.han1meviewer.logic.model.HanimeInfo
+import com.yenaly.han1meviewer.logic.model.HanimeVideo
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
@@ -66,7 +67,7 @@ class VideoIntroductionFragment :
     YenalyFragment<FragmentVideoIntroductionBinding, VideoViewModel>() {
 
     @UsingCautiously("use after [viewModel.hanimeVideoFlow.collect]")
-    private lateinit var videoData: HanimeVideoModel
+    private lateinit var videoData: HanimeVideo
 
     @UsingCautiously("use after [Xpopup#asAttachList]")
     private lateinit var checkedQuality: String
@@ -103,7 +104,7 @@ class VideoIntroductionFragment :
 
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.hanimeVideoFlow.collect { state ->
                     binding.videoIntroNsv.isInvisible = state !is VideoLoadingState.Success
                     when (state) {
@@ -142,24 +143,22 @@ class VideoIntroductionFragment :
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
-                viewModel.addToFavVideoFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> {
-                            showShortToast(R.string.fav_failed)
-                        }
+            viewModel.addToFavVideoFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> {
+                        showShortToast(R.string.fav_failed)
+                    }
 
-                        is WebsiteState.Loading -> Unit
-                        is WebsiteState.Success -> {
-                            if (videoData.isFav) {
-                                showShortToast(R.string.cancel_fav)
-                                videoData.decrementFavTime()
-                                handleFavButton(false)
-                            } else {
-                                showShortToast(R.string.add_to_fav)
-                                videoData.incrementFavTime()
-                                handleFavButton(true)
-                            }
+                    is WebsiteState.Loading -> Unit
+                    is WebsiteState.Success -> {
+                        if (videoData.isFav) {
+                            showShortToast(R.string.cancel_fav)
+                            videoData.decrementFavTime()
+                            handleFavButton(false)
+                        } else {
+                            showShortToast(R.string.add_to_fav)
+                            videoData.incrementFavTime()
+                            handleFavButton(true)
                         }
                     }
                 }
@@ -167,45 +166,41 @@ class VideoIntroductionFragment :
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
-                viewModel.loadDownloadedFlow.collect { entity ->
-                    if (entity == null) { // 没下
-                        enqueueDownloadWork(videoData)
-                        return@collect
-                    }
-                    // 没下完或下過了
-                    if (!entity.isDownloaded) {
-                        if (entity.isDownloading) showShortToast(R.string.downloading_now)
-                        else showShortToast(R.string.already_in_queue)
-                        return@collect
-                    }
+            viewModel.loadDownloadedFlow.collect { entity ->
+                if (entity == null) { // 没下
+                    enqueueDownloadWork(videoData)
+                    return@collect
+                }
+                // 没下完或下過了
+                if (!entity.isDownloaded) {
+                    if (entity.isDownloading) showShortToast(R.string.downloading_now)
+                    else showShortToast(R.string.already_in_queue)
+                    return@collect
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
-                viewModel.modifyMyListFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> {
-                            showShortToast(R.string.add_failed)
-                        }
+            viewModel.modifyMyListFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> {
+                        showShortToast(R.string.add_failed)
+                    }
 
-                        is WebsiteState.Loading -> Unit
-                        is WebsiteState.Success -> {
-                            val index = state.info
-                            checkNotNull(videoData.myList?.myListInfo?.get(index)).let {
-                                it.isSelected = !it.isSelected
-                            }
-                            showShortToast(R.string.add_success)
+                    is WebsiteState.Loading -> Unit
+                    is WebsiteState.Success -> {
+                        val index = state.info
+                        checkNotNull(videoData.myList?.myListInfo?.get(index)).let {
+                            it.isSelected = !it.isSelected
                         }
+                        showShortToast(R.string.add_success)
                     }
                 }
             }
         }
     }
 
-    private fun initTitle(info: HanimeVideoModel) {
+    private fun initTitle(info: HanimeVideo) {
         binding.title.text = info.title.also { initShareButton(it) }
         binding.chineseTitle.text = info.chineseTitle
     }
@@ -220,7 +215,7 @@ class VideoIntroductionFragment :
         }
     }
 
-    private fun initArtist(artist: HanimeVideoModel.Artist?) {
+    private fun initArtist(artist: HanimeVideo.Artist?) {
         if (artist == null) {
             binding.vgArtist.isGone = true
         } else {
@@ -242,7 +237,7 @@ class VideoIntroductionFragment :
         }
     }
 
-    private fun initFunctionBar(videoData: HanimeVideoModel) {
+    private fun initFunctionBar(videoData: HanimeVideo) {
         handleFavButton(videoData.isFav)
         binding.btnAddToFav.clickTrigger(viewLifecycleOwner.lifecycle) {
             if (isAlreadyLogin) {
@@ -298,7 +293,7 @@ class VideoIntroductionFragment :
         }
     }
 
-    private fun initDownloadButton(videoData: HanimeVideoModel) {
+    private fun initDownloadButton(videoData: HanimeVideo) {
         if (videoData.videoUrls.isEmpty()) {
             showShortToast(R.string.no_video_links_found)
         } else binding.btnDownload.clickTrigger(viewLifecycleOwner.lifecycle) {
@@ -349,7 +344,7 @@ class VideoIntroductionFragment :
         }
     }
 
-    private suspend fun enqueueDownloadWork(videoData: HanimeVideoModel) {
+    private suspend fun enqueueDownloadWork(videoData: HanimeVideo) {
         requireContext().requestPostNotificationPermission()
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -372,8 +367,8 @@ class VideoIntroductionFragment :
 
     }
 
-    private fun List<HanimeInfoModel>.buildFlexibleGridLayoutManager(): GridLayoutManager {
-        val counts = if (any { it.itemType == HanimeInfoModel.NORMAL })
+    private fun List<HanimeInfo>.buildFlexibleGridLayoutManager(): GridLayoutManager {
+        val counts = if (any { it.itemType == HanimeInfo.NORMAL })
             VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
         return FixedGridLayoutManager(context, counts)
     }

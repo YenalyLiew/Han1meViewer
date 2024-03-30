@@ -8,7 +8,7 @@ import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
+import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.ui.popup.CoilImageLoader
 
 /**
@@ -16,7 +16,7 @@ import com.yenaly.han1meviewer.ui.popup.CoilImageLoader
  * @author Yenaly Liew
  * @time 2023/11/29 029 20:11
  */
-class HanimePreviewTourRvAdapter : BaseDifferAdapter<HanimeInfoModel, QuickViewHolder>(
+class HanimePreviewTourRvAdapter : BaseDifferAdapter<HanimeInfo, QuickViewHolder>(
     HanimeVideoRvAdapter.COMPARATOR
 ) {
 
@@ -25,7 +25,7 @@ class HanimePreviewTourRvAdapter : BaseDifferAdapter<HanimeInfoModel, QuickViewH
     override fun onBindViewHolder(
         holder: QuickViewHolder,
         position: Int,
-        item: HanimeInfoModel?,
+        item: HanimeInfo?,
     ) {
         holder.getView<ImageView>(R.id.cover).load(item?.coverUrl) {
             crossfade(true)

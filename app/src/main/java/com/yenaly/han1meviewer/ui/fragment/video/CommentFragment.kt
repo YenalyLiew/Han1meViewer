@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
@@ -24,6 +25,7 @@ import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.arguments
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -79,8 +81,8 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
 
     override fun bindDataObservers() {
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.videoCommentFlow.collect { state ->
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.videoCommentStateFlow.collect { state ->
                     binding.rvComment.isGone = state is WebsiteState.Error
                     when (state) {
                         is WebsiteState.Error -> {
@@ -96,7 +98,6 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                             binding.srlComment.finishRefresh()
                             viewModel.csrfToken = state.info.csrfToken
                             viewModel.currentUserId = state.info.currentUserId
-                            commentAdapter.submitList(state.info.videoComment)
                             binding.rvComment.isGone = state.info.videoComment.isEmpty()
                             if (state.info.videoComment.isEmpty()) {
                                 binding.state.showEmpty()
@@ -110,58 +111,61 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         }
 
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.postCommentFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> {
-                            showShortToast(R.string.send_failed)
-                        }
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.videoCommentFlow.collectLatest { list ->
+                    commentAdapter.submitList(list)
+                }
+            }
+        }
 
-                        is WebsiteState.Loading -> {
-                            showShortToast(R.string.sending_comment)
-                        }
+        lifecycleScope.launch {
+            viewModel.postCommentFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> {
+                        showShortToast(R.string.send_failed)
+                    }
 
-                        is WebsiteState.Success -> {
-                            showShortToast(R.string.send_success)
-                            viewModel.getComment(commentTypePrefix, viewModel.code)
-                            replyPopup.dismiss()
-                        }
+                    is WebsiteState.Loading -> {
+                        showShortToast(R.string.sending_comment)
+                    }
+
+                    is WebsiteState.Success -> {
+                        showShortToast(R.string.send_success)
+                        viewModel.getComment(commentTypePrefix, viewModel.code)
+                        replyPopup.dismiss()
                     }
                 }
             }
         }
 
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.postReplyFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> {
-                            showShortToast(R.string.send_failed)
-                        }
+            viewModel.postReplyFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> {
+                        showShortToast(R.string.send_failed)
+                    }
 
-                        is WebsiteState.Loading -> {
-                            showShortToast(R.string.sending_reply)
-                        }
+                    is WebsiteState.Loading -> {
+                        showShortToast(R.string.sending_reply)
+                    }
 
-                        is WebsiteState.Success -> {
-                            showShortToast(R.string.send_success)
-                            viewModel.getComment(commentTypePrefix, viewModel.code)
-                            commentAdapter.replyPopup?.dismiss()
-                        }
+                    is WebsiteState.Success -> {
+                        showShortToast(R.string.send_success)
+                        viewModel.getComment(commentTypePrefix, viewModel.code)
+                        commentAdapter.replyPopup?.dismiss()
                     }
                 }
             }
         }
 
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.commentLikeFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> showShortToast(state.throwable.message)
-                        is WebsiteState.Loading -> Unit
-                        is WebsiteState.Success -> viewModel.handleCommentLike(
-                            state.info, commentAdapter
-                        )
+            viewModel.commentLikeFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> showShortToast(state.throwable.message)
+                    is WebsiteState.Loading -> Unit
+                    is WebsiteState.Success -> {
+                        viewModel.handleCommentLike(state.info)
+                        commentAdapter.notifyItemChanged(state.info.commentPosition, 0)
                     }
                 }
             }

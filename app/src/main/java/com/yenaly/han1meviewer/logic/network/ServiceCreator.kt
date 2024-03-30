@@ -1,6 +1,8 @@
 package com.yenaly.han1meviewer.logic.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.yenaly.han1meviewer.BuildConfig
+import com.yenaly.han1meviewer.HA1_GITHUB_API_URL
 import com.yenaly.han1meviewer.HJson
 import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.yenaly_libs.utils.applicationContext
@@ -29,8 +31,9 @@ object ServiceCreator {
         .build()
         .create(T::class.java)
 
-    inline fun <reified T> createVersion(): T = Retrofit.Builder()
-        .baseUrl("https://api.github.com/")
+    inline fun <reified T> createGitHubApi(): T = Retrofit.Builder()
+        .baseUrl(HA1_GITHUB_API_URL)
+        .client(githubClient)
         .addConverterFactory(HJson.asConverterFactory("application/json".toMediaType()))
         .build()
         .create(T::class.java)
@@ -41,11 +44,15 @@ object ServiceCreator {
     var okHttpClient: OkHttpClient = buildOkHttpClient()
         private set
 
+    var githubClient: OkHttpClient = buildGithubClient()
+        private set
+
     /**
      * Rebuild OkHttpClient
      */
     fun rebuildOkHttpClient() {
         okHttpClient = buildOkHttpClient()
+        githubClient = buildGithubClient()
     }
 
     /**
@@ -57,14 +64,27 @@ object ServiceCreator {
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
             .addInterceptor { chain ->
-                val request =
-                    chain.request().newBuilder().addHeader("User-Agent", USER_AGENT).build()
+                val request = chain.request().newBuilder().addHeader(
+                    "User-Agent", USER_AGENT
+                ).build()
                 return@addInterceptor chain.proceed(request)
             }
             .cache(cache)
             .cookieJar(HCookieJar())
             .proxySelector(HProxySelector())
             .dns(HDns())
+            .build()
+    }
+
+    private fun buildGithubClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .dns(GitHubDns)
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder().addHeader(
+                    "Authorization", "Bearer ${BuildConfig.HA1_GITHUB_TOKEN}"
+                ).build()
+                return@addInterceptor chain.proceed(request)
+            }
             .build()
     }
 }

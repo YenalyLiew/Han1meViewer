@@ -11,7 +11,7 @@ import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
-import com.yenaly.han1meviewer.logic.model.HanimeVideoModel
+import com.yenaly.han1meviewer.logic.model.HanimeVideo
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.yenaly_libs.base.YenalyViewModel
@@ -50,7 +50,7 @@ class VideoViewModel(private val application: Application) : YenalyViewModel(app
     var csrfToken: String? = null
 
     private val _hanimeVideoFlow =
-        MutableStateFlow<VideoLoadingState<HanimeVideoModel>>(VideoLoadingState.Loading)
+        MutableStateFlow<VideoLoadingState<HanimeVideo>>(VideoLoadingState.Loading)
     val hanimeVideoFlow = _hanimeVideoFlow.asStateFlow()
 
     fun getHanimeVideo(videoCode: String) {

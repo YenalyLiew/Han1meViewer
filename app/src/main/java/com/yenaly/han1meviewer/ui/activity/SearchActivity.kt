@@ -5,16 +5,17 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isGone
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.yenaly.han1meviewer.*
 import com.yenaly.han1meviewer.databinding.ActivitySearchBinding
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
-import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
+import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
@@ -28,6 +29,7 @@ import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
@@ -94,12 +96,12 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
     @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.searchFlow.collect { state ->
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.searchStateFlow.collect { state ->
                     binding.searchRv.isGone = state is PageLoadingState.Error
                     when (state) {
                         is PageLoadingState.Loading -> {
-                            if (searchAdapter.items.isEmpty()) binding.searchSrl.autoRefresh()
+                            if (viewModel.searchFlow.value.isEmpty()) binding.searchSrl.autoRefresh()
                         }
 
                         is PageLoadingState.Success -> {
@@ -111,13 +113,12 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
                                     state.info.buildFlexibleGridLayoutManager()
                                 hasAdapterLoaded = true
                             }
-                            searchAdapter.addAll(state.info)
                             binding.state.showContent()
                         }
 
                         is PageLoadingState.NoMoreData -> {
                             binding.searchSrl.finishLoadMoreWithNoMoreData()
-                            if (searchAdapter.items.isEmpty()) {
+                            if (viewModel.searchFlow.value.isEmpty()) {
                                 binding.state.showEmpty()
                                 binding.searchRv.isGone = true
                             }
@@ -133,11 +134,19 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.searchFlow.collectLatest {
+                    searchAdapter.submitList(it)
+                }
+            }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        val dataState = viewModel.searchFlow.value
+        val dataState = viewModel.searchStateFlow.value
         binding.searchRv.layoutManager = if (dataState is PageLoadingState.Success) {
             dataState.info.buildFlexibleGridLayoutManager()
         } else FixedGridLayoutManager(this, VIDEO_IN_ONE_LINE)
@@ -156,9 +165,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
      * 獲取最新結果，清除之前保存的所有數據
      */
     private fun getNewHanimeSearchResult() {
-        searchAdapter.items = emptyList()
         viewModel.page = 1
         hasAdapterLoaded = false
+        viewModel.clearHanimeSearchResult()
         getHanimeSearchResult()
     }
 
@@ -202,8 +211,8 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
         }
     }
 
-    private fun List<HanimeInfoModel>.buildFlexibleGridLayoutManager(): GridLayoutManager {
-        val counts = if (any { it.itemType == HanimeInfoModel.NORMAL })
+    private fun List<HanimeInfo>.buildFlexibleGridLayoutManager(): GridLayoutManager {
+        val counts = if (any { it.itemType == HanimeInfo.NORMAL })
             VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
         return FixedGridLayoutManager(this@SearchActivity, counts)
     }

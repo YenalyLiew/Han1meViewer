@@ -5,7 +5,7 @@ package com.yenaly.han1meviewer.logic.model
  * @author Yenaly Liew
  * @time 2022/06/08 008 22:56
  */
-data class HanimeInfoModel(
+data class HanimeInfo(
     val title: String,
     val coverUrl: String,
     val videoCode: String,

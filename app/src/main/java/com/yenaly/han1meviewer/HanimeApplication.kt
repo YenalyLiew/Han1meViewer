@@ -2,19 +2,12 @@ package com.yenaly.han1meviewer
 
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.WorkManager
 import com.google.android.material.color.DynamicColors
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.yenaly.han1meviewer.logic.network.HProxySelector
-import com.yenaly.han1meviewer.worker.HUpdateWorker
-import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyApplication
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 /**
  * @project Hanime1
@@ -42,21 +35,6 @@ class HanimeApplication : YenalyApplication() {
         HProxySelector.rebuildNetwork()
 
         initNotificationChannel()
-        initWorkManager()
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun initWorkManager() {
-        // 取消，防止每次启动都有残留的更新任务
-        WorkManager.getInstance(this).pruneWork()
-
-        GlobalScope.launch(Dispatchers.Main) {
-            HUpdateWorker.collectOutput(this@HanimeApplication)
-        }
-
-        GlobalScope.launch(Dispatchers.Main) {
-            HanimeDownloadWorker.collectOutput(this@HanimeApplication)
-        }
     }
 
     private fun initNotificationChannel() {

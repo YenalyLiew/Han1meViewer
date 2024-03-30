@@ -3,14 +3,14 @@ package com.yenaly.han1meviewer.ui.fragment.home
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
@@ -32,6 +32,7 @@ import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -107,7 +108,6 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         initPlaylistHeader()
 
         viewModel.getPlaylists()
-        getNewPlaylistItems()
 
         adapter.setOnItemLongClickListener { _, _, position ->
             val item = adapter.getItem(position).notNull()
@@ -116,7 +116,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                 setMessage(getString(R.string.sure_to_delete_s, item.title))
                 setPositiveButton(R.string.confirm) { _, _ ->
                     listCode?.let { listCode ->
-                        viewModel.deletePlaylist(listCode, item.videoCode, position)
+                        viewModel.deleteFromPlaylist(listCode, item.videoCode, position)
                     }
                 }
                 setNegativeButton(R.string.cancel, null)
@@ -164,8 +164,8 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
-                viewModel.playlistFlow.collect { state ->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playlistStateFlow.collect { state ->
                     val isExist =
                         state is PageLoadingState.Success || state is PageLoadingState.NoMoreData
                     if (!isAfterRefreshing) {
@@ -185,15 +185,15 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                             adapter.stateView = null
                             if (listCode == null) {
                                 binding.statePageList.showLoading()
-                            } else if (adapter.items.isEmpty()) {
-                                binding.srlPageList.autoRefreshAnimationOnly()
+                            } else if (viewModel.playlistFlow.value.isEmpty()) {
+                                binding.srlPageList.autoRefresh()
                             }
                         }
 
                         is PageLoadingState.NoMoreData -> {
                             binding.srlPageList.finishLoadMoreWithNoMoreData()
                             binding.srlPageList.finishRefresh()
-                            if (adapter.items.isEmpty()) {
+                            if (viewModel.playlistFlow.value.isEmpty()) {
                                 adapter.notifyDataSetChanged() // 這裡要用notifyDataSetChanged()，不然不會出現空白頁，而且crash
                                 binding.statePageList.showEmpty()
                             }
@@ -201,19 +201,16 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
 
                         is PageLoadingState.Success -> {
                             page++
+                            binding.srlPageList.finishRefresh()
+                            binding.srlPageList.finishLoadMore(true)
                             if (!isAfterRefreshing) {
                                 binding.cover.load(state.info.hanimeInfo.firstOrNull()?.coverUrl) {
                                     crossfade(true)
                                 }
                             }
                             isAfterRefreshing = true
-                            binding.srlPageList.finishRefresh()
-                            binding.srlPageList.finishLoadMore(true)
                             viewModel.csrfToken = state.info.csrfToken
-                            Log.d("csrf_token", viewModel.csrfToken.toString())
                             listDesc = state.info.desc
-                            Log.d("playlist", state.info.hanimeInfo.toString())
-                            if (listCode != null) adapter.addAll(state.info.hanimeInfo)
                             binding.statePageList.showContent()
                         }
                     }
@@ -222,7 +219,15 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playlistFlow.collectLatest { list ->
+                    if (listCode != null) adapter.submitList(list)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.playlistsFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Success -> {
@@ -248,7 +253,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.deletePlaylistFlow.collect { state ->
+            viewModel.deleteFromPlaylistFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
                         showShortToast(R.string.delete_failed)
@@ -258,9 +263,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                     }
 
                     is WebsiteState.Success -> {
-                        val index = state.info
                         showShortToast(R.string.delete_failed)
-                        adapter.removeAt(index)
                     }
                 }
             }
@@ -282,7 +285,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                             listCode = null
                             listTitle = null
                             listDesc = null
-                            adapter.items = emptyList()
+                            binding.appBar.setExpanded(false, true)
                             binding.statePageList.showLoading()
                         } else {
                             listTitle = state.info.title
@@ -322,8 +325,8 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
 
     fun getNewPlaylistItems() {
         page = 1
-        adapter.items = emptyList()
         isAfterRefreshing = false
+        viewModel.clearMyListItems(listCode)
         getPlaylistItems()
     }
 

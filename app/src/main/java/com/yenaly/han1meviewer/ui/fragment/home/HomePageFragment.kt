@@ -6,8 +6,9 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +21,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentHomePageBinding
-import com.yenaly.han1meviewer.logic.model.HomePageModel
+import com.yenaly.han1meviewer.logic.model.HomePage
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.MainActivity
@@ -159,7 +160,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         lifecycleScope.launch {
-            whenStarted {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.homePageFlow.collect { state ->
                     binding.rv.isGone = state !is WebsiteState.Success
                     binding.banner.isVisible =
@@ -201,7 +202,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         super.onConfigurationChanged(newConfig)
     }
 
-    private fun initBanner(info: HomePageModel) {
+    private fun initBanner(info: HomePage) {
         info.banner?.let { banner ->
             binding.tvBannerTitle.text = spannable {
                 banner.title.quote(Color.RED, stripeWidth = 4.dp, gapWidth = 4.dp)

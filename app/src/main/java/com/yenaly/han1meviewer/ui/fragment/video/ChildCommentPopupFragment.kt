@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.COMMENT_ID
 import com.yenaly.han1meviewer.CSRF_TOKEN
@@ -18,6 +17,7 @@ import com.yenaly.yenaly_libs.utils.appScreenHeight
 import com.yenaly.yenaly_libs.utils.arguments
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -46,60 +46,61 @@ class ChildCommentPopupFragment :
         viewModel.getCommentReply(commentId!!)
 
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.videoReplyFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> {
-                            showShortToast(R.string.load_reply_failed)
-                            dialog.dismiss()
-                        }
-
-                        is WebsiteState.Loading -> {
-
-                        }
-
-                        is WebsiteState.Success -> {
-                            replyAdapter.submitList(state.info.videoComment)
-                        }
+            viewModel.videoReplyStateFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> {
+                        showShortToast(R.string.load_reply_failed)
+                        dialog.dismiss()
                     }
+
+                    is WebsiteState.Loading -> Unit
+
+                    is WebsiteState.Success -> Unit
                 }
             }
         }
 
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.postReplyFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> {
-                            showShortToast(R.string.send_failed)
-                        }
-
-                        is WebsiteState.Loading -> {
-                            showShortToast(R.string.sending_reply)
-                        }
-
-                        is WebsiteState.Success -> {
-                            showShortToast(R.string.send_success)
-                            viewModel.getCommentReply(commentId!!)
-                            replyAdapter.replyPopup?.dismiss()
-                        }
-                    }
-                }
+            viewModel.videoReplyFlow.collectLatest { list ->
+                replyAdapter.submitList(list)
             }
         }
 
         lifecycleScope.launch {
-            whenStarted {
-                viewModel.commentLikeFlow.collect { state ->
-                    when (state) {
-                        is WebsiteState.Error -> showShortToast(state.throwable.message)
-                        is WebsiteState.Loading -> Unit
-                        is WebsiteState.Success -> viewModel.handleCommentLike(
-                            state.info, replyAdapter
-                        )
+
+            viewModel.postReplyFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> {
+                        showShortToast(R.string.send_failed)
+                    }
+
+                    is WebsiteState.Loading -> {
+                        showShortToast(R.string.sending_reply)
+                    }
+
+                    is WebsiteState.Success -> {
+                        showShortToast(R.string.send_success)
+                        viewModel.getCommentReply(commentId!!)
+                        replyAdapter.replyPopup?.dismiss()
                     }
                 }
             }
+
+        }
+
+        lifecycleScope.launch {
+
+            viewModel.commentLikeFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> showShortToast(state.throwable.message)
+                    is WebsiteState.Loading -> Unit
+                    is WebsiteState.Success -> {
+                        viewModel.handleCommentLike(state.info)
+                        replyAdapter.notifyItemChanged(state.info.commentPosition, 0)
+                    }
+                }
+            }
+
         }
     }
 }

@@ -3,12 +3,14 @@ package com.yenaly.han1meviewer.ui.fragment.home
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
+import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
@@ -22,6 +24,7 @@ import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -44,8 +47,6 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
         checkLogin()
         (activity as MainActivity).setupToolbar()
         binding.state.init()
-
-        getNewMyWatchLater()
 
         adapter.setOnItemLongClickListener { _, _, position ->
             val item = adapter.getItem(position).notNull()
@@ -79,8 +80,8 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
     @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            whenStarted {
-                viewModel.watchLaterFlow.collect { state ->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.watchLaterStateFlow.collect { state ->
                     when (state) {
                         is PageLoadingState.Error -> {
                             binding.srlPageList.finishRefresh()
@@ -91,12 +92,12 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
 
                         is PageLoadingState.Loading -> {
                             adapter.stateView = null
-                            if (adapter.items.isEmpty()) binding.srlPageList.autoRefreshAnimationOnly()
+                            if (viewModel.watchLaterFlow.value.isEmpty()) binding.srlPageList.autoRefresh()
                         }
 
                         is PageLoadingState.NoMoreData -> {
                             binding.srlPageList.finishLoadMoreWithNoMoreData()
-                            if (adapter.items.isEmpty()) binding.state.showEmpty()
+                            if (viewModel.watchLaterFlow.value.isEmpty()) binding.state.showEmpty()
                         }
 
                         is PageLoadingState.Success -> {
@@ -104,10 +105,17 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
                             binding.srlPageList.finishRefresh()
                             binding.srlPageList.finishLoadMore(true)
                             viewModel.csrfToken = state.info.csrfToken
-                            adapter.addAll(state.info.hanimeInfo)
                             binding.state.showContent()
                         }
                     }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.watchLaterFlow.collectLatest {
+                    adapter.submitList(it)
                 }
             }
         }
@@ -124,9 +132,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
                     }
 
                     is WebsiteState.Success -> {
-                        val index = state.info
                         showShortToast(R.string.delete_success)
-                        adapter.removeAt(index)
                     }
                 }
             }
@@ -144,7 +150,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
 
     private fun getNewMyWatchLater() {
         page = 1
-        adapter.items = emptyList()
+        viewModel.clearMyListItems(MyListType.WATCH_LATER)
         getMyWatchLater()
     }
 

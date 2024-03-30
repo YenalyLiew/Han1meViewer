@@ -18,7 +18,7 @@ import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_MATCH_PARENT
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_WRAP_CONTENT
 import com.yenaly.han1meviewer.getHanimeVideoLink
-import com.yenaly.han1meviewer.logic.model.HanimeInfoModel
+import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
@@ -37,45 +37,45 @@ import com.yenaly.yenaly_libs.utils.startActivity
  * @time 2023/11/26 026 17:15
  */
 class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidthType is VIDEO_LAYOUT_MATCH_PARENT or VIDEO_LAYOUT_WRAP_CONTENT or nothing
-    BaseDifferAdapter<HanimeInfoModel, QuickViewHolder>(COMPARATOR) {
+    BaseDifferAdapter<HanimeInfo, QuickViewHolder>(COMPARATOR) {
 
     init {
         isStateViewEnable = true
     }
 
     companion object {
-        val COMPARATOR = object : DiffUtil.ItemCallback<HanimeInfoModel>() {
+        val COMPARATOR = object : DiffUtil.ItemCallback<HanimeInfo>() {
             override fun areItemsTheSame(
-                oldItem: HanimeInfoModel,
-                newItem: HanimeInfoModel,
+                oldItem: HanimeInfo,
+                newItem: HanimeInfo,
             ): Boolean {
                 return oldItem.videoCode == newItem.videoCode
             }
 
             override fun areContentsTheSame(
-                oldItem: HanimeInfoModel,
-                newItem: HanimeInfoModel,
+                oldItem: HanimeInfo,
+                newItem: HanimeInfo,
             ): Boolean {
                 return oldItem == newItem
             }
         }
     }
 
-    override fun getItemViewType(position: Int, list: List<HanimeInfoModel>): Int {
+    override fun getItemViewType(position: Int, list: List<HanimeInfo>): Int {
         return list[position].itemType
     }
 
-    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfoModel?) {
+    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfo?) {
         item.notNull()
         when (holder.itemViewType) {
-            HanimeInfoModel.SIMPLIFIED -> {
+            HanimeInfo.SIMPLIFIED -> {
                 holder.getView<ImageView>(R.id.cover).load(item.coverUrl) {
                     crossfade(true)
                 }
                 holder.getView<TextView>(R.id.title).text = item.title
             }
 
-            HanimeInfoModel.NORMAL -> {
+            HanimeInfo.NORMAL -> {
                 holder.getView<TextView>(R.id.title).text = item.title
                 holder.getView<ImageView>(R.id.cover).load(item.coverUrl) {
                     crossfade(true)
@@ -126,13 +126,13 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
         parent: ViewGroup,
         viewType: Int,
     ): QuickViewHolder {
-        return if (viewType == HanimeInfoModel.NORMAL) {
+        return if (viewType == HanimeInfo.NORMAL) {
             QuickViewHolder(R.layout.item_hanime_video, parent)
         } else {
             QuickViewHolder(R.layout.item_hanime_video_simplified, parent)
         }.also { viewHolder ->
             when (viewType) {
-                HanimeInfoModel.SIMPLIFIED -> {
+                HanimeInfo.SIMPLIFIED -> {
                     when (context) {
                         is SearchActivity -> viewHolder.getView<View>(R.id.linear)
                             .widthMatchParent()
@@ -147,7 +147,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                     }
                 }
 
-                HanimeInfoModel.NORMAL -> {
+                HanimeInfo.NORMAL -> {
                     when (context) {
                         is VideoActivity -> when (videoWidthType) {
                             VIDEO_LAYOUT_MATCH_PARENT ->

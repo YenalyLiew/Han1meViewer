@@ -5,7 +5,7 @@ package com.yenaly.han1meviewer.logic.model
  * @author Yenaly Liew
  * @time 2022/06/20 020 21:56
  */
-data class VideoCommentModel(
+data class VideoComments(
     val videoComment: MutableList<VideoComment>,
     val currentUserId: String? = null,
     val csrfToken: String? = null,
@@ -74,5 +74,5 @@ data class VideoCommentArguments(
     val commentPosition: Int,
     // 你當前點擊的是讚還是踩，和comment裏的isPositive不一樣
     val isPositive: Boolean,
-    val comment: VideoCommentModel.VideoComment,
+    val comment: VideoComments.VideoComment,
 )

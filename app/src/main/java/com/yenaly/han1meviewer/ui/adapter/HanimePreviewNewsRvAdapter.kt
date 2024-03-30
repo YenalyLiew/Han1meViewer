@@ -16,7 +16,7 @@ import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemHanimePreviewNews2Binding
-import com.yenaly.han1meviewer.logic.model.HanimePreviewModel
+import com.yenaly.han1meviewer.logic.model.HanimePreview
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.popup.CoilImageLoader
@@ -30,7 +30,7 @@ import com.yenaly.yenaly_libs.utils.startActivity
  * @time 2023/11/26 026 16:48
  */
 class HanimePreviewNewsRvAdapter :
-    BaseQuickAdapter<HanimePreviewModel.PreviewInfo, HanimePreviewNewsRvAdapter.ViewHolder>() {
+    BaseQuickAdapter<HanimePreview.PreviewInfo, HanimePreviewNewsRvAdapter.ViewHolder>() {
 
     init {
         isStateViewEnable = true
@@ -43,7 +43,7 @@ class HanimePreviewNewsRvAdapter :
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int,
-        item: HanimePreviewModel.PreviewInfo?,
+        item: HanimePreview.PreviewInfo?,
     ) {
         item.notNull()
         holder.binding.ivCoverBig.load(item.coverUrl) {
@@ -89,7 +89,7 @@ class HanimePreviewNewsRvAdapter :
         }
     }
 
-    private inner class PreviewPicRvAdapter(private val item: HanimePreviewModel.PreviewInfo) :
+    private inner class PreviewPicRvAdapter(private val item: HanimePreview.PreviewInfo) :
         BaseQuickAdapter<String, QuickViewHolder>(item.relatedPicsUrl) {
         override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: String?) {
             holder.getView<ImageView>(R.id.iv_preview_news_pic).load(item) {

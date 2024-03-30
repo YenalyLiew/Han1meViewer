@@ -5,9 +5,10 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import coil.load
@@ -79,7 +80,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
     override fun bindDataObservers() {
         lifecycleScope.launch {
-            whenStarted {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.hanimeVideoFlow.collect { state ->
                     when (state) {
                         is VideoLoadingState.Error -> {

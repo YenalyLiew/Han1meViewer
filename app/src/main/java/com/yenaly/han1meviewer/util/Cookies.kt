@@ -10,7 +10,7 @@ value class CookieString(val cookie: String)
 /**
  * 主要用於 [HCookieJar][com.yenaly.han1meviewer.logic.network.HCookieJar]，最好不要用到其他地方。
  */
-internal fun CookieString.toLoginCookieList(domain: String): List<Cookie> {
+fun CookieString.toLoginCookieList(domain: String): List<Cookie> {
     val cookieList = mutableListOf<Cookie>().also {
         it += preferencesCookieList(domain)
     }

@@ -52,6 +52,7 @@
                         android:layout_gravity="bottom|start"
                         android:layout_marginBottom="16dp"
                         android:background="@drawable/shape_preview_button_left"
+                        android:foreground="?selectableItemBackground"
                         app:icon="@drawable/ic_baseline_arrow_back_24"
                         app:iconGravity="start" />
 
@@ -62,6 +63,7 @@
                         android:layout_gravity="bottom|end"
                         android:layout_marginBottom="16dp"
                         android:background="@drawable/shape_preview_button_right"
+                        android:foreground="?selectableItemBackground"
                         app:icon="@drawable/ic_baseline_arrow_forward_24"
                         app:iconGravity="end" />
 

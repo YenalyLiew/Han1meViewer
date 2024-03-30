@@ -5,7 +5,7 @@ package com.yenaly.han1meviewer.logic.model
  * @author Yenaly Liew
  * @time 2023/08/26 026 17:47
  */
-data class PlaylistsModel(
+data class Playlists(
     val playlists: List<Playlist>,
     val csrfToken: String? = null,
 ) {

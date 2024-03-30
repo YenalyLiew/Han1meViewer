@@ -8,8 +8,9 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.view.isGone
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -165,7 +166,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
     @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         lifecycleScope.launch {
-            whenStarted {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.previewFlow.collect { state ->
                     binding.nsvPreview.isGone = state !is WebsiteState.Success
                     binding.appBar.setExpanded(state is WebsiteState.Success, true)
