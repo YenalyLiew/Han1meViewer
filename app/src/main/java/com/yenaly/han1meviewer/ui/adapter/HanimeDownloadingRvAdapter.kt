@@ -48,6 +48,9 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
     }
 
     companion object {
+        private const val DOWNLOADING = 1
+        private const val PAUSE = 1 shl 1
+
         val COMPARATOR = object : DiffUtil.ItemCallback<HanimeDownloadEntity>() {
             override fun areContentsTheSame(
                 oldItem: HanimeDownloadEntity,
@@ -61,6 +64,18 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                 newItem: HanimeDownloadEntity,
             ): Boolean {
                 return oldItem.id == newItem.id
+            }
+
+            override fun getChangePayload(
+                oldItem: HanimeDownloadEntity,
+                newItem: HanimeDownloadEntity,
+            ): Any {
+                var bitset = 0
+                if (oldItem.progress != newItem.progress || oldItem.downloadedLength != newItem.downloadedLength)
+                    bitset = bitset or DOWNLOADING
+                if (oldItem.isDownloading != newItem.isDownloading)
+                    bitset = bitset or PAUSE
+                return bitset
             }
         }
     }
@@ -76,15 +91,38 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         }
         holder.binding.tvSize.text = spannable {
             item.downloadedLength.formatFileSize().text()
-            " | ".span {
-                color(Color.RED)
-            }
+            " | ".span { color(Color.RED) }
             item.length.formatFileSize().span { style(Typeface.BOLD) }
         }
         holder.binding.tvQuality.text = item.quality
         holder.binding.tvProgress.text = "${item.progress}%"
-        holder.binding.pbProgress.setProgress(item.progress, false)
+        holder.binding.pbProgress.setProgress(item.progress, true)
         holder.binding.btnStart.handleStartButton(item.isDownloading)
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int,
+        item: HanimeDownloadEntity?,
+        payloads: List<Any>,
+    ) {
+        if (payloads.isEmpty() || payloads.first() == 0)
+            return super.onBindViewHolder(holder, position, item, payloads)
+        item.notNull()
+        val bitset = payloads.first() as Int
+        if (bitset and DOWNLOADING != 0) {
+            holder.binding.tvSize.text = spannable {
+                item.downloadedLength.formatFileSize().text()
+                " | ".span { color(Color.RED) }
+                item.length.formatFileSize().span { style(Typeface.BOLD) }
+            }
+            holder.binding.tvProgress.text = "${item.progress}%"
+            holder.binding.pbProgress.setProgress(item.progress, true)
+        }
+        if (bitset and PAUSE != 0) {
+            holder.binding.btnStart.handleStartButton(item.isDownloading)
+        }
     }
 
     override fun onCreateViewHolder(
@@ -137,7 +175,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
     }
 
 
-    fun MaterialButton.handleStartButton(isDownloading: Boolean) {
+    private fun MaterialButton.handleStartButton(isDownloading: Boolean) {
         if (isDownloading) {
             setText(R.string.pause)
             setIconResource(R.drawable.ic_baseline_pause_24)

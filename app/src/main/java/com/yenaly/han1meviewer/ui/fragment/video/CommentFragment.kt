@@ -165,7 +165,6 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                     is WebsiteState.Loading -> Unit
                     is WebsiteState.Success -> {
                         viewModel.handleCommentLike(state.info)
-                        commentAdapter.notifyItemChanged(state.info.commentPosition, 0)
                     }
                 }
             }
