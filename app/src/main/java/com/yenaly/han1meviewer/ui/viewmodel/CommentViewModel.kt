@@ -154,13 +154,15 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
                     when (commentPlace) {
                         CommentPlace.COMMENT -> _videoCommentFlow.update { prevList ->
                             prevList.toMutableList().apply {
-                                this[commentPosition].handleCommentLike(argState.info)
+                                this[commentPosition] =
+                                    this[commentPosition].handleCommentLike(argState.info)
                             }
                         }
 
                         CommentPlace.CHILD_COMMENT -> _videoReplyFlow.update { prevList ->
                             prevList.toMutableList().apply {
-                                this[commentPosition].handleCommentLike(argState.info)
+                                this[commentPosition] =
+                                    this[commentPosition].handleCommentLike(argState.info)
                             }
                         }
                     }
@@ -169,12 +171,12 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
         }
     }
 
-    private fun VideoComments.VideoComment.handleCommentLike(args: VideoCommentArguments) {
-        if (args.isPositive) {
-            this.incrementLikesCount(cancel = post.likeCommentStatus)
-        } else {
-            this.decrementLikesCount(cancel = post.unlikeCommentStatus)
-        }
+    private fun VideoComments.VideoComment.handleCommentLike(
+        args: VideoCommentArguments,
+    ) = if (args.isPositive) {
+        this.incrementLikesCount(cancel = post.likeCommentStatus)
+    } else {
+        this.decrementLikesCount(cancel = post.unlikeCommentStatus)
     }
 
     fun handleCommentLike(args: VideoCommentArguments) {

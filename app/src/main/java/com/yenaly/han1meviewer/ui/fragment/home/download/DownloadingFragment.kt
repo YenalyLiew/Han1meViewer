@@ -37,7 +37,7 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         adapter.setStateViewLayout(R.layout.layout_empty_view)
-        binding.rvList.itemAnimator?.changeDuration = 0
+        // binding.rvList.itemAnimator?.changeDuration = 0
     }
 
     override fun bindDataObservers() {

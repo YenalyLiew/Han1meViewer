@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -15,6 +14,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
+import com.google.android.material.button.MaterialButton
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.COMMENT_ID
@@ -45,6 +45,8 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
     var replyPopup: ReplyPopup? = null
 
     companion object {
+        private const val THUMB = 0
+
         val COMPARATOR = object : DiffUtil.ItemCallback<VideoComments.VideoComment>() {
             override fun areItemsTheSame(
                 oldItem: VideoComments.VideoComment,
@@ -58,6 +60,15 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                 newItem: VideoComments.VideoComment,
             ): Boolean {
                 return oldItem == newItem
+            }
+
+            override fun getChangePayload(
+                oldItem: VideoComments.VideoComment,
+                newItem: VideoComments.VideoComment,
+            ): Any? {
+                return if (oldItem.post.likeCommentStatus != newItem.post.likeCommentStatus ||
+                    oldItem.post.unlikeCommentStatus != newItem.post.unlikeCommentStatus
+                ) THUMB else null
             }
         }
     }
@@ -82,16 +93,23 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         holder.binding.tvDate.text = item.date
         holder.binding.tvUsername.text = item.username
         holder.binding.btnViewMoreReplies.isVisible = item.hasMoreReplies
-        holder.binding.btnThumbUp.text = item.realLikesCount.toString()
-        holder.binding.btnThumbUp.icon = if (item.post.likeCommentStatus) {
-            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_up_alt_24)
-        } else {
-            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_up_off_alt_24)
-        }
-        holder.binding.btnThumbDown.icon = if (item.post.unlikeCommentStatus) {
-            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_down_alt_24)
-        } else {
-            AppCompatResources.getDrawable(context, R.drawable.ic_baseline_thumb_down_off_alt_24)
+        holder.binding.btnThumbUp.text = item.realLikesCount?.toString()
+        holder.binding.btnThumbUp.setThumbUpIcon(item.post.likeCommentStatus)
+        holder.binding.btnThumbDown.setThumbDownIcon(item.post.unlikeCommentStatus)
+    }
+
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int,
+        item: VideoComments.VideoComment?,
+        payloads: List<Any>,
+    ) {
+        if (payloads.isEmpty()) return super.onBindViewHolder(holder, position, item, payloads)
+        item.notNull()
+        if (payloads.first() == THUMB) {
+            holder.binding.btnThumbUp.setThumbUpIcon(item.post.likeCommentStatus)
+            holder.binding.btnThumbDown.setThumbDownIcon(item.post.unlikeCommentStatus)
+            holder.binding.btnThumbUp.text = item.realLikesCount?.toString()
         }
     }
 
@@ -200,6 +218,22 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                     XPopup.Builder(context).autoOpenSoftInput(true).asCustom(commentPopup).show()
                 }
             }
+        }
+    }
+
+    private fun MaterialButton.setThumbUpIcon(likeCommentStatus: Boolean) {
+        if (likeCommentStatus) {
+            setIconResource(R.drawable.ic_baseline_thumb_up_alt_24)
+        } else {
+            setIconResource(R.drawable.ic_baseline_thumb_up_off_alt_24)
+        }
+    }
+
+    private fun MaterialButton.setThumbDownIcon(unlikeCommentStatus: Boolean) {
+        if (unlikeCommentStatus) {
+            setIconResource(R.drawable.ic_baseline_thumb_down_alt_24)
+        } else {
+            setIconResource(R.drawable.ic_baseline_thumb_down_off_alt_24)
         }
     }
 

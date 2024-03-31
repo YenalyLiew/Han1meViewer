@@ -33,20 +33,28 @@ data class VideoComments(
 
         val realReplyId get() = post.foreignId ?: checkNotNull(id)
         val realLikesCount get() = thumbUp
-        fun incrementLikesCount(cancel: Boolean = false) {
-            if (thumbUp != null) {
-                thumbUp = thumbUp!! + if (cancel) -1 else 1
-                post.likeCommentStatus = !cancel
-                post.unlikeCommentStatus = false
-            }
+        fun incrementLikesCount(cancel: Boolean = false): VideoComment {
+            return thumbUp?.let {
+                copy(
+                    thumbUp = it + if (cancel) -1 else 1,
+                    post = post.copy(
+                        likeCommentStatus = !cancel,
+                        unlikeCommentStatus = false
+                    )
+                )
+            } ?: this
         }
 
-        fun decrementLikesCount(cancel: Boolean = false) {
-            if (thumbUp != null) {
-                thumbUp = thumbUp!! - if (cancel) -1 else 1
-                post.likeCommentStatus = false
-                post.unlikeCommentStatus = !cancel
-            }
+        fun decrementLikesCount(cancel: Boolean = false): VideoComment {
+            return thumbUp?.let {
+                copy(
+                    thumbUp = it - if (cancel) -1 else 1,
+                    post = post.copy(
+                        likeCommentStatus = false,
+                        unlikeCommentStatus = !cancel
+                    )
+                )
+            } ?: this
         }
 
         data class POST(
