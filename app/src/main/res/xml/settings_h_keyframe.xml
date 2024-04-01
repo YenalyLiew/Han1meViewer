@@ -52,7 +52,7 @@
     <PreferenceCategory
         app:iconSpaceReserved="false"
         app:key="h_keyframe_custom_category"
-        app:title="自訂">
+        app:title="@string/custom">
 
         <SwitchPreferenceCompat
             app:defaultValue="false"

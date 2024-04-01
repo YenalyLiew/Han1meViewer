@@ -424,7 +424,7 @@ object NetworkRepo {
 
             is SSLHandshakeException -> {
                 e.printStackTrace()
-                SSLHandshakeException(getString(R.string.network_instable_msg))
+                SSLHandshakeException(getString(R.string.network_unstable_msg))
             }
 
             else -> {

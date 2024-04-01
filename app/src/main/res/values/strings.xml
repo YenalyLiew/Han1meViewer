@@ -50,7 +50,7 @@
     <string name="expand">展開</string>
     <string name="series_video">系列影片</string>
     <string name="related_video">相關影片</string>
-    <string name="is_playing">現正播放</string>
+    <string name="now_playing">現正播放</string>
     <string name="view_more_replies">查看更多回覆</string>
     <string name="comment_not_found">未發現評論</string>
     <string name="hanime_list">新番列表</string>
@@ -148,7 +148,7 @@
     <string name="will_remind_before_d_seconds">將會在 %d 秒前倒計時提醒</string>
     <string name="shared_h_keyframes_enable">採用共享關鍵H幀集</string>
     <string name="shared_h_keyframe_manage">共享關鍵H幀管理</string>
-    <string name="shared_h_keyframe_manage_tip">歡迎到 GitHub 上面提交你的關鍵H幀，如果不會提交討論區有教學文供參考</string>
+    <string name="shared_h_keyframe_manage_tip">歡迎到 GitHub 上面提交你的關鍵H幀，如果不會提交，討論區有教學文供參考</string>
     <string name="shared_h_keyframes_enable_tip">採用好心人上傳到 Github 的關鍵H幀集</string>
     <string name="shared">共享</string>
     <string name="shared_h_keyframes_use_first">優先採用共享關鍵H幀集</string>
@@ -311,7 +311,7 @@
     <string name="website_blocked_msg">看到這裡説明他們網站加固了，能不能恢復只能聽天命了…</string>
     <string name="not_logged_in_currently">當前未登入</string>
     <string name="parse_error_msg">可能這個網址解析起來不大一樣…</string>
-    <string name="network_instable_msg">可能是你的網路不穩定，多刷新！</string>
+    <string name="network_unstable_msg">可能是你的網路不穩定，多刷新！</string>
     <string name="download_s_failed_many_times">下載 %1$s 失敗多次！</string>
     <string name="unknown_download_error">未知下載錯誤</string>
     <string name="download_task_completed">下載任務已完成！</string>
@@ -320,5 +320,6 @@
     <string name="download_failed_s_exists">下載失敗：%1$s 已存在</string>
     <string name="download_task_failed">下載任務失敗！</string>
     <string name="download_task_failed_s_reason_s">下載失敗：%1$s\n原因為：%2$s</string>
+    <string name="custom">自訂</string>
 
 </resources>
