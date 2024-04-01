@@ -36,7 +36,7 @@
                 android:background="@color/per50_transparent_black"
                 android:contentDescription="@null"
                 android:gravity="center"
-                android:text="@string/is_playing" />
+                android:text="@string/now_playing" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

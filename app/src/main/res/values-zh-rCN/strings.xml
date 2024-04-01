@@ -32,7 +32,7 @@
     <string name="cancel">取消</string>
     <string name="content_tag">内容标签</string>
     <string name="pair_widely">广泛配对</string>
-    <string name="pair_widely_alert">较多结果，较不精准。配对所有包含任何一个选择的标签的影片，而非全部标签。</string>
+    <string name="pair_widely_alert">较多结果，较不精准。配对所有包含任何一个选择的标签的影片，而非全部标签</string>
     <string name="reset">重置</string>
     <string name="save">保存</string>
     <string name="save_and_search">保存并搜索</string>
@@ -50,7 +50,7 @@
     <string name="expand">展开</string>
     <string name="series_video">系列影片</string>
     <string name="related_video">相关影片</string>
-    <string name="is_playing">现正播放</string>
+    <string name="now_playing">现正播放</string>
     <string name="view_more_replies">查看更多回复</string>
     <string name="comment_not_found">未发现评论</string>
     <string name="hanime_list">新番列表</string>
@@ -144,7 +144,7 @@
     <string name="will_remind_before_d_seconds">将会在 %d 秒前倒计时提醒</string>
     <string name="shared_h_keyframes_enable">采用共享关键H帧集</string>
     <string name="shared_h_keyframe_manage">共享关键H帧管理</string>
-    <string name="shared_h_keyframe_manage_tip">无法自己修改，修改在需要在 Github 上 Pull Request，并随版本更新入数据库，暂时是这样的</string>
+    <string name="shared_h_keyframe_manage_tip">欢迎到 GitHub 上面提交你的关键H帧，如果不会提交，讨论区有教学文档参考</string>
     <string name="shared_h_keyframes_enable_tip">采用好心人上传到 Github 的关键H帧集</string>
     <string name="shared">共享</string>
     <string name="shared_h_keyframes_use_first">优先采用共享关键H帧集</string>
@@ -182,7 +182,7 @@
     <string name="login_failed">登录失败</string>
     <string name="login_success">登录成功</string>
     <string name="account_or_password_wrong">账户或密码可能错误</string>
-    <string name="login_tips">该方法只能保持登录 2 个小时… 还是推荐使用网页登录，\n但网页是不走 Hosts 的，所以可能需要 VPN。</string>
+    <string name="login_tips">该方法只能保持登录 2 个小时… 还是推荐使用网页登录，\n但网页是不走 Hosts 的，所以可能需要 VPN</string>
     <string name="ignore">忽略</string>
     <string name="update">更新</string>
     <string name="use_ci_update_channel">采用 CI 更新频道</string>
@@ -191,7 +191,7 @@
     <string name="update_failed">更新失败</string>
     <string name="update_download_background">在背景下载更新</string>
     <string name="allow_install_from_unknown_app_sources">准许当前 App 来源安装</string>
-    <string name="reason_for_allow_install_from_unknown_app_sources">别担心，这只是为了更新。\n你如果不放心，可以直接去 Github 上下载。</string>
+    <string name="reason_for_allow_install_from_unknown_app_sources">别担心，这只是为了更新。\n你如果不放心，可以直接去 Github 上下载</string>
     <string name="go_to_settings">前往设置</string>
     <string name="allow_post_notification">准许发送通知</string>
     <string name="reason_for_download_notification">请同意通知权限，及时收到下载信息！</string>
@@ -269,7 +269,7 @@
     <string name="download_video_detail_below">将要下载的影片详情如下</string>
     <string name="name_with_colon">名称：</string>
     <string name="quality_with_colon">画质：</string>
-    <string name="after_download_tips">下载完毕后可以在「下载」界面找到下载后的影片，「设置」界面里有详细存储路径。</string>
+    <string name="after_download_tips">下载完毕后可以在「下载」界面找到下载后的影片，「设置」界面里有详细存储路径</string>
     <string name="traditional_chinese">繁体中文</string>
     <string name="simplified_chinese">简体中文</string>
     <string name="restart_or_not_working">修改%s需要重启程序，否则不起作用！</string>
@@ -288,16 +288,16 @@
     <string name="low">低</string>
     <string name="very_low">很低</string>
     <string name="extremely_low">极低</string>
-    <string name="update_failed_tips">如果你发现软件有重大问题但是提示更新失败，请直接去 Github Releases 界面查看是否有最新版下载。\n\n
+    <string name="update_failed_tips">如果你发现软件有重大问题但是提示更新失败，请直接去 Github Releases 界面查看是否有最新版下载\n\n
 还有我竟然发现有人花钱买这 APP，真没必要哈！</string>
-    <string name="shared_h_keyframe_detected_msg">注意：如果你也有和对方相同代号的关键H帧，那么你自己的将会被覆盖。\n
+    <string name="shared_h_keyframe_detected_msg">注意：如果你也有和对方相同代号的关键H帧，那么你自己的将会被覆盖\n
 \n
 标题：%1$s\n
 代号：%2$s\n
 有 %3$d 个时刻</string>
     <string name="domain_change_tips">修改域名需要重启程序，否则不起作用！\n
 不同域名不共通 Cookie，所以更换域名后需要重新进行登录操作。\n
-所以除 hanime1.me 以外的域名可能在某些时间段会重定向回 hanime1.me，这可能导致 Cookie 失效。\n
+所以除 hanime1.me 以外的域名可能在某些时间段会重定向回 hanime1.me，这可能导致 Cookie 失效\n
 \n
 建议如下：\n
 · 无 VPN 用户，使用 hanime1.me 并开启内置 Hosts\n
@@ -307,7 +307,7 @@
     <string name="website_blocked_msg">看到这里说明他们网站加固了，能不能恢复只能听天命了…</string>
     <string name="not_logged_in_currently">当前未登录</string>
     <string name="parse_error_msg">可能这个网址解析起来不太一样…</string>
-    <string name="network_instable_msg">可能是你的网络不稳定，多刷新！</string>
+    <string name="network_unstable_msg">可能是你的网络不稳定，多刷新！</string>
     <string name="download_s_failed_many_times">下载 %1$s 失败多次！</string>
     <string name="unknown_download_error">未知下载错误</string>
     <string name="download_task_completed">下载任务已完成！</string>
@@ -316,5 +316,6 @@
     <string name="download_failed_s_exists">下载失败：%1$s 已存在</string>
     <string name="download_task_failed">下载任务失败！</string>
     <string name="download_task_failed_s_reason_s">下载失败：%1$s\n原因为：%2$s</string>
+    <string name="custom">自定义</string>
 
 </resources>
