@@ -24,7 +24,7 @@ import com.yenaly.yenaly_libs.utils.showSnackBar
 class AboutActivity : AbsAboutActivity() {
 
     private val eggArray = arrayOf(
-        "爲什麽點擊這裡，以爲這裡有彩蛋嗎？",
+        "為什麼點擊這裡，以為這裡有彩蛋嗎？",
         "別點了！！",
         "再點擊 4 次進入崩壞模式",
         "再點擊 3 次進入崩壞模式",
