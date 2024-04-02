@@ -11,7 +11,6 @@ body:
       placeholder: |
         Example:
         "
-```json
 {
   "videoCode": "12444",
   "title": "思春期SEX#1",
@@ -31,7 +30,6 @@ body:
     }
   ]
 }
-```
  "
     validations:
       required: true
