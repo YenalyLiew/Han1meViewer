@@ -84,7 +84,7 @@
     <string name="current_version">Current Version: %s</string>
     <string name="already_latest_update">Already the Latest Version!</string>
     <string name="app_slogan">Unofficial Hanime1.me Client</string>
-    <string name="search_placeholder">What do you want to watch today?</string>
+    <string name="search_placeholder">What to watch today?</string>
     <string name="downloading">Downloading</string>
     <string name="downloading_s">Downloading: %1$s</string>
     <string name="downloading_update_percent">Downloading Update %d%%</string>

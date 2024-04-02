@@ -165,7 +165,7 @@
             android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/battery_time_layout"
             android:gravity="center"
-            android:text="倍速"
+            android:text="@string/speed"
             android:textColor="#ffffffff"
             android:visibility="gone"
             tools:visibility="visible" />
