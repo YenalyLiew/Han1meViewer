@@ -97,7 +97,7 @@ class AboutActivity : AbsAboutActivity() {
             )
             add(
                 Contributor(
-                    0,
+                    R.drawable.ɴᴇᴋᴏ,
                     "NeKoOuO",
                     "Contributor",
                     "https://github.com/NeKoOuO"
