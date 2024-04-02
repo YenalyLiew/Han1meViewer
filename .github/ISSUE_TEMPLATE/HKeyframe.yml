@@ -10,8 +10,7 @@ body:
       description: 不會歡迎提問哦
       placeholder: |
         Example:
-        "
-{
+        "{
   "videoCode": "12444",
   "title": "思春期SEX#1",
   "author": "NeKoOuO",
@@ -29,8 +28,7 @@ body:
       "prompt": null
     }
   ]
-}
- "
+}"
     validations:
       required: true
 
