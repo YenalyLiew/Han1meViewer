@@ -24,7 +24,7 @@ import com.yenaly.yenaly_libs.utils.showSnackBar
 class AboutActivity : AbsAboutActivity() {
 
     private val eggArray = arrayOf(
-        "爲什麽點擊這裏，以爲這裏有彩蛋嗎？",
+        "為什麼點擊這裡，以為這裡有彩蛋嗎？",
         "別點了！！",
         "再點擊 4 次進入崩壞模式",
         "再點擊 3 次進入崩壞模式",
@@ -72,7 +72,7 @@ class AboutActivity : AbsAboutActivity() {
                 Card(
                     """
                 Hanime1的非官方客戶端，提供了等同Hanime1網站的大部分功能。
-                并且提供了一些獨特的功能。
+                並且提供了一些獨特的功能。
                 請注意：本軟體僅供學習使用，軟體作者與網站擁有者無關。
             """.trimIndent()
                 )
