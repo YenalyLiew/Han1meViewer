@@ -1,0 +1,22 @@
+name: ⭐ 功能請求
+description: 建議一個功能來改善 Han1meViewer
+labels: [good idea | 好主意]
+body:
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 描述您建議的功能
+      description: 如何改進 Han1meViewer？
+      placeholder: |
+        Example:
+          "我想要bla bla bla..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-details
+    attributes:
+      label: 其他
+      placeholder: |
+        其他補充資訊
