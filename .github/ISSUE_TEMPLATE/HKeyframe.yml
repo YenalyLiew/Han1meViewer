@@ -1,0 +1,22 @@
+name: 提交關鍵H幀
+description: 分享你的關鍵H幀
+labels: [𝐇Keyframe]
+body:
+
+  - type: textarea
+    id: json-file
+    attributes:
+      label: 填寫.json格式的文檔
+      description: 不會歡迎提問哦
+      placeholder: |
+        Example:
+        "範例可參考討論區"
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-details
+    attributes:
+      label: 其他你想講的
+      placeholder: |
+        其他補充資訊
