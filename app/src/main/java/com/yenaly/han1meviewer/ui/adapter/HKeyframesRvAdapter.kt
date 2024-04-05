@@ -98,7 +98,7 @@ class HKeyframesRvAdapter : BaseDifferAdapter<HKeyframeEntity, QuickViewHolder>(
                     val position = viewHolder.bindingAdapterPosition
                     val item = getItem(position).notNull()
                     XPopup.Builder(view.context).atView(view).isDarkTheme(true).asAttachList(
-                        Array(editResArray.size) { idx -> view.context.getString(editResArray[idx]) },
+                        editResArray.map(view.context::getString).toTypedArray(),
                         editResIconArray
                     ) { pos, _ ->
                         when (pos) {

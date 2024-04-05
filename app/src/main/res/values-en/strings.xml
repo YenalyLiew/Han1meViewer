@@ -134,7 +134,7 @@
     <string name="h_keyframes_enable">Enable H Keyframes!</string>
     <string name="h_keyframes_enable_tip">Disabling this feature will not delete your history data</string>
     <string name="h_keyframes_disable_tip">When enabled, relevant components will be displayed at the top of the player</string>
-    <string name="h_keyframe_title_prefix">Video Code:</string>
+    <string name="h_keyframe_title_prefix">Video Code: </string>
     <string name="manage">Manage</string>
     <string name="h_keyframe_manage">Manage H Keyframes</string>
     <string name="h_keyframe">H Keyframe</string>

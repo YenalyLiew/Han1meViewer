@@ -1,6 +1,7 @@
 package com.yenaly.han1meviewer.ui.fragment.settings
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,8 @@ class HKeyframesFragment :
     }
 
     override fun initData(savedInstanceState: Bundle?) {
+        binding.btnUp.isVisible = false
+        binding.btnDown.isVisible = false
         binding.rvKeyframe.layoutManager = LinearLayoutManager(context)
         binding.rvKeyframe.adapter = adapter
         adapter.setStateViewLayout(R.layout.layout_empty_view)

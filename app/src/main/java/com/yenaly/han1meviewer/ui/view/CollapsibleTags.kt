@@ -2,6 +2,8 @@ package com.yenaly.han1meviewer.ui.view
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,7 @@ import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.coroutines.launch
+
 
 /**
  * 可折叠 TAG 栏
@@ -64,6 +67,20 @@ class CollapsibleTags @JvmOverloads constructor(
             toggleButton.isVisible = value
         }
 
+    /**
+     * 從這裏設置tags
+     *
+     * post很重要，因為要等到View被加入到Window才能取得父View的寬度，
+     * 在RecyclerView中不這麽設置會出現問題。
+     */
+    var tags: List<String>? = null
+        set(value) {
+            field = value
+            post {
+                setTagsInternal(value ?: emptyList())
+            }
+        }
+
     private var tagViewList: MutableList<Chip>? = null
         set(value) {
             field = value
@@ -98,20 +115,6 @@ class CollapsibleTags @JvmOverloads constructor(
         post {
             toggleButton.animate().rotation(if (isCollapsed) 0F else 180F).setDuration(animDuration)
                 .setInterpolator(animInterpolator).start()
-        }
-    }
-
-    /**
-     * 從這裏設置tags
-     *
-     * post很重要，因為要等到View被加入到Window才能取得父View的寬度，
-     * 在RecyclerView中不這麽設置會出現問題。
-     *
-     * @param tags 標籤列表
-     */
-    fun setTags(tags: List<String>) {
-        post {
-            setTagsInternal(tags)
         }
     }
 
@@ -173,6 +176,63 @@ class CollapsibleTags @JvmOverloads constructor(
                     height = value
                 }
             }
+        }
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+        val superState = super.onSaveInstanceState()
+        val ss = SavedState(superState)
+        ss.isCollapsed = isCollapsed
+        ss.isCollapsedEnabled = isCollapsedEnabled
+        ss.chipGroupMeasureHeight = chipGroupMeasureHeight
+        ss.tags = tags
+        return ss
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state !is SavedState) {
+            super.onRestoreInstanceState(state)
+            return
+        }
+
+        super.onRestoreInstanceState(state.superState)
+        this.isCollapsed = state.isCollapsed
+        this.isCollapsedEnabled = state.isCollapsedEnabled
+        this.chipGroupMeasureHeight = state.chipGroupMeasureHeight
+        this.tags = state.tags
+    }
+
+    class SavedState : BaseSavedState {
+
+        var isCollapsed: Boolean = false
+        var isCollapsedEnabled: Boolean = true
+        var chipGroupMeasureHeight: Int = 0
+        var tags: List<String>? = null
+
+        constructor(superState: Parcelable?) : super(superState)
+
+        constructor(parcel: Parcel) : super(parcel) {
+            this.isCollapsed = parcel.readBoolean()
+            this.isCollapsedEnabled = parcel.readBoolean()
+            this.chipGroupMeasureHeight = parcel.readInt()
+            this.tags = parcel.createStringArrayList()
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR = object : Parcelable.Creator<SavedState> {
+                override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
+
+                override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+            }
+        }
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeBoolean(isCollapsed)
+            out.writeBoolean(isCollapsedEnabled)
+            out.writeInt(chipGroupMeasureHeight)
+            out.writeStringList(tags)
         }
     }
 }

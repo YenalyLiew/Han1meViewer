@@ -1,6 +1,8 @@
 {
   "videoCode": "38457",
+  "group": "闇憑村",
   "title": "闇憑村#2",
+  "episode": 2,
   "author": "NeKoOuO",
   "keyframes": [
     {
@@ -23,7 +25,7 @@
       "position": 549000,
       "prompt": null
     },
-        {
+    {
       "position": 562000,
       "prompt": null
     },

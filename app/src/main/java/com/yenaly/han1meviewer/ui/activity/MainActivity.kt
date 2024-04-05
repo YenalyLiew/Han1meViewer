@@ -75,12 +75,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         binding.nvMain.setupWithNavController(navController)
 
         binding.nvMain.getHeaderView(0)?.setPaddingRelative(0, window.currentStatusBarHeight, 0, 0)
-
-        binding.nvMain.menu.findItem(R.id.nv_settings).setOnMenuItemClickListener {
-            startActivity<SettingsActivity>()
-            binding.dlMain.closeDrawers()
-            return@setOnMenuItemClickListener false
-        }
     }
 
     override fun onStart() {
@@ -113,7 +107,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    // todo: 有時間轉移到 strings.xml
     private fun showFindRelatedLinkSnackBar(videoCode: String) {
         showSnackBar(R.string.detect_ha1_related_link_in_clipboard, Snackbar.LENGTH_LONG) {
             setAction(R.string.enter) {

@@ -18,6 +18,10 @@
     <color name="per70_transparent_black">#B3000000</color>
     <color name="per80_transparent_black">#CC000000</color>
     <color name="per90_transparent_black">#E6000000</color>
+    <color name="per50_transparent_white">#80FFFFFF</color>
+    <color name="per60_transparent_white">#99FFFFFF</color>
     <color name="per70_transparent_white">#B3FFFFFF</color>
+    <color name="per80_transparent_white">#CCFFFFFF</color>
     <color name="per90_transparent_white">#E6FFFFFF</color>
+    <color name="per50_transparent_grey">#80B0B0B0</color>
 </resources>
