@@ -1,6 +1,8 @@
 {
   "videoCode": "89088",
+  "group": "初戀時間",
   "title": "初戀時間#6",
+  "episode": 6,
   "author": "NeKoOuO",
   "keyframes": [
     {
@@ -22,7 +24,7 @@
     {
       "position": 710000,
       "prompt": null
-    },     
+    },
     {
       "position": 808000,
       "prompt": null

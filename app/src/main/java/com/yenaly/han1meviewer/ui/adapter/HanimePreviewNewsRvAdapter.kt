@@ -57,7 +57,7 @@ class HanimePreviewNewsRvAdapter :
         holder.binding.tvReleaseDate.text = item.releaseDate
         holder.binding.tvVideoTitle.text = item.videoTitle
 
-        holder.binding.tags.setTags(item.tags)
+        holder.binding.tags.tags = item.tags
 
         holder.binding.rvPreview.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -76,7 +76,7 @@ class HanimePreviewNewsRvAdapter :
             ).root
         ).also { viewHolder ->
             viewHolder.binding.tags.lifecycle = (context as? PreviewActivity)?.lifecycle
-            viewHolder.binding.tags.isCollapsedEnabled = false
+            viewHolder.binding.tags.isCollapsedEnabled = true
             viewHolder.itemView.apply {
                 setOnClickListener {
                     val position = viewHolder.bindingAdapterPosition

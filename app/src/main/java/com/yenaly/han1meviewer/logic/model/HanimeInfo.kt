@@ -1,6 +1,12 @@
 package com.yenaly.han1meviewer.logic.model
 
 /**
+ * @project Han1meViewer
+ * @author Yenaly Liew
+ */
+interface HanimeInfoType : MultiItemEntity
+
+/**
  * @project Hanime1
  * @author Yenaly Liew
  * @time 2022/06/08 008 22:56
@@ -18,7 +24,7 @@ data class HanimeInfo(
     val isPlaying: Boolean = false, // for video playlist only.
 
     override var itemType: Int,
-) : MultiItemEntity {
+) : HanimeInfoType {
     companion object {
         const val NORMAL = 0
         const val SIMPLIFIED = 1

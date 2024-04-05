@@ -121,7 +121,7 @@ class VideoIntroductionFragment :
                             binding.views.text =
                                 getString(R.string.s_view_times, state.info.views.toString())
                             binding.tvIntroduction.setContent(state.info.introduction)
-                            binding.tags.setTags(state.info.tags)
+                            binding.tags.tags = state.info.tags
                             if (state.info.playlist != null) {
                                 binding.playlist.subTitle.text = state.info.playlist.playlistName
                                 playlistAdapter.submitList(state.info.playlist.video)

@@ -144,12 +144,12 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         linearSnapHelper.attachToRecyclerView(binding.rvTourSimplified)
 
         tourSimplifiedAdapter.setOnItemClickListener { _, _, position ->
-            binding.vpNews.setCurrentItem(position, true)
+            binding.vpNews.setCurrentItem(position, false)
             binding.appBar.setExpanded(false, true)
         }
 
         binding.vpNews.innerRecyclerView?.isNestedScrollingEnabled = false
-        binding.vpNews.offscreenPageLimit = 20 // 被迫，要不然一堆高度问题
+        binding.vpNews.offscreenPageLimit = 1
         binding.vpNews.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 binding.rvTourSimplified.smoothScrollToPosition(position)
