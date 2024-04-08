@@ -8,6 +8,7 @@ import com.yenaly.yenaly_libs.utils.unsafeLazy
  * @author Yenaly Liew
  * @time 2024/03/22 022 21:33
  */
+@JvmDefaultWithoutCompatibility
 interface WorkerMixin {
     @Suppress("UNCHECKED_CAST", "SameParameterValue")
     fun <T : Any> ListenableWorker.inputData(key: String, def: T): Lazy<T> = unsafeLazy {

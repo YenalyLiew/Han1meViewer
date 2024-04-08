@@ -2,7 +2,6 @@ package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import coil.load
@@ -27,7 +26,7 @@ import kotlinx.datetime.toLocalDateTime
  * @time 2023/11/26 026 15:35
  */
 class WatchHistoryRvAdapter :
-    BaseDifferAdapter<WatchHistoryEntity, WatchHistoryRvAdapter.ViewHolder>(COMPARATOR) {
+    BaseDifferAdapter<WatchHistoryEntity, DataBindingHolder<ItemWatchHistoryBinding>>(COMPARATOR) {
 
     init {
         isStateViewEnable = true
@@ -51,10 +50,8 @@ class WatchHistoryRvAdapter :
         }
     }
 
-    inner class ViewHolder(view: View) : DataBindingHolder<ItemWatchHistoryBinding>(view)
-
     override fun onBindViewHolder(
-        holder: WatchHistoryRvAdapter.ViewHolder,
+        holder: DataBindingHolder<ItemWatchHistoryBinding>,
         position: Int,
         item: WatchHistoryEntity?,
     ) {
@@ -75,11 +72,11 @@ class WatchHistoryRvAdapter :
         context: Context,
         parent: ViewGroup,
         viewType: Int,
-    ): WatchHistoryRvAdapter.ViewHolder {
-        return ViewHolder(
+    ): DataBindingHolder<ItemWatchHistoryBinding> {
+        return DataBindingHolder(
             ItemWatchHistoryBinding.inflate(
                 LayoutInflater.from(context), parent, false
-            ).root
+            )
         ).also { viewHolder ->
             viewHolder.itemView.apply {
                 setOnClickListener {

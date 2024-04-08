@@ -2,6 +2,8 @@ package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
 import android.view.ViewGroup
+import androidx.core.view.minusAssign
+import androidx.core.view.plusAssign
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -18,12 +20,14 @@ import com.yenaly.han1meviewer.R
  */
 class RvWrapper<VH : ViewHolder>(
     private val adapter: RecyclerView.Adapter<VH>,
+    private val customRv: ((Context) -> RecyclerView)?,
     private val layoutManager: () -> LayoutManager,
 ) : BaseSingleItemAdapter<Unit, QuickViewHolder>() {
     companion object {
         fun <VH : ViewHolder> RecyclerView.Adapter<VH>.wrappedWith(
+            customRv: ((Context) -> RecyclerView)? = null,
             layoutManager: () -> LayoutManager,
-        ) = RvWrapper(this, layoutManager)
+        ) = RvWrapper(this, customRv, layoutManager)
     }
 
     var wrapper: RecyclerView? = null
@@ -37,10 +41,23 @@ class RvWrapper<VH : ViewHolder>(
         viewType: Int,
     ): QuickViewHolder {
         return QuickViewHolder(R.layout.item_rv_wrapper, parent).also { viewHolder ->
-            viewHolder.getView<RecyclerView>(R.id.rv).apply {
-                wrapper = this
-                layoutManager = this@RvWrapper.layoutManager()
-                adapter = this@RvWrapper.adapter
+            val frame = viewHolder.itemView as ViewGroup
+            var rv = this@RvWrapper.customRv?.invoke(context)?.apply {
+                id = R.id.rv
+                isNestedScrollingEnabled = false
+            }
+            val prevRv = viewHolder.getView<RecyclerView>(R.id.rv)
+            if (rv != null) {
+                frame -= prevRv
+                rv.layoutParams = prevRv.layoutParams
+                frame += rv
+            } else {
+                rv = prevRv
+            }
+            rv.apply wr@{
+                this@RvWrapper.wrapper = this@wr
+                this@wr.layoutManager = this@RvWrapper.layoutManager()
+                this@wr.adapter = this@RvWrapper.adapter
             }
         }
     }

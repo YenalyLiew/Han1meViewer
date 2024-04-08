@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -49,19 +50,25 @@ class VideoViewModel(private val application: Application) : YenalyViewModel(app
 
     var csrfToken: String? = null
 
-    private val _hanimeVideoFlow =
+    private val _hanimeVideoStateFlow =
         MutableStateFlow<VideoLoadingState<HanimeVideo>>(VideoLoadingState.Loading)
+    val hanimeVideoStateFlow = _hanimeVideoStateFlow.asStateFlow()
+
+    private val _hanimeVideoFlow = MutableStateFlow<HanimeVideo?>(null)
     val hanimeVideoFlow = _hanimeVideoFlow.asStateFlow()
 
     fun getHanimeVideo(videoCode: String) {
         viewModelScope.launch {
-            NetworkRepo.getHanimeVideo(videoCode).collect { video ->
-                _hanimeVideoFlow.value = video
+            NetworkRepo.getHanimeVideo(videoCode).collect { state ->
+                _hanimeVideoStateFlow.value = state
+                if (state is VideoLoadingState.Success) {
+                    _hanimeVideoFlow.update { state.info }
+                }
             }
         }
     }
 
-    private val _addToFavVideoFlow = MutableSharedFlow<WebsiteState<Unit>>()
+    private val _addToFavVideoFlow = MutableSharedFlow<WebsiteState<Boolean>>()
     val addToFavVideoFlow = _addToFavVideoFlow.asSharedFlow()
 
     private val _loadDownloadedFlow = MutableSharedFlow<HanimeDownloadEntity?>()
@@ -83,10 +90,18 @@ class VideoViewModel(private val application: Application) : YenalyViewModel(app
         currentUserId: String?,
     ) {
         viewModelScope.launch {
-            NetworkRepo.addToMyFavVideo(videoCode, likeStatus, currentUserId, csrfToken)
-                .collect {
-                    _addToFavVideoFlow.emit(it)
+            NetworkRepo.addToMyFavVideo(
+                videoCode, likeStatus, currentUserId, csrfToken
+            ).collect { state ->
+                _addToFavVideoFlow.emit(state)
+                if (likeStatus) {
+                    // 代表移除喜爱
+                    _hanimeVideoFlow.update { it?.decFavTime() }
+                } else {
+                    // 代表添加喜爱
+                    _hanimeVideoFlow.update { it?.incFavTime() }
                 }
+            }
         }
     }
 
@@ -102,6 +117,11 @@ class VideoViewModel(private val application: Application) : YenalyViewModel(app
         viewModelScope.launch {
             NetworkRepo.addToMyList(listCode, videoCode, isChecked, position, csrfToken).collect {
                 _modifyMyListFlow.emit(it)
+                _hanimeVideoFlow.update { prev ->
+                    val myList = prev?.myList?.myListInfo.orEmpty().toMutableList()
+                    myList[position] = myList[position].copy(isSelected = isChecked)
+                    prev?.copy(myList = prev.myList?.copy(myListInfo = myList))
+                }
             }
         }
     }

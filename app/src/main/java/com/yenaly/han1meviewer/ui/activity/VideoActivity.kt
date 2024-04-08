@@ -67,7 +67,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
         currentVideoActivitySet += this
         Log.d("CurrentVideoActivitySet", "$this was added.")
 
-        (videoCodeByWebsite ?: videoCode!!).let {
+        requireNotNull(videoCodeByWebsite ?: videoCode).let {
             viewModel.videoCode = it
             commentViewModel.code = it
             binding.videoPlayer.videoCode = it
@@ -81,7 +81,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     override fun bindDataObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.hanimeVideoFlow.collect { state ->
+                viewModel.hanimeVideoStateFlow.collect { state ->
                     when (state) {
                         is VideoLoadingState.Error -> {
                             showShortToast(state.throwable.localizedMessage)

@@ -3,7 +3,6 @@ package com.yenaly.han1meviewer.ui.adapter
 import android.content.Context
 import android.graphics.Typeface
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -36,7 +35,9 @@ import com.yenaly.yenaly_libs.utils.showShortToast
  * @time 2023/11/26 026 16:19
  */
 class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
-    BaseDifferAdapter<VideoComments.VideoComment, VideoCommentRvAdapter.ViewHolder>(COMPARATOR) {
+    BaseDifferAdapter<VideoComments.VideoComment, DataBindingHolder<ItemVideoCommentBinding>>(
+        COMPARATOR
+    ) {
 
     init {
         isStateViewEnable = true
@@ -73,10 +74,8 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         }
     }
 
-    inner class ViewHolder(view: View) : DataBindingHolder<ItemVideoCommentBinding>(view)
-
     override fun onBindViewHolder(
-        holder: ViewHolder,
+        holder: DataBindingHolder<ItemVideoCommentBinding>,
         position: Int,
         item: VideoComments.VideoComment?,
     ) {
@@ -99,7 +98,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
     }
 
     override fun onBindViewHolder(
-        holder: ViewHolder,
+        holder: DataBindingHolder<ItemVideoCommentBinding>,
         position: Int,
         item: VideoComments.VideoComment?,
         payloads: List<Any>,
@@ -117,11 +116,11 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         context: Context,
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder {
-        return ViewHolder(
+    ): DataBindingHolder<ItemVideoCommentBinding> {
+        return DataBindingHolder(
             ItemVideoCommentBinding.inflate(
                 LayoutInflater.from(context), parent, false
-            ).root
+            )
         ).also { viewHolder ->
             viewHolder.binding.btnViewMoreReplies.setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition

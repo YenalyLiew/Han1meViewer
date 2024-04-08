@@ -33,7 +33,7 @@ data class VideoComments(
 
         val realReplyId get() = post.foreignId ?: checkNotNull(id)
         val realLikesCount get() = thumbUp
-        fun incrementLikesCount(cancel: Boolean = false): VideoComment {
+        fun incLikesCount(cancel: Boolean = false): VideoComment {
             return thumbUp?.let {
                 copy(
                     thumbUp = it + if (cancel) -1 else 1,
@@ -45,7 +45,7 @@ data class VideoComments(
             } ?: this
         }
 
-        fun decrementLikesCount(cancel: Boolean = false): VideoComment {
+        fun decLikesCount(cancel: Boolean = false): VideoComment {
             return thumbUp?.let {
                 copy(
                     thumbUp = it - if (cancel) -1 else 1,
@@ -77,7 +77,7 @@ data class VideoComments(
 /**
  * 用於 評論交互 Flow 的返回值
  */
-data class VideoCommentArguments(
+data class VideoCommentArgs(
     // 當前評論所處adapter位置
     val commentPosition: Int,
     // 你當前點擊的是讚還是踩，和comment裏的isPositive不一樣
