@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toFile
 import androidx.core.net.toUri
@@ -41,7 +40,9 @@ import kotlinx.coroutines.launch
  * @time 2023/11/26 026 17:05
  */
 class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
-    BaseDifferAdapter<HanimeDownloadEntity, HanimeDownloadingRvAdapter.ViewHolder>(COMPARATOR) {
+    BaseDifferAdapter<HanimeDownloadEntity, DataBindingHolder<ItemHanimeDownloadingBinding>>(
+        COMPARATOR
+    ) {
 
     init {
         isStateViewEnable = true
@@ -80,10 +81,12 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         }
     }
 
-    inner class ViewHolder(view: View) : DataBindingHolder<ItemHanimeDownloadingBinding>(view)
-
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, item: HanimeDownloadEntity?) {
+    override fun onBindViewHolder(
+        holder: DataBindingHolder<ItemHanimeDownloadingBinding>,
+        position: Int,
+        item: HanimeDownloadEntity?,
+    ) {
         item.notNull()
         holder.binding.tvTitle.text = item.title
         holder.binding.ivCover.load(item.coverUrl) {
@@ -102,7 +105,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(
-        holder: ViewHolder,
+        holder: DataBindingHolder<ItemHanimeDownloadingBinding>,
         position: Int,
         item: HanimeDownloadEntity?,
         payloads: List<Any>,
@@ -129,11 +132,11 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         context: Context,
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder {
-        return ViewHolder(
+    ): DataBindingHolder<ItemHanimeDownloadingBinding> {
+        return DataBindingHolder(
             ItemHanimeDownloadingBinding.inflate(
                 LayoutInflater.from(context), parent, false
-            ).root
+            )
         ).also { viewHolder ->
             viewHolder.binding.btnStart.setOnClickListener {
                 val pos = viewHolder.bindingAdapterPosition

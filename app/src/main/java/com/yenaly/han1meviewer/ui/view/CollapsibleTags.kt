@@ -212,13 +212,14 @@ class CollapsibleTags @JvmOverloads constructor(
         constructor(superState: Parcelable?) : super(superState)
 
         constructor(parcel: Parcel) : super(parcel) {
-            this.isCollapsed = parcel.readBoolean()
-            this.isCollapsedEnabled = parcel.readBoolean()
+            this.isCollapsed = parcel.readBooleanCompat()
+            this.isCollapsedEnabled = parcel.readBooleanCompat()
             this.chipGroupMeasureHeight = parcel.readInt()
             this.tags = parcel.createStringArrayList()
         }
 
         companion object {
+            @Suppress("unused")
             @JvmField
             val CREATOR = object : Parcelable.Creator<SavedState> {
                 override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
@@ -229,10 +230,20 @@ class CollapsibleTags @JvmOverloads constructor(
 
         override fun writeToParcel(out: Parcel, flags: Int) {
             super.writeToParcel(out, flags)
-            out.writeBoolean(isCollapsed)
-            out.writeBoolean(isCollapsedEnabled)
+            out.writeBooleanCompat(isCollapsed)
+            out.writeBooleanCompat(isCollapsedEnabled)
             out.writeInt(chipGroupMeasureHeight)
             out.writeStringList(tags)
+        }
+
+        @Suppress("NOTHING_TO_INLINE")
+        private inline fun Parcel.readBooleanCompat(): Boolean {
+            return readInt() != 0
+        }
+
+        @Suppress("NOTHING_TO_INLINE")
+        private inline fun Parcel.writeBooleanCompat(value: Boolean) {
+            writeInt(if (value) 1 else 0)
         }
     }
 }

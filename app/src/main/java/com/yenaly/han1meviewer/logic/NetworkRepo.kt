@@ -9,9 +9,9 @@ import com.yenaly.han1meviewer.logic.exception.HanimeNotFoundException
 import com.yenaly.han1meviewer.logic.exception.IPBlockedException
 import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.model.CommentPlace
-import com.yenaly.han1meviewer.logic.model.ModifiedPlaylistArguments
+import com.yenaly.han1meviewer.logic.model.ModifiedPlaylistArgs
 import com.yenaly.han1meviewer.logic.model.MyListType
-import com.yenaly.han1meviewer.logic.model.VideoCommentArguments
+import com.yenaly.han1meviewer.logic.model.VideoCommentArgs
 import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.logic.network.HUpdater
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
@@ -148,7 +148,7 @@ object NetworkRepo {
         }
     ) {
         Log.d("add_to_fav_body", it)
-        return@websiteIOFlow WebsiteState.Success(Unit)
+        return@websiteIOFlow WebsiteState.Success(likeStatus)
     }
 
     fun createPlaylist(
@@ -203,7 +203,7 @@ object NetworkRepo {
     ) {
         Log.d("modify_playlist_body", it)
         return@websiteIOFlow WebsiteState.Success(
-            ModifiedPlaylistArguments(
+            ModifiedPlaylistArgs(
                 title = title, desc = description, isDeleted = delete,
             )
         )
@@ -280,7 +280,7 @@ object NetworkRepo {
     ) {
         Log.d("like_comment_body", it)
         return@websiteIOFlow WebsiteState.Success(
-            VideoCommentArguments(
+            VideoCommentArgs(
                 commentPosition, isPositive, comment
             )
         )

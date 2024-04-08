@@ -7,6 +7,7 @@ import android.widget.Button
 import androidx.annotation.StringRes
 import com.chad.library.adapter4.BaseSingleItemAdapter
 import com.chad.library.adapter4.viewholder.QuickViewHolder
+import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.yenaly_libs.utils.applicationContext
@@ -18,22 +19,42 @@ import com.yenaly.yenaly_libs.utils.applicationContext
  */
 class VideoColumnTitleAdapter : BaseSingleItemAdapter<Unit, QuickViewHolder> {
 
-    private val title: String
-    private val subtitle: String?
+    private val notifyWhenSet: Boolean
+
+    var title: String
+        set(value) = if (notifyWhenSet) {
+            field = value
+            notifyItemChanged(0)
+        } else field = value
+
+    var subtitle: String?
+        set(value) = if (notifyWhenSet) {
+            field = value
+            notifyItemChanged(0)
+        } else field = value
 
     var onMoreHanimeListener: ((View) -> Unit)? = null
 
-    constructor(title: String, subtitle: String? = null) : super() {
+    constructor() : super() {
+        notifyWhenSet = true
+        title = EMPTY_STRING
+        subtitle = null
+    }
+
+    constructor(title: String, subtitle: String? = null, notifyWhenSet: Boolean = false) : super() {
         this.title = title
         this.subtitle = subtitle
+        this.notifyWhenSet = notifyWhenSet
     }
 
     constructor(
         @StringRes title: Int,
         @StringRes subtitle: Int = 0,
+        notifyWhenSet: Boolean = false,
     ) : this(
         applicationContext.getString(title),
-        if (subtitle != 0) applicationContext.getString(subtitle) else null
+        if (subtitle != 0) applicationContext.getString(subtitle) else null,
+        notifyWhenSet
     )
 
     override fun onBindViewHolder(holder: QuickViewHolder, item: Unit?) {

@@ -67,7 +67,8 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
 
     override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfo?) {
         item.notNull()
-        when (holder.itemViewType) {
+        // stackoverflow-64362192
+        when (getItemViewType(position)) {
             HanimeInfo.SIMPLIFIED -> {
                 holder.getView<ImageView>(R.id.cover).load(item.coverUrl) {
                     crossfade(true)

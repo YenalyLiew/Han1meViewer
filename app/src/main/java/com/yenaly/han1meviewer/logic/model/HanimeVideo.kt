@@ -31,21 +31,15 @@ data class HanimeVideo(
     val relatedHanimes: List<HanimeInfo>,
     val artist: Artist?,
 
-    var favTimes: Int?,
-    var isFav: Boolean = false,
+    val favTimes: Int?,
+    val isFav: Boolean = false,
     val csrfToken: String? = null,
     val currentUserId: String? = null,
 ) {
 
-    fun incrementFavTime() {
-        favTimes?.let { favTimes = it + 1 }
-        isFav = true
-    }
+    fun incFavTime() = copy(favTimes = favTimes?.let { it + 1 }, isFav = true)
 
-    fun decrementFavTime() {
-        favTimes?.let { favTimes = it - 1 }
-        isFav = false
-    }
+    fun decFavTime() = copy(favTimes = favTimes?.let { it - 1 }, isFav = false)
 
     // 為保證兼容性，不能直接用天數
     val uploadTimeMillis: Long

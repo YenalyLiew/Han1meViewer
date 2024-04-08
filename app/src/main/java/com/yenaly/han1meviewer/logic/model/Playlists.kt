@@ -19,7 +19,7 @@ data class Playlists(
 /**
  * 用於 修改播放清單 Flow 的返回值
  */
-data class ModifiedPlaylistArguments(
+data class ModifiedPlaylistArgs(
     var title: String,
     var desc: String,
     var isDeleted: Boolean,

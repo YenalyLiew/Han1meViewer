@@ -311,5 +311,9 @@ Recommendations are as follows:\n
     <string name="download_task_failed">Download task failed!</string>
     <string name="download_task_failed_s_reason_s">Download task failed: %1$s\nReason: %2$s</string>
     <string name="custom">Custom</string>
+    <string name="show_bottom_progress">Show Bottom Progress Bar</string>
+    <string name="default_playback_speed">Default Playback Speed</string>
+    <string name="long_press_speed_multiplier">Long Press Speed Multiplier</string>
+    <string name="slide_sensitivity">Slide Sensitivity for Progress Adjustment</string>
 
 </resources>

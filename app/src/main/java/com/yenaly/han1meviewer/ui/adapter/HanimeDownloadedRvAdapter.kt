@@ -3,7 +3,6 @@ package com.yenaly.han1meviewer.ui.adapter
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toFile
 import androidx.core.net.toUri
@@ -36,13 +35,13 @@ import kotlinx.datetime.toLocalDateTime
  * @time 2023/11/26 026 16:57
  */
 class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
-    BaseDifferAdapter<HanimeDownloadEntity, HanimeDownloadedRvAdapter.ViewHolder>(COMPARATOR) {
+    BaseDifferAdapter<HanimeDownloadEntity, DataBindingHolder<ItemHanimeDownloadedBinding>>(
+        COMPARATOR
+    ) {
 
     init {
         isStateViewEnable = true
     }
-
-    inner class ViewHolder(view: View) : DataBindingHolder<ItemHanimeDownloadedBinding>(view)
 
     companion object {
         val COMPARATOR = object : DiffUtil.ItemCallback<HanimeDownloadEntity>() {
@@ -62,7 +61,11 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, item: HanimeDownloadEntity?) {
+    override fun onBindViewHolder(
+        holder: DataBindingHolder<ItemHanimeDownloadedBinding>,
+        position: Int,
+        item: HanimeDownloadEntity?,
+    ) {
         item.notNull()
         holder.binding.tvTitle.text = item.title
         holder.binding.ivCover.load(item.coverUrl) {
@@ -85,11 +88,11 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
         context: Context,
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder {
-        return ViewHolder(
+    ): DataBindingHolder<ItemHanimeDownloadedBinding> {
+        return DataBindingHolder(
             ItemHanimeDownloadedBinding.inflate(
                 LayoutInflater.from(context), parent, false
-            ).root
+            )
         ).also { viewHolder ->
             viewHolder.itemView.setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition

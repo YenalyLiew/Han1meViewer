@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
-import com.yenaly.han1meviewer.logic.model.ModifiedPlaylistArguments
+import com.yenaly.han1meviewer.logic.model.ModifiedPlaylistArgs
 import com.yenaly.han1meviewer.logic.model.MyListItems
 import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.model.Playlists
@@ -180,7 +180,7 @@ class MyListViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
-    private val _modifyPlaylistFlow = MutableSharedFlow<WebsiteState<ModifiedPlaylistArguments>>()
+    private val _modifyPlaylistFlow = MutableSharedFlow<WebsiteState<ModifiedPlaylistArgs>>()
     val modifyPlaylistFlow = _modifyPlaylistFlow.asSharedFlow()
 
     fun modifyPlaylist(listCode: String, title: String, desc: String, delete: Boolean) {

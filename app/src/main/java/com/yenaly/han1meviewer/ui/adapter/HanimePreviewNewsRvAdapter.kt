@@ -3,7 +3,6 @@ package com.yenaly.han1meviewer.ui.adapter
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +14,7 @@ import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
-import com.yenaly.han1meviewer.databinding.ItemHanimePreviewNews2Binding
+import com.yenaly.han1meviewer.databinding.ItemHanimePreviewNewsV2Binding
 import com.yenaly.han1meviewer.logic.model.HanimePreview
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
@@ -30,7 +29,7 @@ import com.yenaly.yenaly_libs.utils.startActivity
  * @time 2023/11/26 026 16:48
  */
 class HanimePreviewNewsRvAdapter :
-    BaseQuickAdapter<HanimePreview.PreviewInfo, HanimePreviewNewsRvAdapter.ViewHolder>() {
+    BaseQuickAdapter<HanimePreview.PreviewInfo, DataBindingHolder<ItemHanimePreviewNewsV2Binding>>() {
 
     init {
         isStateViewEnable = true
@@ -38,10 +37,8 @@ class HanimePreviewNewsRvAdapter :
 
     private val imageLoader = CoilImageLoader()
 
-    inner class ViewHolder(view: View) : DataBindingHolder<ItemHanimePreviewNews2Binding>(view)
-
     override fun onBindViewHolder(
-        holder: ViewHolder,
+        holder: DataBindingHolder<ItemHanimePreviewNewsV2Binding>,
         position: Int,
         item: HanimePreview.PreviewInfo?,
     ) {
@@ -69,11 +66,11 @@ class HanimePreviewNewsRvAdapter :
         context: Context,
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder {
-        return ViewHolder(
-            ItemHanimePreviewNews2Binding.inflate(
+    ): DataBindingHolder<ItemHanimePreviewNewsV2Binding> {
+        return DataBindingHolder(
+            ItemHanimePreviewNewsV2Binding.inflate(
                 LayoutInflater.from(context), parent, false
-            ).root
+            )
         ).also { viewHolder ->
             viewHolder.binding.tags.lifecycle = (context as? PreviewActivity)?.lifecycle
             viewHolder.binding.tags.isCollapsedEnabled = true

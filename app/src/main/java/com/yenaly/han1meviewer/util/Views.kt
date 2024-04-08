@@ -47,3 +47,14 @@ fun View.removeItself() {
 fun Button.setDrawableTop(@DrawableRes drawableRes: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, drawableRes, 0, 0)
 }
+
+inline fun <reified T : View> View.findParent(): T {
+    var parent = parent
+    while (parent != null) {
+        if (parent is T) {
+            return parent
+        }
+        parent = parent.parent
+    }
+    error("No parent of type ${T::class.java.simpleName} found")
+}
