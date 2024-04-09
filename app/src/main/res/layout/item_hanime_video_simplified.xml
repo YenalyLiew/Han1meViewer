@@ -7,36 +7,50 @@
 
     </data>
 
-    <LinearLayout
-        android:id="@+id/linear"
+    <FrameLayout
+        android:id="@+id/frame"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:foreground="?selectableItemBackground"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="8dp"
-        tools:ignore="UseCompoundDrawables">
+        android:layout_height="wrap_content">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/cover"
-            android:layout_width="@dimen/video_cover_simplified_width"
-            android:layout_height="@dimen/video_cover_simplified_height"
-            android:contentDescription="@null"
-            app:shapeAppearanceOverlay="@style/RoundCornerImageView" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="@dimen/video_cover_simplified_width"
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:minLines="2"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            tools:text="123123123abc, abc, abc" />
+            android:layout_margin="4dp"
+            android:foreground="?selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            tools:ignore="UseCompoundDrawables, UselessParent">
 
-    </LinearLayout>
+            <FrameLayout
+                android:id="@+id/cover_wrapper"
+                android:layout_width="@dimen/video_cover_simplified_width"
+                android:layout_height="@dimen/video_cover_simplified_height">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    app:shapeAppearanceOverlay="@style/RoundCornerImageView" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:minLines="2"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                tools:text="123123123abc, abc, abc" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </layout>

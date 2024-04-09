@@ -17,6 +17,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_MATCH_PARENT
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_WRAP_CONTENT
+import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.getHanimeVideoLink
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.ui.activity.MainActivity
@@ -135,16 +136,21 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
             when (viewType) {
                 HanimeInfo.SIMPLIFIED -> {
                     when (context) {
-                        is SearchActivity -> viewHolder.getView<View>(R.id.linear)
-                            .widthMatchParent()
+                        is SearchActivity -> {
+                            viewHolder.getView<View>(R.id.frame).widthMatchParent()
+                        }
 
                         is VideoActivity -> when (videoWidthType) {
                             VIDEO_LAYOUT_MATCH_PARENT ->
-                                viewHolder.getView<View>(R.id.linear).widthMatchParent()
+                                viewHolder.getView<View>(R.id.frame).widthMatchParent()
 
                             VIDEO_LAYOUT_WRAP_CONTENT ->
-                                viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                                viewHolder.getView<View>(R.id.frame).widthWrapContent()
                         }
+                    }
+                    with(VideoCoverSize.Simplified) {
+                        viewHolder.getView<ViewGroup>(R.id.cover_wrapper)
+                            .resizeForSimplifiedVideoCover()
                     }
                 }
 
@@ -152,19 +158,22 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                     when (context) {
                         is VideoActivity -> when (videoWidthType) {
                             VIDEO_LAYOUT_MATCH_PARENT ->
-                                viewHolder.getView<View>(R.id.linear).widthMatchParent()
+                                viewHolder.getView<View>(R.id.frame).widthMatchParent()
 
                             VIDEO_LAYOUT_WRAP_CONTENT ->
-                                viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                                viewHolder.getView<View>(R.id.frame).widthWrapContent()
                         }
 
                         is MainActivity -> {
                             val activity = context
                             val fragment = activity.currentFragment
                             if (fragment is HomePageFragment) {
-                                viewHolder.getView<View>(R.id.linear).widthWrapContent()
+                                viewHolder.getView<View>(R.id.frame).widthWrapContent()
                             }
                         }
+                    }
+                    with(VideoCoverSize.Normal) {
+                        viewHolder.getView<ViewGroup>(R.id.cover_wrapper).resizeForVideoCover()
                     }
                 }
             }

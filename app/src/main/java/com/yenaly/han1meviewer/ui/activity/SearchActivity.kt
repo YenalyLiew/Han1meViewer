@@ -70,7 +70,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
         binding.state.init()
 
         binding.searchRv.apply {
-            layoutManager = FixedGridLayoutManager(this@SearchActivity, VIDEO_IN_ONE_LINE)
+            layoutManager = FixedGridLayoutManager(
+                this@SearchActivity, VideoCoverSize.Normal.videoInOneLine
+            )
             adapter = searchAdapter
             addOnScrollListener(object : OnScrollListener() {
 
@@ -149,7 +151,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
         val dataState = viewModel.searchStateFlow.value
         binding.searchRv.layoutManager = if (dataState is PageLoadingState.Success) {
             dataState.info.buildFlexibleGridLayoutManager()
-        } else FixedGridLayoutManager(this, VIDEO_IN_ONE_LINE)
+        } else FixedGridLayoutManager(this, VideoCoverSize.Normal.videoInOneLine)
     }
 
     private fun getHanimeSearchResult() {
@@ -213,7 +215,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
 
     private fun List<HanimeInfo>.buildFlexibleGridLayoutManager(): GridLayoutManager {
         val counts = if (any { it.itemType == HanimeInfo.NORMAL })
-            VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
+            VideoCoverSize.Normal.videoInOneLine else VideoCoverSize.Simplified.videoInOneLine
         return FixedGridLayoutManager(this@SearchActivity, counts)
     }
 
