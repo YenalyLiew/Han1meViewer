@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
+import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
 import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
@@ -62,7 +62,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
         }
 
         binding.rvPageList.apply {
-            layoutManager = GridLayoutManager(context, SIMPLIFIED_VIDEO_IN_ONE_LINE)
+            layoutManager = GridLayoutManager(context, VideoCoverSize.Simplified.videoInOneLine)
             adapter = this@MyWatchLaterFragment.adapter
         }
 
@@ -141,7 +141,8 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.rvPageList.layoutManager = GridLayoutManager(context, SIMPLIFIED_VIDEO_IN_ONE_LINE)
+        binding.rvPageList.layoutManager =
+            GridLayoutManager(context, VideoCoverSize.Simplified.videoInOneLine)
     }
 
     private fun getMyWatchLater() {

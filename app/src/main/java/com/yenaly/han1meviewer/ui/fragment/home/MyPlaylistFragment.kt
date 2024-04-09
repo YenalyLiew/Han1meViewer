@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
+import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.databinding.FragmentPlaylistBinding
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -101,7 +101,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         }
 
         binding.rvPageList.apply {
-            layoutManager = GridLayoutManager(context, SIMPLIFIED_VIDEO_IN_ONE_LINE)
+            layoutManager = GridLayoutManager(context, VideoCoverSize.Simplified.videoInOneLine)
             adapter = this@MyPlaylistFragment.adapter
         }
 
@@ -332,7 +332,8 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.rvPageList.layoutManager = GridLayoutManager(context, SIMPLIFIED_VIDEO_IN_ONE_LINE)
+        binding.rvPageList.layoutManager =
+            GridLayoutManager(context, VideoCoverSize.Simplified.videoInOneLine)
     }
 
     override fun MainActivity.setupToolbar() {

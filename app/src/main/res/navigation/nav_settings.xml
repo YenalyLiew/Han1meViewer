@@ -31,6 +31,16 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_homeSettingsFragment_pop_to_hKeyframeSettingsFragment"
+            app:destination="@id/hKeyframeSettingsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/homeSettingsFragment"
+            app:popUpToInclusive="true" />
+
 
     </fragment>
 

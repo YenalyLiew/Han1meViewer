@@ -1,7 +1,5 @@
 package com.yenaly.han1meviewer
 
-import com.yenaly.yenaly_libs.utils.appScreenWidth
-import com.yenaly.yenaly_libs.utils.applicationContext
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format.char
@@ -28,16 +26,6 @@ val LOCAL_DATE_TIME_FORMAT = LocalDateTime.Format {
 
 const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
-
-// 動態設置影片卡片長寬
-
-val VIDEO_IN_ONE_LINE
-    get() =
-        (appScreenWidth / applicationContext.resources.getDimension(R.dimen.video_cover_width)).toInt()
-
-val SIMPLIFIED_VIDEO_IN_ONE_LINE
-    get() =
-        (appScreenWidth / applicationContext.resources.getDimension(R.dimen.video_cover_simplified_width)).toInt()
 
 // 設置發佈日期年份，在搜索的tag裏
 

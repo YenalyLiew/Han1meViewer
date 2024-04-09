@@ -35,10 +35,9 @@ import com.yenaly.han1meviewer.HanimeResolution
 import com.yenaly.han1meviewer.LOCAL_DATE_FORMAT
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
-import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_MATCH_PARENT
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_WRAP_CONTENT
+import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
 import com.yenaly.han1meviewer.databinding.ItemVideoIntroductionBinding
@@ -301,7 +300,9 @@ class VideoIntroductionFragment :
     }
 
     private val List<HanimeInfo>.eachGridCounts
-        get() = if (any { it.itemType == HanimeInfo.NORMAL }) VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
+        get() = if (any { it.itemType == HanimeInfo.NORMAL }) {
+            VideoCoverSize.Normal.videoInOneLine
+        } else VideoCoverSize.Simplified.videoInOneLine
 
     private inner class VideoIntroTouchListener : OnItemTouchListener {
 
