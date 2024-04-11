@@ -15,6 +15,7 @@ import com.yenaly.han1meviewer.R
  * @author Yenaly Liew
  * @time 2023/11/30 030 15:24
  */
+@JvmDefaultWithoutCompatibility
 interface StateLayoutMixin {
 
     /**

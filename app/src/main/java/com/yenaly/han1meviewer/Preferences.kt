@@ -121,7 +121,7 @@ object Preferences {
     val sharedHKeyframesEnable: Boolean
         get() = preferenceSp.getBoolean(
             HKeyframeSettingsFragment.SHARED_H_KEYFRAMES_ENABLE,
-            false
+            true
         )
 
     val sharedHKeyframesUseFirst: Boolean

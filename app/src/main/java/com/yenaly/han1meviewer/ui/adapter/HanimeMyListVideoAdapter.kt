@@ -11,6 +11,7 @@ import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
+import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.util.notNull
@@ -60,7 +61,7 @@ class HanimeMyListVideoAdapter : BaseDifferAdapter<HanimeInfo, QuickViewHolder>(
         viewType: Int,
     ): QuickViewHolder {
         return QuickViewHolder(R.layout.item_hanime_video_simplified, parent).also { viewHolder ->
-            viewHolder.getView<View>(R.id.linear).layoutParams = ViewGroup.LayoutParams(
+            viewHolder.getView<View>(R.id.frame).layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
@@ -73,6 +74,9 @@ class HanimeMyListVideoAdapter : BaseDifferAdapter<HanimeInfo, QuickViewHolder>(
                     context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
                 }
                 // setOnLongClickListener 由各自的 Fragment 实现
+            }
+            with(VideoCoverSize.Simplified) {
+                viewHolder.getView<ViewGroup>(R.id.cover_wrapper).resizeForVideoCover()
             }
         }
     }

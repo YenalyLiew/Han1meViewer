@@ -62,19 +62,31 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/tv_banner_title"
-                                style="@style/TextAppearance.Material3.TitleLarge"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="2dp"
-                                android:ellipsize="end"
-                                android:maxLines="1"
-                                android:padding="4dp"
-                                android:textAlignment="center"
-                                android:textColor="@color/white"
-                                android:textStyle="bold"
-                                tools:text="1234 -v 125" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <View
+                                    android:layout_width="8dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginVertical="4dp"
+                                    android:background="@color/red" />
+
+                                <TextView
+                                    android:id="@+id/tv_banner_title"
+                                    style="@style/TextAppearance.Material3.TitleLarge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:paddingVertical="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/white"
+                                    android:textStyle="bold"
+                                    tools:text="1234 -v 125" />
+
+                            </LinearLayout>
 
                             <TextView
                                 android:id="@+id/tv_banner_desc"

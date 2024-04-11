@@ -36,9 +36,9 @@ abstract class HistoryDatabase : RoomDatabase() {
         }
 
         private val migration_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
 
-                val cursor = database.query(
+                val cursor = db.query(
                     """SELECT id, redirectLink FROM WatchHistoryEntity"""
                 )
                 while (cursor.moveToNext()) {
@@ -47,14 +47,14 @@ abstract class HistoryDatabase : RoomDatabase() {
                     val videoCode =
                         url.substringAfter("v=") // 不用 String.toVideoCode() 的原因是，防止該拓展函數因不可抗力改變導致 migrate 失敗
                     val values = contentValuesOf("redirectLink" to videoCode)
-                    database.update(
+                    db.update(
                         "WatchHistoryEntity",
                         SQLiteDatabase.CONFLICT_REPLACE,
                         values,
                         "id = ?", arrayOf(id)
                     )
                 }
-                database.execSQL(
+                db.execSQL(
                     """ALTER TABLE WatchHistoryEntity
                    RENAME COLUMN redirectLink TO videoCode"""
                 )

@@ -5,6 +5,7 @@ package com.yenaly.yenaly_libs.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.core.content.getSystemService
 
 /**
  * 将文字复制到剪切板
@@ -14,7 +15,7 @@ import android.content.Context
  */
 fun copyTextToClipboard(
     text: CharSequence?,
-    label: CharSequence? = null
+    label: CharSequence? = null,
 ) {
     val clipboardManager =
         applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -32,16 +33,12 @@ fun CharSequence?.copyToClipboard(label: CharSequence? = null) = copyTextToClipb
  */
 inline val textFromClipboard: String?
     get() {
-        val clipboardManager =
-            applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = clipboardManager.primaryClip
-        if (null != clipData && clipData.itemCount > 0) {
-            val item = clipData.getItemAt(0)
-            if (null != item) {
-                val charSequence = item.coerceToText(applicationContext)
-                if (null != charSequence) {
-                    return charSequence.toString()
-                }
+        val context = applicationContext
+        val clipboardManager = context.getSystemService<ClipboardManager>()
+        val clipData = clipboardManager?.primaryClip ?: return null
+        if (clipData.itemCount > 0) {
+            clipData.getItemAt(0)?.let { item ->
+                return item.coerceToText(context)?.toString()
             }
         }
         return null
@@ -51,8 +48,7 @@ inline val textFromClipboard: String?
  * 清除剪切板内容
  */
 fun clearClipboard() {
-    val clipboardManager =
-        applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clipboardManager = applicationContext.getSystemService<ClipboardManager>()
     val clipData = ClipData.newPlainText(null, null)
-    clipboardManager.setPrimaryClip(clipData)
+    clipboardManager?.setPrimaryClip(clipData)
 }

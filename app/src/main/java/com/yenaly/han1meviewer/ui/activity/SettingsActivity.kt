@@ -9,6 +9,7 @@ import com.yenaly.han1meviewer.databinding.ActivitySettingsBinding
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.SystemStatusUtil
+import com.yenaly.yenaly_libs.utils.intentExtra
 
 /**
  * @project Han1meViewer
@@ -16,6 +17,8 @@ import com.yenaly.yenaly_libs.utils.SystemStatusUtil
  * @time 2022/07/01 001 13:40
  */
 class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewModel>() {
+
+    private val shouldNavToHKeyframeSettings by intentExtra("h_keyframe", false)
 
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
@@ -35,15 +38,23 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fcv_settings) as NavHostFragment
         navController = navHostFragment.navController
+        if (shouldNavToHKeyframeSettings) {
+            navController.navigate(R.id.action_homeSettingsFragment_pop_to_hKeyframeSettingsFragment)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> if (!navController.navigateUp()) {
+            android.R.id.home -> if (!navController.popBackStack()) {
                 finish()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 }

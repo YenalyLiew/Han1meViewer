@@ -5,6 +5,8 @@ import com.yenaly.han1meviewer.logic.dao.DownloadDatabase
 import com.yenaly.han1meviewer.logic.dao.HistoryDatabase
 import com.yenaly.han1meviewer.logic.dao.MiscellanyDatabase
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
+import com.yenaly.han1meviewer.logic.entity.HKeyframeHeader
+import com.yenaly.han1meviewer.logic.entity.HKeyframeType
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
@@ -30,14 +32,15 @@ object DatabaseRepo {
             if (keyword != null) hKeyframeDao.loadAll(keyword)
             else hKeyframeDao.loadAll()
 
+        // #issue-106: 剧集分类
         @OptIn(ExperimentalSerializationApi::class)
-        fun loadAllShared() = flow {
-            val list = applicationContext.assets.let { assets ->
+        fun loadAllShared(): Flow<List<HKeyframeType>> = flow {
+            val res = applicationContext.assets.let { assets ->
                 assets.list("h_keyframes")?.asSequence()
                     ?.filter { it.endsWith(".json") }
-                    ?.mapNotNullTo(mutableListOf()) {
+                    ?.mapNotNull { fileName ->
                         try {
-                            assets.open("h_keyframes/$it").use { inputStream ->
+                            assets.open("h_keyframes/$fileName").use { inputStream ->
                                 Json.decodeFromStream<HKeyframeEntity>(inputStream)
                             }
                         } catch (e: Exception) {
@@ -45,8 +48,16 @@ object DatabaseRepo {
                             null
                         }
                     }
+                    ?.sortedWith(
+                        compareBy<HKeyframeEntity> { it.group }.thenBy { it.episode }
+                    )
+                    ?.groupBy { it.group ?: "???" }
+                    ?.flatMap { (group, entities) ->
+                        listOf(HKeyframeHeader(title = group, attached = entities)) + entities
+                    }
+                    .orEmpty()
             }
-            emit(list)
+            emit(res)
         }
 
         suspend fun findBy(videoCode: String) =

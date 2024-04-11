@@ -317,5 +317,10 @@
     <string name="download_task_failed">下载任务失败！</string>
     <string name="download_task_failed_s_reason_s">下载失败：%1$s\n原因为：%2$s</string>
     <string name="custom">自定义</string>
+    <string name="show_bottom_progress">显示底部进度条</string>
+    <string name="default_playback_speed">默认播放速度</string>
+    <string name="long_press_speed_multiplier">长按快进速度是当前速度的</string>
+    <string name="slide_sensitivity">滑动调整进度的灵敏度</string>
+    <string name="web_link">网页链接</string>
 
 </resources>

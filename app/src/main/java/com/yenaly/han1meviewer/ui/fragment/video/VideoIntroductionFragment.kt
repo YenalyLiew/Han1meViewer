@@ -1,14 +1,23 @@
 package com.yenaly.han1meviewer.ui.fragment.video
 
+import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
+import androidx.viewpager2.widget.ViewPager2
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -17,6 +26,7 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
@@ -25,13 +35,12 @@ import com.yenaly.han1meviewer.HanimeResolution
 import com.yenaly.han1meviewer.LOCAL_DATE_FORMAT
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.SIMPLIFIED_VIDEO_IN_ONE_LINE
-import com.yenaly.han1meviewer.UsingCautiously
-import com.yenaly.han1meviewer.VIDEO_IN_ONE_LINE
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_MATCH_PARENT
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_WRAP_CONTENT
+import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
+import com.yenaly.han1meviewer.databinding.ItemVideoIntroductionBinding
 import com.yenaly.han1meviewer.getHanimeVideoDownloadLink
 import com.yenaly.han1meviewer.getHanimeVideoLink
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
@@ -39,15 +48,17 @@ import com.yenaly.han1meviewer.logic.model.HanimeVideo
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
-import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
+import com.yenaly.han1meviewer.ui.adapter.BaseSingleDifferAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
+import com.yenaly.han1meviewer.ui.adapter.RvWrapper.Companion.wrappedWith
+import com.yenaly.han1meviewer.ui.adapter.VideoColumnTitleAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
+import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.requestPostNotificationPermission
 import com.yenaly.han1meviewer.util.setDrawableTop
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyFragment
-import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.browse
 import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.shareText
@@ -55,7 +66,10 @@ import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
+import com.yenaly.yenaly_libs.utils.view.findParent
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.format
 
 /**
@@ -66,77 +80,114 @@ import kotlinx.datetime.format
 class VideoIntroductionFragment :
     YenalyFragment<FragmentVideoIntroductionBinding, VideoViewModel>() {
 
-    @UsingCautiously("use after [viewModel.hanimeVideoFlow.collect]")
-    private lateinit var videoData: HanimeVideo
+    companion object {
+        private const val FAV = 1
+        private const val PLAYLIST = 1 shl 1
 
-    @UsingCautiously("use after [Xpopup#asAttachList]")
-    private lateinit var checkedQuality: String
+        val COMPARATOR = object : DiffUtil.ItemCallback<HanimeVideo>() {
+            override fun areItemsTheSame(oldItem: HanimeVideo, newItem: HanimeVideo): Boolean {
+                return true
+            }
 
-    private val playlistAdapter by unsafeLazy { HanimeVideoRvAdapter(VIDEO_LAYOUT_WRAP_CONTENT) }
-    private val relatedAdapter by unsafeLazy { HanimeVideoRvAdapter(VIDEO_LAYOUT_MATCH_PARENT) }
+            override fun areContentsTheSame(oldItem: HanimeVideo, newItem: HanimeVideo): Boolean {
+                return false
+            }
+
+            override fun getChangePayload(oldItem: HanimeVideo, newItem: HanimeVideo): Any {
+                var bitset = 0
+                if (oldItem.isFav != newItem.isFav)
+                    bitset = bitset or FAV
+                if (!(oldItem.myList?.isSelectedArray contentEquals newItem.myList?.isSelectedArray))
+                    bitset = bitset or PLAYLIST
+                return bitset
+            }
+        }
+    }
+
+    private var checkedQuality: String? = null
+
+    private val videoIntroAdapter = VideoIntroductionAdapter()
+    private val playlistTitleAdapter =
+        VideoColumnTitleAdapter(title = R.string.series_video, notifyWhenSet = true)
+    private val playlistAdapter = HanimeVideoRvAdapter(VIDEO_LAYOUT_WRAP_CONTENT)
+    private val playlistWrapper = playlistAdapter.wrappedWith {
+        LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+    }
+    private val relatedTitleAdapter =
+        VideoColumnTitleAdapter(title = R.string.related_video)
+    private val relatedAdapter = HanimeVideoRvAdapter(VIDEO_LAYOUT_MATCH_PARENT)
+
+    private val multi by unsafeLazy {
+        // 后期添加
+        ConcatAdapter()
+    }
+
+    private val layoutManager by unsafeLazy {
+        GridLayoutManager(context, 1).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    if (multi.getWrappedAdapterAndPosition(position).first === relatedAdapter) {
+                        return 1
+                    }
+                    return spanCount
+                }
+            }
+        }
+    }
+
+    /**
+     * 保证 submitList 不同时调用
+     */
+    private val mutex = Mutex()
 
     override fun initData(savedInstanceState: Bundle?) {
-        binding.relatedHanime.subTitle.isGone = true
-        binding.playlist.rv.isNestedScrollingEnabled = true
-        binding.playlist.title.setText(R.string.series_video)
-        binding.relatedHanime.title.setText(R.string.related_video)
-        binding.tags.lifecycle = viewLifecycleOwner.lifecycle
-
-        // #issue-80: 长按复制功能请求
-        binding.title.setOnLongClickListener {
-            binding.title.text.copyToClipboard()
-            showShortToast(R.string.copy_to_clipboard)
-            return@setOnLongClickListener true
-        }
-        binding.chineseTitle.setOnLongClickListener {
-            binding.chineseTitle.text.copyToClipboard()
-            showShortToast(R.string.copy_to_clipboard)
-            return@setOnLongClickListener true
-        }
-
-        binding.relatedHanime.rv.layoutManager =
-            FixedGridLayoutManager(context, VIDEO_IN_ONE_LINE)
-        binding.playlist.rv.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.playlist.rv.adapter = playlistAdapter
-        binding.relatedHanime.rv.adapter = relatedAdapter
+        binding.rvVideoIntro.layoutManager = layoutManager
+        binding.rvVideoIntro.adapter = multi
+        binding.rvVideoIntro.addOnItemTouchListener(VideoIntroTouchListener())
     }
 
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.hanimeVideoFlow.collect { state ->
-                    binding.videoIntroNsv.isInvisible = state !is VideoLoadingState.Success
+                viewModel.hanimeVideoStateFlow.collect { state ->
+                    binding.rvVideoIntro.isVisible = state is VideoLoadingState.Success
                     when (state) {
                         is VideoLoadingState.Error -> Unit
 
                         is VideoLoadingState.Loading -> Unit
 
                         is VideoLoadingState.Success -> {
-                            videoData = state.info
-
-                            initTitle(state.info)
-                            binding.uploadTime.text = state.info.uploadTime
-                                ?.format(LOCAL_DATE_FORMAT)
-                            binding.views.text =
-                                getString(R.string.s_view_times, state.info.views.toString())
-                            binding.tvIntroduction.setContent(state.info.introduction)
-                            binding.tags.setTags(state.info.tags)
-                            if (state.info.playlist != null) {
-                                binding.playlist.subTitle.text = state.info.playlist.playlistName
-                                playlistAdapter.submitList(state.info.playlist.video)
-                            } else {
-                                binding.playlist.root.isGone = true
+                            val video = state.info
+                            mutex.withLock {
+                                videoIntroAdapter.submit(video) // 挂起是为了让它在首位
                             }
-                            binding.relatedHanime.rv.layoutManager =
-                                state.info.relatedHanimes.buildFlexibleGridLayoutManager()
-                            relatedAdapter.submitList(state.info.relatedHanimes)
-                            initArtist(state.info.artist)
-                            initDownloadButton(state.info)
-                            initFunctionBar(state.info)
+                            multi.addAdapter(videoIntroAdapter)
+                            if (video.playlist != null) {
+                                playlistTitleAdapter.subtitle = video.playlist.playlistName
+                                multi.addAdapter(playlistTitleAdapter)
+                                playlistAdapter.submitList(video.playlist.video)
+                                multi.addAdapter(playlistWrapper)
+                            } else {
+                                multi.removeAdapter(playlistTitleAdapter)
+                                multi.removeAdapter(playlistWrapper)
+                            }
+                            multi.addAdapter(relatedTitleAdapter)
+                            relatedAdapter.submitList(video.relatedHanimes)
+                            multi.addAdapter(relatedAdapter)
+                            layoutManager.spanCount = video.relatedHanimes.eachGridCounts
                         }
 
                         is VideoLoadingState.NoContent -> Unit
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.hanimeVideoFlow.collect { video ->
+                    mutex.withLock {
+                        videoIntroAdapter.submit(video)
                     }
                 }
             }
@@ -151,14 +202,11 @@ class VideoIntroductionFragment :
 
                     is WebsiteState.Loading -> Unit
                     is WebsiteState.Success -> {
-                        if (videoData.isFav) {
+                        val isFav = state.info
+                        if (isFav) {
                             showShortToast(R.string.cancel_fav)
-                            videoData.decrementFavTime()
-                            handleFavButton(false)
                         } else {
                             showShortToast(R.string.add_to_fav)
-                            videoData.incrementFavTime()
-                            handleFavButton(true)
                         }
                     }
                 }
@@ -168,7 +216,7 @@ class VideoIntroductionFragment :
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadDownloadedFlow.collect { entity ->
                 if (entity == null) { // 没下
-                    enqueueDownloadWork(videoData)
+                    viewModel.hanimeVideoFlow.value?.let { enqueueDownloadWork(it) }
                     return@collect
                 }
                 // 没下完或下過了
@@ -184,132 +232,15 @@ class VideoIntroductionFragment :
             viewModel.modifyMyListFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
-                        showShortToast(R.string.add_failed)
+                        showShortToast(R.string.modify_failed)
                     }
 
                     is WebsiteState.Loading -> Unit
                     is WebsiteState.Success -> {
-                        val index = state.info
-                        checkNotNull(videoData.myList?.myListInfo?.get(index)).let {
-                            it.isSelected = !it.isSelected
-                        }
-                        showShortToast(R.string.add_success)
+                        showShortToast(R.string.modify_success)
                     }
                 }
             }
-        }
-    }
-
-    private fun initTitle(info: HanimeVideo) {
-        binding.title.text = info.title.also { initShareButton(it) }
-        binding.chineseTitle.text = info.chineseTitle
-    }
-
-    private fun handleFavButton(isFav: Boolean) {
-        if (isFav) {
-            binding.btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_24)
-            binding.btnAddToFav.setText(R.string.liked)
-        } else {
-            binding.btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_border_24)
-            binding.btnAddToFav.setText(R.string.add_to_fav)
-        }
-    }
-
-    private fun initArtist(artist: HanimeVideo.Artist?) {
-        if (artist == null) {
-            binding.vgArtist.isGone = true
-        } else {
-            binding.vgArtist.isGone = false
-            binding.vgArtist.setOnClickListener {
-                startActivity<SearchActivity>(
-                    ADVANCED_SEARCH_MAP to advancedSearchMapOf(
-                        HAdvancedSearch.QUERY to artist.name,
-                        HAdvancedSearch.GENRE to artist.genre
-                    )
-                )
-            }
-            binding.tvArtist.text = artist.name
-            binding.tvGenre.text = artist.genre
-            binding.ivArtist.load(artist.avatarUrl) {
-                crossfade(true)
-                transformations(CircleCropTransformation())
-            }
-        }
-    }
-
-    private fun initFunctionBar(videoData: HanimeVideo) {
-        handleFavButton(videoData.isFav)
-        binding.btnAddToFav.clickTrigger(viewLifecycleOwner.lifecycle) {
-            if (isAlreadyLogin) {
-                if (videoData.isFav) {
-                    viewModel.removeFromFavVideo(
-                        viewModel.videoCode,
-                        videoData.currentUserId,
-                    )
-                } else {
-                    viewModel.addToFavVideo(
-                        viewModel.videoCode,
-                        videoData.currentUserId,
-                    )
-                }
-            } else {
-                showShortToast(R.string.login_first)
-            }
-        }
-        binding.btnMyList.setOnClickListener {
-            if (isAlreadyLogin) {
-                requireContext().showAlertDialog {
-                    setTitle(R.string.add_to_playlist)
-                    setMultiChoiceItems(
-                        videoData.myList?.titleArray,
-                        videoData.myList?.isSelectedArray,
-                    ) { _, index, isChecked ->
-                        viewModel.modifyMyList(
-                            checkNotNull(videoData.myList?.myListInfo?.get(index)).code,
-                            viewModel.videoCode, isChecked, index
-                        )
-                    }
-                    setNeutralButton(R.string.back, null)
-                }
-            } else {
-                showShortToast(R.string.login_first)
-            }
-        }
-        binding.btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
-            browse(getHanimeVideoLink(viewModel.videoCode))
-        }
-    }
-
-    private fun initShareButton(title: String) {
-        val shareText =
-            title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -"
-        binding.btnShare.setOnClickListener {
-            shareText(shareText, getString(R.string.long_press_share_to_copy))
-        }
-        binding.btnShare.setOnLongClickListener {
-            shareText.copyToClipboard()
-            showShortToast(R.string.copy_to_clipboard)
-            return@setOnLongClickListener true
-        }
-    }
-
-    private fun initDownloadButton(videoData: HanimeVideo) {
-        if (videoData.videoUrls.isEmpty()) {
-            showShortToast(R.string.no_video_links_found)
-        } else binding.btnDownload.clickTrigger(viewLifecycleOwner.lifecycle) {
-            XPopup.Builder(context)
-                .atView(it)
-                .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
-                    if (key == HanimeResolution.RES_UNKNOWN) {
-                        showShortToast(R.string.cannot_download_here)
-                        browse(getHanimeVideoDownloadLink(viewModel.videoCode))
-                    } else notifyDownload(videoData.title, key) {
-                        checkedQuality = key
-                        viewModel.findDownloadedHanime(
-                            viewModel.videoCode, checkedQuality
-                        )
-                    }
-                }.show()
         }
     }
 
@@ -346,6 +277,7 @@ class VideoIntroductionFragment :
 
     private suspend fun enqueueDownloadWork(videoData: HanimeVideo) {
         requireContext().requestPostNotificationPermission()
+        val checkedQuality = requireNotNull(checkedQuality)
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -361,15 +293,232 @@ class VideoIntroductionFragment :
             .setConstraints(constraints)
             .setInputData(data)
             .build()
-        WorkManager.getInstance(applicationContext)
+        WorkManager.getInstance(requireContext().applicationContext)
             .beginUniqueWork(viewModel.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
             .enqueue()
 
     }
 
-    private fun List<HanimeInfo>.buildFlexibleGridLayoutManager(): GridLayoutManager {
-        val counts = if (any { it.itemType == HanimeInfo.NORMAL })
-            VIDEO_IN_ONE_LINE else SIMPLIFIED_VIDEO_IN_ONE_LINE
-        return FixedGridLayoutManager(context, counts)
+    private val List<HanimeInfo>.eachGridCounts
+        get() = if (any { it.itemType == HanimeInfo.NORMAL }) {
+            VideoCoverSize.Normal.videoInOneLine
+        } else VideoCoverSize.Simplified.videoInOneLine
+
+    private inner class VideoIntroTouchListener : OnItemTouchListener {
+
+        private var startX = 0
+        private var vp2: ViewPager2? = null
+        private var isNotHorizontalWrapper = false
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            when (e.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    startX = e.x.toInt()
+                    val childView = rv.findChildViewUnder(e.x, e.y)
+                    val position = childView?.let(rv::getChildAdapterPosition) ?: return false
+                    val adapter = multi.getWrappedAdapterAndPosition(position).first
+                    isNotHorizontalWrapper = adapter !== playlistWrapper
+                    val vp2 = vp2 ?: rv.findParent<ViewPager2>().also { vp2 = it }
+                    if (vp2.isUserInputEnabled != isNotHorizontalWrapper) {
+                        vp2.isUserInputEnabled = isNotHorizontalWrapper
+                    }
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    if (isNotHorizontalWrapper) return false
+                    val endX = e.x.toInt()
+                    val direction = startX - endX
+                    val canScrollHorizontally =
+                        playlistWrapper.wrapper?.canScrollHorizontally(1)?.not()?.let { csh ->
+                            if (!csh) false else direction > 0
+                        } ?: true
+                    val vp2 = vp2 ?: rv.findParent<ViewPager2>().also { vp2 = it }
+                    if (vp2.isUserInputEnabled != canScrollHorizontally) {
+                        vp2.isUserInputEnabled = canScrollHorizontally
+                    }
+                }
+            }
+            return false
+        }
+
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) = Unit
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) = Unit
+
+    }
+
+    private inner class VideoIntroductionAdapter :
+        BaseSingleDifferAdapter<HanimeVideo, DataBindingHolder<ItemVideoIntroductionBinding>>(
+            COMPARATOR
+        ) {
+
+        override fun onBindViewHolder(
+            holder: DataBindingHolder<ItemVideoIntroductionBinding>,
+            item: HanimeVideo?,
+        ) {
+            item ?: return
+            holder.binding.apply {
+                uploadTime.text = item.uploadTime?.format(LOCAL_DATE_FORMAT)
+                views.text = getString(R.string.s_view_times, item.views.toString())
+                tvIntroduction.setContent(item.introduction)
+                tags.tags = item.tags
+                tags.lifecycle = viewLifecycleOwner.lifecycle
+
+                initTitle(item)
+                initArtist(item.artist)
+                initDownloadButton(item)
+                initFunctionBar(item)
+            }
+        }
+
+        override fun onBindViewHolder(
+            holder: DataBindingHolder<ItemVideoIntroductionBinding>,
+            item: HanimeVideo?,
+            payloads: List<Any>,
+        ) {
+            if (payloads.isEmpty() || payloads.first() == 0)
+                return super.onBindViewHolder(holder, item, payloads)
+            item.notNull()
+            val bitset = payloads.first() as Int
+            if (bitset and FAV != 0) {
+                holder.binding.handleFavButton(item.isFav)
+            }
+        }
+
+        override fun onCreateViewHolder(
+            context: Context,
+            parent: ViewGroup,
+            viewType: Int,
+        ): DataBindingHolder<ItemVideoIntroductionBinding> {
+            return DataBindingHolder(
+                ItemVideoIntroductionBinding.inflate(
+                    LayoutInflater.from(context), parent, false
+                )
+            )
+        }
+
+        private fun ItemVideoIntroductionBinding.initTitle(info: HanimeVideo) {
+            title.text = info.title.also { initShareButton(it) }
+            chineseTitle.text = info.chineseTitle
+            // #issue-80: 长按复制功能请求
+            title.setOnLongClickListener {
+                title.text.copyToClipboard()
+                showShortToast(R.string.copy_to_clipboard)
+                return@setOnLongClickListener true
+            }
+            chineseTitle.setOnLongClickListener {
+                chineseTitle.text.copyToClipboard()
+                showShortToast(R.string.copy_to_clipboard)
+                return@setOnLongClickListener true
+            }
+        }
+
+        private fun ItemVideoIntroductionBinding.handleFavButton(isFav: Boolean) {
+            if (isFav) {
+                btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_24)
+                btnAddToFav.setText(R.string.liked)
+            } else {
+                btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_border_24)
+                btnAddToFav.setText(R.string.add_to_fav)
+            }
+        }
+
+        private fun ItemVideoIntroductionBinding.initArtist(artist: HanimeVideo.Artist?) {
+            if (artist == null) {
+                vgArtist.isGone = true
+            } else {
+                vgArtist.isGone = false
+                vgArtist.setOnClickListener {
+                    startActivity<SearchActivity>(
+                        ADVANCED_SEARCH_MAP to advancedSearchMapOf(
+                            HAdvancedSearch.QUERY to artist.name,
+                            HAdvancedSearch.GENRE to artist.genre
+                        )
+                    )
+                }
+                tvArtist.text = artist.name
+                tvGenre.text = artist.genre
+                ivArtist.load(artist.avatarUrl) {
+                    crossfade(true)
+                    transformations(CircleCropTransformation())
+                }
+            }
+        }
+
+        private fun ItemVideoIntroductionBinding.initFunctionBar(videoData: HanimeVideo) {
+            handleFavButton(videoData.isFav)
+            btnAddToFav.clickTrigger(viewLifecycleOwner.lifecycle) {
+                if (isAlreadyLogin) {
+                    if (videoData.isFav) {
+                        viewModel.removeFromFavVideo(
+                            viewModel.videoCode,
+                            videoData.currentUserId,
+                        )
+                    } else {
+                        viewModel.addToFavVideo(
+                            viewModel.videoCode,
+                            videoData.currentUserId,
+                        )
+                    }
+                } else {
+                    showShortToast(R.string.login_first)
+                }
+            }
+            btnMyList.setOnClickListener {
+                if (isAlreadyLogin) {
+                    requireContext().showAlertDialog {
+                        setTitle(R.string.add_to_playlist)
+                        setMultiChoiceItems(
+                            videoData.myList?.titleArray,
+                            videoData.myList?.isSelectedArray,
+                        ) { _, index, isChecked ->
+                            viewModel.modifyMyList(
+                                checkNotNull(videoData.myList?.myListInfo?.get(index)).code,
+                                viewModel.videoCode, isChecked, index
+                            )
+                        }
+                        setNeutralButton(R.string.back, null)
+                    }
+                } else {
+                    showShortToast(R.string.login_first)
+                }
+            }
+            btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
+                browse(getHanimeVideoLink(viewModel.videoCode))
+            }
+        }
+
+        private fun ItemVideoIntroductionBinding.initShareButton(title: String) {
+            val shareText =
+                title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -"
+            btnShare.setOnClickListener {
+                shareText(shareText, getString(R.string.long_press_share_to_copy))
+            }
+            btnShare.setOnLongClickListener {
+                shareText.copyToClipboard()
+                showShortToast(R.string.copy_to_clipboard)
+                return@setOnLongClickListener true
+            }
+        }
+
+        private fun ItemVideoIntroductionBinding.initDownloadButton(videoData: HanimeVideo) {
+            if (videoData.videoUrls.isEmpty()) {
+                showShortToast(R.string.no_video_links_found)
+            } else btnDownload.clickTrigger(viewLifecycleOwner.lifecycle) {
+                XPopup.Builder(context)
+                    .atView(it)
+                    .asAttachList(videoData.videoUrls.keys.toTypedArray(), null) { _, key ->
+                        if (key == HanimeResolution.RES_UNKNOWN) {
+                            showShortToast(R.string.cannot_download_here)
+                            browse(getHanimeVideoDownloadLink(viewModel.videoCode))
+                        } else notifyDownload(videoData.title, key) {
+                            checkedQuality = key
+                            viewModel.findDownloadedHanime(
+                                viewModel.videoCode, quality = key
+                            )
+                        }
+                    }.show()
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.yenaly.han1meviewer.ui.fragment.home
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -13,7 +12,6 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
-import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
 import com.yenaly.han1meviewer.AdvancedSearchMap
 import com.yenaly.han1meviewer.HAdvancedSearch
@@ -34,7 +32,6 @@ import com.yenaly.han1meviewer.ui.adapter.VideoColumnTitleAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.base.YenalyFragment
-import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.coroutines.launch
 
@@ -204,9 +201,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
 
     private fun initBanner(info: HomePage) {
         info.banner?.let { banner ->
-            binding.tvBannerTitle.text = spannable {
-                banner.title.quote(Color.RED, stripeWidth = 4.dp, gapWidth = 4.dp)
-            }
+            binding.tvBannerTitle.text = banner.title
             binding.tvBannerDesc.text = banner.description
             binding.cover.load(banner.picUrl) {
                 crossfade(true)

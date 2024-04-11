@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.CommentPlace
-import com.yenaly.han1meviewer.logic.model.VideoCommentArguments
+import com.yenaly.han1meviewer.logic.model.VideoCommentArgs
 import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.yenaly_libs.base.YenalyViewModel
@@ -52,7 +52,7 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
     val postReplyFlow = _postReplyFlow.asSharedFlow()
 
     private val _commentLikeFlow =
-        MutableSharedFlow<WebsiteState<VideoCommentArguments>>(replay = 0)
+        MutableSharedFlow<WebsiteState<VideoCommentArgs>>(replay = 0)
     val commentLikeFlow = _commentLikeFlow.asSharedFlow()
 
     fun getComment(type: String, code: String) {
@@ -172,14 +172,14 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
     }
 
     private fun VideoComments.VideoComment.handleCommentLike(
-        args: VideoCommentArguments,
+        args: VideoCommentArgs,
     ) = if (args.isPositive) {
-        this.incrementLikesCount(cancel = post.likeCommentStatus)
+        this.incLikesCount(cancel = post.likeCommentStatus)
     } else {
-        this.decrementLikesCount(cancel = post.unlikeCommentStatus)
+        this.decLikesCount(cancel = post.unlikeCommentStatus)
     }
 
-    fun handleCommentLike(args: VideoCommentArguments) {
+    fun handleCommentLike(args: VideoCommentArgs) {
         if (args.isPositive) {
             if (args.comment.post.likeCommentStatus) {
                 showShortToast(R.string.cancel_thumb_up_success)

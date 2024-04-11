@@ -1,6 +1,8 @@
 {
   "videoCode": "84718",
+  "group": "初戀時間",
   "title": "初戀時間#2",
+  "episode": 2,
   "author": "NeKoOuO",
   "keyframes": [
     {
@@ -18,7 +20,7 @@
     {
       "position": 678500,
       "prompt": null
-    },    
+    },
     {
       "position": 823430,
       "prompt": null

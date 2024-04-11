@@ -31,8 +31,8 @@ abstract class DownloadDatabase : RoomDatabase() {
         }
 
         private val migration_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
                     """CREATE TABLE IF NOT EXISTS `HanimeDownloadEntity`(
                     `coverUrl` TEXT NOT NULL, `title` TEXT NOT NULL,
                     `addDate` INTEGER NOT NULL, `videoCode` TEXT NOT NULL,
@@ -41,7 +41,7 @@ abstract class DownloadDatabase : RoomDatabase() {
                     `downloadedLength` INTEGER NOT NULL, `isDownloading` INTEGER NOT NULL,
                     `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)"""
                 )
-                database.execSQL(
+                db.execSQL(
                     """INSERT INTO `HanimeDownloadEntity`(
                         `coverUrl`, `title`, `addDate`,
                         `videoCode`, `videoUri`, `quality`,
@@ -51,7 +51,7 @@ abstract class DownloadDatabase : RoomDatabase() {
                         `id`
                      FROM `HanimeDownloadedEntity`"""
                 )
-                database.execSQL("""DROP TABLE IF EXISTS HanimeDownloadedEntity""")
+                db.execSQL("""DROP TABLE IF EXISTS HanimeDownloadedEntity""")
             }
         }
     }

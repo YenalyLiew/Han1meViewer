@@ -6,18 +6,18 @@
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="show_bottom_progress"
-        app:title="顯示底部進度條" />
+        app:title="@string/show_bottom_progress" />
 
     <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
         app:iconSpaceReserved="false"
         app:key="player_speed"
-        app:title="預設播放速度"
+        app:title="@string/default_playback_speed"
         app:useSimpleSummaryProvider="true" />
 
     <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
         app:iconSpaceReserved="false"
         app:key="long_press_speed_times"
-        app:title="長按快進速度是當前速度的"
+        app:title="@string/long_press_speed_multiplier"
         app:useSimpleSummaryProvider="true" />
 
     <SeekBarPreference
@@ -26,7 +26,7 @@
         app:iconSpaceReserved="false"
         app:key="slide_sensitivity"
         app:min="1"
-        app:title="滑動調整進度的靈敏度" />
+        app:title="@string/slide_sensitivity" />
 
 
 </PreferenceScreen>

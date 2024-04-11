@@ -3,73 +3,18 @@ package com.yenaly.han1meviewer.util
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yenaly.han1meviewer.R
+import com.yenaly.yenaly_libs.utils.awaitActivityResult
+import com.yenaly.yenaly_libs.utils.requestPermission
 import com.yenaly.yenaly_libs.utils.showShortToast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
-// Thanks to https://github.com/FooIbar/EhViewer/
-
-// 为了让权限申请更轻松，主要是为了能全局控制，
-// 不得不使用了 ActivitiesManager.currentActivity 这个全局变量代替原有 Context
-// 所以使用的时候务必注意！
-
-private val atomicInteger = AtomicInteger()
-
-private suspend fun <I, O> Context.awaitActivityResult(
-    contract: ActivityResultContract<I, O>,
-    input: I,
-): O {
-    val key = "activity_rq#${atomicInteger.getAndIncrement()}"
-
-    val activity = this.toComponentActivity()
-    val lifecycle = activity.lifecycle
-    var launcher: ActivityResultLauncher<I>? = null
-    var observer: LifecycleEventObserver? = null
-    observer = LifecycleEventObserver { _, event ->
-        if (Lifecycle.Event.ON_DESTROY == event) {
-            launcher?.unregister()
-            if (observer != null) {
-                lifecycle.removeObserver(observer!!)
-            }
-        }
-    }
-
-    return withContext(Dispatchers.Main) {
-        lifecycle.addObserver(observer)
-        suspendCoroutine { cont -> // No cancellation support here since we cannot cancel a launched Intent
-            launcher = activity.activityResultRegistry.register(key, contract) {
-                launcher?.unregister()
-                lifecycle.removeObserver(observer)
-                cont.resume(it)
-            }.apply { launch(input) }
-        }
-    }
-}
-
-private suspend fun Context.requestPermission(key: String): Boolean {
-    if (ContextCompat.checkSelfPermission(
-            this, key
-        ) == PackageManager.PERMISSION_GRANTED
-    ) return true
-    return awaitActivityResult(ActivityResultContracts.RequestPermission(), key)
-}
 
 /**
  * 请求选择图片或视频

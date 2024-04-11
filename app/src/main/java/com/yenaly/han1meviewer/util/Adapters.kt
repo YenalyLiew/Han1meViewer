@@ -4,10 +4,13 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import com.chad.library.adapter4.BaseDifferAdapter
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.applicationContext
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * 设置状态视图
@@ -36,6 +39,12 @@ fun com.chad.library.adapter4.BaseQuickAdapter<*, *>.setStateViewLayout(
     stateView = view
 }
 
+suspend fun <T : Any> BaseDifferAdapter<T, *>.awaitSubmitList(list: List<T>?) =
+    suspendCoroutine { cont ->
+        submitList(list) {
+            cont.resume(Unit)
+        }
+    }
 
 /**
  * BRVAH4 的 getItem() 现在开始会返回 null 值了，为了避免各种 null 检查，

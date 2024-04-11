@@ -3,7 +3,9 @@ package com.yenaly.yenaly_libs.base.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.ViewParent
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
 
 /**
@@ -25,13 +27,22 @@ class RecyclerViewAtViewPager2 : RecyclerView {
 
     private var startX = 0
     private var startY = 0
+
+    private var vpParent: ViewParent? = null
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        vpParent = getVpParent()
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
                 startX = ev.x.toInt()
                 startY = ev.y.toInt()
-                parent.requestDisallowInterceptTouchEvent(true)
+                vpParent?.requestDisallowInterceptTouchEvent(true)
             }
+
             MotionEvent.ACTION_MOVE -> {
                 val endX = ev.x.toInt()
                 val endY = ev.y.toInt()
@@ -40,16 +51,17 @@ class RecyclerViewAtViewPager2 : RecyclerView {
                 if (disX > disY) {
                     //为了解决RecyclerView嵌套RecyclerView时横向滑动的问题
                     if (disallowIntercept) {
-                        parent.requestDisallowInterceptTouchEvent(disallowIntercept)
+                        vpParent?.requestDisallowInterceptTouchEvent(disallowIntercept)
                     } else {
-                        parent.requestDisallowInterceptTouchEvent(canScrollHorizontally(startX - endX))
+                        vpParent?.requestDisallowInterceptTouchEvent(canScrollHorizontally(startX - endX))
                     }
                 } else {
-                    parent.requestDisallowInterceptTouchEvent(false)
+                    vpParent?.requestDisallowInterceptTouchEvent(false)
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                parent.requestDisallowInterceptTouchEvent(false)
+                vpParent?.requestDisallowInterceptTouchEvent(false)
             }
         }
         return super.dispatchTouchEvent(ev)
@@ -58,5 +70,16 @@ class RecyclerViewAtViewPager2 : RecyclerView {
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
         this.disallowIntercept = disallowIntercept
         super.requestDisallowInterceptTouchEvent(disallowIntercept)
+    }
+
+    private fun getVpParent(): ViewParent? {
+        var p = this.parent
+        while (p != null) {
+            if (p is ViewPager2) {
+                return p
+            }
+            p = p.parent
+        }
+        return null
     }
 }

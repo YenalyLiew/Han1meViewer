@@ -11,6 +11,7 @@ import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
  * @author Yenaly Liew
  * @time 2023/08/29 029 15:32
  */
+@JvmDefaultWithoutCompatibility
 interface LoginNeededFragmentMixin {
     /**
      * 檢查是否已經登錄，如果沒有則返回上一個 Fragment
