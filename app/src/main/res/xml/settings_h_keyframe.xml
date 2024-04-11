@@ -28,7 +28,7 @@
         app:title="@string/shared">
 
         <SwitchPreferenceCompat
-            app:defaultValue="false"
+            app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="shared_h_keyframes_enable"
             app:summary="@string/shared_h_keyframes_enable_tip"
