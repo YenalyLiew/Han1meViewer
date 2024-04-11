@@ -5,7 +5,7 @@ plugins {
     kotlin("android") version "1.9.23" apply false
     kotlin("plugin.serialization") version "1.9.23" apply false
 
-    id("com.github.ben-manes.versions") version "0.50.0"
+    id("com.github.ben-manes.versions") version "0.51.0"
 }
 
 task<Delete>("clean") {
