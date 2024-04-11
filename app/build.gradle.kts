@@ -9,7 +9,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("plugin.serialization")
-    id("com.google.devtools.ksp") version "1.9.23-1.0.19"
+    id("com.google.devtools.ksp") version "1.9.23-1.0.20"
 }
 
 val isRelease: Boolean
