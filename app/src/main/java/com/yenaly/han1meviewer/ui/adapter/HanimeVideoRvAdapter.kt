@@ -149,8 +149,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                         }
                     }
                     with(VideoCoverSize.Simplified) {
-                        viewHolder.getView<ViewGroup>(R.id.cover_wrapper)
-                            .resizeForSimplifiedVideoCover()
+                        viewHolder.getView<ViewGroup>(R.id.cover_wrapper).resizeForVideoCover()
                     }
                 }
 

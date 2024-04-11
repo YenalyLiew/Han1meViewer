@@ -20,6 +20,8 @@ import com.google.android.material.chip.ChipGroup
 import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
+import com.yenaly.han1meviewer.util.readBooleanCompat
+import com.yenaly.han1meviewer.util.writeBooleanCompat
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.showShortToast
@@ -234,16 +236,6 @@ class CollapsibleTags @JvmOverloads constructor(
             out.writeBooleanCompat(isCollapsedEnabled)
             out.writeInt(chipGroupMeasureHeight)
             out.writeStringList(tags)
-        }
-
-        @Suppress("NOTHING_TO_INLINE")
-        private inline fun Parcel.readBooleanCompat(): Boolean {
-            return readInt() != 0
-        }
-
-        @Suppress("NOTHING_TO_INLINE")
-        private inline fun Parcel.writeBooleanCompat(value: Boolean) {
-            writeInt(if (value) 1 else 0)
         }
     }
 }

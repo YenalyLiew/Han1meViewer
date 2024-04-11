@@ -75,7 +75,7 @@ object VideoCoverSize {
         val videoInOneLine
             get() = (screenWidth / simplifiedVideoCoverWidth).toInt().coerceAtLeast(atLeast)
 
-        fun ViewGroup.resizeForSimplifiedVideoCover(atLeast: Int = Simplified.atLeast) {
+        fun ViewGroup.resizeForVideoCover(atLeast: Int = Simplified.atLeast) {
             require(atLeast > 0)
             val screenWidth = VideoCoverSize.screenWidth
             val videoInOneLine = (screenWidth / simplifiedVideoCoverWidth).toInt()

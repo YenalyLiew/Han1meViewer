@@ -2,8 +2,6 @@
 
 package com.yenaly.yenaly_libs.utils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.util.stream.Stream
 
 /**
@@ -37,6 +35,5 @@ fun DoubleArray.toStringArray(): Array<String> {
 /**
  * Kotlin 专属 Stream toArray 语法糖。
  */
-@RequiresApi(Build.VERSION_CODES.N)
 inline fun <reified T> Stream<*>.toTypedArray(): Array<T?> =
     toArray { size -> arrayOfNulls<T>(size) }

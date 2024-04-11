@@ -321,5 +321,6 @@
     <string name="default_playback_speed">默认播放速度</string>
     <string name="long_press_speed_multiplier">长按快进速度是当前速度的</string>
     <string name="slide_sensitivity">滑动调整进度的灵敏度</string>
+    <string name="web_link">网页链接</string>
 
 </resources>

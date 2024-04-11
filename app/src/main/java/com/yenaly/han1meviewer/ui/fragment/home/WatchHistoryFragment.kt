@@ -71,7 +71,6 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewMod
         ) { item ->
             when (item.itemId) {
                 R.id.tb_delete -> {
-                    // todo: strings.xml
                     requireContext().showAlertDialog {
                         setTitle(R.string.sure_to_delete)
                         setMessage(R.string.sure_to_delete_all_histories)

@@ -4,7 +4,7 @@ package com.yenaly.yenaly_libs.utils.view
 
 import android.view.Window
 import android.widget.EditText
-import com.yenaly.yenaly_libs.utils.SystemStatusUtil
+import com.yenaly.yenaly_libs.utils.showIme
 
 /**
  * 在EditText上聚焦并显示软键盘
@@ -15,11 +15,11 @@ fun EditText.showIme(window: Window) = this.let {
     it.isFocusable = true
     it.isFocusableInTouchMode = true
     if (it.hasFocus()) {
-        SystemStatusUtil.showIme(window, true)
+        window.showIme(true)
     } else {
         it.requestFocus()
         repeat(2) {
-            SystemStatusUtil.showIme(window, true)
+            window.showIme(true)
         }
     }
 }
@@ -31,5 +31,5 @@ fun EditText.showIme(window: Window) = this.let {
  */
 fun EditText.hideIme(window: Window) = this.let {
     it.clearFocus()
-    SystemStatusUtil.showIme(window, false)
+    window.showIme(false)
 }

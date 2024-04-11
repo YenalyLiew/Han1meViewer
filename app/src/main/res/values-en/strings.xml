@@ -288,7 +288,7 @@
     <string name="very_low">Very Low</string>
     <string name="extremely_low">Extremely Low</string>
     <string name="update_failed_tips">If you find significant issues with the software but the update fails, please go directly to the Github Releases page to see if there is a latest version available\n\nAlso, I just found out that someone actually paid for this app, it\'s really unnecessary!</string>
-    <string name="shared_h_keyframe_detected_msg">Note: If you also have H Keyframes with the same code as the other party, yours will be overwritten\n\nTitle: %1$s\nCode: %2$s\n%d moment(s) available</string>
+    <string name="shared_h_keyframe_detected_msg">Note: If you also have H Keyframes with the same code as the other party, yours will be overwritten\n\nTitle: %1$s\nCode: %2$s\n%3$d moment(s) available</string>
     <string name="domain_change_tips">Changing the domain name requires restarting the program, otherwise it will not take effect!\n
 Different domains do not share the same cookies, so after changing the domain name, you need to log in again.\n
 So, except for hanime1.me, other domain names may redirect back to hanime1.me at certain times, which may cause cookies to expire\n
@@ -315,5 +315,6 @@ Recommendations are as follows:\n
     <string name="default_playback_speed">Default Playback Speed</string>
     <string name="long_press_speed_multiplier">Long Press Speed Multiplier</string>
     <string name="slide_sensitivity">Slide Sensitivity for Progress Adjustment</string>
+    <string name="web_link">Web Link</string>
 
 </resources>

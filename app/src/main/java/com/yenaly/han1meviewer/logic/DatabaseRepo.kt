@@ -32,6 +32,7 @@ object DatabaseRepo {
             if (keyword != null) hKeyframeDao.loadAll(keyword)
             else hKeyframeDao.loadAll()
 
+        // #issue-106: 剧集分类
         @OptIn(ExperimentalSerializationApi::class)
         fun loadAllShared(): Flow<List<HKeyframeType>> = flow {
             val res = applicationContext.assets.let { assets ->
