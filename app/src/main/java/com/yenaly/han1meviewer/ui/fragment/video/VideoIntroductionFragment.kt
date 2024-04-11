@@ -53,7 +53,6 @@ import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.RvWrapper.Companion.wrappedWith
 import com.yenaly.han1meviewer.ui.adapter.VideoColumnTitleAdapter
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
-import com.yenaly.han1meviewer.util.findParent
 import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.requestPostNotificationPermission
 import com.yenaly.han1meviewer.util.setDrawableTop
@@ -67,6 +66,7 @@ import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
+import com.yenaly.yenaly_libs.utils.view.findParent
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

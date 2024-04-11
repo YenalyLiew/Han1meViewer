@@ -104,7 +104,7 @@ class HKeyframeSettingsFragment : YenalySettingsFragment(R.xml.settings_h_keyfra
         whenCountdownRemind.apply {
             setDefaultValue(HJzvdStd.DEF_COUNTDOWN_SEC)
             summary = value.toPrettyCountdownRemindString()
-            setOnPreferenceChangeListener { pref, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 summary = (newValue as Int).toPrettyCountdownRemindString()
                 return@setOnPreferenceChangeListener true
             }

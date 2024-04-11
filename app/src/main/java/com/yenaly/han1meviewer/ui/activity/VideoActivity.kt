@@ -28,7 +28,7 @@ import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.ScreenRotateUtil
+import com.yenaly.yenaly_libs.utils.OrientationManager
 import com.yenaly.yenaly_libs.utils.browse
 import com.yenaly.yenaly_libs.utils.intentExtra
 import com.yenaly.yenaly_libs.utils.makeBundle
@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
 class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
-    ScreenRotateUtil.OrientationChangeListener {
+    OrientationManager.OrientationChangeListener {
 
     companion object {
         /**
@@ -73,7 +73,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             binding.videoPlayer.videoCode = it
         }
 
-        ScreenRotateUtil.getInstance(this).setOrientationChangeListener(this)
+        lifecycle.addObserver(OrientationManager(this))
         initViewPager()
         initHKeyframe()
     }
@@ -125,7 +125,6 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                         }
 
                         is VideoLoadingState.NoContent -> {
-                            // todo: 有時間轉移到 strings.xml
                             showShortToast(R.string.video_might_not_exist)
                             finish()
                         }
@@ -155,11 +154,6 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
         super.onBackPressed()
     }
 
-    override fun onStart() {
-        super.onStart()
-        ScreenRotateUtil.getInstance(this).start(this)
-    }
-
     override fun onStop() {
         super.onStop()
         Jzvd.goOnPlayOnPause()
@@ -167,22 +161,22 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
     override fun onDestroy() {
         super.onDestroy()
-        // 可能需要把ScreenRotateUtil的listener置null，但置null可能会崩溃
-        ScreenRotateUtil.getInstance(this).stop()
         Jzvd.releaseAllVideos()
         currentVideoActivitySet -= this
         Log.d("CurrentVideoActivitySet", "$this was removed.")
     }
 
-    override fun orientationChange(orientation: Int) {
+    override fun onOrientationChanged(orientation: OrientationManager.ScreenOrientation) {
         if (Jzvd.CURRENT_JZVD != null
             && (binding.videoPlayer.state == Jzvd.STATE_PLAYING || binding.videoPlayer.state == Jzvd.STATE_PAUSE)
             && binding.videoPlayer.screen != Jzvd.SCREEN_TINY
             && Jzvd.FULLSCREEN_ORIENTATION != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         ) {
-            if (orientation in 45..315 && binding.videoPlayer.screen == Jzvd.SCREEN_NORMAL) {
-                changeScreenFullLandscape(ScreenRotateUtil.orientationDirection)
-            } else if (((orientation in 0 until 45) || orientation > 315) && binding.videoPlayer.screen == Jzvd.SCREEN_FULLSCREEN) {
+            if (orientation.isLandscape && binding.videoPlayer.screen == Jzvd.SCREEN_NORMAL) {
+                changeScreenFullLandscape(orientation)
+            } else if (orientation === OrientationManager.ScreenOrientation.PORTRAIT
+                && binding.videoPlayer.screen == Jzvd.SCREEN_FULLSCREEN
+            ) {
                 changeScreenNormal()
             }
         }
@@ -193,18 +187,18 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
      */
     private fun changeScreenNormal() {
         if (binding.videoPlayer.screen == Jzvd.SCREEN_FULLSCREEN) {
-            binding.videoPlayer.autoQuitFullscreen()
+            binding.videoPlayer.gotoNormalScreen()
         }
     }
 
     /**
      * 横屏
      */
-    private fun changeScreenFullLandscape(x: Float) {
+    private fun changeScreenFullLandscape(orientation: OrientationManager.ScreenOrientation) {
         //从竖屏状态进入横屏
         if (binding.videoPlayer.screen != Jzvd.SCREEN_FULLSCREEN) {
             if (System.currentTimeMillis() - Jzvd.lastAutoFullscreenTime > 2000) {
-                binding.videoPlayer.autoFullscreen(x)
+                binding.videoPlayer.autoFullscreen(orientation)
                 Jzvd.lastAutoFullscreenTime = System.currentTimeMillis()
             }
         }

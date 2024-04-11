@@ -40,12 +40,12 @@ val appLocalVersionCode: Long
 /**
  * 获取APP可及屏幕宽度
  */
-val appScreenWidth: Int get() = DeviceUtil.getAppScreenSize(applicationContext).first
+val appScreenWidth: Int get() = applicationContext.resources.displayMetrics.widthPixels
 
 /**
  * 获取APP可及屏幕高度
  */
-val appScreenHeight: Int get() = DeviceUtil.getAppScreenSize(applicationContext).second
+val appScreenHeight: Int get() = applicationContext.resources.displayMetrics.heightPixels
 
 /**
  * 判断当前是否为DEBUG模式

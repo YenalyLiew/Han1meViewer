@@ -180,7 +180,6 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             val cacheDir = context.cacheDir
             var folderSize = cacheDir?.folderSize ?: 0L
             summary = generateClearCacheSummary(folderSize)
-            // todo: strings.xml
             setOnPreferenceClickListener {
                 if (folderSize != 0L) {
                     context.showAlertDialog {

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.TextUtils;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
@@ -22,7 +20,6 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.yenaly.yenaly_libs.R;
 
@@ -588,88 +585,6 @@ public class SystemStatusUtil {
         }
     }
 
-    /**
-     * 获取当前实际状态栏高度
-     *
-     * @param window window
-     * @return 当前实际状态栏高度
-     */
-    public static int getCurrentStatusBarHeight(@NonNull Window window) {
-        WindowInsetsCompat windowInsetsCompat = ViewCompat.getRootWindowInsets(window.getDecorView());
-        if (windowInsetsCompat != null) {
-            return windowInsetsCompat.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-        }
-        return DeviceUtil.getStatusBarHeight(window.getContext());
-    }
-
-    /**
-     * 获取当前实际导航栏高度
-     *
-     * @param window window
-     * @return 当前实际导航栏高度
-     */
-    public static int getCurrentNavBarHeight(@NonNull Window window) {
-        WindowInsetsCompat windowInsetsCompat = ViewCompat.getRootWindowInsets(window.getDecorView());
-        if (windowInsetsCompat != null) {
-            return windowInsetsCompat.getInsets(WindowInsetsCompat.Type.statusBars()).bottom;
-        }
-        return DeviceUtil.getNavigationBarHeight(window.getContext());
-    }
-
-    /**
-     * 是否显示系统栏
-     *
-     * @param window    window
-     * @param statusBar 显示状态栏
-     * @param navBar    显示导航栏
-     */
-    public static void showSystemBar(@NonNull Window window, boolean statusBar, boolean navBar) {
-        WindowInsetsControllerCompat controller = ViewCompat.getWindowInsetsController(window.getDecorView());
-        if (controller != null) {
-            if (statusBar && navBar) {
-                controller.show(WindowInsetsCompat.Type.systemBars());
-                return;
-            }
-            if (!statusBar && !navBar) {
-                controller.hide(WindowInsetsCompat.Type.systemBars());
-                return;
-            }
-            if (statusBar) {
-                controller.show(WindowInsetsCompat.Type.statusBars());
-            } else {
-                controller.hide(WindowInsetsCompat.Type.statusBars());
-            }
-            if (navBar) {
-                controller.show(WindowInsetsCompat.Type.navigationBars());
-            } else {
-                controller.hide(WindowInsetsCompat.Type.navigationBars());
-            }
-        } else {
-            if (isStatusBarVisible(window) != statusBar || isNavBarVisible(window) != navBar) {
-                SystemStatusUtil.fullScreen(window, statusBar, navBar);
-            }
-        }
-    }
-
-    /**
-     * 是否将系统栏图标切换成亮色模式
-     *
-     * @param window    window
-     * @param statusBar 设置状态栏图标为亮色模式
-     * @param navBar    设置导航栏图标为亮色模式
-     */
-    public static void setSystemBarIconLightMode(@NonNull Window window, boolean statusBar, boolean navBar) {
-        WindowInsetsControllerCompat controller = ViewCompat.getWindowInsetsController(window.getDecorView());
-        if (controller != null) {
-            controller.setAppearanceLightStatusBars(statusBar);
-            controller.setAppearanceLightNavigationBars(navBar);
-            if (controller.isAppearanceLightStatusBars() != statusBar) {
-                setStatusIconDarkMode(window, statusBar);
-            }
-        } else {
-            setStatusIconDarkMode(window, statusBar);
-        }
-    }
 
     /**
      * 当前状态栏是否可见
@@ -697,54 +612,5 @@ public class SystemStatusUtil {
             return windowInsetsCompat.isVisible(WindowInsetsCompat.Type.navigationBars());
         }
         return true;
-    }
-
-    /**
-     * 当前软键盘是否可见
-     *
-     * @param window window
-     * @return 是否可见
-     */
-    public static boolean isImeVisible(@NonNull Window window) {
-        WindowInsetsCompat windowInsetsCompat = ViewCompat.getRootWindowInsets(window.getDecorView());
-        if (windowInsetsCompat != null) {
-            return windowInsetsCompat.isVisible(WindowInsetsCompat.Type.ime());
-        }
-        return false;
-    }
-
-    /**
-     * 是否显示软键盘
-     *
-     * @param window window
-     * @param ime    是否显示软键盘
-     */
-    public static void showIme(@NonNull Window window, boolean ime) {
-        WindowInsetsControllerCompat controller = ViewCompat.getWindowInsetsController(window.getDecorView());
-        if (controller != null) {
-            if (ime) {
-                controller.show(WindowInsetsCompat.Type.ime());
-            } else {
-                controller.hide(WindowInsetsCompat.Type.ime());
-            }
-        } else {
-            InputMethodManager imm = (InputMethodManager) window.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (ime) {
-                imm.showSoftInput(window.getDecorView(), InputMethodManager.SHOW_FORCED);
-            } else {
-                imm.hideSoftInputFromWindow(window.getDecorView().getWindowToken(), 0);
-            }
-        }
-    }
-
-    /**
-     * 判断当前是否为夜间模式
-     *
-     * @param context 上下文
-     * @return boolean
-     */
-    public static boolean isAppDarkMode(@NonNull Context context) {
-        return (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)
-                == Configuration.UI_MODE_NIGHT_YES;
     }
 }
