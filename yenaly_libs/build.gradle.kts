@@ -1,21 +1,23 @@
+import Config.fetch
+
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.com.android.library)
+    alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.com.google.devtools.ksp)
 }
 
 android {
-    compileSdk = Config.compileSdk
+    compileSdk = libs.versions.compileSdk.fetch<Int>()
 
     defaultConfig {
-        minSdk = Config.minSdk
+        minSdk = libs.versions.minSdk.fetch<Int>()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
     buildFeatures {
+        //noinspection DataBindingWithoutKapt
         dataBinding = true
     }
     buildTypes {
@@ -33,8 +35,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs =
-            freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-Xskip-prerelease-check"
+        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn" + "-Xskip-prerelease-check")
     }
     resourcePrefix = "yenaly_"
     namespace = "com.yenaly.yenaly_libs"
@@ -42,22 +43,22 @@ android {
 
 dependencies {
 
-    implementation(Libs.Core.recyclerView)
-    implementation(Libs.Core.coreKtx)
-    implementation(Libs.Core.appCompat)
-    implementation(Libs.Core.material)
-    implementation(Libs.Core.coroutinesAndroid)
+    implementation(libs.recyclerview)
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.coroutines.android)
 
-    implementation(Libs.Jetpack.lifecycleLiveDataKtx)
-    implementation(Libs.Jetpack.lifecycleViewModelKtx)
-    implementation(Libs.Jetpack.preferenceKtx)
-    implementation(Libs.Jetpack.startupRuntime)
-    implementation(Libs.Parse.gson)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.preference.ktx)
+    implementation(libs.startup.runtime)
+    implementation(libs.gson)
 
-    implementation(Libs.Spannable.spannableX)
+    implementation(libs.spannable.x)
 
-    testImplementation(Libs.Test.junit)
+    testImplementation(libs.junit)
 
-    androidTestImplementation(Libs.Test.testJunit)
-    androidTestImplementation(Libs.Test.testEspressoCore)
+    androidTestImplementation(libs.test.junit)
+    androidTestImplementation(libs.test.espresso.core)
 }
