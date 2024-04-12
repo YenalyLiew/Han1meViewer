@@ -2,21 +2,22 @@
 
 import Config.Version.createVersionCode
 import Config.Version.createVersionName
+import Config.fetch
 import Config.lastCommitSha
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("plugin.serialization")
-    id("com.google.devtools.ksp") version "1.9.23-1.0.19"
+    alias(libs.plugins.com.android.application)
+    alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
+    alias(libs.plugins.com.google.devtools.ksp)
 }
 
 val isRelease: Boolean
     get() = gradle.startParameter.taskNames.any { it.contains("Release") }
 
 android {
-    compileSdk = Config.compileSdk
+    compileSdk = libs.versions.compileSdk.fetch<Int>()
 
     val commitSha = if (isRelease) lastCommitSha else "8ea5a9c" // 方便调试
 
@@ -40,8 +41,8 @@ android {
 
     defaultConfig {
         applicationId = "com.yenaly.han1meviewer"
-        minSdk = Config.minSdk
-        targetSdk = Config.targetSdk
+        minSdk = libs.versions.minSdk.fetch<Int>()
+        targetSdk = libs.versions.targetSdk.fetch<Int>()
         versionCode = if (isRelease) createVersionCode() else 1 // 方便调试
         versionName = versionCode.createVersionName(major = 0, minor = 14, patch = 0)
 
@@ -76,7 +77,9 @@ android {
         }
     }
     buildFeatures {
+        //noinspection DataBindingWithoutKapt
         dataBinding = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -95,70 +98,54 @@ dependencies {
 
     // android related
 
-    implementation(Libs.Core.coreKtx)
-    implementation(Libs.Core.appCompat)
-    implementation(Libs.Core.material)
-    implementation(Libs.Core.coroutinesAndroid)
-    implementation(Libs.Core.fragmentKtx)
-    implementation(Libs.Core.constraintLayout)
-    implementation(Libs.Core.recyclerView)
-
-    implementation(Libs.Jetpack.lifecycleViewModelKtx)
-    implementation(Libs.Jetpack.lifecycleRuntimeKtx)
-    implementation(Libs.Jetpack.lifecycleLiveDataKtx)
-    implementation(Libs.Jetpack.roomRuntime)
-    implementation(Libs.Jetpack.roomKtx)
-    implementation(Libs.Jetpack.navigationFragmentKtx)
-    implementation(Libs.Jetpack.navigationUiKtx)
-    implementation(Libs.Jetpack.preferenceKtx)
-    implementation(Libs.Jetpack.workRuntime)
-    implementation(Libs.Jetpack.workRuntimeKtx)
+    implementation(libs.bundles.android.base)
+    implementation(libs.bundles.android.jetpack)
 
     // datetime
 
-    implementation(Libs.Datetime.datetime)
+    implementation(libs.datetime)
 
     // parse
 
-    implementation(Libs.Parse.serialization)
-    implementation(Libs.Parse.jsoup)
+    implementation(libs.serialization.json)
+    implementation(libs.jsoup)
 
     // network
 
-    implementation(Libs.Network.retrofit)
-    implementation(Libs.Network.converterSerialization)
+    implementation(libs.retrofit)
+    implementation(libs.converter.serialization)
 
     // pic
 
-    implementation(Libs.Pic.coil)
+    implementation(libs.coil)
 
     // popup
 
-    implementation(Libs.Popup.xPopup)
-    implementation(Libs.Popup.xPopupExt)
+    implementation(libs.xpopup)
+    implementation(libs.xpopup.ext)
 
     // video
 
-    implementation(Libs.Video.jiaoziVideoPlayer)
+    implementation(libs.jiaozi.video.player)
 
     // view
 
-    implementation(Libs.Core.RecyclerView.refreshLayoutKernel)
-    implementation(Libs.Core.RecyclerView.refreshHeaderMaterial)
-    implementation(Libs.Core.RecyclerView.refreshFooterClassics)
-    implementation(Libs.Core.RecyclerView.multiType)
-    implementation(Libs.Core.RecyclerView.baseRecyclerViewAdapterHelper4)
-    implementation(Libs.Core.TextView.expandableTextView)
-    implementation(Libs.Spannable.spannableX)
-    implementation(Libs.Activity.about)
-    implementation(Libs.View.stateLayout)
+    implementation(libs.refresh.layout.kernel)
+    implementation(libs.refresh.header.material)
+    implementation(libs.refresh.footer.classics)
+    implementation(libs.multitype)
+    implementation(libs.base.recyclerview.adapter.helper4)
+    implementation(libs.expandable.textview)
+    implementation(libs.spannable.x)
+    implementation(libs.about)
+    implementation(libs.statelayout)
 
-    ksp(Libs.Jetpack.roomCompiler)
+    ksp(libs.room.compiler)
 
-    testImplementation(Libs.Test.junit)
+    testImplementation(libs.junit)
 
-    androidTestImplementation(Libs.Test.testJunit)
-    androidTestImplementation(Libs.Test.testEspressoCore)
+    androidTestImplementation(libs.test.junit)
+    androidTestImplementation(libs.test.espresso.core)
 }
 
 /**
