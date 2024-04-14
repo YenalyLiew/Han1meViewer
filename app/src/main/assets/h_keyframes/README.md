@@ -10,8 +10,8 @@
 前在屏幕**左上角**倒计时提醒（可调整）。在 0-1s 时，会精确到一位小数，方便你更好的控制时间。
 
 此外，还提供了**共享关键H帧集**。这些关键H帧是内置于软件里的，来源于贡献者在 GitHub
-上的补充。目前是随着版本更新来更新共享关键H帧集，暂时不考虑服务器在线共享之类的（太危险），
-~~前提是有贡献者来帮忙补充~~。
+上的补充。目前是随着版本更新（或 CI 实时更新）来更新共享关键H帧集，暂时不考虑服务器在线共享之类的（太危险）。
+
 [共享关键库位置](https://github.com/YenalyLiew/Han1meViewer/blob/master/app/src/main/assets/h_keyframes)
 
 ## 须知
@@ -56,7 +56,9 @@ clone 仓库步骤：
 ```json
 {
   "videoCode": "84711",
+  "group": "aaa",
   "title": "abc",
+  "episode": 1,
   "author": "yenaly",
   "keyframes": [
     {
@@ -73,17 +75,20 @@ clone 仓库步骤：
 
 介绍一下每一个键值是干什么的：
 
-> 注意：`author`为`null`时代表个人本地储存的，不为空才代表是共享的。所以不允许 JSON 文件里出现`null`
-> 的`author`。
+> 注意-1：`author`为`null`时代表个人本地储存的，不为空才代表是共享的。所以不允许 JSON 文件里出现`null`的`author`。
+>
+> 注意-2：编写前务必查询当前已上传的关键H帧是否存在。假设有一人已上传 AAA 的第一集，group 名为`aaa`，title 为`aaa-01`，你也要按照他的方式进行修改，不要自行更改 group 名为`AAA`。如果你觉得你的命名更准确、更优质，也可以选择将其所有当前系列的group名和title名一起修改。
 
-| 键         | 值类型               | 作用                                     |
-|-----------|-------------------|----------------------------------------|
-| videoCode | string (not null) | 影片代号，用于识别影片                            |
-| title     | string (not null) | 影片标题，看得清晰些                             |
-| author    | string (not null) | 关键H帧作者，也就是你，**而不是**影片作者！               |
-| keyframes | array             | 关键H帧列表                                 |
+| 键        | 值类型            | 作用                                                         |
+| --------- | ----------------- | ------------------------------------------------------------ |
+| videoCode | string (not null) | 影片代号，用于识别影片                                       |
+| group     | string (nullable) | 影片系列名称，用于影片分组，为 null 代表无系列               |
+| title     | string (not null) | 影片标题，看得清晰些                                         |
+| episode   | number            | 影片集数，如果无系列请填 0                                   |
+| author    | string (not null) | 关键H帧作者，也就是你，**而不是**影片作者！                  |
+| keyframes | array             | 关键H帧列表                                                  |
 | position  | number            | 「顶点」位置，怎么获取下面说，两个 position 必须间隔 5s 及以上 |
-| prompt    | string (nullable) | 「顶点」提示，最好少于五个字，或 null                  |
+| prompt    | string (nullable) | 「顶点」提示，最好少于五个字，或 null                        |
 
 #### 怎么获取「顶点」位置？
 
@@ -114,11 +119,11 @@ push 到远程仓库：
 
 以上步骤完成后，就可以将代码从本地仓库推送到远程仓库了。
 
-> 注意，提交信息的格式为：`[关键H帧] 添加/修改/删除 <影片代号>`
+> 注意，提交信息的格式为：`[HKeyframe] 添加/修改/删除 <影片名称>`
 >
 > 简繁都行，英文也行。
 >
-> 例如：`[关键H帧] 修改 12345`
+> 例如：`[HKeyframe] 添加 初恋时间系列`
 
 ### Pull Request
 

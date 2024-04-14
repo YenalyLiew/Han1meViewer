@@ -1,7 +1,6 @@
 package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,7 +9,6 @@ import coil.load
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.chad.library.adapter4.viewholder.QuickViewHolder
-import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
@@ -19,8 +17,8 @@ import com.yenaly.han1meviewer.logic.model.HanimePreview
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.popup.CoilImageLoader
+import com.yenaly.han1meviewer.ui.view.BlurTransformation
 import com.yenaly.han1meviewer.util.notNull
-import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
@@ -45,10 +43,9 @@ class HanimePreviewNewsRvAdapter :
         item.notNull()
         holder.binding.ivCoverBig.load(item.coverUrl) {
             crossfade(true)
+            transformations(BlurTransformation(context))
         }
-        holder.binding.tvTitle.text = spannable {
-            item.title.quote(Color.RED, stripeWidth = 4.dp, gapWidth = 4.dp)
-        }
+        holder.binding.tvTitle.text = item.title
         holder.binding.tvIntroduction.text = item.introduction
         holder.binding.tvBrand.text = item.brand
         holder.binding.tvReleaseDate.text = item.releaseDate

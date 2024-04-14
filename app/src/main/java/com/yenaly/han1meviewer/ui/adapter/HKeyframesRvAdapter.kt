@@ -191,6 +191,8 @@ class HKeyframeRvAdapter(
      */
     var isLocal: Boolean = true
 
+    var isShared: Boolean = false
+
     companion object {
         val COMPARATOR = object : DiffUtil.ItemCallback<HKeyframeEntity.Keyframe>() {
             override fun areItemsTheSame(
@@ -231,6 +233,7 @@ class HKeyframeRvAdapter(
         viewType: Int,
     ): QuickViewHolder {
         return QuickViewHolder(R.layout.item_h_keyframe, parent).also { viewHolder ->
+            if (isShared) return@also
             viewHolder.getView<MaterialButton>(R.id.btn_edit).apply {
                 setOnClickListener {
                     val position = viewHolder.bindingAdapterPosition
