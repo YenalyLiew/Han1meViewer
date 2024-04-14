@@ -60,7 +60,14 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
 
     private val dateUtils = DateUtils()
 
+    /**
+     * 左右滑动 VP 时，不触发 onScrollStateChanged，防止触发两次 binding.vpNews.setCurrentItem
+     * 导致滑动不流畅。
+     */
+    private var shouldTriggerScroll = false
+
     private val tourSimplifiedAdapter = HanimePreviewTourRvAdapter()
+    private val linearSnapHelper = LinearSnapHelper()
     private val newsAdapter = HanimePreviewNewsRvAdapter()
 
     private val tourLayoutManager by unsafeLazy {
@@ -138,10 +145,22 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                     }
                 }
             })
+            linearSnapHelper.attachToRecyclerView(this)
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        if (shouldTriggerScroll) {
+                            val view = linearSnapHelper.findSnapView(tourLayoutManager)
+                            val position = view?.let(::getChildAdapterPosition)
+                                ?: RecyclerView.NO_POSITION
+                            binding.vpNews.setCurrentItem(position, false)
+                        }
+                        shouldTriggerScroll = true
+                    }
+                }
+            })
         }
-
-        val linearSnapHelper = LinearSnapHelper()
-        linearSnapHelper.attachToRecyclerView(binding.rvTourSimplified)
 
         tourSimplifiedAdapter.setOnItemClickListener { _, _, position ->
             binding.vpNews.setCurrentItem(position, false)
@@ -152,6 +171,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         binding.vpNews.offscreenPageLimit = 1
         binding.vpNews.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                shouldTriggerScroll = false
                 binding.rvTourSimplified.smoothScrollToPosition(position)
             }
         })

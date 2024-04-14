@@ -31,7 +31,6 @@ class SharedHKeyframesRvAdapter : BaseDifferAdapter<HKeyframeType, QuickViewHold
     }
 
     companion object {
-
         val COMPARATOR = object : DiffUtil.ItemCallback<HKeyframeType>() {
             override fun areItemsTheSame(
                 oldItem: HKeyframeType,
@@ -92,6 +91,7 @@ class SharedHKeyframesRvAdapter : BaseDifferAdapter<HKeyframeType, QuickViewHold
                     layoutManager = LinearLayoutManager(context)
                     adapter = HKeyframeRvAdapter(item.videoCode, item).apply {
                         isLocal = item.author == null
+                        isShared = true
                     }
                 }
                 holder.setText(R.id.tv_author, "@${item.author}")

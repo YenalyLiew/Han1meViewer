@@ -20,26 +20,41 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/per80_transparent_black"
+            android:background="@color/per70_transparent_black"
             android:contentDescription="@null" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:clipToPadding="false"
             android:paddingHorizontal="8dp">
 
-            <TextView
-                android:id="@+id/tv_title"
+            <LinearLayout
+                android:layout_marginStart="-8dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                android:textSize="20sp"
-                tools:text="123122342424242424342234" />
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="4dp"
+                    android:background="@color/red" />
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    style="@style/TextAppearance.Material3.TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    tools:text="1234 -v 125" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_video_title"
