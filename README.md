@@ -2,15 +2,15 @@
 
 ![Han1meViewer](https://socialify.git.ci/YenalyLiew/Han1meViewer/image?description=1&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fgithub.com%2FYenalyLiew%2FHan1meViewer%2Fblob%2Fmaster%2Ficon%2Ficon_han1me_viewer-rurires.png%3Fraw%3Dtrue&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
 
-这是 [Hanime1](https://hanime1.me/) Android 平台的非官方浏览器。
+这是 [Hanime1](https://hanime1.me/) Android 平台的**非官方**浏览器。
 
-Android 版本必须不小于 7.0 才能使用。
+要使用此应用，您的 Android 版本必须**不小于 7.0**。
 
 本项目仅用于学习和交流代码，不可闭源。
 
-An unofficial Hanime1.me Application for Android.
+An **unofficial** [Hanime1](https://hanime1.me/) Application for Android.
 
-Android version must be no less than 7.0 to be used.
+To use this application, your Android version must be **7.0 or higher**.
 
 This project is intended solely for purposes of learning codes.
 
@@ -101,7 +101,7 @@ This project is intended solely for purposes of learning codes.
 GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，暂时不考虑服务器在线共享之类的，
 ~~前提是有贡献者来帮忙补充~~。
 
-如果你想贡献关键H帧，请点击 [这里](https://github.com/YenalyLiew/Han1meViewer/blob/master/app/src/main/assets/h_keyframes/README.md)
+如果你想贡献关键H帧，请点击 [这里](app/src/main/assets/h_keyframes/README.md)
 查看应该怎么做。
 
 ## 需要注意的问题
@@ -157,7 +157,7 @@ GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，
 
   首先你要知道我那个**代理 ≠ 内置梯子**，是给特殊人群用的。你正常使用是需要自备梯子的。如果你懂，你也不会问这个问题；如果你不懂，那说明这个功能应该跟你没啥关系。
 
-  在 v0.13.0 中，新增**应用内置 Hosts**功能，可以让你**直连**网站。
+  在 v0.13.0 中，新增**应用内置 Hosts** 功能，可以让你**直连**网站。
 
 - **下载影片，但一段时间内没下载一直暂停，结果下一次继续之后总是弹错误通知怎么办？**
 
@@ -165,6 +165,24 @@ GitHub 上的补充。目前是随着版本更新来更新共享关键H帧集，
   **失效**，必须**自行重新下载**。下载功能的 bug 还是有点多的，如果遇到什么奇怪的问题欢迎提 issue！
 
 ## 更新内容
+
+### v0.14.5
+
+**[调整]** 微调新番导览界面视觉效果。
+
+**[更改]** 默认开启 采用共享关键H帧集。
+
+**[优化]** 播放器根据重力旋转屏幕有时失效的问题。
+
+**[优化]** 影片封面大小根据不同设备进行调整。
+
+**[新增]** 首页侧边栏新增关键H帧设置。
+
+**[优化]** 影片介绍界面根据滑动适时加载。
+
+**[修复]** 部分字符串未本地化。
+
+**[优化]** 共享关键H帧已分类排序，因此 JSON 需要新增两个键值。
 
 ### v0.14.0
 
@@ -428,6 +446,12 @@ bug 产生，所以建议下载完了再关闭。
 
 我 Cookie 有一块逻辑写错了两年我都没发现，但没想到的是，写错了竟然并不影响正常运行。
 
+### 考虑实现的功能
+
+- 夜间/日间模式，切换主题
+- 更换播放器，jiaozi 确实有点老了，打算换成 GSYVideoPlayer
+- 投屏，我看有不少人想要
+
 ### 目前遇到的问题
 
 - 通过分析可知，登入后正确的返回 Cookie 应为三个，分别为
@@ -436,8 +460,6 @@ bug 产生，所以建议下载完了再关闭。
   而 hanime1_session 的有效期只有 2 个小时，所以本地登入只能保持 2 个小时的登入状态。
   如果有人知道如何正确获取 remember_web_xxx，请告诉我，感激不尽！
 
-- 关键H帧共享起来（指上传到 Github）确实对于一般人来说不太友好，到时候可能整个一键生成 JSON？
-  你只需要负责 Pull Request。
+## 如果你也是写 App 的...
 
-- CI 构建是个好东西，但我得学一下怎么用...
-
+如果你对本 App 的相关技术栈感兴趣，或者想了解下我是怎么实现的，可以点击 [这里](README_TECH.md) 阅读。
