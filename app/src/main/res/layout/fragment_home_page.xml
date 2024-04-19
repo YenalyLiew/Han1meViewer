@@ -68,6 +68,7 @@
                                 android:layout_height="wrap_content">
 
                                 <View
+                                    android:id="@+id/a_color"
                                     android:layout_width="8dp"
                                     android:layout_height="match_parent"
                                     android:layout_marginVertical="4dp"

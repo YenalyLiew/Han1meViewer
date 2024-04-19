@@ -5,5 +5,5 @@
         android:bottomRightRadius="16dp"
         android:topLeftRadius="0dp"
         android:topRightRadius="16dp" />
-    <solid android:color="@color/per70_transparent_black" />
+    
 </shape>

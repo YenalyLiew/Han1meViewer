@@ -1,14 +1,20 @@
 package com.yenaly.han1meviewer.ui.fragment.home
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
@@ -31,6 +37,7 @@ import com.yenaly.han1meviewer.ui.adapter.RvWrapper.Companion.wrappedWith
 import com.yenaly.han1meviewer.ui.adapter.VideoColumnTitleAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.util.colorTransition
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.coroutines.launch
@@ -42,6 +49,11 @@ import kotlinx.coroutines.launch
  */
 class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(),
     IToolbarFragment<MainActivity>, StateLayoutMixin {
+
+    companion object {
+        private val animInterpolator = FastOutSlowInInterpolator()
+        private val animDuration = 300L
+    }
 
     private val latestHanimeAdapter = HanimeVideoRvAdapter()
     private val latestReleaseAdapter = HanimeVideoRvAdapter()
@@ -205,9 +217,52 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
             binding.tvBannerDesc.text = banner.description
             binding.cover.load(banner.picUrl) {
                 crossfade(true)
+                allowHardware(false)
+                target(
+                    onStart = binding.cover::setImageDrawable,
+                    onError = binding.cover::setImageDrawable,
+                    onSuccess = {
+                        binding.cover.setImageDrawable(it)
+                        it.toBitmapOrNull()?.let(Palette::Builder)?.generate { p ->
+                            p?.let(::handlePalette)
+                        }
+                    }
+                )
             }
             binding.btnBanner.setOnClickListener {
                 requireActivity().startActivity<VideoActivity>(VIDEO_CODE to banner.videoCode)
+            }
+        }
+    }
+
+    private fun handlePalette(p: Palette) {
+        val darkVibrant = p.getDarkVibrantColor(Color.RED)
+        val lightVibrant = p.getLightVibrantColor(Color.RED)
+
+        val darkVibrantForContentScrim =
+            p.darkVibrantSwatch?.rgb ?: p.darkMutedSwatch?.rgb ?: p.lightVibrantSwatch?.rgb
+            ?: p.lightMutedSwatch?.rgb ?: Color.BLACK
+        binding.collapsingToolbar.setContentScrimColor(darkVibrantForContentScrim)
+        colorTransition(
+            fromColor = binding.btnBanner.iconTint.defaultColor,
+            toColor = darkVibrant
+        ) {
+            interpolator = animInterpolator
+            duration = animDuration
+            addUpdateListener {
+                val color = it.animatedValue as Int
+                binding.btnBanner.iconTint = ColorStateList.valueOf(color)
+            }
+        }
+        colorTransition(
+            fromColor = (binding.aColor.background as ColorDrawable).color,
+            toColor = lightVibrant
+        ) {
+            interpolator = animInterpolator
+            duration = animDuration
+            addUpdateListener {
+                val color = it.animatedValue as Int
+                binding.aColor.setBackgroundColor(color)
             }
         }
     }
