@@ -43,16 +43,17 @@
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="hanime1.me"
-                    android:pathPrefix="/watch"
-                    android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="hanime1.com" />
+                <data android:host="hanime1.me" />
+                <data android:path="/watch" />
             </intent-filter>
         </activity>
         <activity

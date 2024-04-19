@@ -1,9 +1,14 @@
 package com.yenaly.han1meviewer.ui.fragment.settings
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
-import androidx.fragment.app.activityViewModels
+import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,7 +29,6 @@ import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
 import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
-import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
 import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.util.showUpdateDialog
@@ -53,8 +57,6 @@ import kotlin.concurrent.thread
 class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
     IToolbarFragment<SettingsActivity> {
 
-    private val viewModel by activityViewModels<SettingsViewModel>()
-
     companion object {
         const val VIDEO_LANGUAGE = "video_language"
         const val PLAYER_SETTINGS = "player_settings"
@@ -66,6 +68,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         const val SUBMIT_BUG = "submit_bug"
         const val FORUM = "forum"
         const val NETWORK_SETTINGS = "network_settings"
+        const val APPLY_DEEP_LINKS = "apply_deep_links"
 
         const val LAST_UPDATE_POPUP_TIME = "last_update_popup_time"
         const val UPDATE_POPUP_INTERVAL_DAYS = "update_popup_interval_days"
@@ -96,6 +99,8 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             by safePreference<Preference>(FORUM)
     private val networkSettings
             by safePreference<Preference>(NETWORK_SETTINGS)
+    private val applyDeepLinks
+            by safePreference<Preference>(APPLY_DEEP_LINKS)
 
     private var checkUpdateTimes = 0
 
@@ -226,6 +231,17 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 return@setOnPreferenceClickListener true
             }
         }
+        applyDeepLinks.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                isVisible = true
+                setOnPreferenceClickListener {
+                    showApplyDeepLinksDialog(it.context)
+                    return@setOnPreferenceClickListener true
+                }
+            } else {
+                isVisible = false
+            }
+        }
         useCIUpdateChannel.apply {
             setOnPreferenceChangeListener { _, _ ->
                 AppViewModel.getLatestVersion()
@@ -256,7 +272,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                             update.setSummary(R.string.check_update_failed)
                             update.setOnPreferenceClickListener {
                                 if (checkUpdateTimes > 2) {
-                                    showUpdateFailedDialog()
+                                    showUpdateFailedDialog(it.context)
                                 } else AppViewModel.getLatestVersion()
                                 return@setOnPreferenceClickListener true
                             }
@@ -288,8 +304,27 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
     }
 
-    private fun showUpdateFailedDialog() {
-        requireContext().showAlertDialog {
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun showApplyDeepLinksDialog(context: Context) {
+        context.showAlertDialog {
+            setTitle(R.string.apply_deep_links)
+            setView(R.layout.dialog_apply_deep_links)
+            setPositiveButton(R.string.go_to_settings) { _, _ ->
+                val intent = Intent().apply {
+                    action = Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS
+                    addCategory(Intent.CATEGORY_DEFAULT)
+                    data = "package:${context.packageName}".toUri()
+                    flags =
+                        Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                }
+                requireActivity().startActivity(intent)
+            }
+            setNegativeButton(R.string.cancel, null)
+        }
+    }
+
+    private fun showUpdateFailedDialog(context: Context) {
+        context.showAlertDialog {
             setTitle(R.string.do_not_check_update_again)
             setMessage(getString(R.string.update_failed_tips).trimIndent())
             setPositiveButton(R.string.take_me_to_download) { _, _ ->

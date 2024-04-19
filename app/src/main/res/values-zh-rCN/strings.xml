@@ -322,5 +322,8 @@
     <string name="long_press_speed_multiplier">长按快进速度是当前速度的</string>
     <string name="slide_sensitivity">滑动调整进度的灵敏度</string>
     <string name="web_link">网页链接</string>
+    <string name="apply_deep_links">应用深层链接</string>
+    <string name="apply_deep_links_summary">应用后，打开相关网页后能快速跳转至本 App</string>
+    <string name="apply_deep_links_tips">MIUI 隐藏了这个界面，所以你需要从这里打开然后添加链接</string>
 
 </resources>

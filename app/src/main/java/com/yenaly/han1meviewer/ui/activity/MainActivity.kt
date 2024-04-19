@@ -31,7 +31,11 @@ import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.util.showUpdateDialog
 import com.yenaly.han1meviewer.videoUrlRegex
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.*
+import com.yenaly.yenaly_libs.utils.currentStatusBarHeight
+import com.yenaly.yenaly_libs.utils.showShortToast
+import com.yenaly.yenaly_libs.utils.showSnackBar
+import com.yenaly.yenaly_libs.utils.startActivity
+import com.yenaly.yenaly_libs.utils.textFromClipboard
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
@@ -146,7 +150,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                                     crossfade(true)
                                     transformations(CircleCropTransformation())
                                 }
-                                headerUsername.text = "Loading..."
+                                headerUsername.setText(R.string.loading)
                             }
                         }
                     }

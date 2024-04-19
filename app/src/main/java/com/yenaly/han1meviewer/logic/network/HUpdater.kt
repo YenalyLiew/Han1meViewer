@@ -95,8 +95,16 @@ object HUpdater {
         }
     }
 
+    /**
+     * This function is used to filter out commits that are not authored by the user.
+     */
+    private val CommitComparison.Commit.CommitDetail.CommitAuthor.isAuthorShouldIgnore: Boolean
+        get() = name.contains("dependabot")
+
     private fun List<CommitComparison.Commit>.toChangelogPrettyString(): String {
-        return distinct().reversed().joinToString("\n\n") { commit ->
+        return filterNot { commit ->
+            commit.commit.author.isAuthorShouldIgnore
+        }.distinct().reversed().joinToString("\n\n") { commit ->
             val message = commit.commit.message.replace(linefeedRegex, "\n")
             "↓ (@${commit.commit.author.name})\n$message"
         }

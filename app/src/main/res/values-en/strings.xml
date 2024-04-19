@@ -316,5 +316,8 @@ Recommendations are as follows:\n
     <string name="long_press_speed_multiplier">Long Press Speed Multiplier</string>
     <string name="slide_sensitivity">Slide Sensitivity for Progress Adjustment</string>
     <string name="web_link">Web Link</string>
+    <string name="apply_deep_links">Apply Deep Links</string>
+    <string name="apply_deep_links_summary">After application, quickly jump to this app when opening relevant web pages</string>
+    <string name="apply_deep_links_tips">MIUI has hidden this interface, so you need to open it from here and then add the link.</string>
 
 </resources>

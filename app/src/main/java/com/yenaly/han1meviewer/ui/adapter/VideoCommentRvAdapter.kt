@@ -13,6 +13,8 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
+import com.drake.spannable.replaceSpanFirst
+import com.drake.spannable.span.HighlightSpan
 import com.google.android.material.button.MaterialButton
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
@@ -45,6 +47,8 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
 
     var replyPopup: ReplyPopup? = null
 
+    private var usernameRegex: Regex? = null
+
     companion object {
         private const val THUMB = 0
 
@@ -74,6 +78,13 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         }
     }
 
+    override fun submitList(list: List<VideoComments.VideoComment>?) {
+        super.submitList(list)
+        if (fragment != null && fragment is ChildCommentPopupFragment) {
+            list?.map { it.username }?.toSet()?.let(::setUsernameRegex)
+        }
+    }
+
     override fun onBindViewHolder(
         holder: DataBindingHolder<ItemVideoCommentBinding>,
         position: Int,
@@ -88,7 +99,14 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
             crossfade(true)
             transformations(CircleCropTransformation())
         }
-        holder.binding.tvContent.text = item.content
+        holder.binding.tvContent.text = kotlin.run {
+            val regex = usernameRegex
+            if (regex != null) {
+                item.content.replaceSpanFirst(regex) { _ ->
+                    HighlightSpan("#ed6a2c")
+                }
+            } else item.content
+        }
         holder.binding.tvDate.text = item.date
         holder.binding.tvUsername.text = item.username
         holder.binding.btnViewMoreReplies.isVisible = item.hasMoreReplies
@@ -240,5 +258,11 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
     private fun TextView.fixTextSelection() {
         setTextIsSelectable(false)
         post { setTextIsSelectable(true) }
+    }
+
+    private fun setUsernameRegex(usernameList: Set<String>) {
+        usernameRegex = Regex(usernameList.joinToString("|") { username ->
+            Regex.escape("@$username")
+        })
     }
 }

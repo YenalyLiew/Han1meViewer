@@ -100,6 +100,7 @@ dependencies {
 
     implementation(libs.bundles.android.base)
     implementation(libs.bundles.android.jetpack)
+    implementation(libs.palette)
 
     // datetime
 

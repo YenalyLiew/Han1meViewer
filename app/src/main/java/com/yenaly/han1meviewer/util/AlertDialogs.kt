@@ -2,18 +2,10 @@ package com.yenaly.han1meviewer.util
 
 import android.content.Context
 import android.content.DialogInterface
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.yenaly.yenaly_libs.ActivitiesManager
-import com.yenaly.yenaly_libs.utils.activity
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-
-// 爲什麽要放在這裏，因爲用這個方法的大多數用在了 AlertDialog 上
-// AlertDialog 需要一個帶窗口 token 的 Context
-fun Context.toComponentActivity() =
-    (this.activity ?: ActivitiesManager.currentActivity) as ComponentActivity
 
 inline fun Context.showAlertDialog(action: MaterialAlertDialogBuilder.() -> Unit) {
     MaterialAlertDialogBuilder(this).apply(action).show()
