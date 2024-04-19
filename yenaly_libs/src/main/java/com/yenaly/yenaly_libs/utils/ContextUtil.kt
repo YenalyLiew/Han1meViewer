@@ -7,12 +7,13 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
-import android.util.TypedValue
+import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.material.color.MaterialColors
 import com.yenaly.yenaly_libs.ActivitiesManager
 
 /**
@@ -82,8 +83,9 @@ val Context.lifecycle: Lifecycle
  * Extension function to get a theme color from a Context.
  */
 @ColorInt
-fun Context.getThemeColor(@AttrRes attrColor: Int): Int {
-    return TypedValue().apply {
-        theme.resolveAttribute(attrColor, this, true)
-    }.data
+fun Context.getThemeColor(
+    @AttrRes attrColor: Int,
+    @ColorInt defColor: Int = Color.TRANSPARENT,
+): Int {
+    return MaterialColors.getColor(this, attrColor, defColor)
 }

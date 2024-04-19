@@ -304,6 +304,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
     }
 
+    // #issue-124: Support deep links.
     @RequiresApi(Build.VERSION_CODES.S)
     private fun showApplyDeepLinksDialog(context: Context) {
         context.showAlertDialog {

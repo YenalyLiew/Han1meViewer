@@ -1,21 +1,29 @@
 package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.viewpager2.widget.ViewPager2
+import coil.imageLoader
 import coil.load
+import coil.request.ImageRequest
 import com.google.android.material.appbar.AppBarLayout
 import com.yenaly.han1meviewer.DATE_CODE
 import com.yenaly.han1meviewer.R
@@ -25,9 +33,12 @@ import com.yenaly.han1meviewer.ui.adapter.HanimePreviewNewsRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimePreviewTourRvAdapter
 import com.yenaly.han1meviewer.ui.view.CenterLinearLayoutManager
 import com.yenaly.han1meviewer.ui.viewmodel.PreviewViewModel
+import com.yenaly.han1meviewer.util.colorTransition
+import com.yenaly.han1meviewer.util.toColorStateList
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.appScreenWidth
 import com.yenaly.yenaly_libs.utils.dp
+import com.yenaly.yenaly_libs.utils.getThemeColor
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.AppBarLayoutStateChangeListener
@@ -173,6 +184,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             override fun onPageSelected(position: Int) {
                 shouldTriggerScroll = false
                 binding.rvTourSimplified.smoothScrollToPosition(position)
+                handleToolbarColor(position)
             }
         })
 
@@ -211,19 +223,33 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                                 dateUtils.current.format(DateUtils.NORMAL_FORMAT)
                             )
                             binding.fabPrevious.apply {
+                                isVisible = state.info.hasPrevious
                                 isEnabled = state.info.hasPrevious
                                 text = dateUtils.prevDate.format(DateUtils.NORMAL_FORMAT)
                             }
                             binding.fabNext.apply {
+                                isVisible = state.info.hasNext
                                 isEnabled = state.info.hasNext
                                 text = dateUtils.nextDate.format(DateUtils.NORMAL_FORMAT)
                             }
                             binding.cover.load(state.info.headerPicUrl) {
                                 crossfade(true)
+                                allowHardware(false)
+                                target(
+                                    onStart = binding.cover::setImageDrawable,
+                                    onError = binding.cover::setImageDrawable,
+                                    onSuccess = {
+                                        binding.cover.setImageDrawable(it)
+                                        it.toBitmapOrNull()?.let(Palette::Builder)?.generate { p ->
+                                            p?.let(::handleHeaderPalette)
+                                        }
+                                    }
+                                )
                             }
                             tourSimplifiedAdapter.submitList(state.info.latestHanime)
                             // 有時候 tour 無法順利加載出來，加點延遲反而就好了，哈哈
                             delay(100)
+                            handleToolbarColor(0)
                             newsAdapter.submitList(state.info.previewInfo)
                         }
                     }
@@ -252,6 +278,68 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun handleToolbarColor(index: Int) {
+        val data = tourSimplifiedAdapter.getItem(index)?.coverUrl
+        val request = ImageRequest.Builder(this)
+            .data(data)
+            .allowHardware(false)
+            .target(
+                onError = {
+
+                },
+                onSuccess = {
+                    it.toBitmapOrNull()?.let(Palette::Builder)?.generate { p ->
+                        p?.let(::handleToolbarPalette)
+                    }
+                }
+            )
+            .build()
+        this.imageLoader.enqueue(request)
+    }
+
+    private fun handleToolbarPalette(p: Palette) {
+        val darkMuted =
+            p.darkMutedSwatch?.rgb ?: p.darkVibrantSwatch?.rgb ?: p.lightVibrantSwatch?.rgb
+            ?: p.lightMutedSwatch?.rgb ?: Color.BLACK
+        colorTransition(
+            fromColor = (binding.collapsingToolbar.contentScrim as ColorDrawable).color,
+            toColor = ColorUtils.blendARGB(darkMuted, Color.BLACK, 0.3f)
+        ) {
+            duration = animDuration
+            interpolator = animInterpolator
+            addUpdateListener {
+                val value = it.animatedValue as Int
+                binding.collapsingToolbar.setContentScrimColor(value)
+            }
+        }
+        colorTransition(
+            fromColor = (binding.llTour.background as? ColorDrawable)?.color ?: Color.TRANSPARENT,
+            toColor = darkMuted
+        ) {
+            duration = animDuration
+            interpolator = animInterpolator
+            addUpdateListener {
+                val value = it.animatedValue as Int
+                binding.llTour.setBackgroundColor(value)
+            }
+        }
+    }
+
+    private fun handleHeaderPalette(p: Palette) {
+        val colorPrimary = getThemeColor(com.google.android.material.R.attr.colorPrimary)
+        val lightVibrant = p.getLightVibrantColor(colorPrimary)
+        val per70lightVibrantStateList =
+            ColorUtils.setAlphaComponent(lightVibrant, 0xB3).toColorStateList()
+        binding.fabPrevious.backgroundTintList = per70lightVibrantStateList
+        binding.fabNext.backgroundTintList = per70lightVibrantStateList
+        val titleTextColorStateList =
+            (p.lightVibrantSwatch?.titleTextColor ?: Color.BLACK).toColorStateList()
+        binding.fabPrevious.iconTint = titleTextColorStateList
+        binding.fabNext.iconTint = titleTextColorStateList
+        binding.fabPrevious.setTextColor(titleTextColorStateList)
+        binding.fabNext.setTextColor(titleTextColorStateList)
     }
 
     private fun initAnimation() {
