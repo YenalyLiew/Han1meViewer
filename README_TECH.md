@@ -73,7 +73,7 @@ rv.itemAnimator?.changeDuration = 0
 
 但我发现，很多人确实介绍了这种方法，但鲜少有人去介绍如何高效率实现一次性去处理多个字段。你可能想到了 `List<Int>` 或 `IntArray`，通过遍历对应去处理每一种情况。这样的话，时间复杂度和空间复杂度都是 `O(n)`，`n` 是你需要监听的数目；再聪明点也可以想到使用 `Set<Int>`，在 `onBindViewHolder` 中分别查询 set 中是否含有某个情况来对应处理，这时候时间复杂度降到了 `O(1)`。如果在刷新不频繁的情况下，这样做确实没什么不妥，但是高强度下，每次 new 一个数据结构确实是一个小负担，那应该怎么样做呢？
 
-这时候可以选择简单的 Bitmap 数据结构。你可能刚听说，但它确实很常见，你在使用 `Intent#setAction` 打开新 Activity 的时候，大概率会接触到这种数据结构。我们可以利用一个仅 4 个字节的 32-bit 整数值去实现查找 (`find`)、判空 (`isEmpty`)、添加 (`add`) 的功能（我们只需要这些功能，而且不同情况数量大概率不超过 32 个）。
+这时候可以选择简单的 Bitmap 数据结构。你可能刚听说，但它确实很常见，你在使用 `Intent#addFlags` 打开新 Activity 的时候，大概率会接触到这种数据结构。我们可以利用一个仅 4 个字节的 32-bit 整数值去实现查找 (`find`)、判空 (`isEmpty`)、添加 (`add`) 的功能（我们只需要这些功能，而且不同情况数量大概率不超过 32 个）。
 
 聚焦于 [HanimeDownloadingRvAdapter.kt](app/src/main/java/com/yenaly/han1meviewer/ui/adapter/HanimeDownloadingRvAdapter.kt)
 

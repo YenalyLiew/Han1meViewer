@@ -13,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.awaitActivityResult
 import com.yenaly.yenaly_libs.utils.requestPermission
+import com.yenaly.yenaly_libs.utils.requireComponentActivity
 import com.yenaly.yenaly_libs.utils.showShortToast
 
 
@@ -47,7 +48,7 @@ suspend fun Context.requestPostNotificationPermission(): Boolean {
  * 顯示發送通知權限對話框
  */
 private suspend fun Context.showPostNotificationPermissionDialog(): Int {
-    val dialog = MaterialAlertDialogBuilder(this.toComponentActivity())
+    val dialog = MaterialAlertDialogBuilder(this.requireComponentActivity())
         .setTitle(R.string.allow_post_notification)
         .setMessage(R.string.reason_for_download_notification)
         .create()
@@ -82,7 +83,7 @@ suspend fun Context.requestInstallPermission(): Boolean {
  * 显示安装权限对话框
  */
 private suspend fun Context.showInstallPermissionDialog(): Int {
-    val dialog = MaterialAlertDialogBuilder(this.toComponentActivity())
+    val dialog = MaterialAlertDialogBuilder(this.requireComponentActivity())
         .setTitle(R.string.allow_install_from_unknown_app_sources)
         .setMessage(R.string.reason_for_allow_install_from_unknown_app_sources)
         .create()
