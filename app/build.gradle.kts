@@ -52,6 +52,8 @@ android {
         buildConfigField("String", "VERSION_NAME", "\"${versionName}\"")
         buildConfigField("int", "VERSION_CODE", "$versionCode")
         buildConfigField("String", "HA1_GITHUB_TOKEN", "\"${githubToken}\"")
+
+        buildConfigField("int", "SEARCH_YEAR_RANGE_END", "${Config.thisYear}")
     }
 
     buildTypes {

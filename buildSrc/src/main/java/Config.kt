@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import java.time.Clock
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 
@@ -35,6 +36,9 @@ object Config {
         get() = providers.exec {
             commandLine = "git rev-parse --short=7 HEAD".split(' ')
         }.standardOutput.asText.get().trim()
+
+    val thisYear: Int
+        get() = LocalDateTime.now(Clock.system(ZoneId.of("Asia/Shanghai"))).year
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> Provider<String>.fetch(clazz: KClass<T>): T {
