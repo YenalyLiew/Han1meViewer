@@ -37,7 +37,7 @@ const val SEARCH_YEAR_RANGE_START = 1990
 /**
  * 發佈日期年份結束於
  */
-const val SEARCH_YEAR_RANGE_END = 2022
+const val SEARCH_YEAR_RANGE_END = BuildConfig.SEARCH_YEAR_RANGE_END
 
 // intent傳值用名稱
 
