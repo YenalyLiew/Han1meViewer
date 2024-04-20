@@ -80,7 +80,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
 
     override fun submitList(list: List<VideoComments.VideoComment>?) {
         super.submitList(list)
-        if (fragment != null && fragment is ChildCommentPopupFragment) {
+        if (list !== items && fragment != null && fragment is ChildCommentPopupFragment) {
             list?.map { it.username }?.toSet()?.let(::setUsernameRegex)
         }
     }
@@ -103,7 +103,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
             val regex = usernameRegex
             if (regex != null) {
                 item.content.replaceSpanFirst(regex) { _ ->
-                    HighlightSpan("#ed6a2c")
+                    HighlightSpan(context, R.color.at_person)
                 }
             } else item.content
         }

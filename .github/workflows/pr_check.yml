@@ -3,6 +3,8 @@ name: Pull Request Check
 on:
   pull_request:
     branches: [ "master" ]
+    paths-ignore:
+      - "**.md"
 
 jobs:
   check:
