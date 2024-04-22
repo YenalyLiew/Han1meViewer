@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
         app:iconSpaceReserved="false"
         app:key="domain_name"
         app:title="@string/domain_name"

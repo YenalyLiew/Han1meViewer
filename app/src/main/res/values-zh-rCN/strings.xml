@@ -325,5 +325,6 @@
     <string name="apply_deep_links">应用深层链接</string>
     <string name="apply_deep_links_summary">应用后，打开相关网页后能快速跳转至本 App</string>
     <string name="apply_deep_links_tips">MIUI 隐藏了这个界面，所以你需要从这里打开然后添加链接</string>
+    <string name="switch_player_kernel">切换播放器内核</string>
 
 </resources>

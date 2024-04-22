@@ -23,7 +23,7 @@ import com.yenaly.han1meviewer.logic.network.HanimeNetwork
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
-import com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.ActivitiesManager
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment

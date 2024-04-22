@@ -4,7 +4,7 @@
 
     <PreferenceCategory app:title="@string/video">
 
-        <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+        <com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
             app:icon="@drawable/baseline_simp_to_trad_24"
             app:key="video_language"
             app:title="@string/video_language"

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.chad.library.adapter4.BaseQuickAdapter
 import com.chad.library.adapter4.viewholder.QuickViewHolder
-import com.yenaly.han1meviewer.ui.view.HJzvdStd
+import com.yenaly.han1meviewer.ui.view.video.HJzvdStd
 
 /**
  * @project Han1meViewer

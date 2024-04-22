@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.view
+package com.yenaly.han1meviewer.ui.view.pref
 
 import android.content.Context
 import android.util.AttributeSet

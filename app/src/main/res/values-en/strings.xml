@@ -319,5 +319,6 @@ Recommendations are as follows:\n
     <string name="apply_deep_links">Apply Deep Links</string>
     <string name="apply_deep_links_summary">After application, quickly jump to this app when opening relevant web pages</string>
     <string name="apply_deep_links_tips">MIUI has hidden this interface, so you need to open it from here and then add the link.</string>
+    <string name="switch_player_kernel">Switch Player Kernel</string>
 
 </resources>

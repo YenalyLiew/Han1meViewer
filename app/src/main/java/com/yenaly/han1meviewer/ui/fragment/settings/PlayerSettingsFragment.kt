@@ -7,8 +7,9 @@ import androidx.preference.SwitchPreferenceCompat
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
-import com.yenaly.han1meviewer.ui.view.HJzvdStd
-import com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
+import com.yenaly.han1meviewer.ui.view.video.HJzvdStd
+import com.yenaly.han1meviewer.ui.view.video.HMediaKernel
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 
 /**
@@ -20,12 +21,15 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
     IToolbarFragment<SettingsActivity> {
 
     companion object {
+        const val SWITCH_PLAYER_KERNEL = "switch_player_kernel"
         const val SHOW_BOTTOM_PROGRESS = "show_bottom_progress"
         const val PLAYER_SPEED = "player_speed"
         const val SLIDE_SENSITIVITY = "slide_sensitivity"
         const val LONG_PRESS_SPEED_TIMES = "long_press_speed_times"
     }
 
+    private val switchPlayerKernel
+            by safePreference<MaterialDialogPreference>(SWITCH_PLAYER_KERNEL)
     private val showBottomProgressPref
             by safePreference<SwitchPreferenceCompat>(SHOW_BOTTOM_PROGRESS)
     private val playerSpeed
@@ -41,6 +45,12 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
     }
 
     override fun onPreferencesCreated(savedInstanceState: Bundle?) {
+        switchPlayerKernel.apply {
+            val kernelNames = HMediaKernel.Type.entries.map { it.name }.toTypedArray()
+            entries = kernelNames
+            entryValues = kernelNames
+            if (value == null) setValueIndex(HMediaKernel.Type.ExoPlayer.ordinal)
+        }
         playerSpeed.apply {
             entries = HJzvdStd.speedStringArray
             entryValues = Array(HJzvdStd.speedArray.size) {
