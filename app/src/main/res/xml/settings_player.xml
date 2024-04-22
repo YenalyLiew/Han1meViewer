@@ -2,19 +2,25 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
+        app:iconSpaceReserved="false"
+        app:key="switch_player_kernel"
+        app:title="@string/switch_player_kernel"
+        app:useSimpleSummaryProvider="true" />
+
     <SwitchPreferenceCompat
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="show_bottom_progress"
         app:title="@string/show_bottom_progress" />
 
-    <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+    <com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
         app:iconSpaceReserved="false"
         app:key="player_speed"
         app:title="@string/default_playback_speed"
         app:useSimpleSummaryProvider="true" />
 
-    <com.yenaly.han1meviewer.ui.view.MaterialDialogPreference
+    <com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
         app:iconSpaceReserved="false"
         app:key="long_press_speed_times"
         app:title="@string/long_press_speed_multiplier"

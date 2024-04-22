@@ -1,12 +1,9 @@
-package com.yenaly.han1meviewer.ui.view
+package com.yenaly.han1meviewer.ui.view.video
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.ActivityInfo
 import android.graphics.Typeface
 import android.media.AudioManager
-import android.media.MediaPlayer
-import android.media.PlaybackParams
 import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
 import android.util.AttributeSet
@@ -30,9 +27,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.jzvd.JZDataSource
-import cn.jzvd.JZMediaSystem
 import cn.jzvd.JZUtils
-import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.Preferences
@@ -46,6 +41,7 @@ import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.OrientationManager
 import com.yenaly.yenaly_libs.utils.activity
+import com.yenaly.yenaly_libs.utils.appScreenWidth
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.removeItself
 import java.util.Timer
@@ -253,6 +249,7 @@ class HJzvdStd @JvmOverloads constructor(
 
     override fun init(context: Context?) {
         super.init(context)
+        SAVE_PROGRESS = false
         tvSpeed = findViewById(R.id.tv_speed)
         tvKeyframe = findViewById(R.id.tv_keyframe)
         tvTimer = findViewById(R.id.tv_timer)
@@ -265,7 +262,15 @@ class HJzvdStd @JvmOverloads constructor(
     }
 
     override fun setUp(jzDataSource: JZDataSource?, screen: Int) {
-        super.setUp(jzDataSource, screen, HJZMediaSystem::class.java)
+        super.setUp(jzDataSource, screen, ExoMediaKernel::class.java)
+    }
+
+    fun setUp(jzDataSource: JZDataSource?, screen: Int, kernel: HMediaKernel.Type) {
+        setUp(jzDataSource, screen, kernel.clazz)
+    }
+
+    override fun setUp(jzDataSource: JZDataSource?, screen: Int, clazz: Class<*>) {
+        super.setUp(jzDataSource, screen, clazz)
         Log.d("CustomJzvdStd-Settings", buildString {
             append("showBottomProgress: ")
             appendLine(showBottomProgress)
@@ -404,7 +409,7 @@ class HJzvdStd @JvmOverloads constructor(
                         }
                     } else {
                         //如果y轴滑动距离超过设置的处理范围，那么进行滑动事件处理
-                        if (mDownX < mScreenHeight * 0.5f) { //左侧改变亮度
+                        if (mDownX < appScreenWidth * 0.5f) { //左侧改变亮度
                             mChangeBrightness = true
                             val lp = JZUtils.getWindow(context).attributes
                             if (lp.screenBrightness < 0) {
@@ -635,38 +640,6 @@ class HJzvdStd @JvmOverloads constructor(
             8 -> 20
             9 -> 40
             else -> throw IllegalStateException("Invalid sensitivity value: $this")
-        }
-    }
-}
-
-class HJZMediaSystem(jzvd: Jzvd) : JZMediaSystem(jzvd) {
-
-    // #issue-26: 有的手機長按快進會報錯，合理懷疑是不是因爲沒有加 post
-    // #issue-28: 有的平板长按快进也会报错，结果是 IllegalArgumentException，很奇怪，两次 try-catch 处理试试。
-    override fun setSpeed(speed: Float) {
-        mMediaHandler.post {
-            try {
-                val pp = mediaPlayer.playbackParams
-                pp.speed = speed.absoluteValue
-                mediaPlayer.playbackParams = pp
-            } catch (e: IllegalArgumentException) {
-                try {
-                    val opp = PlaybackParams().setSpeed(speed.absoluteValue)
-                    mediaPlayer.playbackParams = opp
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
-
-    override fun onVideoSizeChanged(mediaPlayer: MediaPlayer?, width: Int, height: Int) {
-        super.onVideoSizeChanged(mediaPlayer, width, height)
-        val ratio = width.toFloat() / height // > 1 橫屏， < 1 竖屏
-        if (ratio > 1) {
-            Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        } else {
-            Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 }

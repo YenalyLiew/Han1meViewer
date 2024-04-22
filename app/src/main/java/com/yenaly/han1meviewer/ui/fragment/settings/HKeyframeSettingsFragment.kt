@@ -10,7 +10,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
-import com.yenaly.han1meviewer.ui.view.HJzvdStd
+import com.yenaly.han1meviewer.ui.view.video.HJzvdStd
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 
 /**

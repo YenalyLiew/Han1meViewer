@@ -7,7 +7,8 @@ import com.yenaly.han1meviewer.ui.fragment.settings.HKeyframeSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.NetworkSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.PlayerSettingsFragment
-import com.yenaly.han1meviewer.ui.view.HJzvdStd
+import com.yenaly.han1meviewer.ui.view.video.HJzvdStd
+import com.yenaly.han1meviewer.ui.view.video.HMediaKernel
 import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.getSpValue
@@ -63,6 +64,12 @@ object Preferences {
         }
 
     // 設定 相關
+
+    val switchPlayerKernel: String
+        get() = preferenceSp.getString(
+            PlayerSettingsFragment.SWITCH_PLAYER_KERNEL,
+            HMediaKernel.Type.ExoPlayer.name
+        ) ?: HMediaKernel.Type.ExoPlayer.name
 
     val showBottomProgress: Boolean
         get() = preferenceSp.getBoolean(

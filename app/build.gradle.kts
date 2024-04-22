@@ -130,6 +130,7 @@ dependencies {
     // video
 
     implementation(libs.jiaozi.video.player)
+    implementation(libs.media3.exoplayer)
 
     // view
 
@@ -149,6 +150,8 @@ dependencies {
 
     androidTestImplementation(libs.test.junit)
     androidTestImplementation(libs.test.espresso.core)
+
+    debugImplementation(libs.leak.canary)
 }
 
 /**

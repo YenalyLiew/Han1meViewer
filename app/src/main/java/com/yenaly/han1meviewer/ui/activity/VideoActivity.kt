@@ -13,6 +13,7 @@ import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import coil.load
 import com.yenaly.han1meviewer.COMMENT_TYPE
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.VIDEO_COMMENT_PREFIX
@@ -24,6 +25,7 @@ import com.yenaly.han1meviewer.logic.exception.ParseException
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.fragment.video.VideoIntroductionFragment
+import com.yenaly.han1meviewer.ui.view.video.HMediaKernel
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
@@ -49,6 +51,8 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     }
 
     private val commentViewModel by viewModels<CommentViewModel>()
+
+    private val kernel = HMediaKernel.Type.fromString(Preferences.switchPlayerKernel)
 
     private val videoCode by intentExtra<String>(VIDEO_CODE)
     private var videoTitle: String? = null
@@ -107,7 +111,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                             } else {
                                 binding.videoPlayer.setUp(
                                     JZDataSource(state.info.videoUrls, state.info.title),
-                                    Jzvd.SCREEN_NORMAL
+                                    Jzvd.SCREEN_NORMAL, kernel
                                 )
                             }
                             binding.videoPlayer.posterImageView.load(state.info.coverUrl) {
