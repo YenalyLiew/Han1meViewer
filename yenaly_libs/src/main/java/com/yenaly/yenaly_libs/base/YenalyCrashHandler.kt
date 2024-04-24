@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Looper
-import com.yenaly.yenaly_libs.ActivitiesManager
+import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.base.dialog.YenalyCrashDialogActivity
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.startActivity
@@ -58,7 +58,7 @@ class YenalyCrashHandler private constructor() : Thread.UncaughtExceptionHandler
                 flag = Intent.FLAG_ACTIVITY_NEW_TASK,
                 values = arrayOf("yenaly_throwable" to errorWriter.toString())
             )
-            ActivitiesManager.exit(killProcess = true)
+            ActivityManager.exit(killProcess = true)
         }
     }
 

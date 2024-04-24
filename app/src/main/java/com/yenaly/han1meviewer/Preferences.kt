@@ -44,6 +44,12 @@ object Preferences {
 
     // 更新 相關
 
+    private const val UPDATE_NODE_ID = "update_node_id"
+
+    var updateNodeId: String
+        get() = getSpValue(UPDATE_NODE_ID, EMPTY_STRING)
+        set(value) = putSpValue(UPDATE_NODE_ID, value)
+
     var lastUpdatePopupTime
         get() = getSpValue(HomeSettingsFragment.LAST_UPDATE_POPUP_TIME, 0L)
         set(value) = putSpValue(HomeSettingsFragment.LAST_UPDATE_POPUP_TIME, value)

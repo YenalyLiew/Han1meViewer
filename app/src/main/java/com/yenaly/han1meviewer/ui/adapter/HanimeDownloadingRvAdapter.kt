@@ -26,7 +26,6 @@ import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadingBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.util.await
-import com.yenaly.han1meviewer.util.createDownloadName
 import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
@@ -160,9 +159,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                     setTitle(R.string.sure_to_delete)
                     setMessage(
                         context.getString(
-                            R.string.prepare_to_delete_s, createDownloadName(
-                                item.title, item.quality
-                            )
+                            R.string.prepare_to_delete_s, item.videoUri.toUri().toFile().path
                         )
                     )
                     setPositiveButton(R.string.confirm) { _, _ ->

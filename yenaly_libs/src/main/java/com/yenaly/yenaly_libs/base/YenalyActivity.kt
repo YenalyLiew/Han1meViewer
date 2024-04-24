@@ -17,12 +17,13 @@ import java.lang.reflect.ParameterizedType
  * @Description : Description...
  */
 abstract class YenalyActivity<DB : ViewDataBinding, VM : ViewModel>(
-    private val viewModelFactory: ViewModelProvider.Factory? = null
+    private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : FrameActivity() {
 
-    lateinit var binding: DB
-    lateinit var viewModel: VM
+    protected var _binding: DB? = null
+    val binding get() = _binding!!
 
+    lateinit var viewModel: VM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,13 +34,12 @@ abstract class YenalyActivity<DB : ViewDataBinding, VM : ViewModel>(
 
     override fun onDestroy() {
         super.onDestroy()
-        if (::binding.isInitialized) {
-            binding.unbind()
-        }
+        _binding?.unbind()
+        _binding = null
     }
 
     private fun initView() {
-        binding = getViewBinding(layoutInflater)
+        _binding = getViewBinding(layoutInflater)
         setContentView(binding.root)
         viewModel = createViewModel(this, viewModelFactory)
         binding.lifecycleOwner = this

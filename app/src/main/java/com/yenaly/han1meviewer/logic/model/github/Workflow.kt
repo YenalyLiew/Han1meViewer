@@ -26,10 +26,12 @@ data class Artifacts(
     @SerialName("artifacts") val artifacts: List<Artifact>,
 ) {
     val downloadLink: String get() = artifacts.first().downloadLink
+    val nodeId: String get() = artifacts.first().nodeId
 
     @Serializable
     data class Artifact(
         val name: String,
         @SerialName("archive_download_url") val downloadLink: String,
+        @SerialName("node_id") val nodeId: String,
     )
 }

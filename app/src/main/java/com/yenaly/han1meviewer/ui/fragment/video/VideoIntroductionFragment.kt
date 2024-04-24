@@ -283,7 +283,8 @@ class VideoIntroductionFragment :
             .build()
         val data = workDataOf(
             HanimeDownloadWorker.QUALITY to checkedQuality,
-            HanimeDownloadWorker.DOWNLOAD_URL to videoData.videoUrls[checkedQuality]!!,
+            HanimeDownloadWorker.DOWNLOAD_URL to videoData.videoUrls[checkedQuality]?.link,
+            HanimeDownloadWorker.VIDEO_TYPE to videoData.videoUrls[checkedQuality]?.suffix,
             HanimeDownloadWorker.HANIME_NAME to videoData.title,
             HanimeDownloadWorker.VIDEO_CODE to viewModel.videoCode,
             HanimeDownloadWorker.COVER_URL to videoData.coverUrl,

@@ -25,7 +25,7 @@ import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
 import com.yenaly.han1meviewer.util.showAlertDialog
-import com.yenaly.yenaly_libs.ActivitiesManager
+import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -92,7 +92,7 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
                         setMessage(getString(R.string.domain_change_tips).trimIndent())
                         setPositiveButton(R.string.confirm) { _, _ ->
                             logout()
-                            ActivitiesManager.restart(killProcess = true)
+                            ActivityManager.restart(killProcess = true)
                         }
                         setNegativeButton(R.string.cancel) { _, _ ->
                             domainName.value = origin
@@ -109,7 +109,7 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
                     setTitle(R.string.attention)
                     setMessage(getString(R.string.restart_or_not_working, EMPTY_STRING))
                     setPositiveButton(R.string.confirm) { _, _ ->
-                        ActivitiesManager.restart(killProcess = true)
+                        ActivityManager.restart(killProcess = true)
                     }
                     setNegativeButton(R.string.cancel, null)
                 }

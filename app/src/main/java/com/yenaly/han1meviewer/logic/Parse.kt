@@ -479,7 +479,8 @@ object Parse {
             videos.forEach { source ->
                 val resolution = source.attr("size") + "P"
                 val sourceUrl = source.absUrl("src")
-                hanimeResolution.parseResolution(resolution, sourceUrl)
+                val videoType = source.attr("type")
+                hanimeResolution.parseResolution(resolution, sourceUrl, videoType)
             }
         } else {
             val playerDivWrapper = parseBody.selectFirst("div[id=player-div-wrapper]")

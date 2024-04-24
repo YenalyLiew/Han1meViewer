@@ -3,13 +3,11 @@ package com.yenaly.han1meviewer.ui.activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import coil.load
 import com.yenaly.han1meviewer.COMMENT_TYPE
@@ -26,6 +24,7 @@ import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.fragment.video.VideoIntroductionFragment
 import com.yenaly.han1meviewer.ui.view.video.HMediaKernel
+import com.yenaly.han1meviewer.ui.view.video.HanimeDataSource
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
@@ -35,6 +34,7 @@ import com.yenaly.yenaly_libs.utils.browse
 import com.yenaly.yenaly_libs.utils.intentExtra
 import com.yenaly.yenaly_libs.utils.makeBundle
 import com.yenaly.yenaly_libs.utils.showShortToast
+import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.view.attach
 import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
 import kotlinx.coroutines.launch
@@ -42,13 +42,6 @@ import kotlinx.datetime.Clock
 
 class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     OrientationManager.OrientationChangeListener {
-
-    companion object {
-        /**
-         * 用於保存當前正在播放的VideoActivity
-         */
-        val currentVideoActivitySet = linkedSetOf<VideoActivity>()
-    }
 
     private val commentViewModel by viewModels<CommentViewModel>()
 
@@ -67,9 +60,6 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                 videoCodeByWebsite = it.getQueryParameter("v")
             }
         }
-
-        currentVideoActivitySet += this
-        Log.d("CurrentVideoActivitySet", "$this was added.")
 
         requireNotNull(videoCodeByWebsite ?: videoCode).let {
             viewModel.videoCode = it
@@ -110,7 +100,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                                 }
                             } else {
                                 binding.videoPlayer.setUp(
-                                    JZDataSource(state.info.videoUrls, state.info.title),
+                                    HanimeDataSource(state.info.title, state.info.videoUrls),
                                     Jzvd.SCREEN_NORMAL, kernel
                                 )
                             }
@@ -166,8 +156,6 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     override fun onDestroy() {
         super.onDestroy()
         Jzvd.releaseAllVideos()
-        currentVideoActivitySet -= this
-        Log.d("CurrentVideoActivitySet", "$this was removed.")
     }
 
     override fun onOrientationChanged(orientation: OrientationManager.ScreenOrientation) {
@@ -221,6 +209,10 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     }
 
     private fun initHKeyframe() {
+        binding.videoPlayer.onGoHomeClickListener = { v ->
+            // singleTask 直接把所有 VideoActivity 都 finish 掉
+            startActivity<MainActivity>()
+        }
         binding.videoPlayer.onKeyframeClickListener = { v ->
             binding.videoPlayer.clickHKeyframe(v)
         }

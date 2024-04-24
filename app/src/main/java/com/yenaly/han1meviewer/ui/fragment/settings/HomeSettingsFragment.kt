@@ -32,7 +32,7 @@ import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
 import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.util.showUpdateDialog
-import com.yenaly.yenaly_libs.ActivitiesManager
+import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.base.preference.LongClickablePreference
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 import com.yenaly.yenaly_libs.utils.browse
@@ -133,7 +133,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                             )
                         )
                         setPositiveButton(R.string.confirm) { _, _ ->
-                            ActivitiesManager.restart(killProcess = true)
+                            ActivityManager.restart(killProcess = true)
                         }
                         setNegativeButton(R.string.cancel, null)
                     }

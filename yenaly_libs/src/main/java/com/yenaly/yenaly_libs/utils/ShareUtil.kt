@@ -5,7 +5,7 @@ package com.yenaly.yenaly_libs.utils
 
 import android.net.Uri
 import androidx.core.app.ShareCompat
-import com.yenaly.yenaly_libs.ActivitiesManager
+import com.yenaly.yenaly_libs.ActivityManager
 
 @JvmOverloads
 fun shareText(content: CharSequence, title: CharSequence? = null) {
@@ -39,7 +39,7 @@ fun shareFiles(uris: List<Uri>, title: CharSequence? = null, mimeType: String? =
 
 inline fun share(mimeType: String?, crossinline block: ShareCompat.IntentBuilder.() -> Unit) =
     ShareCompat
-        .IntentBuilder(ActivitiesManager.currentActivity ?: applicationContext)
+        .IntentBuilder(ActivityManager.currentActivity.get() ?: applicationContext)
         .setType(mimeType)
         .apply(block)
         .startChooser()

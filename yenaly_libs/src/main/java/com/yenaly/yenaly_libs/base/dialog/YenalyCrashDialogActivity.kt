@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.itxca.spannablex.spannable
-import com.yenaly.yenaly_libs.ActivitiesManager
+import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.R
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
 import com.yenaly.yenaly_libs.utils.copyToClipboard
@@ -41,10 +41,10 @@ class YenalyCrashDialogActivity : FrameActivity() {
             .setMessage(info)
             .setCancelable(false)
             .setPositiveButton(R.string.yenaly_restart_app) { _, _ ->
-                ActivitiesManager.restart(killProcess = true)
+                ActivityManager.restart(killProcess = true)
             }
             .setNegativeButton(R.string.yenaly_exit_app) { _, _ ->
-                ActivitiesManager.exit(killProcess = true)
+                ActivityManager.exit(killProcess = true)
             }
             .setNeutralButton(R.string.yenaly_copy) { _, _ ->
                 yenalyThrowable.copyToClipboard()
