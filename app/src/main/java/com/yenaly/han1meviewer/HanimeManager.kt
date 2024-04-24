@@ -40,11 +40,7 @@ fun getHanimeVideoLink(videoCode: String) = HANIME_BASE_URL + "watch?v=" + video
 fun getHanimeVideoDownloadLink(videoCode: String) =
     HANIME_BASE_URL + "download?v=" + videoCode
 
-val videoUrlRegex = when (HANIME_BASE_URL) {
-    HANIME_MAIN_BASE_URL -> Regex("""hanime1\.me/watch\?v=(\d+)""")
-    HANIME_ALTER_BASE_URL -> Regex("""hanime1\.(?:com|me)/watch\?v=(\d+)""")
-    else -> throw IllegalStateException("This URL has not been handled.")
-}
+val videoUrlRegex = Regex("""hanime1\.(?:com|me)/watch\?v=(\d+)""")
 
 fun String.toVideoCode() = videoUrlRegex.find(this)?.groupValues?.get(1)
 

@@ -8,12 +8,19 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.*
-import com.yenaly.han1meviewer.*
+import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
+import com.yenaly.han1meviewer.DOWNLOAD_NOTIFICATION_CHANNEL
+import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.network.ServiceCreator
+import com.yenaly.han1meviewer.util.DEF_VIDEO_TYPE
 import com.yenaly.han1meviewer.util.await
 import com.yenaly.han1meviewer.util.getDownloadedHanimeFile
 import com.yenaly.yenaly_libs.utils.showShortToast
@@ -44,6 +51,7 @@ class HanimeDownloadWorker(
         const val DELETE = "delete"
         const val QUALITY = "quality"
         const val DOWNLOAD_URL = "download_url"
+        const val VIDEO_TYPE = "video_type"
         const val HANIME_NAME = "hanime_name"
         const val VIDEO_CODE = "video_code"
         const val COVER_URL = "cover_url"
@@ -81,6 +89,7 @@ class HanimeDownloadWorker(
 
     private val hanimeName by inputData(HANIME_NAME, EMPTY_STRING)
     private val downloadUrl by inputData(DOWNLOAD_URL, EMPTY_STRING)
+    private val videoType by inputData(VIDEO_TYPE, DEF_VIDEO_TYPE)
     private val quality by inputData(QUALITY, EMPTY_STRING)
     private val videoCode by inputData(VIDEO_CODE, EMPTY_STRING)
     private val coverUrl by inputData(COVER_URL, EMPTY_STRING)
@@ -108,7 +117,7 @@ class HanimeDownloadWorker(
 
     private suspend fun createNewRaf() {
         return withContext(Dispatchers.IO) {
-            val file = getDownloadedHanimeFile(hanimeName, quality)
+            val file = getDownloadedHanimeFile(hanimeName, quality, suffix = videoType)
             var raf: RandomAccessFile? = null
             var response: Response? = null
             var body: ResponseBody? = null
@@ -146,7 +155,7 @@ class HanimeDownloadWorker(
 
     private suspend fun download(): Result {
         return withContext(Dispatchers.IO) {
-            val file = getDownloadedHanimeFile(hanimeName, quality)
+            val file = getDownloadedHanimeFile(hanimeName, quality, suffix = videoType)
             val isExist = DatabaseRepo.HanimeDownload.isExist(videoCode, quality)
             if (!isExist) createNewRaf()
             val entity = DatabaseRepo.HanimeDownload.findBy(videoCode, quality)

@@ -17,13 +17,15 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.yenaly.han1meviewer.EMPTY_STRING
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.UPDATE_NOTIFICATION_CHANNEL
+import com.yenaly.han1meviewer.logic.model.github.Latest
 import com.yenaly.han1meviewer.logic.network.HUpdater
 import com.yenaly.han1meviewer.util.installApkPackage
 import com.yenaly.han1meviewer.util.runSuspendCatching
+import com.yenaly.han1meviewer.util.updateFile
 import com.yenaly.yenaly_libs.utils.showShortToast
-import java.io.File
 import kotlin.random.Random
 
 /**
@@ -39,17 +41,19 @@ class HUpdateWorker(
         const val TAG = "HUpdateWorker"
 
         const val DOWNLOAD_LINK = "download_link"
+        const val NODE_ID = "node_id"
         const val UPDATE_APK = "update_apk"
 
         /**
          * This function is used to enqueue a download task
          */
-        fun enqueue(context: Context, downloadLink: String) {
+        fun enqueue(context: Context, latest: Latest) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             val data = workDataOf(
-                DOWNLOAD_LINK to downloadLink,
+                DOWNLOAD_LINK to latest.downloadLink,
+                NODE_ID to latest.nodeId,
             )
             val req = OneTimeWorkRequestBuilder<HUpdateWorker>()
                 .addTag(TAG)
@@ -88,19 +92,21 @@ class HUpdateWorker(
     }
 
     private val downloadLink by inputData(DOWNLOAD_LINK, EMPTY_STRING)
+    private val nodeId by inputData(NODE_ID, EMPTY_STRING)
     private val downloadId = Random.nextInt()
 
     override suspend fun doWork(): Result {
         with(HUpdater) {
-            val file = File(context.cacheDir, "update.apk").apply { delete() }
+            val file = context.updateFile.apply { delete() }
             val inject = runSuspendCatching {
                 setForeground(createForegroundInfo(progress = 0))
                 file.injectUpdate(downloadLink) { progress ->
-                    setForegroundAsync(createForegroundInfo(progress))
+                    setForeground(createForegroundInfo(progress))
                 }
             }
             if (inject.isSuccess) {
                 val outputData = workDataOf(UPDATE_APK to file.toUri().toString())
+                Preferences.updateNodeId = nodeId
                 return Result.success(outputData)
             } else {
                 inject.exceptionOrNull()?.printStackTrace()

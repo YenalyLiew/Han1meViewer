@@ -21,16 +21,18 @@ import java.lang.reflect.ParameterizedType
  */
 abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverloads constructor(
     private val sharedViewModel: Boolean = true,
-    private val viewModelFactory: ViewModelProvider.Factory? = null
+    private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : FrameFragment() {
 
-    lateinit var binding: DB
+    protected var _binding: DB? = null
+    val binding get() = _binding!!
+
     lateinit var viewModel: VM
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         initView(inflater, container)
         return binding.root
@@ -44,16 +46,15 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (::binding.isInitialized) {
-            binding.unbind()
-        }
+        _binding?.unbind()
+        _binding = null
     }
 
     private fun initView(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ) {
-        binding = getViewBinding(inflater, container)
+        _binding = getViewBinding(inflater, container)
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel = if (sharedViewModel) {
@@ -77,7 +78,7 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
     @Suppress("unchecked_cast")
     private fun <DB : ViewDataBinding> getViewBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): DB {
         val dbClass =
             (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<DB>

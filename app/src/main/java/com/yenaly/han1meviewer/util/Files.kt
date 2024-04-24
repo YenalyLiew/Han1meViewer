@@ -8,16 +8,21 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.yenaly.han1meviewer.FILE_PROVIDER_AUTHORITY
 import com.yenaly.yenaly_libs.utils.applicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 
 val hanimeVideoLocalFolder get() = applicationContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
 
-fun createDownloadName(title: String, quality: String, suffix: String = "mp4") =
+const val DEF_VIDEO_TYPE = "mp4"
+
+fun createDownloadName(title: String, quality: String, suffix: String = DEF_VIDEO_TYPE) =
     "${title}_${quality}.${suffix}"
 
-fun getDownloadedHanimeFile(title: String, quality: String, suffix: String = "mp4"): File {
+fun getDownloadedHanimeFile(title: String, quality: String, suffix: String = DEF_VIDEO_TYPE): File {
     return File(hanimeVideoLocalFolder, createDownloadName(title, quality, suffix))
 }
 
@@ -52,25 +57,28 @@ fun Context.openDownloadedHanimeVideoLocally(
 /**
  * copyTo with progress
  */
-fun InputStream.copyTo(
+suspend fun InputStream.copyTo(
     out: OutputStream,
     contentLength: Long,
     bufferSize: Int = DEFAULT_BUFFER_SIZE,
-    progress: ((Int) -> Unit)? = null,
+    progress: (suspend (Int) -> Unit)? = null,
 ): Long {
-    var bytesCopied: Long = 0
-    val buffer = ByteArray(bufferSize)
-    var bytes = read(buffer)
-    var percent = 0
-    while (bytes >= 0) {
-        out.write(buffer, 0, bytes)
-        bytesCopied += bytes
-        val newPercent = (bytesCopied * 100 / contentLength).toInt()
-        if (newPercent != percent) {
-            percent = newPercent
-            progress?.invoke(percent)
+    return withContext(Dispatchers.IO) {
+        var bytesCopied: Long = 0
+        val buffer = ByteArray(bufferSize)
+        var bytes = read(buffer)
+        var percent = 0
+        while (bytes >= 0) {
+            yield()
+            out.write(buffer, 0, bytes)
+            bytesCopied += bytes
+            val newPercent = (bytesCopied * 100 / contentLength).toInt()
+            if (newPercent != percent) {
+                percent = newPercent
+                progress?.invoke(percent.coerceAtMost(100))
+            }
+            bytes = read(buffer)
         }
-        bytes = read(buffer)
+        bytesCopied
     }
-    return bytesCopied
 }

@@ -5,8 +5,9 @@ package com.yenaly.yenaly_libs.base
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import com.yenaly.yenaly_libs.ActivitiesManager
+import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.utils.isDebugEnabled
+import java.lang.ref.WeakReference
 
 /**
  * @ProjectName : YenalyModule
@@ -24,16 +25,13 @@ open class YenalyApplication : Application(), Application.ActivityLifecycleCallb
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        ActivitiesManager.push(activity)
-        ActivitiesManager.currentActivity = activity
     }
 
     override fun onActivityStarted(activity: Activity) {
-        ActivitiesManager.currentActivity = activity
     }
 
     override fun onActivityResumed(activity: Activity) {
-        ActivitiesManager.currentActivity = activity
+        ActivityManager.currentActivity = WeakReference(activity)
     }
 
     override fun onActivityPaused(activity: Activity) {
@@ -46,6 +44,5 @@ open class YenalyApplication : Application(), Application.ActivityLifecycleCallb
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        ActivitiesManager.remove(activity)
     }
 }

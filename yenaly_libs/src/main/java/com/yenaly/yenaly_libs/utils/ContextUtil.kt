@@ -3,7 +3,6 @@
 
 package com.yenaly.yenaly_libs.utils
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
@@ -14,7 +13,7 @@ import androidx.annotation.ColorInt
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.color.MaterialColors
-import com.yenaly.yenaly_libs.ActivitiesManager
+import com.yenaly.yenaly_libs.ActivityManager
 
 /**
  * Global application context.
@@ -31,11 +30,11 @@ val application get() = applicationContext as Application
 /**
  * Extension property to get the Activity from a Context.
  */
-val Context.activity: Activity?
+val Context.activity: android.app.Activity?
     get() {
         var context = this
         while (context is ContextWrapper) {
-            if (context is Activity) {
+            if (context is android.app.Activity) {
                 return context
             }
             context = context.baseContext
@@ -46,7 +45,7 @@ val Context.activity: Activity?
 /**
  * Extension function to find an Activity of a specific type from a Context.
  */
-inline fun <reified T : Activity> Context.findActivity(): T {
+inline fun <reified T : android.app.Activity> Context.findActivity(): T {
     var context = this
     while (context is ContextWrapper) {
         if (context is T) {
@@ -62,7 +61,8 @@ inline fun <reified T : Activity> Context.findActivity(): T {
  * This is mainly used for AlertDialogs which require a Context with a window token.
  */
 fun Context.requireComponentActivity() =
-    (this.activity ?: ActivitiesManager.currentActivity) as ComponentActivity
+    (this.activity ?: ActivityManager.currentActivity.get()) as? ComponentActivity
+        ?: error("No ComponentActivity found")
 
 /**
  * Extension property to get the Lifecycle from a Context.

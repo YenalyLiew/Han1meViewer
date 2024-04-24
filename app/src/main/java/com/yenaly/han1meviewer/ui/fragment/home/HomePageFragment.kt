@@ -168,7 +168,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
 
     @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.homePageFlow.collect { state ->
                     binding.rv.isGone = state !is WebsiteState.Success
@@ -205,6 +205,11 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        binding.rv.adapter = null
+        super.onDestroyView()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

@@ -9,4 +9,10 @@ data class Latest(
     val version: String,
     val changelog: String,
     val downloadLink: String,
+    /**
+     * Node ID for the download link
+     *
+     * 其实就是个变相的 md5 验证
+     */
+    val nodeId: String,
 )

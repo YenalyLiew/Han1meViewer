@@ -33,7 +33,6 @@ import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
-import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.adapter.HKeyframeRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.VideoSpeedAdapter
 import com.yenaly.han1meviewer.util.notNull
@@ -205,6 +204,13 @@ class HJzvdStd @JvmOverloads constructor(
     var onKeyframeClickListener: ((View) -> Unit)? = null
 
     /**
+     * 回到主頁的點擊事件
+     *
+     * 作用：關閉所有的 VideoActivity
+     */
+    var onGoHomeClickListener: ((View) -> Unit)? = null
+
+    /**
      * 關鍵H幀的長按事件
      *
      * 作用：將當前時刻加入關鍵H幀
@@ -359,7 +365,7 @@ class HJzvdStd @JvmOverloads constructor(
         when (v.id) {
             R.id.tv_speed -> clickSpeed()
             R.id.tv_keyframe -> onKeyframeClickListener?.invoke(v)
-            R.id.go_home -> clickGoHome()
+            R.id.go_home -> onGoHomeClickListener?.invoke(v)
         }
     }
 
@@ -608,12 +614,6 @@ class HJzvdStd @JvmOverloads constructor(
                     + this@HJzvdStd.context.getString(R.string.long_press_to_add_h_keyframe)
         )
         popup.showAtLocation(textureViewContainer, Gravity.END, 0, 0)
-    }
-
-    fun clickGoHome() {
-        VideoActivity.currentVideoActivitySet.forEach {
-            it.finish()
-        }
     }
 
     /**

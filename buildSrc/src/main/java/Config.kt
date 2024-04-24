@@ -38,7 +38,7 @@ object Config {
         }.standardOutput.asText.get().trim()
 
     val thisYear: Int
-        get() = LocalDateTime.now(Clock.system(ZoneId.of("Asia/Shanghai"))).year
+        get() = LocalDateTime.now(Clock.system(ZoneId.of("UTC+8"))).year
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> Provider<String>.fetch(clazz: KClass<T>): T {

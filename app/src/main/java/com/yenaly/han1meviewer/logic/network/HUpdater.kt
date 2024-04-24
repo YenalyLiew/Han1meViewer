@@ -19,6 +19,8 @@ import java.util.zip.ZipInputStream
  */
 object HUpdater {
 
+    const val TAG = "HUpdater"
+
     const val DEFAULT_BRANCH = "master"
 
     /**
@@ -47,19 +49,24 @@ object HUpdater {
                     val artifacts =
                         HanimeNetwork.githubService.getArtifacts(workflowRun.artifactsUrl)
                     val archiveUrl = artifacts.downloadLink
+                    val nodeId = artifacts.nodeId
                     val changelog = runSuspendCatching {
                         HanimeNetwork.githubService.getCommitComparison(
                             curSha = curSha,
                             latestSha = shortSha
                         ).commits.toChangelogPrettyString()
                     }.getOrNull() ?: workflowRun.title
-                    return Latest("$shortSha (CI)", changelog, archiveUrl)
+                    return Latest("$shortSha (CI)", changelog, archiveUrl, nodeId)
                 }
             } else {
                 val ver = HanimeNetwork.githubService.getLatestVersion()
                 val isNeeded = checkNeedUpdate(ver.tagName)
                 if (isNeeded) {
-                    return Latest(ver.tagName, ver.body, ver.assets.first().browserDownloadURL)
+                    return Latest(
+                        ver.tagName, ver.body,
+                        ver.assets.first().browserDownloadURL,
+                        ver.assets.first().nodeID
+                    )
                 }
             }
         }
@@ -71,10 +78,10 @@ object HUpdater {
      *
      * @param url update url
      */
-    suspend fun File.injectUpdate(url: String, progress: ((Int) -> Unit)? = null) {
+    suspend fun File.injectUpdate(url: String, progress: (suspend (Int) -> Unit)? = null) {
         val res = HanimeNetwork.githubService.request(url)
         if (url.endsWith("zip")) {
-            Log.d("HUpdater", "Injecting update from zip ($url)")
+            Log.d(TAG, "Injecting update from zip ($url)")
             res.body()?.use { body ->
                 body.byteStream().use { stream ->
                     ZipInputStream(stream).use { zip ->
@@ -86,7 +93,7 @@ object HUpdater {
                 }
             }
         } else {
-            Log.d("HUpdater", "Injecting update from release ($url)")
+            Log.d(TAG, "Injecting update from release ($url)")
             this.outputStream().use {
                 res.body()?.use { body ->
                     body.byteStream().copyTo(it, body.contentLength(), progress = progress)
