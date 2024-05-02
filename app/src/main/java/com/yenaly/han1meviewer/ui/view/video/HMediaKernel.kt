@@ -23,6 +23,7 @@ import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.LoadControl
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
@@ -57,7 +58,7 @@ sealed interface HMediaKernel {
 
 class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMediaKernel {
     companion object {
-        const val TAG = "ExoMediaCore"
+        const val TAG = "ExoMediaKernel"
     }
 
     private var _exoPlayer: ExoPlayer? = null
@@ -104,7 +105,8 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
 
             val currUrl = jzvd.jzDataSource.currentUrl.toString()
             val videoSource = if (currUrl.contains(".m3u8")) {
-                error("HLS is not supported")
+                HlsMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(currUrl))
             } else {
                 ProgressiveMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(MediaItem.fromUri(currUrl))
