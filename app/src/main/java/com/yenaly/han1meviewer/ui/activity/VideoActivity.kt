@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.ui.activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -59,6 +60,13 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             uri?.let {
                 videoCodeByWebsite = it.getQueryParameter("v")
             }
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            if (Jzvd.backPress()) {
+                return@addCallback
+            }
+            finish()
         }
 
         requireNotNull(videoCodeByWebsite ?: videoCode).let {
@@ -141,13 +149,6 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
         }
     }
 
-    override fun onBackPressed() {
-        if (Jzvd.backPress()) {
-            return
-        }
-        super.onBackPressed()
-    }
-
     override fun onStop() {
         super.onStop()
         Jzvd.goOnPlayOnPause()
@@ -209,7 +210,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     }
 
     private fun initHKeyframe() {
-        binding.videoPlayer.onGoHomeClickListener = { v ->
+        binding.videoPlayer.onGoHomeClickListener = { _ ->
             // singleTask 直接把所有 VideoActivity 都 finish 掉
             startActivity<MainActivity>()
         }

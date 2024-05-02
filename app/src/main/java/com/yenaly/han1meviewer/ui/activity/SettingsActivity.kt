@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.navigation.NavController
@@ -31,6 +32,21 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
 
     override fun initData(savedInstanceState: Bundle?) {
         setSupportActionBar(binding.toolbar)
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_OPEN,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_CLOSE,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
+        }
+
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeActionContentDescription(R.string.back)
@@ -53,8 +69,11 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
         return super.onOptionsItemSelected(item)
     }
 
+    @Suppress("DEPRECATION")
     override fun finish() {
         super.finish()
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
     }
 }
