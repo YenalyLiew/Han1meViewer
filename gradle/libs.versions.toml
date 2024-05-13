@@ -7,7 +7,7 @@ targetSdk = "34"
 # Plugins
 androidGradle = "8.3.2"
 kotlin = "1.9.23"
-serializationPlugin = "1.9.23"
+serializationPlugin = "1.9.24"
 ksp = "1.9.23-1.0.19"
 
 # Dependencies
