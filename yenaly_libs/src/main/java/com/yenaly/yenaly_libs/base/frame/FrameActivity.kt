@@ -1,14 +1,13 @@
 package com.yenaly.yenaly_libs.base.frame
 
-import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.TextView
-import android.window.OnBackInvokedCallback
-import android.window.OnBackInvokedDispatcher
-import androidx.annotation.CallSuper
 import androidx.annotation.MenuRes
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
@@ -17,7 +16,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yenaly.yenaly_libs.R
 import com.yenaly.yenaly_libs.utils.dp
-import java.lang.ref.WeakReference
 
 /**
  * @author Yenaly Liew
@@ -27,19 +25,12 @@ abstract class FrameActivity : AppCompatActivity() {
 
     private lateinit var loadingDialog: AlertDialog
 
-    private var onBackInvokedCallback: OnBackInvokedCallback? = null
-
-    /**
-     * SDK33 及以上专用，不需要适配就不用管，详情请见 [onBackEvent] 方法
-     */
-    open var isNeedInterceptBackEvent: Boolean = false
-
     @JvmOverloads
     open fun showLoadingDialog(
         loadingText: String = getString(R.string.yenaly_loading),
         cancelable: Boolean = false,
         dialogWidth: Int = 260.dp,
-        dialogHeight: Int = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialogHeight: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
     ) {
         val loadingDialogView =
             LayoutInflater.from(this).inflate(R.layout.yenaly_dialog_loading, null)
@@ -68,13 +59,6 @@ abstract class FrameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setUiStyle()
         super.onCreate(savedInstanceState)
-        if (isNeedInterceptBackEvent && Build.VERSION.SDK_INT >= 33) {
-            onBackInvokedCallback = OnBackInvokedCallbackInner(this).also {
-                onBackInvokedDispatcher.registerOnBackInvokedCallback(
-                    OnBackInvokedDispatcher.PRIORITY_DEFAULT, it
-                )
-            }
-        }
     }
 
 
@@ -83,35 +67,6 @@ abstract class FrameActivity : AppCompatActivity() {
         if (this::loadingDialog.isInitialized) {
             loadingDialog.dismiss()
         }
-        if (Build.VERSION.SDK_INT >= 33) {
-            onBackInvokedCallback?.let(onBackInvokedDispatcher::unregisterOnBackInvokedCallback)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    internal class OnBackInvokedCallbackInner(frameActivity: FrameActivity) :
-        OnBackInvokedCallback {
-        private val activity = WeakReference(frameActivity)
-
-        override fun onBackInvoked() {
-            activity.get()?.apply {
-                onBackEvent()
-            }
-        }
-    }
-
-    /**
-     * SDK33 之后 deprecate 了 [onBackPressed] 方法，
-     * SDK33 后需要调用这个方法执行新逻辑，
-     * 之前版本不需要调用，调用 [onBackPressed] 方法即可。
-     *
-     * 不要忘了把 [isNeedInterceptBackEvent] 设置为 true.
-     *
-     * [相关链接](https://juejin.cn/post/7105645114760331300)
-     */
-    @CallSuper
-    open fun onBackEvent() {
-        onBackPressed()
     }
 
     /**
@@ -124,7 +79,7 @@ abstract class FrameActivity : AppCompatActivity() {
      */
     open fun addMenu(
         @MenuRes menuRes: Int,
-        action: (menuItem: MenuItem) -> Boolean
+        action: (menuItem: MenuItem) -> Boolean,
     ) {
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -143,7 +98,7 @@ abstract class FrameActivity : AppCompatActivity() {
     open fun addMenu(
         @MenuRes menuRes: Int,
         owner: LifecycleOwner,
-        action: (menuItem: MenuItem) -> Boolean
+        action: (menuItem: MenuItem) -> Boolean,
     ) {
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -163,7 +118,7 @@ abstract class FrameActivity : AppCompatActivity() {
         @MenuRes menuRes: Int,
         owner: LifecycleOwner,
         state: Lifecycle.State,
-        action: (menuItem: MenuItem) -> Boolean
+        action: (menuItem: MenuItem) -> Boolean,
     ) {
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

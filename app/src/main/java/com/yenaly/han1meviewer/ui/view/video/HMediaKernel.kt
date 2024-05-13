@@ -334,4 +334,11 @@ class SystemMediaKernel(jzvd: Jzvd) : JZMediaSystem(jzvd), HMediaKernel {
             Jzvd.FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
+
+    // #issue-139: 部分机型暂停报错，没判空导致的
+    override fun pause() {
+        mMediaHandler.post {
+            mediaPlayer?.pause()
+        }
+    }
 }

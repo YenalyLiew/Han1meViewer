@@ -24,7 +24,6 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingHorizontal="8dp"
-            android:paddingTop="68dp"
             android:paddingBottom="8dp">
 
             <com.scwang.smart.refresh.header.MaterialHeader
@@ -41,7 +40,8 @@
                     android:id="@+id/search_rv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:clipToPadding="false" />
+                    android:clipToPadding="false"
+                    android:paddingTop="68dp" />
 
             </com.drake.statelayout.StateLayout>
 
