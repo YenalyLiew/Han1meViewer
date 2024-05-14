@@ -144,6 +144,7 @@ dependencies {
     implementation(libs.spannable.x)
     implementation(libs.about)
     implementation(libs.statelayout)
+    implementation(libs.circular.reveal.switch)
 
     ksp(libs.room.compiler)
 
@@ -152,7 +153,7 @@ dependencies {
     androidTestImplementation(libs.test.junit)
     androidTestImplementation(libs.test.espresso.core)
 
-    debugImplementation(libs.leak.canary)
+    // debugImplementation(libs.leak.canary)
 }
 
 /**
