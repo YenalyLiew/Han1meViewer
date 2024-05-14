@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.WindowCompat
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.drakeet.about.AbsAboutActivity
@@ -12,6 +14,8 @@ import com.drakeet.about.Card
 import com.drakeet.about.Category
 import com.drakeet.about.Contributor
 import com.google.android.material.appbar.AppBarLayout
+import com.yenaly.circularrevealswitch.SwitchAnimation
+import com.yenaly.circularrevealswitch.ext.setDayNightModeSwitcher
 import com.yenaly.han1meviewer.BuildConfig
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.showSnackBar
@@ -50,8 +54,24 @@ class AboutActivity : AbsAboutActivity() {
             cornerRadius = 0F
         }
 
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (ColorUtils.calculateLuminance(randomHeaderColor) > 0.5) {
+            slogan.setTextColor(Color.BLACK)
+            version.setTextColor(Color.BLACK)
+            controller.isAppearanceLightStatusBars = true
+        } else {
+            slogan.setTextColor(Color.WHITE)
+            version.setTextColor(Color.WHITE)
+            controller.isAppearanceLightStatusBars = false
+        }
+
         findViewById<AppBarLayout>(com.drakeet.about.R.id.header_layout).apply {
             setBackgroundColor(randomHeaderColor)
+            setDayNightModeSwitcher(
+                duration = 1000L,
+                animToDayMode = SwitchAnimation.entries.random(),
+                animToNightMode = SwitchAnimation.entries.random()
+            )
         }
         setHeaderContentScrim(gradientDrawable)
 
