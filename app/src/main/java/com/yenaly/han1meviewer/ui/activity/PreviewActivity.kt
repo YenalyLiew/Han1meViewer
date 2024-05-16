@@ -33,6 +33,7 @@ import com.yenaly.han1meviewer.ui.adapter.HanimePreviewNewsRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimePreviewTourRvAdapter
 import com.yenaly.han1meviewer.ui.view.CenterLinearLayoutManager
 import com.yenaly.han1meviewer.ui.viewmodel.PreviewViewModel
+import com.yenaly.han1meviewer.util.addUpdateListener
 import com.yenaly.han1meviewer.util.colorTransition
 import com.yenaly.han1meviewer.util.toColorStateList
 import com.yenaly.yenaly_libs.base.YenalyActivity
@@ -309,7 +310,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         ) {
             duration = animDuration
             interpolator = animInterpolator
-            addUpdateListener {
+            addUpdateListener(lifecycle) {
                 val value = it.animatedValue as Int
                 binding.collapsingToolbar.setContentScrimColor(value)
             }
@@ -320,7 +321,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         ) {
             duration = animDuration
             interpolator = animInterpolator
-            addUpdateListener {
+            addUpdateListener(lifecycle) {
                 val value = it.animatedValue as Int
                 binding.llTour.setBackgroundColor(value)
             }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.core.view.isGone
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -12,7 +13,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import com.yenaly.han1meviewer.*
+import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
+import com.yenaly.han1meviewer.AdvancedSearchMap
+import com.yenaly.han1meviewer.HAdvancedSearch
+import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.databinding.ActivitySearchBinding
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
@@ -175,6 +179,12 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private fun initSearchBar() {
+        onBackPressedDispatcher.addCallback(this) {
+            if (binding.searchBar.hideHistory()) {
+                return@addCallback
+            }
+            finish()
+        }
         val searchAdapter = HanimeSearchHistoryRvAdapter()
         searchAdapter.listener = object : HanimeSearchHistoryRvAdapter.OnItemViewClickListener {
             override fun onItemClickListener(v: View, history: SearchHistoryEntity) {

@@ -37,6 +37,7 @@ import com.yenaly.han1meviewer.ui.adapter.RvWrapper.Companion.wrappedWith
 import com.yenaly.han1meviewer.ui.adapter.VideoColumnTitleAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.util.addUpdateListener
 import com.yenaly.han1meviewer.util.colorTransition
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.startActivity
@@ -254,7 +255,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         ) {
             interpolator = animInterpolator
             duration = animDuration
-            addUpdateListener {
+            addUpdateListener(viewLifecycleOwner.lifecycle) {
                 val color = it.animatedValue as Int
                 binding.btnBanner.iconTint = ColorStateList.valueOf(color)
             }
@@ -265,7 +266,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         ) {
             interpolator = animInterpolator
             duration = animDuration
-            addUpdateListener {
+            addUpdateListener(viewLifecycleOwner.lifecycle) {
                 val color = it.animatedValue as Int
                 binding.aColor.setBackgroundColor(color)
             }

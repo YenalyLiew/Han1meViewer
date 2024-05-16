@@ -20,6 +20,7 @@ import com.google.android.material.chip.ChipGroup
 import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
+import com.yenaly.han1meviewer.util.addUpdateListener
 import com.yenaly.han1meviewer.util.readBooleanCompat
 import com.yenaly.han1meviewer.util.writeBooleanCompat
 import com.yenaly.yenaly_libs.utils.activity
@@ -172,7 +173,7 @@ class CollapsibleTags @JvmOverloads constructor(
         return ValueAnimator.ofInt(start, end).apply {
             duration = animDuration
             interpolator = animInterpolator
-            addUpdateListener {
+            addUpdateListener(lifecycle) {
                 val value = it.animatedValue as Int
                 chipGroup.updateLayoutParams {
                     height = value
