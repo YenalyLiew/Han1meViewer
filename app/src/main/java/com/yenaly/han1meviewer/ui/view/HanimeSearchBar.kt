@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -134,7 +133,7 @@ class HanimeSearchBar @JvmOverloads constructor(
                 trySend(searchText)
                 Log.d("HanimeSearchBar", "focus: $searchText")
             } else {
-                if (!isCollapsed) hideHistory()
+                hideHistory()
             }
         }
 
@@ -168,7 +167,7 @@ class HanimeSearchBar @JvmOverloads constructor(
         isCollapsed = false
     }
 
-    fun hideHistory() {
+    fun hideHistory(): Boolean {
         if (!isCollapsed) {
             etSearch.hideIme(window)
             Log.d("HanimeSearchBar", "History Height: ${rvHistory.height}")
@@ -179,7 +178,9 @@ class HanimeSearchBar @JvmOverloads constructor(
                 .rotation(0F)
                 .start()
             isCollapsed = true
+            return true
         }
+        return false
     }
 
     private fun View.buildHeightAnimation(
@@ -207,11 +208,14 @@ class HanimeSearchBar @JvmOverloads constructor(
         return measuredHeight
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        if (event.keyCode == KeyEvent.KEYCODE_BACK && !isCollapsed) {
-            hideHistory()
-            return true
-        }
-        return super.dispatchKeyEvent(event)
-    }
+    // 使用 onBackPressedDispatcher.addCallback 替换
+    // 这个方法在 API 34 以上（貌似）无法返回 key event
+    //
+    // override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+    //     if (event.keyCode == KeyEvent.KEYCODE_BACK && !isCollapsed) {
+    //         hideHistory()
+    //         return true
+    //     }
+    //     return super.dispatchKeyEvent(event)
+    // }
 }
