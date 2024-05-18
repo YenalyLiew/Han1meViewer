@@ -187,12 +187,12 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
         }
         val searchAdapter = HanimeSearchHistoryRvAdapter()
         searchAdapter.listener = object : HanimeSearchHistoryRvAdapter.OnItemViewClickListener {
-            override fun onItemClickListener(v: View, history: SearchHistoryEntity) {
-                binding.searchBar.searchText = history.query
+            override fun onItemClickListener(v: View, history: SearchHistoryEntity?) {
+                binding.searchBar.searchText = history?.query
             }
 
-            override fun onItemRemoveListener(v: View, history: SearchHistoryEntity) {
-                viewModel.deleteSearchHistory(history)
+            override fun onItemRemoveListener(v: View, history: SearchHistoryEntity?) {
+                history?.let(viewModel::deleteSearchHistory)
             }
         }
         binding.searchBar.apply hsb@{

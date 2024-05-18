@@ -58,20 +58,21 @@ class HanimeSearchHistoryRvAdapter :
     ): QuickViewHolder {
         return QuickViewHolder(R.layout.item_search_history, parent).also { viewHolder ->
             viewHolder.getView<View>(R.id.btn_remove).setOnClickListener {
+                // #issue-142: 部分机型调用 getItem().notNull() 可能会报错
                 listener?.onItemRemoveListener(
-                    it, getItem(viewHolder.bindingAdapterPosition).notNull()
+                    it, getItem(viewHolder.bindingAdapterPosition)
                 )
             }
             viewHolder.getView<View>(R.id.root).setOnClickListener {
                 listener?.onItemClickListener(
-                    it, getItem(viewHolder.bindingAdapterPosition).notNull()
+                    it, getItem(viewHolder.bindingAdapterPosition)
                 )
             }
         }
     }
 
     interface OnItemViewClickListener {
-        fun onItemClickListener(v: View, history: SearchHistoryEntity)
-        fun onItemRemoveListener(v: View, history: SearchHistoryEntity)
+        fun onItemClickListener(v: View, history: SearchHistoryEntity?)
+        fun onItemRemoveListener(v: View, history: SearchHistoryEntity?)
     }
 }
