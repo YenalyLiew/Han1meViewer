@@ -2,7 +2,6 @@
 
 import Config.Version.createVersionCode
 import Config.Version.createVersionName
-import Config.fetch
 import Config.lastCommitSha
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
@@ -17,7 +16,7 @@ val isRelease: Boolean
     get() = gradle.startParameter.taskNames.any { it.contains("Release") }
 
 android {
-    compileSdk = libs.versions.compileSdk.fetch<Int>()
+    compileSdk = property("compile.sdk")?.toString()?.toIntOrNull()
 
     val commitSha = if (isRelease) lastCommitSha else "8ea5a9c" // 方便调试
 
@@ -41,10 +40,10 @@ android {
 
     defaultConfig {
         applicationId = "com.yenaly.han1meviewer"
-        minSdk = libs.versions.minSdk.fetch<Int>()
-        targetSdk = libs.versions.targetSdk.fetch<Int>()
+        minSdk = property("min.sdk")?.toString()?.toIntOrNull()
+        targetSdk = property("target.sdk")?.toString()?.toIntOrNull()
         versionCode = if (isRelease) createVersionCode() else 1 // 方便调试
-        versionName = versionCode.createVersionName(major = 0, minor = 14, patch = 5)
+        versionName = versionCode.createVersionName(major = 0, minor = 14, patch = 8)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
