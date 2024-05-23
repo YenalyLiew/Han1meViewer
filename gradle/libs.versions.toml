@@ -1,11 +1,6 @@
 [versions]
-# Base
-compileSdk = "34"
-minSdk = "24"
-targetSdk = "34"
-
 # Plugins
-androidGradle = "8.4.0"
+androidGradle = "8.4.1"
 kotlin = "1.9.24"
 serializationPlugin = "1.9.24"
 ksp = "1.9.24-1.0.20"

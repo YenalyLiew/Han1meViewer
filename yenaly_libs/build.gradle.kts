@@ -1,5 +1,3 @@
-import Config.fetch
-
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
@@ -7,10 +5,10 @@ plugins {
 }
 
 android {
-    compileSdk = libs.versions.compileSdk.fetch<Int>()
+    compileSdk = property("compile.sdk")?.toString()?.toIntOrNull()
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.fetch<Int>()
+        minSdk = property("min.sdk")?.toString()?.toIntOrNull()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -48,7 +46,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.coroutines.android)
-    
+
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.preference.ktx)

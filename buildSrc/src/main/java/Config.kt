@@ -1,12 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlin.reflect.KClass
 
 /**
  * @author Yenaly Liew
@@ -39,17 +37,4 @@ object Config {
 
     val thisYear: Int
         get() = LocalDateTime.now(Clock.system(ZoneId.of("UTC+8"))).year
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> Provider<String>.fetch(clazz: KClass<T>): T {
-        return when (clazz) {
-            Int::class -> get().toInt() as T
-            Long::class -> get().toLong() as T
-            Boolean::class -> get().toBoolean() as T
-            String::class -> get() as T
-            else -> error("Unsupported type: ${clazz.simpleName}")
-        }
-    }
-
-    inline fun <reified T : Any> Provider<String>.fetch(): T = fetch(T::class)
 }
