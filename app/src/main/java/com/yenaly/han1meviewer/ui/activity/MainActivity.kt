@@ -23,6 +23,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
 import com.yenaly.han1meviewer.hanimeSpannable
+import com.yenaly.han1meviewer.logic.exception.CloudFlareBlockedException
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
@@ -100,6 +101,17 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
                         state.info?.let { release ->
                             Preferences.lastUpdatePopupTime = Clock.System.now().epochSeconds
                             showUpdateDialog(release)
+                        }
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.homePageFlow.collect { state ->
+                    if (state is WebsiteState.Error) {
+                        if (state.throwable is CloudFlareBlockedException) {
+                            // TODO: 被屏蔽时的处理
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 package com.yenaly.han1meviewer.ui.view
 
-import android.animation.ValueAnimator
+import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,12 +41,12 @@ class HanimeSearchBar @JvmOverloads constructor(
 
     private val window = checkNotNull(context.activity?.window)
 
-    private val searchBar: ViewGroup
-    private val back: MaterialButton
-    private val search: MaterialButton
-    private val tag: MaterialButton
-    private val rvHistory: RecyclerView
-    private val etSearch: TextInputEditText
+    private val root = inflate(context, R.layout.layout_hanime_search_bar, this) as ViewGroup
+    private val back: MaterialButton = findViewById(R.id.btn_back)
+    private val search: MaterialButton = findViewById(R.id.btn_search)
+    private val tag: MaterialButton = findViewById(R.id.btn_tag)
+    private val rvHistory: RecyclerView = findViewById(R.id.rv_history)
+    private val etSearch: TextInputEditText = findViewById(R.id.et_search)
 
     /**
      * 历史记录是否折叠
@@ -55,15 +54,12 @@ class HanimeSearchBar @JvmOverloads constructor(
     private var isCollapsed = true
 
     init {
-        inflate(context, R.layout.layout_hanime_search_bar, this)
-        searchBar = findViewById(R.id.search_bar)
-        back = findViewById(R.id.btn_back)
-        search = findViewById(R.id.btn_search)
-        tag = findViewById(R.id.btn_tag)
-        rvHistory = findViewById(R.id.rv_history)
-        etSearch = findViewById(R.id.et_search)
-
         // init
+        root.layoutTransition = LayoutTransition().apply {
+            enableTransitionType(LayoutTransition.CHANGING)
+            setDuration(LayoutTransition.CHANGING, animDuration)
+            setInterpolator(LayoutTransition.CHANGING, animInterpolator)
+        }
         rvHistory.layoutManager = LinearLayoutManager(context)
         rvHistory.itemAnimator?.removeDuration = 0
         etSearch.setOnEditorActionListener { _, actionId, _ ->
@@ -152,13 +148,14 @@ class HanimeSearchBar @JvmOverloads constructor(
         }
 
     fun showHistory() {
-        rvHistory.animate()
-            .setInterpolator(animInterpolator)
-            .setDuration(animDuration)
-            .alpha(1F)
-            .withStartAction { rvHistory.visibility = VISIBLE }
-            .start()
+//        val slide = Slide(Gravity.BOTTOM).apply {
+//            duration = animDuration
+//            interpolator = animInterpolator
+//            addTarget(rvHistory)
+//        }
+//        TransitionManager.beginDelayedTransition(searchBar, slide)
 
+        rvHistory.visibility = View.VISIBLE
         back.animate()
             .setInterpolator(animInterpolator)
             .setDuration(animDuration)
@@ -168,44 +165,24 @@ class HanimeSearchBar @JvmOverloads constructor(
     }
 
     fun hideHistory(): Boolean {
-        if (!isCollapsed) {
-            etSearch.hideIme(window)
-            Log.d("HanimeSearchBar", "History Height: ${rvHistory.height}")
-            rvHistory.visibility = GONE
-            back.animate()
-                .setInterpolator(animInterpolator)
-                .setDuration(animDuration)
-                .rotation(0F)
-                .start()
-            isCollapsed = true
-            return true
-        }
-        return false
-    }
+        if (isCollapsed) return false
+        etSearch.hideIme(window)
+        Log.d("HanimeSearchBar", "History Height: ${rvHistory.height}")
+//        val slide = Slide(Gravity.TOP).apply {
+//            duration = animDuration
+//            interpolator = animInterpolator
+//            addTarget(rvHistory)
+//        }
+//        TransitionManager.beginDelayedTransition(searchBar, slide)
 
-    private fun View.buildHeightAnimation(
-        from: Int, to: Int,
-    ): ValueAnimator? {
-        if (from == to) return null
-        return ValueAnimator.ofInt(from, to).apply {
-            duration = animDuration
-            interpolator = animInterpolator
-            addUpdateListener {
-                val value = it.animatedValue as Int
-                updateLayoutParams {
-                    height = value
-                }
-            }
-        }
-    }
-
-    private fun View.calcHeight(): Int {
-        val matchParentMeasureSpec =
-            MeasureSpec.makeMeasureSpec((parent as View).width, MeasureSpec.EXACTLY)
-        val wrapContentMeasureSpec =
-            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-        measure(matchParentMeasureSpec, wrapContentMeasureSpec)
-        return measuredHeight
+        rvHistory.visibility = View.GONE
+        back.animate()
+            .setInterpolator(animInterpolator)
+            .setDuration(animDuration)
+            .rotation(0F)
+            .start()
+        isCollapsed = true
+        return true
     }
 
     // 使用 onBackPressedDispatcher.addCallback 替换

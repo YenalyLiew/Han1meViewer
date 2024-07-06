@@ -26,6 +26,7 @@ abstract class YenalyFragment<DB : ViewDataBinding, VM : ViewModel> @JvmOverload
 
     protected var _binding: DB? = null
     val binding get() = _binding!!
+    val bindingOrNull get() = _binding
 
     lateinit var viewModel: VM
 

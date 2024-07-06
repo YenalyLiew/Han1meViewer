@@ -241,34 +241,37 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         }
     }
 
+    // #issue-160: 修复字段销毁后调用引发的错误
     private fun handlePalette(p: Palette) {
-        val darkVibrant = p.getDarkVibrantColor(Color.RED)
-        val lightVibrant = p.getLightVibrantColor(Color.RED)
+        bindingOrNull?.let { binding ->
+            val darkVibrant = p.getDarkVibrantColor(Color.RED)
+            val lightVibrant = p.getLightVibrantColor(Color.RED)
 
-        val darkVibrantForContentScrim =
-            p.darkVibrantSwatch?.rgb ?: p.darkMutedSwatch?.rgb ?: p.lightVibrantSwatch?.rgb
-            ?: p.lightMutedSwatch?.rgb ?: Color.BLACK
-        binding.collapsingToolbar.setContentScrimColor(darkVibrantForContentScrim)
-        colorTransition(
-            fromColor = binding.btnBanner.iconTint.defaultColor,
-            toColor = darkVibrant
-        ) {
-            interpolator = animInterpolator
-            duration = animDuration
-            addUpdateListener(viewLifecycleOwner.lifecycle) {
-                val color = it.animatedValue as Int
-                binding.btnBanner.iconTint = ColorStateList.valueOf(color)
+            val darkVibrantForContentScrim =
+                p.darkVibrantSwatch?.rgb ?: p.darkMutedSwatch?.rgb ?: p.lightVibrantSwatch?.rgb
+                ?: p.lightMutedSwatch?.rgb ?: Color.BLACK
+            binding.collapsingToolbar.setContentScrimColor(darkVibrantForContentScrim)
+            colorTransition(
+                fromColor = binding.btnBanner.iconTint.defaultColor,
+                toColor = darkVibrant
+            ) {
+                interpolator = animInterpolator
+                duration = animDuration
+                addUpdateListener(viewLifecycleOwner.lifecycle) {
+                    val color = it.animatedValue as Int
+                    binding.btnBanner.iconTint = ColorStateList.valueOf(color)
+                }
             }
-        }
-        colorTransition(
-            fromColor = (binding.aColor.background as ColorDrawable).color,
-            toColor = lightVibrant
-        ) {
-            interpolator = animInterpolator
-            duration = animDuration
-            addUpdateListener(viewLifecycleOwner.lifecycle) {
-                val color = it.animatedValue as Int
-                binding.aColor.setBackgroundColor(color)
+            colorTransition(
+                fromColor = (binding.aColor.background as ColorDrawable).color,
+                toColor = lightVibrant
+            ) {
+                interpolator = animInterpolator
+                duration = animDuration
+                addUpdateListener(viewLifecycleOwner.lifecycle) {
+                    val color = it.animatedValue as Int
+                    binding.aColor.setBackgroundColor(color)
+                }
             }
         }
     }

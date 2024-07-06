@@ -14,7 +14,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.BuildCompat.PrereleaseSdkCheck
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -45,7 +44,6 @@ class LoginActivity : FrameActivity() {
         SystemStatusUtil.fullScreen(window, true)
     }
 
-    @PrereleaseSdkCheck
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
@@ -74,6 +72,13 @@ class LoginActivity : FrameActivity() {
             binding.wvLogin.loadUrl(HANIME_LOGIN_URL)
         }
         binding.srlLogin.autoRefresh()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.wvLogin.removeAllViews()
+        binding.wvLogin.destroy()
+        binding.unbind()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -131,8 +136,12 @@ class LoginActivity : FrameActivity() {
                     description: String?,
                     failingUrl: String?,
                 ) {
-                    binding.srlLogin.finishRefresh()
-                    dialog.show()
+                    // #issue-146
+                    // #issue-160: 修复字段销毁后调用引发的错误
+                    if (!isDestroyed && !isFinishing) {
+                        binding.srlLogin.finishRefresh()
+                        dialog.show()
+                    }
                 }
             }
         }
