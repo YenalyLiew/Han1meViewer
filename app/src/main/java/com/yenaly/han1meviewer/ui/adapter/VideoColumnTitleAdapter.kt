@@ -21,13 +21,13 @@ class VideoColumnTitleAdapter : BaseSingleItemAdapter<Unit, QuickViewHolder> {
 
     private val notifyWhenSet: Boolean
 
-    var title: String
+    var title: String = EMPTY_STRING
         set(value) = if (notifyWhenSet) {
             field = value
             notifyItemChanged(0)
         } else field = value
 
-    var subtitle: String?
+    var subtitle: String? = null
         set(value) = if (notifyWhenSet) {
             field = value
             notifyItemChanged(0)

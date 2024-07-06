@@ -4,6 +4,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?android:colorBackground</item>
         <item name="android:navigationBarColor">?android:colorBackground</item>
+        <item name="android:windowTranslucentStatus">false</item>
         <!-- Customize your theme here. -->
     </style>
 

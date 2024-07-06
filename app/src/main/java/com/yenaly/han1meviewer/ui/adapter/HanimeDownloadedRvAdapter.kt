@@ -101,16 +101,19 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
             }
             viewHolder.binding.btnDelete.setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
-                val file = item.videoUri.toUri().toFile()
-                context.showAlertDialog {
-                    setTitle(R.string.sure_to_delete)
-                    setMessage(context.getString(R.string.prepare_to_delete_s, file.name))
-                    setPositiveButton(R.string.confirm) { _, _ ->
-                        if (file.exists()) file.delete()
-                        fragment.viewModel.deleteDownloadHanimeBy(item.videoCode, item.quality)
+                // #issue-158: 这里可能为空
+                val item = getItem(position)
+                item?.let {
+                    val file = it.videoUri.toUri().toFile()
+                    context.showAlertDialog {
+                        setTitle(R.string.sure_to_delete)
+                        setMessage(context.getString(R.string.prepare_to_delete_s, file.name))
+                        setPositiveButton(R.string.confirm) { _, _ ->
+                            if (file.exists()) file.delete()
+                            fragment.viewModel.deleteDownloadHanimeBy(it.videoCode, it.quality)
+                        }
+                        setNegativeButton(R.string.cancel, null)
                     }
-                    setNegativeButton(R.string.cancel, null)
                 }
             }
             viewHolder.binding.btnLocalPlayback.setOnClickListener {
