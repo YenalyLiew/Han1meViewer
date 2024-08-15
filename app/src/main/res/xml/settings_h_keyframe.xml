@@ -7,7 +7,8 @@
         app:iconSpaceReserved="false"
         app:key="h_keyframes_enable"
         app:summary="@string/h_keyframes_disable_tip"
-        app:title="@string/h_keyframes_enable" />
+        app:title="@string/h_keyframes_enable"
+        android:widgetLayout="@layout/preference_switch_widget" />
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
@@ -18,7 +19,6 @@
             app:iconSpaceReserved="false"
             app:key="h_keyframe_manage"
             app:title="@string/h_keyframe_manage" />
-
 
     </PreferenceCategory>
 
@@ -32,6 +32,7 @@
             app:iconSpaceReserved="false"
             app:key="shared_h_keyframes_enable"
             app:summary="@string/shared_h_keyframes_enable_tip"
+            android:widgetLayout="@layout/preference_switch_widget"
             app:title="@string/shared_h_keyframes_enable" />
 
         <SwitchPreferenceCompat
@@ -39,6 +40,7 @@
             app:iconSpaceReserved="false"
             app:key="shared_h_keyframes_use_first"
             app:summary="@string/shared_h_keyframes_use_first_tip"
+            android:widgetLayout="@layout/preference_switch_widget"
             app:title="@string/shared_h_keyframes_use_first" />
 
         <Preference
@@ -58,6 +60,7 @@
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="show_comment_when_countdown"
+            android:widgetLayout="@layout/preference_switch_widget"
             app:title="@string/show_prompt_when_countdown" />
 
         <SeekBarPreference
