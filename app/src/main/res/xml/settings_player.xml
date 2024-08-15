@@ -12,6 +12,7 @@
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="show_bottom_progress"
+        android:widgetLayout="@layout/preference_switch_widget"
         app:title="@string/show_bottom_progress" />
 
     <com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
