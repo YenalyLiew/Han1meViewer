@@ -2,6 +2,9 @@ package com.yenaly.yenaly_libs.base.settings
 
 import android.os.Bundle
 import android.util.Log
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import androidx.annotation.XmlRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -72,5 +75,13 @@ abstract class YenalySettingsFragment(@XmlRes private val xmlRes: Int) :
         checkNotNull(findPreference<T>(key)) {
             "The preference belonged to the key \"$key\" is null."
         }
+    }
+
+    override fun setDivider(divider: Drawable?) {
+        super.setDivider(ColorDrawable(Color.TRANSPARENT))
+    }
+
+    override fun setDividerHeight(height: Int) {
+        super.setDividerHeight(0)
     }
 }
