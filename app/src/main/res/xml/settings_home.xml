@@ -59,6 +59,7 @@
             app:defaultValue="false"
             app:key="use_ci_update_channel"
             app:summary="@string/use_ci_update_channel_summary"
+            android:widgetLayout="@layout/preference_switch_widget"
             app:title="@string/use_ci_update_channel" />
 
         <SeekBarPreference
