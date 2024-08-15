@@ -15,6 +15,7 @@
         app:iconSpaceReserved="false"
         app:key="use_built_in_hosts"
         app:summary="@string/use_built_in_hosts_summary"
+        android:widgetLayout="@layout/preference_switch_widget"
         app:title="@string/use_built_in_hosts" />
 
 </PreferenceScreen>
