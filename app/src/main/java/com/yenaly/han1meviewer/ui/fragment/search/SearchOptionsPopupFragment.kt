@@ -187,7 +187,7 @@ class SearchOptionsPopupFragment :
                 addTagsScope {
                     addTagGroup(getString(R.string.video_attr), videoAttrTagArray)
                     addTagGroup(getString(R.string.relationship), relationshipTagArray)
-                    addTagGroup(getString(R.string.character_setting), characterSettingTagArray)
+                    addTagGroup(getString(R.string.characteristics), characterSettingTagArray)
                     addTagGroup(getString(R.string.appearance_and_figure), appearanceTagArray)
                     addTagGroup(getString(R.string.story_plot), storyPlotTagArray)
                     addTagGroup(getString(R.string.sex_position), sexPositionTagArray)
@@ -235,22 +235,33 @@ class SearchOptionsPopupFragment :
                     it.set(year, month, 0)
                 }
             }
-            val popup = TimePickerPopup(requireContext())
-                .setMode(TimePickerPopup.Mode.YM)
-                .setYearRange(SEARCH_YEAR_RANGE_START, SEARCH_YEAR_RANGE_END)
-                .setDefaultDate(date)
-                .setTimePickerListener(object : TimePickerListener {
-                    override fun onCancel() = Unit
-                    override fun onTimeChanged(date: Date) = Unit
+            val popup = HTimePickerPopup(requireContext())
+                .apply {
+                    setMode(TimePickerPopup.Mode.YM)
+                    setYearRange(SEARCH_YEAR_RANGE_START, SEARCH_YEAR_RANGE_END)
+                    setDefaultDate(date)
+                    setTimePickerListener(object : TimePickerListener {
+                        override fun onCancel() = Unit
+                        override fun onTimeChanged(date: Date) = Unit
 
-                    override fun onTimeConfirm(date: Date, view: View?) {
-                        val calendar = Calendar.getInstance()
-                        calendar.time = date
-                        viewModel.year = calendar.get(Calendar.YEAR)
-                        viewModel.month = calendar.get(Calendar.MONTH) + 1
-                        initOptionsChecked()
-                    }
-                })
+                        override fun onTimeConfirm(date: Date, view: View?) {
+                            val calendar = Calendar.getInstance()
+                            calendar.time = date
+                            when (mode) {
+                                TimePickerPopup.Mode.YM -> {
+                                    viewModel.year = calendar.get(Calendar.YEAR)
+                                    viewModel.month = calendar.get(Calendar.MONTH) + 1
+                                }
+
+                                else -> {
+                                    viewModel.year = calendar.get(Calendar.YEAR)
+                                    viewModel.month = null
+                                }
+                            }
+                            initOptionsChecked()
+                        }
+                    })
+                }
             return XPopup.Builder(requireContext()).setOptionsCheckedCallback()
                 .borderRadius(POP_UP_BORDER_RADIUS)
                 .isDarkTheme(true)
