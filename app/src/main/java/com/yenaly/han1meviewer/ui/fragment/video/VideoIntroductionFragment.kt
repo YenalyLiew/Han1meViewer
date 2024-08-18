@@ -83,6 +83,7 @@ class VideoIntroductionFragment :
     companion object {
         private const val FAV = 1
         private const val PLAYLIST = 1 shl 1
+        private const val SUBSCRIBE = 1 shl 2
 
         val COMPARATOR = object : DiffUtil.ItemCallback<HanimeVideo>() {
             override fun areItemsTheSame(oldItem: HanimeVideo, newItem: HanimeVideo): Boolean {
@@ -99,6 +100,8 @@ class VideoIntroductionFragment :
                     bitset = bitset or FAV
                 if (!(oldItem.myList?.isSelectedArray contentEquals newItem.myList?.isSelectedArray))
                     bitset = bitset or PLAYLIST
+                if (oldItem.artist?.isSubscribed != newItem.artist?.isSubscribed)
+                    bitset = bitset or SUBSCRIBE
                 return bitset
             }
         }
@@ -238,6 +241,25 @@ class VideoIntroductionFragment :
                     is WebsiteState.Loading -> Unit
                     is WebsiteState.Success -> {
                         showShortToast(R.string.modify_success)
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.subscribeArtistFlow.collect { state ->
+                when (state) {
+                    is WebsiteState.Error -> {
+                        showShortToast(R.string.subscribe_failed)
+                    }
+
+                    is WebsiteState.Loading -> Unit
+                    is WebsiteState.Success -> {
+                        if (state.info) {
+                            showShortToast(R.string.subscribe_success)
+                        } else {
+                            showShortToast(R.string.unsubscribe_success)
+                        }
                     }
                 }
             }
@@ -384,6 +406,9 @@ class VideoIntroductionFragment :
             if (bitset and FAV != 0) {
                 holder.binding.handleFavButton(item.isFav)
             }
+            if (bitset and SUBSCRIBE != 0) {
+                holder.binding.initArtist(item.artist)
+            }
         }
 
         override fun onCreateViewHolder(
@@ -442,6 +467,38 @@ class VideoIntroductionFragment :
                 ivArtist.load(artist.avatarUrl) {
                     crossfade(true)
                     transformations(CircleCropTransformation())
+                }
+                btnSubscribe.isVisible = artist.post != null
+                if (btnSubscribe.isVisible && artist.post != null) {
+                    btnSubscribe.text = if (artist.isSubscribed) {
+                        getString(R.string.subscribed)
+                    } else {
+                        getString(R.string.subscribe)
+                    }
+                    btnSubscribe.clickTrigger(viewLifecycleOwner.lifecycle) {
+                        if (isAlreadyLogin) {
+                            if (artist.isSubscribed) {
+                                context.showAlertDialog {
+                                    setTitle(R.string.unsubscribe_artist)
+                                    setMessage(R.string.sure_to_unsubscribe)
+                                    setPositiveButton(R.string.sure) { _, _ ->
+                                        viewModel.unsubscribeArtist(
+                                            artist.post.userId,
+                                            artist.post.artistId
+                                        )
+                                    }
+                                    setNegativeButton(R.string.no, null)
+                                }
+                            } else {
+                                viewModel.subscribeArtist(
+                                    artist.post.userId,
+                                    artist.post.artistId
+                                )
+                            }
+                        } else {
+                            showShortToast(R.string.login_first)
+                        }
+                    }
                 }
             }
         }

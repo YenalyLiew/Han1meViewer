@@ -21,6 +21,7 @@ import com.yenaly.han1meviewer.toVideoCode
 import kotlinx.datetime.LocalDate
 import org.json.JSONObject
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Comment
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
@@ -59,10 +60,21 @@ object Parse {
         val bannerPic = bannerImg?.select("img")?.getOrNull(1)?.absUrl("src")
             .logIfParseNull(Parse::homePageVer2.name, "bannerPic")
         val bannerDesc = bannerCSS?.selectFirst("h4")?.ownText()
-        val bannerVideoCode =
+        var bannerVideoCode =
             bannerCSS?.selectFirst("a[class~=play-btn]")?.absUrl("href")?.toVideoCode()
-                .logIfParseNull(Parse::homePageVer2.name, "bannerVideoCode")
-        val banner = if (bannerTitle != null && bannerPic != null && bannerVideoCode != null) {
+        // 目前先判断注释里的，以后可能会有变化
+        if (bannerVideoCode == null) {
+            bannerCSS?.traverse { node, _ ->
+                if (node is Comment) {
+                    node.data.toVideoCode()?.let {
+                        bannerVideoCode = it
+                        return@traverse
+                    }
+                }
+            }
+        }
+        bannerVideoCode.logIfParseNull(Parse::homePageVer2.name, "bannerVideoCode")
+        val banner = if (bannerTitle != null && bannerPic != null) {
             HomePage.Banner(
                 title = bannerTitle, description = bannerDesc,
                 picUrl = bannerPic, videoCode = bannerVideoCode,
@@ -500,11 +512,25 @@ object Parse {
         val artistNameCSS = parseBody.getElementById("video-artist-name")
         val artistGenre = artistNameCSS?.nextElementSibling()?.text()?.trim()
         val artistName = artistNameCSS?.text()?.trim()
+        val postCSS = parseBody.getElementById("video-subscribe-form")
+        val post = postCSS?.let {
+            val userId = it.selectFirst("input[name=subscribe-user-id]")?.attr("value")
+            val artistId = it.selectFirst("input[name=subscribe-artist-id]")?.attr("value")
+            val isSubscribed = it.selectFirst("input[name=subscribe-status]")?.attr("value")
+            if (userId != null && artistId != null && isSubscribed != null) {
+                HanimeVideo.Artist.POST(
+                    userId = userId,
+                    artistId = artistId,
+                    isSubscribed = isSubscribed == "1"
+                )
+            } else null
+        }
         val artist = if (artistAvatarUrl != null && artistName != null && artistGenre != null) {
             HanimeVideo.Artist(
                 name = artistName,
                 avatarUrl = artistAvatarUrl,
                 genre = artistGenre,
+                post = post,
             )
         } else null
 

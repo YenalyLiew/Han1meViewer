@@ -22,6 +22,8 @@ data class HomePage(
         val title: String,
         val description: String?,
         val picUrl: String,
-        val videoCode: String,
+        // 目前网站的策略是，先你吗加载广告，然后再让你跳转
+        // 我不敢保证他会把 videoCode 放在哪里，所以暂时可以为空
+        val videoCode: String?,
     )
 }

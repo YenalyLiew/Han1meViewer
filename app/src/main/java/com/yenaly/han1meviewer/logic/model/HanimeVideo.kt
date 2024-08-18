@@ -70,5 +70,14 @@ data class HanimeVideo(
         val name: String,
         val avatarUrl: String,
         val genre: String,
-    )
+        val post: POST?,
+    ) {
+        val isSubscribed: Boolean get() = post != null && post.isSubscribed
+
+        data class POST(
+            val userId: String,
+            val artistId: String,
+            val isSubscribed: Boolean,
+        )
+    }
 }

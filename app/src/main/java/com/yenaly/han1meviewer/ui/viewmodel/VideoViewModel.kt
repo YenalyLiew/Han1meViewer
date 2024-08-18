@@ -140,6 +140,41 @@ class VideoViewModel(private val application: Application) : YenalyViewModel(app
         }
     }
 
+    // true代表已关注成功，false代表取消关注成功
+    private val _subscribeArtistFlow = MutableSharedFlow<WebsiteState<Boolean>>()
+    val subscribeArtistFlow = _subscribeArtistFlow.asSharedFlow()
+
+    fun subscribeArtist(
+        userId: String,
+        artistId: String,
+    ) {
+        viewModelScope.launch {
+            NetworkRepo.subscribeArtist(csrfToken, userId, artistId, true).collect { state ->
+                _subscribeArtistFlow.emit(state)
+                if (state is WebsiteState.Success) {
+                    _hanimeVideoFlow.update {
+                        it?.copy(artist = it.artist?.copy(post = it.artist.post?.copy(isSubscribed = true)))
+                    }
+                }
+            }
+        }
+    }
+
+    fun unsubscribeArtist(
+        userId: String,
+        artistId: String,
+    ) {
+        viewModelScope.launch {
+            NetworkRepo.subscribeArtist(csrfToken, userId, artistId, false).collect { state ->
+                _subscribeArtistFlow.emit(state)
+                if (state is WebsiteState.Success) {
+                    _hanimeVideoFlow.update {
+                        it?.copy(artist = it.artist?.copy(post = it.artist.post?.copy(isSubscribed = false)))
+                    }
+                }
+            }
+        }
+    }
 
     // boolean: 成功 or 失敗，String: 提示信息
     private val _modifyHKeyframeFlow = MutableSharedFlow<Pair<Boolean, String>>()

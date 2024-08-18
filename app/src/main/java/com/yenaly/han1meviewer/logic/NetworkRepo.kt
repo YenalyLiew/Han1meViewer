@@ -43,6 +43,7 @@ object NetworkRepo {
         action = Parse::homePageVer2
     )
 
+    @Suppress("DEPRECATION")
     fun getHanimeSearchTags() = websiteIOFlow(
         request = { HanimeNetwork.hanimeService.getHanimeSearchResult() },
         action = Parse::hanimeSearchTags
@@ -284,6 +285,28 @@ object NetworkRepo {
                 commentPosition, isPositive, comment
             )
         )
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Subscription">
+
+    fun subscribeArtist(
+        csrfToken: String?,
+        userId: String,
+        artistId: String,
+        // 这里表示目标状态
+        status: Boolean,
+    ) = websiteIOFlow(
+        request = {
+            HanimeNetwork.subscriptionService.subscribeArtist(
+                csrfToken, userId, artistId,
+                if (status) "" else "1"
+            )
+        }
+    ) {
+        Log.d("subscribe_artist_body", it)
+        return@websiteIOFlow WebsiteState.Success(status)
     }
 
     //</editor-fold>
