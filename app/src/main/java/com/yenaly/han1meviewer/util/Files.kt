@@ -7,10 +7,13 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.yenaly.han1meviewer.FILE_PROVIDER_AUTHORITY
+import com.yenaly.han1meviewer.HJson
 import com.yenaly.yenaly_libs.utils.applicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -80,5 +83,17 @@ suspend fun InputStream.copyTo(
             bytes = read(buffer)
         }
         bytesCopied
+    }
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+inline fun <reified T> loadAssetAs(filePath: String): T? {
+    return try {
+        applicationContext.assets.open(filePath).use { inputStream ->
+            HJson.decodeFromStream<T>(inputStream)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }

@@ -38,7 +38,7 @@
     <string name="save_and_search">保存並搜索</string>
     <string name="video_attr">影片屬性</string>
     <string name="relationship">人物關係</string>
-    <string name="character_setting">角色設定</string>
+    <string name="characteristics">角色設定</string>
     <string name="appearance_and_figure">外貌身材</string>
     <string name="story_plot">故事劇情</string>
     <string name="sex_position">性交體位</string>
@@ -330,5 +330,15 @@
     <string name="apply_deep_links_summary">應用後，打開相關網頁後能快速跳轉至本 App</string>
     <string name="apply_deep_links_tips">MIUI 隱藏了這個介面，所以你需要從這裡打開然後添加連結</string>
     <string name="switch_player_kernel">切換播放器內核</string>
+    <string name="switch_to_year">切換至年</string>
+    <string name="switch_to_year_month">切換至年月</string>
+    <string name="subscribe_failed">訂閱失敗</string>
+    <string name="subscribe_success">訂閱成功</string>
+    <string name="unsubscribe_success">取消訂閱成功</string>
+    <string name="subscribe">訂閱</string>
+    <string name="subscribed">已訂閱</string>
+    <string name="unsubscribe">取消訂閱</string>
+    <string name="unsubscribe_artist">取消訂閱該作者</string>
+    <string name="sure_to_unsubscribe">確定要取消訂閱嗎？</string>
 
 </resources>

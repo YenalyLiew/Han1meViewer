@@ -37,3 +37,10 @@ fun DoubleArray.toStringArray(): Array<String> {
  */
 inline fun <reified T> Stream<*>.toTypedArray(): Array<T?> =
     toArray { size -> arrayOfNulls<T>(size) }
+
+/**
+ * 将 List 直接转化为 Array
+ */
+inline fun <I, reified O> List<I>.mapToArray(transform: (I) -> O): Array<O> {
+    return Array(size) { i -> transform(this[i]) }
+}

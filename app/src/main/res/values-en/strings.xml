@@ -37,7 +37,7 @@
     <string name="save_and_search">Save and Search</string>
     <string name="video_attr">Video Attributes</string>
     <string name="relationship">Character Relationships</string>
-    <string name="character_setting">Character Settings</string>
+    <string name="characteristics">Characteristics</string>
     <string name="appearance_and_figure">Appearance and Figure</string>
     <string name="story_plot">Story Plot</string>
     <string name="sex_position">Sex Positions</string>
@@ -320,5 +320,15 @@ Recommendations are as follows:\n
     <string name="apply_deep_links_summary">After application, quickly jump to this app when opening relevant web pages</string>
     <string name="apply_deep_links_tips">MIUI has hidden this interface, so you need to open it from here and then add the link.</string>
     <string name="switch_player_kernel">Switch Player Kernel</string>
+    <string name="switch_to_year">Switch to Y</string>
+    <string name="switch_to_year_month">Switch to YM</string>
+    <string name="subscribe_failed">Subscribed Failed</string>
+    <string name="subscribe_success">Subscribed Successfully</string>
+    <string name="unsubscribe_success">Unsubscribed Successfully</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="subscribed">Subscribed</string>
+    <string name="unsubscribe">Unsubscribe</string>
+    <string name="unsubscribe_artist">Unsubscribe Artist</string>
+    <string name="sure_to_unsubscribe">Are you sure you want to unsubscribe?</string>
 
 </resources>

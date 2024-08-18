@@ -235,8 +235,11 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                     }
                 )
             }
+            binding.btnBanner.isEnabled = banner.videoCode != null
             binding.btnBanner.setOnClickListener {
-                requireActivity().startActivity<VideoActivity>(VIDEO_CODE to banner.videoCode)
+                banner.videoCode?.let { videoCode ->
+                    requireActivity().startActivity<VideoActivity>(VIDEO_CODE to videoCode)
+                }
             }
         }
     }
