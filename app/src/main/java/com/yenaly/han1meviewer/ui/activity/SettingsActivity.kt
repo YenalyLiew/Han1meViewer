@@ -1,15 +1,20 @@
 package com.yenaly.han1meviewer.ui.activity
 
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ActivitySettingsBinding
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.SystemStatusUtil
 import com.yenaly.yenaly_libs.utils.intentExtra
 
 /**
@@ -27,7 +32,10 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
     val currentFragment get() = navHostFragment.childFragmentManager.primaryNavigationFragment
 
     override fun setUiStyle() {
-        SystemStatusUtil.fullScreen(window, true)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
     }
 
     override fun initData(savedInstanceState: Bundle?) {
@@ -56,6 +64,12 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
         navController = navHostFragment.navController
         if (shouldNavToHKeyframeSettings) {
             navController.navigate(R.id.action_homeSettingsFragment_pop_to_hKeyframeSettingsFragment)
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.fcvSettings) { v, insets ->
+            val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = navBar.bottom)
+            insets
         }
     }
 

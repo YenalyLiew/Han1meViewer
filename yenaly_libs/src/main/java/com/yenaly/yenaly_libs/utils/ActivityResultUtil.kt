@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicInteger
@@ -33,11 +34,12 @@ suspend fun <I, O> Context.awaitActivityResult(
     val activity = this.requireComponentActivity()
     val lifecycle = activity.lifecycle
     var launcher: ActivityResultLauncher<I>? = null
-    var observer: LifecycleEventObserver? = null
-    observer = LifecycleEventObserver { _, event ->
-        if (Lifecycle.Event.ON_DESTROY === event) {
-            launcher?.unregister()
-            observer?.let(lifecycle::removeObserver)
+    val observer: LifecycleEventObserver = object : LifecycleEventObserver {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (Lifecycle.Event.ON_DESTROY === event) {
+                launcher?.unregister()
+                lifecycle.removeObserver(this)
+            }
         }
     }
 

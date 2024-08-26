@@ -2,10 +2,19 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,14 +29,19 @@ import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.databinding.ActivitySearchBinding
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
+import com.yenaly.han1meviewer.logic.model.SearchOption
+import com.yenaly.han1meviewer.logic.model.SearchOption.Companion.flatten
+import com.yenaly.han1meviewer.logic.model.SearchOption.Companion.get
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.adapter.FixedGridLayoutManager
 import com.yenaly.han1meviewer.ui.adapter.HanimeSearchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
+import com.yenaly.han1meviewer.ui.fragment.search.HMultiChoicesDialog
 import com.yenaly.han1meviewer.ui.fragment.search.SearchOptionsPopupFragment
 import com.yenaly.han1meviewer.ui.viewmodel.SearchViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
+import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.intentExtra
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers
@@ -60,7 +74,10 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
     private val optionsPopupFragment by unsafeLazy { SearchOptionsPopupFragment() }
 
     override fun setUiStyle() {
-        // SystemStatusUtil.fullScreen(window, true)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
     }
 
     /**
@@ -78,6 +95,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
                 this@SearchActivity, VideoCoverSize.Normal.videoInOneLine
             )
             adapter = searchAdapter
+            clipToPadding = false
             addOnScrollListener(object : OnScrollListener() {
 
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -96,6 +114,23 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
                 getNewHanimeSearchResult()
             }
             setDisableContentWhenRefresh(true)
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.searchBar) { v, insets ->
+            v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top)
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.searchRv) { v, insets ->
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = sysBars.bottom, top = sysBars.top + 68.dp)
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.searchHeader) { v, insets ->
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            v.updateLayoutParams<MarginLayoutParams> {
+                topMargin = sysBars.top + 68.dp
+            }
+            insets
         }
     }
 
@@ -159,11 +194,17 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
     }
 
     private fun getHanimeSearchResult() {
+        Log.d("SearchActivity", buildString {
+            appendLine("page: ${viewModel.page}, query: ${viewModel.query}, genre: ${viewModel.genre}, ")
+            appendLine("sort: ${viewModel.sort}, broad: ${viewModel.broad}, year: ${viewModel.year}, ")
+            appendLine("month: ${viewModel.month}, duration: ${viewModel.duration}, ")
+            appendLine("tagMap: ${viewModel.tagMap}, brandMap: ${viewModel.brandMap}")
+        })
         viewModel.getHanimeSearchResult(
             viewModel.page,
             viewModel.query, viewModel.genre, viewModel.sort, viewModel.broad,
             viewModel.year, viewModel.month, viewModel.duration,
-            viewModel.tagSet, viewModel.brandSet
+            viewModel.tagMap.flatten(), viewModel.brandMap.flatten()
         )
     }
 
@@ -255,12 +296,56 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
         viewModel.duration = map[HAdvancedSearch.DURATION] as? String
 
         when (val tags = map[HAdvancedSearch.TAGS]) {
-            is String -> viewModel.tagSet.add(tags)
-            is HashSet<*> -> viewModel.tagSet.addAll(tags as Set<String>)
+            is Map<*, *> -> {
+                val tagMap = tags as Map<Int, *>
+                tagMap.forEach { (k, v) ->
+                    val scope = viewModel.tags[k]
+                    when (v) {
+                        is String -> {
+                            val option = scope.find { it.searchKey == v }
+                            viewModel.tagMap[k] = option?.let(::setOf) ?: emptySet()
+                        }
+
+                        is Set<*> -> {
+                            val keySet = scope.filterTo(mutableSetOf()) { it.searchKey in v }
+                            viewModel.tagMap[k] = keySet
+                        }
+                    }
+                }
+            }
+
+            // 不推荐使用
+            is String -> {
+                kotlin.run t@{
+                    viewModel.tags.forEach { (k, v) ->
+                        v.find { it.searchKey == tags }?.let { so ->
+                            val scopeKey = SearchOption.toScopeKey(k)
+                            viewModel.tagMap[scopeKey] = setOf(so)
+                            return@t
+                        }
+                    }
+                }
+            }
+
+            // 不推荐使用
+            is Set<*> -> {
+                viewModel.tags.forEach { (k, v) ->
+                    val keySet = v.filterTo(mutableSetOf()) { it.searchKey in tags }
+                    viewModel.tagMap[SearchOption.toScopeKey(k)] = keySet
+                }
+            }
         }
         when (val brands = map[HAdvancedSearch.BRANDS]) {
-            is String -> viewModel.brandSet.add(brands)
-            is HashSet<*> -> viewModel.brandSet.addAll(brands as Set<String>)
+            is String -> {
+                val brand = viewModel.brands.find { it.searchKey == brands }
+                viewModel.brandMap[HMultiChoicesDialog.UNKNOWN_ADAPTER] =
+                    brand?.let(::setOf) ?: emptySet()
+            }
+
+            is Set<*> -> {
+                val keySet = viewModel.brands.filterTo(mutableSetOf()) { it.searchKey in brands }
+                viewModel.brandMap[HMultiChoicesDialog.UNKNOWN_ADAPTER] = keySet
+            }
         }
     }
 }

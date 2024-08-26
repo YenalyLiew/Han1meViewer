@@ -5,6 +5,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +42,11 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding, DownloadViewM
 
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rvList) { v, insets ->
+            val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = navBar.bottom)
+            insets
+        }
         adapter.setStateViewLayout(R.layout.layout_empty_view)
         loadAllSortedDownloadedHanime()
     }

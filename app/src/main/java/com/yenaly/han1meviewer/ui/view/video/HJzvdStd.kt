@@ -24,6 +24,7 @@ import androidx.core.content.getSystemService
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.jzvd.JZDataSource
@@ -41,6 +42,8 @@ import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.OrientationManager
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.appScreenWidth
+import com.yenaly.yenaly_libs.utils.navBarHeight
+import com.yenaly.yenaly_libs.utils.statusBarHeight
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.removeItself
 import java.util.Timer
@@ -166,6 +169,8 @@ class HJzvdStd @JvmOverloads constructor(
     private lateinit var tvKeyframe: TextView
     private lateinit var tvTimer: TextView
     private lateinit var btnGoHome: ImageView
+    private lateinit var layoutTop: View
+    private lateinit var layoutBottom: View
 
     var hKeyframe: HKeyframeEntity? = null
         set(value) {
@@ -260,6 +265,8 @@ class HJzvdStd @JvmOverloads constructor(
         tvKeyframe = findViewById(R.id.tv_keyframe)
         tvTimer = findViewById(R.id.tv_timer)
         btnGoHome = findViewById(R.id.go_home)
+        layoutTop = findViewById(R.id.layout_top)
+        layoutBottom = findViewById(R.id.layout_bottom)
         textureViewContainer.isHapticFeedbackEnabled = true
         tvSpeed.setOnClickListener(this)
         tvKeyframe.setOnClickListener(this)
@@ -333,6 +340,11 @@ class HJzvdStd @JvmOverloads constructor(
         titleTextView.isInvisible = true
         tvTimer.isInvisible = true
         btnGoHome.isVisible = true
+
+        layoutTop.updatePadding(left = 0, right = 0)
+        layoutBottom.updatePadding(left = 0, right = 0)
+        tvTimer.updatePadding(left = 0, right = 0)
+        bottomProgressBar.updatePadding(left = 0, right = 0)
     }
 
     override fun setScreenFullscreen() {
@@ -341,6 +353,13 @@ class HJzvdStd @JvmOverloads constructor(
         if (isHKeyframeEnabled) tvKeyframe.isVisible = true
         titleTextView.isVisible = true
         // btnGoHome.isVisible = false
+
+        val statusBarHeight = statusBarHeight
+        val navBarHeight = navBarHeight
+        layoutTop.updatePadding(left = statusBarHeight, right = navBarHeight)
+        layoutBottom.updatePadding(left = statusBarHeight, right = navBarHeight)
+        tvTimer.updatePadding(left = statusBarHeight)
+        bottomProgressBar.updatePadding(left = statusBarHeight, right = navBarHeight)
     }
 
     override fun clickBack() {
@@ -621,7 +640,7 @@ class HJzvdStd @JvmOverloads constructor(
      *
      * PS: 套 try-catch 没用，因为在 post 里面，所以还是会报错，只能在调用的地方 try-catch 了。
      *
-     * #issue-28 就是这个问题，如果我在 [HJZMediaSystem] 中 setSpeed 方法里加的判断不起作用，
+     * #issue-28 就是这个问题，如果我在 HJZMediaSystem 中 setSpeed 方法里加的判断不起作用，
      * 那么那个机型就先别用这个功能了。
      */
     private fun setSpeedInternal(speed: Float) {

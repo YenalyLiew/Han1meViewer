@@ -2,11 +2,21 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -32,7 +42,7 @@ import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.util.showUpdateDialog
 import com.yenaly.han1meviewer.videoUrlRegex
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.currentStatusBarHeight
+import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.showSnackBar
 import com.yenaly.yenaly_libs.utils.startActivity
@@ -45,7 +55,7 @@ import kotlinx.datetime.Clock
  * @author Yenaly Liew
  * @time 2022/06/08 008 17:35
  */
-class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
+class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), DrawerListener {
 
     lateinit var navHostFragment: NavHostFragment
     lateinit var navController: NavController
@@ -63,7 +73,10 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
         }
 
     override fun setUiStyle() {
-
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
     }
 
     /**
@@ -78,8 +91,13 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
             supportFragmentManager.findFragmentById(R.id.fcv_main) as NavHostFragment
         navController = navHostFragment.navController
         binding.nvMain.setupWithNavController(navController)
+        binding.dlMain.addDrawerListener(this)
 
-        binding.nvMain.getHeaderView(0)?.setPaddingRelative(0, window.currentStatusBarHeight, 0, 0)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.nvMain) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
     }
 
     override fun onStart() {
@@ -121,6 +139,34 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (slideOffset > 0f) {
+                binding.fcvMain.setRenderEffect(
+                    RenderEffect.createBlurEffect(
+                        6.dp * slideOffset,
+                        6.dp * slideOffset,
+                        Shader.TileMode.CLAMP
+                    )
+                )
+            }
+        }
+    }
+
+    override fun onDrawerClosed(drawerView: View) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            binding.fcvMain.setRenderEffect(null)
+        }
+    }
+
+    override fun onDrawerOpened(drawerView: View) {
+
+    }
+
+    override fun onDrawerStateChanged(newState: Int) {
+
     }
 
     private fun showFindRelatedLinkSnackBar(videoCode: String) {

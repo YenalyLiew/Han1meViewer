@@ -8,10 +8,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmapOrNull
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -110,6 +115,10 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
     }
 
     override fun setUiStyle() {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
     }
 
     override fun initData(savedInstanceState: Bundle?) {
@@ -179,7 +188,15 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             binding.appBar.setExpanded(false, true)
         }
 
-        binding.vpNews.innerRecyclerView?.isNestedScrollingEnabled = false
+        binding.vpNews.innerRecyclerView?.apply {
+            isNestedScrollingEnabled = false
+            clipToPadding = false
+            ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+                v.updatePadding(bottom = systemBars.bottom)
+                insets
+            }
+        }
         binding.vpNews.offscreenPageLimit = 1
         binding.vpNews.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {

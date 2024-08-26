@@ -9,7 +9,6 @@ import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
@@ -24,6 +23,7 @@ import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
+import com.yenaly.han1meviewer.util.createAlertDialog
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
@@ -142,13 +142,13 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
             etIp = view.findViewById(R.id.et_ip)
             etPort = view.findViewById(R.id.et_port)
             initView()
-            dialog = MaterialAlertDialogBuilder(proxyPref.context)
-                .setView(view)
-                .setCancelable(false)
-                .setTitle(R.string.proxy)
-                .setPositiveButton(R.string.confirm, null) // Set to null. We override the onclick.
-                .setNegativeButton(R.string.cancel, null)
-                .create()
+            dialog = proxyPref.context.createAlertDialog {
+                setView(view)
+                setCancelable(false)
+                setTitle(R.string.proxy)
+                setPositiveButton(R.string.confirm, null) // Set to null. We override the onclick.
+                setNegativeButton(R.string.cancel, null)
+            }
             dialog.setOnShowListener {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     val ip = etIp.text?.toString().orEmpty()

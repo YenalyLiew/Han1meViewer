@@ -27,6 +27,7 @@
             android:paddingBottom="8dp">
 
             <com.scwang.smart.refresh.header.MaterialHeader
+                android:id="@+id/search_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="68dp" />
