@@ -1,9 +1,9 @@
 [versions]
 # Plugins
 androidGradle = "8.5.2"
-kotlin = "2.0.10"
-serializationPlugin = "2.0.10"
-ksp = "2.0.10-1.0.24"
+kotlin = "2.0.20"
+serializationPlugin = "2.0.20"
+ksp = "2.0.20-1.0.24"
 
 # Dependencies
 about = "2.5.2"
@@ -62,6 +62,7 @@ leakCanary = "2.14"
 circularRevealSwitch = "0.4.6"
 desugarJdkLibs = "2.0.4"
 asynclayoutinflater = "1.0.0"
+flexbox = "3.0.0"
 
 [libraries]
 # Android
@@ -71,6 +72,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesAndroid" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerView" }
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 
 # Jetpack
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewModelKtx" }
@@ -165,3 +167,4 @@ com-android-library = { id = "com.android.library", version.ref = "androidGradle
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 org-jetbrains-kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationPlugin" }
+org-jetbrains-kotlin-plugin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

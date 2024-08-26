@@ -3,6 +3,7 @@
 
 package com.yenaly.yenaly_libs.utils
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
@@ -30,11 +31,11 @@ val application get() = applicationContext as Application
 /**
  * Extension property to get the Activity from a Context.
  */
-val Context.activity: android.app.Activity?
+val Context.activity: Activity?
     get() {
         var context = this
         while (context is ContextWrapper) {
-            if (context is android.app.Activity) {
+            if (context is Activity) {
                 return context
             }
             context = context.baseContext
@@ -45,7 +46,7 @@ val Context.activity: android.app.Activity?
 /**
  * Extension function to find an Activity of a specific type from a Context.
  */
-inline fun <reified T : android.app.Activity> Context.findActivity(): T {
+inline fun <reified T : Activity> Context.findActivity(): T {
     var context = this
     while (context is ContextWrapper) {
         if (context is T) {

@@ -14,16 +14,4 @@ object LanguageHelper {
         } else {
             Locale.getDefault()
         }
-
-    val Locale.isChinese: Boolean
-        get() = language == "zh"
-
-    val Locale.isSimplifiedChinese: Boolean
-        get() = language == "zh" && country == "CN"
-
-    val Locale.isTraditionalChinese: Boolean
-        get() = language == "zh" && country == "TW"
-
-    val Locale.isEnglish: Boolean
-        get() = language == "en"
 }

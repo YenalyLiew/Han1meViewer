@@ -41,7 +41,8 @@ enum class HAdvancedSearch {
     DURATION,
 
     /**
-     * 影片 tag，类型 [String] 或 [HashSet&lt;String&gt;]
+     * 影片 tag，类型 [String] (Deprecated) 或 HashSet&lt;String&gt; (Deprecated)
+     * 或 Map<Int, String> 或 Map<Int, HashSet&lt;String&gt;>
      */
     TAGS,
 

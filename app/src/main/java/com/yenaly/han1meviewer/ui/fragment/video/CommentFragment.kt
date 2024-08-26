@@ -2,8 +2,11 @@ package com.yenaly.han1meviewer.ui.fragment.video
 
 import android.os.Bundle
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -53,6 +56,12 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
 
         binding.rvComment.layoutManager = LinearLayoutManager(context)
         binding.rvComment.adapter = commentAdapter
+        binding.rvComment.clipToPadding = false
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rvComment) { v, insets ->
+            val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = navBar.bottom)
+            insets
+        }
         binding.srlComment.setOnRefreshListener {
             viewModel.getComment(commentTypePrefix, viewModel.code)
         }

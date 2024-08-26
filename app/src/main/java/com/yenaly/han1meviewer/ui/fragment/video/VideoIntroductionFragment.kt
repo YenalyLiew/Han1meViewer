@@ -6,8 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -147,6 +150,12 @@ class VideoIntroductionFragment :
         binding.rvVideoIntro.layoutManager = layoutManager
         binding.rvVideoIntro.adapter = multi
         binding.rvVideoIntro.addOnItemTouchListener(VideoIntroTouchListener())
+        binding.rvVideoIntro.clipToPadding = false
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rvVideoIntro) { v, insets ->
+            val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = navBar.bottom)
+            insets
+        }
     }
 
     override fun bindDataObservers() {

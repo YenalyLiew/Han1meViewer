@@ -1,0 +1,34 @@
+[
+  {
+    "lang": {
+      "zh-rCN": "全部",
+      "en": "All",
+      "zh-rTW": "全部"
+    },
+    "search_key": null
+  },
+  {
+    "lang": {
+      "zh-rCN": "短片（4分钟内）",
+      "en": "Short Film (Within 4 min)",
+      "zh-rTW": "短片（4分鐘內）"
+    },
+    "search_key": "短片"
+  },
+  {
+    "lang": {
+      "zh-rCN": "中长片（4至20分钟）",
+      "en": "Medium-length Film (4 to 20 min)",
+      "zh-rTW": "中長片（4至20分鐘）"
+    },
+    "search_key": "中長片"
+  },
+  {
+    "lang": {
+      "zh-rCN": "长片（20分钟以上）",
+      "en": "Feature Film (Over 20 min)",
+      "zh-rTW": "長片（20分鐘以上）"
+    },
+    "search_key": "長片"
+  }
+]

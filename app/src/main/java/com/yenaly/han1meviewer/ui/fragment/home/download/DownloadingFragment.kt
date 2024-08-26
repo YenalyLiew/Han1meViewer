@@ -1,6 +1,9 @@
 package com.yenaly.han1meviewer.ui.fragment.home.download
 
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +39,11 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
 
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rvList) { v, insets ->
+            val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = navBar.bottom)
+            insets
+        }
         adapter.setStateViewLayout(R.layout.layout_empty_view)
         // binding.rvList.itemAnimator?.changeDuration = 0
     }

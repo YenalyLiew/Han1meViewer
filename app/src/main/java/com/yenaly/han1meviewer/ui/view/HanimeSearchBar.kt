@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.ui.view
 
 import android.animation.LayoutTransition
 import android.content.Context
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -22,6 +23,7 @@ import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.view.hideIme
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.parcelize.Parcelize
 
 /**
  * 搜索界面的搜索栏
@@ -195,4 +197,27 @@ class HanimeSearchBar @JvmOverloads constructor(
     //     }
     //     return super.dispatchKeyEvent(event)
     // }
+
+    override fun onSaveInstanceState(): Parcelable {
+        return SavedState(super.onSaveInstanceState(), isCollapsed)
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state !is SavedState) {
+            super.onRestoreInstanceState(state)
+            return
+        }
+
+        super.onRestoreInstanceState(state.superState)
+        this.isCollapsed = state.isCollapsed
+        if (!isCollapsed) {
+            showHistory()
+        }
+    }
+
+    @Parcelize
+    data class SavedState(
+        val ss: Parcelable?,
+        val isCollapsed: Boolean
+    ) : BaseSavedState(ss)
 }

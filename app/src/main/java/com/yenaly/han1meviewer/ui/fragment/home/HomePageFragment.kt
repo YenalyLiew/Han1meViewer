@@ -4,11 +4,18 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.toBitmapOrNull
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -99,7 +106,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
             onMoreHanimeListener = {
                 toSearchActivity(
                     advancedSearchMapOf(
-                        HAdvancedSearch.TAGS to "中文字幕",
+                        HAdvancedSearch.TAGS to hashMapOf<Int, Any>(R.string.video_attr to "中文字幕"),
                         HAdvancedSearch.SORT to "最新上傳"
                     )
                 )
@@ -155,8 +162,18 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         (activity as MainActivity).setupToolbar()
         binding.state.init()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            easterEgg()
+        }
+
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = concatAdapter
+        binding.rv.clipToPadding = false
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rv) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
         binding.homePageSrl.apply {
             setOnRefreshListener {
                 isAfterRefreshing = false
@@ -281,6 +298,28 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
 
     private fun toSearchActivity(advancedSearchMap: AdvancedSearchMap) {
         startActivity<SearchActivity>(ADVANCED_SEARCH_MAP to advancedSearchMap)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private var easterEggCount = 1f
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun easterEgg() {
+        binding.cover.setOnClickListener {
+            binding.cover.setRenderEffect(
+                RenderEffect.createBlurEffect(
+                    easterEggCount,
+                    easterEggCount,
+                    Shader.TileMode.CLAMP
+                )
+            )
+            easterEggCount++
+        }
+        binding.cover.setOnLongClickListener {
+            binding.cover.setRenderEffect(null)
+            easterEggCount = 1f
+            true
+        }
     }
 
     override fun MainActivity.setupToolbar() {

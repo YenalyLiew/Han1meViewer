@@ -2,7 +2,6 @@ package com.yenaly.han1meviewer.ui.view
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -21,13 +20,12 @@ import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.util.addUpdateListener
-import com.yenaly.han1meviewer.util.readBooleanCompat
-import com.yenaly.han1meviewer.util.writeBooleanCompat
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 
 
 /**
@@ -183,13 +181,10 @@ class CollapsibleTags @JvmOverloads constructor(
     }
 
     override fun onSaveInstanceState(): Parcelable {
-        val superState = super.onSaveInstanceState()
-        val ss = SavedState(superState)
-        ss.isCollapsed = isCollapsed
-        ss.isCollapsedEnabled = isCollapsedEnabled
-        ss.chipGroupMeasureHeight = chipGroupMeasureHeight
-        ss.tags = tags
-        return ss
+        return SavedState(
+            super.onSaveInstanceState(),
+            isCollapsed, isCollapsedEnabled, chipGroupMeasureHeight, tags
+        )
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
@@ -205,38 +200,12 @@ class CollapsibleTags @JvmOverloads constructor(
         this.tags = state.tags
     }
 
-    class SavedState : BaseSavedState {
-
-        var isCollapsed: Boolean = false
-        var isCollapsedEnabled: Boolean = true
-        var chipGroupMeasureHeight: Int = 0
-        var tags: List<String>? = null
-
-        constructor(superState: Parcelable?) : super(superState)
-
-        constructor(parcel: Parcel) : super(parcel) {
-            this.isCollapsed = parcel.readBooleanCompat()
-            this.isCollapsedEnabled = parcel.readBooleanCompat()
-            this.chipGroupMeasureHeight = parcel.readInt()
-            this.tags = parcel.createStringArrayList()
-        }
-
-        companion object {
-            @Suppress("unused")
-            @JvmField
-            val CREATOR = object : Parcelable.Creator<SavedState> {
-                override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
-
-                override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
-            }
-        }
-
-        override fun writeToParcel(out: Parcel, flags: Int) {
-            super.writeToParcel(out, flags)
-            out.writeBooleanCompat(isCollapsed)
-            out.writeBooleanCompat(isCollapsedEnabled)
-            out.writeInt(chipGroupMeasureHeight)
-            out.writeStringList(tags)
-        }
-    }
+    @Parcelize
+    data class SavedState(
+        val ss: Parcelable?,
+        val isCollapsed: Boolean,
+        val isCollapsedEnabled: Boolean,
+        val chipGroupMeasureHeight: Int,
+        val tags: List<String>?
+    ) : BaseSavedState(ss)
 }

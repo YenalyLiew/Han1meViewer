@@ -33,6 +33,12 @@ class RvWrapper<VH : ViewHolder>(
     var wrapper: RecyclerView? = null
         private set
 
+    private var onWrap: (RecyclerView.() -> Unit)? = null
+
+    fun doOnWrap(block: RecyclerView.() -> Unit) {
+        onWrap = block
+    }
+
     override fun onBindViewHolder(holder: QuickViewHolder, item: Unit?) = Unit
 
     override fun onCreateViewHolder(
@@ -55,9 +61,10 @@ class RvWrapper<VH : ViewHolder>(
                 rv = prevRv
             }
             rv.apply wr@{
-                this@RvWrapper.wrapper = this@wr
                 this@wr.layoutManager = this@RvWrapper.layoutManager()
                 this@wr.adapter = this@RvWrapper.adapter
+                this@RvWrapper.wrapper = this@wr
+                onWrap?.invoke(this@wr)
             }
         }
     }

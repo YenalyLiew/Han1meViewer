@@ -2,15 +2,19 @@ package com.yenaly.han1meviewer.ui.viewmodel
 
 import android.app.Application
 import android.util.Log
+import android.util.SparseArray
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
+import com.yenaly.han1meviewer.logic.model.SearchOption
 import com.yenaly.han1meviewer.logic.model.SearchTag
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.util.loadAssetAs
 import com.yenaly.yenaly_libs.base.YenalyViewModel
+import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,10 +41,35 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
     var year: Int? = null
     var month: Int? = null
     var duration: String? = null
-    val tagSet = mutableSetOf<String>()
-    val brandSet = mutableSetOf<String>()
+
+    var tagMap = SparseArray<Set<SearchOption>>()
+    var brandMap = SparseArray<Set<SearchOption>>()
 
     // END: Use in [ChildCommentPopupFragment.kt]
+
+    // START: Use in [SearchOptionsPopupFragment.kt]
+
+    val genres by unsafeLazy {
+        loadAssetAs<List<SearchOption>>("search_options/genre.json").orEmpty()
+    }
+
+    val tags by unsafeLazy {
+        loadAssetAs<Map<String, List<SearchOption>>>("search_options/tags.json").orEmpty()
+    }
+
+    val brands by unsafeLazy {
+        loadAssetAs<List<SearchOption>>("search_options/brands.json").orEmpty()
+    }
+
+    val sortOptions by unsafeLazy {
+        loadAssetAs<List<SearchOption>>("search_options/sort_option.json").orEmpty()
+    }
+
+    val durations by unsafeLazy {
+        loadAssetAs<List<SearchOption>>("search_options/duration.json").orEmpty()
+    }
+
+    // END: Use in [SearchOptionsPopupFragment.kt]
 
     private val _searchStateFlow =
         MutableStateFlow<PageLoadingState<List<HanimeInfo>>>(PageLoadingState.Loading)

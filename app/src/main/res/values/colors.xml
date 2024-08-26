@@ -26,4 +26,7 @@
     <color name="per80_transparent_white">#CCFFFFFF</color>
     <color name="per90_transparent_white">#E6FFFFFF</color>
     <color name="per50_transparent_grey">#80B0B0B0</color>
+    <color name="per90_dark_red">#E6100000</color>
+    <color name="adv_search_unselected_color">#FF495057</color>
+    <color name="adv_search_selected_color">#FF28A745</color>
 </resources>

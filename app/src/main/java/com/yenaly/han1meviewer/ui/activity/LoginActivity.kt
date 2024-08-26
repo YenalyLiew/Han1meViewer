@@ -12,11 +12,12 @@ import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
@@ -28,8 +29,8 @@ import com.yenaly.han1meviewer.databinding.ActivityLoginBinding
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.login
+import com.yenaly.han1meviewer.util.createAlertDialog
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
-import com.yenaly.yenaly_libs.utils.SystemStatusUtil
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
@@ -41,7 +42,10 @@ class LoginActivity : FrameActivity() {
     private val dialog by unsafeLazy { LoginDialog(R.layout.dialog_login) }
 
     override fun setUiStyle() {
-        SystemStatusUtil.fullScreen(window, true)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,13 +164,13 @@ class LoginActivity : FrameActivity() {
             val view = View.inflate(this@LoginActivity, layoutRes, null)
             etUsername = view.findViewById(R.id.et_username)
             etPassword = view.findViewById(R.id.et_password)
-            dialog = MaterialAlertDialogBuilder(this@LoginActivity)
-                .setView(view)
-                .setCancelable(false)
-                .setTitle(R.string.try_login_here)
-                .setPositiveButton(R.string.login, null)
-                .setNegativeButton(R.string.cancel, null)
-                .create()
+            dialog = createAlertDialog {
+                setView(view)
+                setCancelable(false)
+                setTitle(R.string.try_login_here)
+                setPositiveButton(R.string.login, null)
+                setNegativeButton(R.string.cancel, null)
+            }
             dialog.setOnShowListener {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     handleLogin()

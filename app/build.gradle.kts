@@ -8,6 +8,7 @@ import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.parcelize)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.com.google.devtools.ksp)
 }
@@ -43,7 +44,7 @@ android {
         minSdk = property("min.sdk")?.toString()?.toIntOrNull()
         targetSdk = property("target.sdk")?.toString()?.toIntOrNull()
         versionCode = if (isRelease) createVersionCode() else 1 // 方便调试
-        versionName = versionCode.createVersionName(major = 0, minor = 14, patch = 8)
+        versionName = versionCode.createVersionName(major = 0, minor = 14, patch = 10)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -58,7 +59,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false // 被迫 false，混淆会导致无法获取父类泛型
-            signingConfig = signConfig
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
@@ -145,7 +146,6 @@ dependencies {
     implementation(libs.about)
     implementation(libs.statelayout)
     implementation(libs.circular.reveal.switch)
-    implementation(libs.asynclayoutinflater)
 
     ksp(libs.room.compiler)
 

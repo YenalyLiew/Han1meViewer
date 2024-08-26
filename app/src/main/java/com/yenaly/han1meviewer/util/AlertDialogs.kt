@@ -2,13 +2,55 @@ package com.yenaly.han1meviewer.util
 
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.yenaly.han1meviewer.R
+import com.yenaly.yenaly_libs.utils.activity
+import com.yenaly.yenaly_libs.utils.dp
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
+fun Context.getDialogDefaultDrawable(): Drawable {
+    return GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        cornerRadius = 32.dp.toFloat()
+        setColor(getColor(R.color.per90_dark_red))
+    }
+}
+
+fun AlertDialog.createDecorBlurEffect() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        context.activity?.let { activity ->
+            activity.window.decorView.setRenderEffect(
+                RenderEffect.createBlurEffect(
+                    12.dp.toFloat(),
+                    12.dp.toFloat(),
+                    Shader.TileMode.CLAMP
+                )
+            )
+            setOnDismissListener {
+                activity.window.decorView.setRenderEffect(null)
+            }
+        }
+    }
+}
+
+inline fun Context.createAlertDialog(action: MaterialAlertDialogBuilder.() -> Unit): AlertDialog {
+    val ad = MaterialAlertDialogBuilder(this)
+        .setBackground(getDialogDefaultDrawable())
+        .apply(action)
+        .create()
+    ad.createDecorBlurEffect()
+    return ad
+}
+
 inline fun Context.showAlertDialog(action: MaterialAlertDialogBuilder.() -> Unit) {
-    MaterialAlertDialogBuilder(this).apply(action).show()
+    createAlertDialog(action).show()
 }
 
 /**

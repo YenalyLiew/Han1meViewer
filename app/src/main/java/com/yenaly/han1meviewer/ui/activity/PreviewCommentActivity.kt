@@ -1,7 +1,10 @@
 package com.yenaly.han1meviewer.ui.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import com.yenaly.han1meviewer.COMMENT_TYPE
 import com.yenaly.han1meviewer.DATE_CODE
 import com.yenaly.han1meviewer.PREVIEW_COMMENT_PREFIX
@@ -10,7 +13,6 @@ import com.yenaly.han1meviewer.databinding.ActivityPreviewCommentBinding
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.SystemStatusUtil
 import com.yenaly.yenaly_libs.utils.makeBundle
 import com.yenaly.yenaly_libs.utils.safeIntentExtra
 
@@ -25,7 +27,10 @@ class PreviewCommentActivity : YenalyActivity<ActivityPreviewCommentBinding, Com
     private val dateCode by safeIntentExtra<String>(DATE_CODE)
 
     override fun setUiStyle() {
-        SystemStatusUtil.fullScreen(window, true)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
     }
 
     override fun initData(savedInstanceState: Bundle?) {
@@ -40,8 +45,9 @@ class PreviewCommentActivity : YenalyActivity<ActivityPreviewCommentBinding, Com
 
         val commentFragment =
             CommentFragment().makeBundle(COMMENT_TYPE to PREVIEW_COMMENT_PREFIX)
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fcv_pre_comment, commentFragment).commit()
+        supportFragmentManager.beginTransaction().apply {
+            add(R.id.fcv_pre_comment, commentFragment)
+        }.commit()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

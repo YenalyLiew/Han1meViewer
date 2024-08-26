@@ -2,9 +2,16 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.os.Bundle
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -54,6 +61,13 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
 
     private val tabNameArray = intArrayOf(R.string.introduction, R.string.comment)
 
+    override fun setUiStyle() {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
+    }
+
     override fun initData(savedInstanceState: Bundle?) {
         if (intent.action == Intent.ACTION_VIEW) {
             val uri = intent.data
@@ -73,6 +87,14 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             viewModel.videoCode = it
             commentViewModel.code = it
             binding.videoPlayer.videoCode = it
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.videoPlayer) { v, insets ->
+            val navBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            v.updateLayoutParams<MarginLayoutParams> {
+                topMargin = navBar.top
+            }
+            insets
         }
 
         lifecycle.addObserver(OrientationManager(this))

@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.yenaly.han1meviewer.util.createDecorBlurEffect
+import com.yenaly.han1meviewer.util.getDialogDefaultDrawable
 
 /**
  * @project Han1meViewer
@@ -27,6 +29,7 @@ class MaterialDialogPreference : ListPreference {
 
     override fun onClick() {
         dialog.setTitle(title)
+        dialog.setBackground(context.getDialogDefaultDrawable())
         dialog.setSingleChoiceItems(entries, findIndexOfValue(value)) { di, which ->
             val str = entryValues[which].toString()
             if (callChangeListener(str)) {
@@ -34,6 +37,8 @@ class MaterialDialogPreference : ListPreference {
                 di.dismiss()
             }
         }
-        dialog.show()
+        dialog.create().apply {
+            createDecorBlurEffect()
+        }.show()
     }
 }

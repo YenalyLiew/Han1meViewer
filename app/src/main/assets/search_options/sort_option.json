@@ -1,0 +1,58 @@
+[
+  {
+    "lang": {
+      "zh-rCN": "最新上市",
+      "en": "New Arrival",
+      "zh-rTW": "最新上市"
+    },
+    "search_key": "最新上市"
+  },
+  {
+    "lang": {
+      "zh-rCN": "最新上傳",
+      "en": "New Upload",
+      "zh-rTW": "最新上傳"
+    },
+    "search_key": "最新上傳"
+  },
+  {
+    "lang": {
+      "zh-rCN": "本日排行",
+      "en": "Daily Ranking",
+      "zh-rTW": "本日排行"
+    },
+    "search_key": "本日排行"
+  },
+  {
+    "lang": {
+      "zh-rCN": "本週排行",
+      "en": "Weekly Ranking",
+      "zh-rTW": "本週排行"
+    },
+    "search_key": "本週排行"
+  },
+  {
+    "lang": {
+      "zh-rCN": "本月排行",
+      "en": "Monthly Ranking",
+      "zh-rTW": "本月排行"
+    },
+    "search_key": "本月排行"
+  },
+  {
+    "lang": {
+      "zh-rCN": "观看次数",
+      "en": "View Count",
+      "zh-rTW": "觀看次數"
+    },
+    "search_key": "觀看次數"
+  },
+  {
+    "lang": {
+      "zh-rCN": "他们在看",
+      "en": "Trending",
+      "zh-rTW": "他們在看"
+    },
+    "search_key": "他們在看"
+  }
+]

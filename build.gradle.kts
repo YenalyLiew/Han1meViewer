@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.com.android.library) apply false
     alias(libs.plugins.org.jetbrains.kotlin.android) apply false
     alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization) apply false
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.parcelize) apply false
 }
 
 task<Delete>("clean") {

@@ -40,64 +40,58 @@
             android:rowCount="3"
             tools:ignore="UselessParent">
 
-            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+            <com.yenaly.han1meviewer.ui.view.HOptionChip
                 android:id="@+id/type"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:checkable="false"
                 android:text="@string/type"
                 android:textAlignment="center" />
 
 
-            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+            <com.yenaly.han1meviewer.ui.view.HOptionChip
                 android:id="@+id/sort_option"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_marginStart="8dp"
-                android:checkable="false"
+                android:layout_marginTop="16dp"
                 android:text="@string/sort_option"
                 android:textAlignment="center" />
 
-            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+            <com.yenaly.han1meviewer.ui.view.HOptionChip
                 android:id="@+id/tag"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:checkable="false"
                 android:text="@string/tag"
                 android:textAlignment="center" />
 
-            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+            <com.yenaly.han1meviewer.ui.view.HOptionChip
                 android:id="@+id/brand"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_marginStart="8dp"
-                android:checkable="false"
+                android:layout_marginTop="16dp"
                 android:text="@string/brand"
                 android:textAlignment="center" />
 
-            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+            <com.yenaly.han1meviewer.ui.view.HOptionChip
                 android:id="@+id/release_date"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:checkable="false"
                 android:text="@string/release_date"
                 android:textAlignment="center" />
 
-            <com.yenaly.han1meviewer.ui.view.CodeSelectedChip
+            <com.yenaly.han1meviewer.ui.view.HOptionChip
                 android:id="@+id/duration"
-                style="@style/Widget.Material3.Chip.Filter.Elevated"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_marginStart="8dp"
-                android:checkable="false"
+                android:layout_marginTop="16dp"
                 android:text="@string/duration"
                 android:textAlignment="center" />
 

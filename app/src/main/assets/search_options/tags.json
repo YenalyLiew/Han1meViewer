@@ -1,0 +1,977 @@
+{
+  "video_attributes": [
+    {
+      "lang": {
+        "zh-rCN": "无码",
+        "en": "Uncensored",
+        "zh-rTW": "無碼"
+      },
+      "search_key": "無碼"
+    },
+    {
+      "lang": {
+        "zh-rCN": "AI解码",
+        "en": "AI Decoded",
+        "zh-rTW": "AI解碼"
+      },
+      "search_key": "AI解碼"
+    },
+    {
+      "lang": {
+        "zh-rCN": "中文字幕",
+        "en": "Chinese Subtitle",
+        "zh-rTW": "中文字幕"
+      },
+      "search_key": "中文字幕"
+    },
+    {
+      "lang": {
+        "zh-rCN": "1080P",
+        "en": "1080P",
+        "zh-rTW": "1080P"
+      },
+      "search_key": "1080P"
+    },
+    {
+      "lang": {
+        "zh-rCN": "60FPS",
+        "en": "60FPS",
+        "zh-rTW": "60FPS"
+      },
+      "search_key": "60FPS"
+    }
+  ],
+  "character_relationships": [
+    {
+      "lang": {
+        "zh-rCN": "近亲",
+        "en": "Incest",
+        "zh-rTW": "近親"
+      },
+      "search_key": "近親"
+    },
+    {
+      "lang": {
+        "zh-rCN": "姐",
+        "en": "Elder Sister",
+        "zh-rTW": "姐"
+      },
+      "search_key": "姐"
+    },
+    {
+      "lang": {
+        "zh-rCN": "妹",
+        "en": "Younger Sister",
+        "zh-rTW": "妹"
+      },
+      "search_key": "妹"
+    },
+    {
+      "lang": {
+        "zh-rCN": "母",
+        "en": "Mother",
+        "zh-rTW": "母"
+      },
+      "search_key": "母"
+    },
+    {
+      "lang": {
+        "zh-rCN": "女儿",
+        "en": "Daughter",
+        "zh-rTW": "女兒"
+      },
+      "search_key": "女兒"
+    },
+    {
+      "lang": {
+        "zh-rCN": "师生",
+        "en": "Teacher Student",
+        "zh-rTW": "師生"
+      },
+      "search_key": "師生"
+    },
+    {
+      "lang": {
+        "zh-rCN": "情侣",
+        "en": "Couple",
+        "zh-rTW": "情侶"
+      },
+      "search_key": "情侶"
+    },
+    {
+      "lang": {
+        "zh-rCN": "青梅竹马",
+        "en": "Childhood Friend",
+        "zh-rTW": "青梅竹馬"
+      },
+      "search_key": "青梅竹馬"
+    }
+  ],
+  "characteristics": [
+    {
+      "lang": {
+        "zh-rCN": "JK",
+        "zh-rTW": "JK"
+      },
+      "search_key": "JK"
+    },
+    {
+      "lang": {
+        "zh-rCN": "处女",
+        "zh-rTW": "處女"
+      },
+      "search_key": "處女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "御姐",
+        "zh-rTW": "御姐"
+      },
+      "search_key": "御姐"
+    },
+    {
+      "lang": {
+        "zh-rCN": "熟女",
+        "zh-rTW": "熟女"
+      },
+      "search_key": "熟女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "人妻",
+        "zh-rTW": "人妻"
+      },
+      "search_key": "人妻"
+    },
+    {
+      "lang": {
+        "zh-rCN": "老师",
+        "zh-rTW": "老師"
+      },
+      "search_key": "老師"
+    },
+    {
+      "lang": {
+        "zh-rCN": "女医护士",
+        "zh-rTW": "女醫護士"
+      },
+      "search_key": "女醫護士"
+    },
+    {
+      "lang": {
+        "zh-rCN": "OL",
+        "zh-rTW": "OL"
+      },
+      "search_key": "OL"
+    },
+    {
+      "lang": {
+        "zh-rCN": "大小姐",
+        "zh-rTW": "大小姐"
+      },
+      "search_key": "大小姐"
+    },
+    {
+      "lang": {
+        "zh-rCN": "偶像",
+        "zh-rTW": "偶像"
+      },
+      "search_key": "偶像"
+    },
+    {
+      "lang": {
+        "zh-rCN": "女仆",
+        "zh-rTW": "女僕"
+      },
+      "search_key": "女僕"
+    },
+    {
+      "lang": {
+        "zh-rCN": "巫女",
+        "zh-rTW": "巫女"
+      },
+      "search_key": "巫女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "修女",
+        "zh-rTW": "修女"
+      },
+      "search_key": "修女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "风俗娘",
+        "zh-rTW": "風俗娘"
+      },
+      "search_key": "風俗娘"
+    },
+    {
+      "lang": {
+        "zh-rCN": "公主",
+        "zh-rTW": "公主"
+      },
+      "search_key": "公主"
+    },
+    {
+      "lang": {
+        "zh-rCN": "女战士",
+        "zh-rTW": "女戰士"
+      },
+      "search_key": "女戰士"
+    },
+    {
+      "lang": {
+        "zh-rCN": "魔法少女",
+        "zh-rTW": "魔法少女"
+      },
+      "search_key": "魔法少女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "异种族",
+        "zh-rTW": "異種族"
+      },
+      "search_key": "異種族"
+    },
+    {
+      "lang": {
+        "zh-rCN": "妖精",
+        "zh-rTW": "妖精"
+      },
+      "search_key": "妖精"
+    },
+    {
+      "lang": {
+        "zh-rCN": "魔物娘",
+        "zh-rTW": "魔物娘"
+      },
+      "search_key": "魔物娘"
+    },
+    {
+      "lang": {
+        "zh-rCN": "兽娘",
+        "zh-rTW": "獸娘"
+      },
+      "search_key": "獸娘"
+    },
+    {
+      "lang": {
+        "zh-rCN": "碧池",
+        "zh-rTW": "碧池"
+      },
+      "search_key": "碧池"
+    },
+    {
+      "lang": {
+        "zh-rCN": "痴女",
+        "zh-rTW": "痴女"
+      },
+      "search_key": "痴女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "不良少女",
+        "zh-rTW": "不良少女"
+      },
+      "search_key": "不良少女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "傲娇",
+        "zh-rTW": "傲嬌"
+      },
+      "search_key": "傲嬌"
+    },
+    {
+      "lang": {
+        "zh-rCN": "病娇",
+        "zh-rTW": "病嬌"
+      },
+      "search_key": "病嬌"
+    },
+    {
+      "lang": {
+        "zh-rCN": "无口",
+        "zh-rTW": "無口"
+      },
+      "search_key": "無口"
+    },
+    {
+      "lang": {
+        "zh-rCN": "伪娘",
+        "zh-rTW": "偽娘"
+      },
+      "search_key": "偽娘"
+    },
+    {
+      "lang": {
+        "zh-rCN": "扶他",
+        "zh-rTW": "扶他"
+      },
+      "search_key": "扶他"
+    }
+  ],
+  "appearance_and_figure": [
+    {
+      "lang": {
+        "zh-rCN": "短发",
+        "en": "Short Hair",
+        "zh-rTW": "短髮"
+      },
+      "search_key": "短髮"
+    },
+    {
+      "lang": {
+        "zh-rCN": "马尾",
+        "en": "Ponytail",
+        "zh-rTW": "馬尾"
+      },
+      "search_key": "馬尾"
+    },
+    {
+      "lang": {
+        "zh-rCN": "双马尾",
+        "en": "Twin Tail",
+        "zh-rTW": "雙馬尾"
+      },
+      "search_key": "雙馬尾"
+    },
+    {
+      "lang": {
+        "zh-rCN": "巨乳",
+        "en": "Big Breasts",
+        "zh-rTW": "巨乳"
+      },
+      "search_key": "巨乳"
+    },
+    {
+      "lang": {
+        "zh-rCN": "贫乳",
+        "en": "Small Breasts",
+        "zh-rTW": "貧乳"
+      },
+      "search_key": "貧乳"
+    },
+    {
+      "lang": {
+        "zh-rCN": "黑皮肤",
+        "en": "Dark Skin",
+        "zh-rTW": "黑皮膚"
+      },
+      "search_key": "黑皮膚"
+    },
+    {
+      "lang": {
+        "zh-rCN": "眼镜娘",
+        "en": "Glasses",
+        "zh-rTW": "眼鏡娘"
+      },
+      "search_key": "眼鏡娘"
+    },
+    {
+      "lang": {
+        "zh-rCN": "兽耳",
+        "en": "Animal Ears",
+        "zh-rTW": "獸耳"
+      },
+      "search_key": "獸耳"
+    },
+    {
+      "lang": {
+        "zh-rCN": "美人痣",
+        "en": "Beauty Mark",
+        "zh-rTW": "美人痣"
+      },
+      "search_key": "美人痣"
+    },
+    {
+      "lang": {
+        "zh-rCN": "肌肉女",
+        "en": "Muscle",
+        "zh-rTW": "肌肉女"
+      },
+      "search_key": "肌肉女"
+    },
+    {
+      "lang": {
+        "zh-rCN": "白虎",
+        "en": "Virgin",
+        "zh-rTW": "白虎"
+      },
+      "search_key": "白虎"
+    },
+    {
+      "lang": {
+        "zh-rCN": "大屌",
+        "en": "Big Dick",
+        "zh-rTW": "大屌"
+      },
+      "search_key": "大屌"
+    },
+    {
+      "lang": {
+        "zh-rCN": "水手服",
+        "en": "Sailor Suit",
+        "zh-rTW": "水手服"
+      },
+      "search_key": "水手服"
+    },
+    {
+      "lang": {
+        "zh-rCN": "体操服",
+        "en": "Gym Clothes",
+        "zh-rTW": "體操服"
+      },
+      "search_key": "體操服"
+    },
+    {
+      "lang": {
+        "zh-rCN": "泳装",
+        "en": "Swimsuit",
+        "zh-rTW": "泳裝"
+      },
+      "search_key": "泳裝"
+    },
+    {
+      "lang": {
+        "zh-rCN": "比基尼",
+        "en": "Bikini",
+        "zh-rTW": "比基尼"
+      },
+      "search_key": "比基尼"
+    },
+    {
+      "lang": {
+        "zh-rCN": "和服",
+        "en": "Kimono",
+        "zh-rTW": "和服"
+      },
+      "search_key": "和服"
+    },
+    {
+      "lang": {
+        "zh-rCN": "兔女郎",
+        "en": "Bunny Girl",
+        "zh-rTW": "兔女郎"
+      },
+      "search_key": "兔女郎"
+    },
+    {
+      "lang": {
+        "zh-rCN": "围裙",
+        "en": "Apron",
+        "zh-rTW": "圍裙"
+      },
+      "search_key": "圍裙"
+    },
+    {
+      "lang": {
+        "zh-rCN": "啦啦队",
+        "en": "Cheerleader",
+        "zh-rTW": "啦啦隊"
+      },
+      "search_key": "啦啦隊"
+    },
+    {
+      "lang": {
+        "zh-rCN": "旗袍",
+        "en": "Cheongsam",
+        "zh-rTW": "旗袍"
+      },
+      "search_key": "旗袍"
+    },
+    {
+      "lang": {
+        "zh-rCN": "丝袜",
+        "en": "Stockings",
+        "zh-rTW": "絲襪"
+      },
+      "search_key": "絲襪"
+    },
+    {
+      "lang": {
+        "zh-rCN": "吊袜带",
+        "en": "Garter Belt",
+        "zh-rTW": "吊襪帶"
+      },
+      "search_key": "吊襪帶"
+    },
+    {
+      "lang": {
+        "zh-rCN": "热裤",
+        "en": "Hot Pants",
+        "zh-rTW": "熱褲"
+      },
+      "search_key": "��褲"
+    },
+    {
+      "lang": {
+        "zh-rCN": "迷你裙",
+        "en": "Mini Skirt",
+        "zh-rTW": "迷你裙"
+      },
+      "search_key": "迷你裙"
+    },
+    {
+      "lang": {
+        "zh-rCN": "性感内衣",
+        "en": "Sexy Lingerie",
+        "zh-rTW": "性感內衣"
+      },
+      "search_key": "性感內衣"
+    },
+    {
+      "lang": {
+        "zh-rCN": "丁字裤",
+        "en": "Thong",
+        "zh-rTW": "丁字褲"
+      },
+      "search_key": "丁字褲"
+    },
+    {
+      "lang": {
+        "zh-rCN": "高跟鞋",
+        "en": "High Heels",
+        "zh-rTW": "高跟鞋"
+      },
+      "search_key": "高跟鞋"
+    },
+    {
+      "lang": {
+        "zh-rCN": "\u6deb\u7eb9",
+        "en": "Sexy Tattoo",
+        "zh-rTW": "\u6deb\u7d0b"
+      },
+      "search_key": "\u6deb\u7d0b"
+    }
+  ],
+  "story_plot": [
+    {
+      "lang": {
+        "zh-rCN": "纯爱",
+        "zh-rTW": "純愛"
+      },
+      "search_key": "純愛"
+    },
+    {
+      "lang": {
+        "zh-rCN": "恋爱喜剧",
+        "zh-rTW": "戀愛喜劇"
+      },
+      "search_key": "戀愛喜劇"
+    },
+    {
+      "lang": {
+        "zh-rCN": "后宫",
+        "zh-rTW": "後宮"
+      },
+      "search_key": "後宮"
+    },
+    {
+      "lang": {
+        "zh-rCN": "开大车",
+        "zh-rTW": "開大車"
+      },
+      "search_key": "開大車"
+    },
+    {
+      "lang": {
+        "zh-rCN": "公众场合",
+        "zh-rTW": "公眾場合"
+      },
+      "search_key": "公眾場合"
+    },
+    {
+      "lang": {
+        "zh-rCN": "NTR",
+        "zh-rTW": "NTR"
+      },
+      "search_key": "NTR"
+    },
+    {
+      "lang": {
+        "zh-rCN": "精神控制",
+        "zh-rTW": "精神控制"
+      },
+      "search_key": "精神控制"
+    },
+    {
+      "lang": {
+        "zh-rCN": "药物",
+        "zh-rTW": "藥物"
+      },
+      "search_key": "藥物"
+    },
+    {
+      "lang": {
+        "zh-rCN": "痴汉",
+        "zh-rTW": "痴漢"
+      },
+      "search_key": "痴漢"
+    },
+    {
+      "lang": {
+        "zh-rCN": "阿嘿颜",
+        "zh-rTW": "阿嘿顏"
+      },
+      "search_key": "阿嘿顏"
+    },
+    {
+      "lang": {
+        "zh-rCN": "精神崩溃",
+        "zh-rTW": "精神崩潰"
+      },
+      "search_key": "精神崩潰"
+    },
+    {
+      "lang": {
+        "zh-rCN": "猎奇",
+        "zh-rTW": "獵奇"
+      },
+      "search_key": "獵奇"
+    },
+    {
+      "lang": {
+        "zh-rCN": "BDSM",
+        "zh-rTW": "BDSM"
+      },
+      "search_key": "BDSM"
+    },
+    {
+      "lang": {
+        "zh-rCN": "捆绑",
+        "zh-rTW": "綑綁"
+      },
+      "search_key": "綑綁"
+    },
+    {
+      "lang": {
+        "zh-rCN": "眼罩",
+        "zh-rTW": "眼罩"
+      },
+      "search_key": "眼罩"
+    },
+    {
+      "lang": {
+        "zh-rCN": "项圈",
+        "zh-rTW": "項圈"
+      },
+      "search_key": "項圈"
+    },
+    {
+      "lang": {
+        "zh-rCN": "调教",
+        "zh-rTW": "調教"
+      },
+      "search_key": "調教"
+    },
+    {
+      "lang": {
+        "zh-rCN": "\u5f02\u7269\u63d2\u5165",
+        "zh-rTW": "\u7570\u7269\u63d2\u5165"
+      },
+      "search_key": "\u7570\u7269\u63d2\u5165"
+    },
+    {
+      "lang": {
+        "zh-rCN": "\u8089\u4fbf\u5668",
+        "zh-rTW": "\u8089\u4fbf\u5668"
+      },
+      "search_key": "\u8089\u4fbf\u5668"
+    },
+    {
+      "lang": {
+        "zh-rCN": "\u80c3\u51f8",
+        "zh-rTW": "\u80c3\u51f8"
+      },
+      "search_key": "\u80c3\u51f8"
+    },
+    {
+      "lang": {
+        "zh-rCN": "强制",
+        "zh-rTW": "強制"
+      },
+      "search_key": "強制"
+    },
+    {
+      "lang": {
+        "zh-rCN": "逆强制",
+        "zh-rTW": "逆強制"
+      },
+      "search_key": "逆強制"
+    },
+    {
+      "lang": {
+        "zh-rCN": "女王大人",
+        "zh-rTW": "女王樣"
+      },
+      "search_key": "女王樣"
+    },
+    {
+      "lang": {
+        "zh-rCN": "母女丼",
+        "zh-rTW": "母女丼"
+      },
+      "search_key": "母女丼"
+    },
+    {
+      "lang": {
+        "zh-rCN": "姐妹丼",
+        "zh-rTW": "姐妹丼"
+      },
+      "search_key": "姐妹丼"
+    },
+    {
+      "lang": {
+        "zh-rCN": "凌辱",
+        "zh-rTW": "凌辱"
+      },
+      "search_key": "凌辱"
+    },
+    {
+      "lang": {
+        "zh-rCN": "出轨",
+        "zh-rTW": "出軌"
+      },
+      "search_key": "出軌"
+    },
+    {
+      "lang": {
+        "zh-rCN": "摄影",
+        "zh-rTW": "攝影"
+      },
+      "search_key": "攝影"
+    },
+    {
+      "lang": {
+        "zh-rCN": "性转换",
+        "zh-rTW": "性轉換"
+      },
+      "search_key": "性轉換"
+    },
+    {
+      "lang": {
+        "zh-rCN": "百合",
+        "zh-rTW": "百合"
+      },
+      "search_key": "百合"
+    },
+    {
+      "lang": {
+        "zh-rCN": "耽美",
+        "zh-rTW": "耽美"
+      },
+      "search_key": "耽美"
+    },
+    {
+      "lang": {
+        "zh-rCN": "异世界",
+        "zh-rTW": "異世界"
+      },
+      "search_key": "異世界"
+    },
+    {
+      "lang": {
+        "zh-rCN": "怪兽",
+        "zh-rTW": "怪獸"
+      },
+      "search_key": "怪獸"
+    },
+    {
+      "lang": {
+        "zh-rCN": "世界末日",
+        "zh-rTW": "世界末日"
+      },
+      "search_key": "世界末日"
+    }
+  ],
+  "sex_positions": [
+    {
+      "lang": {
+        "zh-rTW": "\u624b\u4ea4"
+      },
+      "search_key": "\u624b\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u6307\u4ea4"
+      },
+      "search_key": "\u6307\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u4e73\u4ea4"
+      },
+      "search_key": "\u4e73\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u809b\u4ea4"
+      },
+      "search_key": "\u809b\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u8173\u4ea4"
+      },
+      "search_key": "\u8173\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u62f3\u4ea4"
+      },
+      "search_key": "\u62f3\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "3P"
+      },
+      "search_key": "3P"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u7fa4\u4ea4"
+      },
+      "search_key": "\u7fa4\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u53e3\u4ea4"
+      },
+      "search_key": "\u53e3\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u53e3\u7206"
+      },
+      "search_key": "\u53e3\u7206"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u541e\u7cbe"
+      },
+      "search_key": "\u541e\u7cbe"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u8214\u86cb\u86cb"
+      },
+      "search_key": "\u8214\u86cb\u86cb"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u8214\u7a74"
+      },
+      "search_key": "\u8214\u7a74"
+    },
+    {
+      "lang": {
+        "zh-rTW": "69"
+      },
+      "search_key": "69"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u81ea\u6170"
+      },
+      "search_key": "\u81ea\u6170"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u814b\u6bdb"
+      },
+      "search_key": "\u814b\u6bdb"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u814b\u4ea4"
+      },
+      "search_key": "\u814b\u4ea4"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u8214\u814b\u4e0b"
+      },
+      "search_key": "\u8214\u814b\u4e0b"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u5167\u5c04"
+      },
+      "search_key": "\u5167\u5c04"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u984f\u5c04"
+      },
+      "search_key": "\u984f\u5c04"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u96d9\u6d1e\u9f4a\u4e0b"
+      },
+      "search_key": "\u96d9\u6d1e\u9f4a\u4e0b"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u61f7\u5b55"
+      },
+      "search_key": "\u61f7\u5b55"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u5674\u5976"
+      },
+      "search_key": "\u5674\u5976"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u653e\u5c3f"
+      },
+      "search_key": "\u653e\u5c3f"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u6392\u4fbf"
+      },
+      "search_key": "\u6392\u4fbf"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u984f\u9762\u9a0e\u4e58"
+      },
+      "search_key": "\u984f\u9762\u9a0e\u4e58"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u8eca\u9707"
+      },
+      "search_key": "\u8eca\u9707"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u6027\u73a9\u5177"
+      },
+      "search_key": "\u6027\u73a9\u5177"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u6bd2\u9f8d\u947d"
+      },
+      "search_key": "\u6bd2\u9f8d\u947d"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u89f8\u624b"
+      },
+      "search_key": "\u89f8\u624b"
+    },
+    {
+      "lang": {
+        "zh-rTW": "\u9838\u624b\u67b7"
+      },
+      "search_key": "\u9838\u624b\u67b7"
+    }
+  ]
+}
