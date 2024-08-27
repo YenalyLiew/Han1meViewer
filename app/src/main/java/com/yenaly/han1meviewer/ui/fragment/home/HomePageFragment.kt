@@ -172,7 +172,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
         ViewCompat.setOnApplyWindowInsetsListener(binding.rv) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = systemBars.bottom)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
         binding.homePageSrl.apply {
             setOnRefreshListener {

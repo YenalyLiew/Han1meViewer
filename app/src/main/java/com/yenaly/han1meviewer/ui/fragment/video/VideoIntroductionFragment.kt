@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import androidx.viewpager2.widget.ViewPager2
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -74,6 +75,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.format
+import java.util.concurrent.TimeUnit
 
 /**
  * @project Hanime1
@@ -154,7 +156,7 @@ class VideoIntroductionFragment :
         ViewCompat.setOnApplyWindowInsetsListener(binding.rvVideoIntro) { v, insets ->
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = navBar.bottom)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
     }
 
@@ -323,6 +325,10 @@ class VideoIntroductionFragment :
         val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
             .addTag(HanimeDownloadWorker.TAG)
             .setConstraints(constraints)
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                HanimeDownloadWorker.BACKOFF_DELAY, TimeUnit.MILLISECONDS
+            )
             .setInputData(data)
             .build()
         WorkManager.getInstance(requireContext().applicationContext)

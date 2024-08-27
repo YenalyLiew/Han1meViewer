@@ -10,6 +10,7 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -32,6 +33,7 @@ import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.utils.formatFileSize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 /**
  * @project Han1meViewer
@@ -199,6 +201,10 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
             .addTag(HanimeDownloadWorker.TAG)
             .setConstraints(constraints)
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                HanimeDownloadWorker.BACKOFF_DELAY, TimeUnit.MILLISECONDS
+            )
             .setInputData(data)
             .build()
         WorkManager.getInstance(context.applicationContext)

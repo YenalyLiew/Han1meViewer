@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -47,6 +49,8 @@ class HanimeDownloadWorker(
         const val TAG = "HanimeDownloadWorker"
 
         const val RESPONSE_INTERVAL = 500L
+
+        const val BACKOFF_DELAY = 10_000L
 
         const val DELETE = "delete"
         const val QUALITY = "quality"
@@ -110,6 +114,15 @@ class HanimeDownloadWorker(
                     )
                 )
             )
+        } else if (runAttemptCount > 0) {
+            Handler(Looper.getMainLooper()).post {
+                showShortToast(
+                    context.getString(
+                        R.string.download_failed_d_times_and_retry_s,
+                        runAttemptCount, hanimeName
+                    )
+                )
+            }
         }
         setForeground(createForegroundInfo())
         return download()

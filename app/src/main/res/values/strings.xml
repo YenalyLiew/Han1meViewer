@@ -312,7 +312,8 @@
     <string name="not_logged_in_currently">當前未登入</string>
     <string name="parse_error_msg">可能這個網址解析起來不大一樣…</string>
     <string name="network_unstable_msg">可能是你的網路不穩定，多刷新！</string>
-    <string name="download_s_failed_many_times">下載 %1$s 失敗多次！</string>
+    <string name="download_s_failed_many_times">下載失敗多次：%1$s！</string>
+    <string name="download_failed_d_times_and_retry_s">下載失敗 %1$d 次，正在重試：%2$s</string>
     <string name="unknown_download_error">未知下載錯誤</string>
     <string name="download_task_completed">下載任務已完成！</string>
     <string name="download_completed_s">下載完畢：%1$s</string>

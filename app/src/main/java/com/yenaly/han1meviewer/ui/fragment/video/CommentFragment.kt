@@ -60,7 +60,7 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         ViewCompat.setOnApplyWindowInsetsListener(binding.rvComment) { v, insets ->
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = navBar.bottom)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
         binding.srlComment.setOnRefreshListener {
             viewModel.getComment(commentTypePrefix, viewModel.code)

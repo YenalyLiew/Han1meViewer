@@ -308,7 +308,8 @@
     <string name="not_logged_in_currently">当前未登录</string>
     <string name="parse_error_msg">可能这个网址解析起来不太一样…</string>
     <string name="network_unstable_msg">可能是你的网络不稳定，多刷新！</string>
-    <string name="download_s_failed_many_times">下载 %1$s 失败多次！</string>
+    <string name="download_s_failed_many_times">下载失败多次：%1$s！</string>
+    <string name="download_failed_d_times_and_retry_s">下载失败 %1$d 次，正在重试：%2$s</string>
     <string name="unknown_download_error">未知下载错误</string>
     <string name="download_task_completed">下载任务已完成！</string>
     <string name="download_completed_s">下载完毕：%1$s</string>

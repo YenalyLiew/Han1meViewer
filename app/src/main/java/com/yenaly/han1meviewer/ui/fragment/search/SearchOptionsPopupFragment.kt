@@ -47,15 +47,17 @@ class SearchOptionsPopupFragment :
     private val timePickerPopup: TimePickerPopup
         get() {
             val date = Calendar.getInstance().also {
-                val year = viewModel.year
-                val month = viewModel.month
-                if (year != null && month != null) {
-                    it.set(year, month, 0)
-                }
+                viewModel.year?.let { year -> it.set(Calendar.YEAR, year) }
+                viewModel.month?.let { month -> it.set(Calendar.MONTH, month - 1) }
+            }
+            val mode = when {
+                viewModel.year != null && viewModel.month != null -> TimePickerPopup.Mode.YM
+                viewModel.year != null -> TimePickerPopup.Mode.Y
+                else -> TimePickerPopup.Mode.YM
             }
             val popup = HTimePickerPopup(requireContext())
-                .apply {
-                    setMode(TimePickerPopup.Mode.YM)
+                .apply popup@{
+                    setMode(mode)
                     setYearRange(SEARCH_YEAR_RANGE_START, SEARCH_YEAR_RANGE_END)
                     setDefaultDate(date)
                     setTimePickerListener(object : TimePickerListener {
@@ -65,7 +67,7 @@ class SearchOptionsPopupFragment :
                         override fun onTimeConfirm(date: Date, view: View?) {
                             val calendar = Calendar.getInstance()
                             calendar.time = date
-                            when (mode) {
+                            when (this@popup.mode) {
                                 TimePickerPopup.Mode.YM -> {
                                     viewModel.year = calendar.get(Calendar.YEAR)
                                     viewModel.month = calendar.get(Calendar.MONTH) + 1

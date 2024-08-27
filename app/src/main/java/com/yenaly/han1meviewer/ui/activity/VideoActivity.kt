@@ -94,7 +94,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             v.updateLayoutParams<MarginLayoutParams> {
                 topMargin = navBar.top
             }
-            insets
+            WindowInsetsCompat.CONSUMED
         }
 
         lifecycle.addObserver(OrientationManager(this))

@@ -28,7 +28,7 @@ object VideoCoverSize {
         context.resources.getDimension(R.dimen.video_cover_simplified_width)
 
     // Ratio of the video cover's width to its height
-    private const val ratio = 15 / 22.0
+    private const val RATIO = 15 / 22.0
 
     /**
      * 自带的一个Margin
@@ -45,18 +45,18 @@ object VideoCoverSize {
         /**
          * 最少显示几个视频
          */
-        private const val atLeast = 2
+        private const val AT_LEAST = 2
 
         val videoInOneLine
-            get() = (screenWidth / videoCoverWidth).toInt().coerceAtLeast(atLeast)
+            get() = (screenWidth / videoCoverWidth).toInt().coerceAtLeast(AT_LEAST)
 
-        fun ViewGroup.resizeForVideoCover(atLeast: Int = Normal.atLeast) {
+        fun ViewGroup.resizeForVideoCover(atLeast: Int = AT_LEAST) {
             require(atLeast > 0)
             val screenWidth = VideoCoverSize.screenWidth
             val videoInOneLine = (screenWidth / videoCoverWidth).toInt()
             if (videoInOneLine < atLeast) {
                 val width = (screenWidth - parentMargin * 2) / atLeast - margin * 2
-                val height = (width * ratio).toInt()
+                val height = (width * RATIO).toInt()
                 updateLayoutParams {
                     this.width = width
                     this.height = height
@@ -70,18 +70,18 @@ object VideoCoverSize {
         /**
          * 最少显示几个视频
          */
-        private const val atLeast = 3
+        private const val AT_LEAST = 3
 
         val videoInOneLine
-            get() = (screenWidth / simplifiedVideoCoverWidth).toInt().coerceAtLeast(atLeast)
+            get() = (screenWidth / simplifiedVideoCoverWidth).toInt().coerceAtLeast(AT_LEAST)
 
-        fun ViewGroup.resizeForVideoCover(atLeast: Int = Simplified.atLeast) {
+        fun ViewGroup.resizeForVideoCover(atLeast: Int = AT_LEAST) {
             require(atLeast > 0)
             val screenWidth = VideoCoverSize.screenWidth
             val videoInOneLine = (screenWidth / simplifiedVideoCoverWidth).toInt()
             if (videoInOneLine < atLeast) {
                 val width = (screenWidth - parentMargin * 2) / atLeast - margin * 2
-                val height = (width / ratio).toInt()
+                val height = (width / RATIO).toInt()
                 updateLayoutParams {
                     this.width = width
                     this.height = height

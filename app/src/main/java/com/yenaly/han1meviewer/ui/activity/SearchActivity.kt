@@ -118,19 +118,19 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.searchBar) { v, insets ->
             v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.searchRv) { v, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = sysBars.bottom, top = sysBars.top + 68.dp)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.searchHeader) { v, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.statusBars())
             v.updateLayoutParams<MarginLayoutParams> {
                 topMargin = sysBars.top + 68.dp
             }
-            insets
+            WindowInsetsCompat.CONSUMED
         }
     }
 

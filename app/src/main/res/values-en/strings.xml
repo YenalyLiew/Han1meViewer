@@ -302,7 +302,8 @@ Recommendations are as follows:\n
     <string name="not_logged_in_currently">Currently not logged in</string>
     <string name="parse_error_msg">Maybe this URL is parsed differently…</string>
     <string name="network_unstable_msg">Your network may be unstable, please refresh more!</string>
-    <string name="download_s_failed_many_times">Download %1$s failed many times!</string>
+    <string name="download_s_failed_many_times">Download failed many times: %1$s!</string>
+    <string name="download_failed_d_times_and_retry_s">Download failed %1$d times, retrying %2$s</string>
     <string name="unknown_download_error">Unknown download error</string>
     <string name="download_task_completed">Download task completed!</string>
     <string name="download_completed_s">Download completed: %1$s</string>
