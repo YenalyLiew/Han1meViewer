@@ -194,7 +194,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
                 v.updatePadding(bottom = systemBars.bottom)
-                insets
+                WindowInsetsCompat.CONSUMED
             }
         }
         binding.vpNews.offscreenPageLimit = 1

@@ -30,7 +30,7 @@ import kotlin.math.abs
  * @author Yenaly Liew
  * @time 2022/06/17 017 19:01
  */
-class VideoViewModel(private val application: Application) : YenalyViewModel(application) {
+class VideoViewModel(application: Application) : YenalyViewModel(application) {
 
     companion object {
         /**

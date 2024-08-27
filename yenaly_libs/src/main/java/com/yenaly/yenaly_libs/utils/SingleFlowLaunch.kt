@@ -27,6 +27,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * @author Yenaly Liew
  * @time 2022/07/17 017 22:34
  */
+@Deprecated("totally trash")
 class SingleFlowLaunch {
 
     private val jobMap = mutableMapOf<SuspendCoroutineScopeBlock, AtomicInteger>()

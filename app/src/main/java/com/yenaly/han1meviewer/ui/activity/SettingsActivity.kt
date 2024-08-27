@@ -69,7 +69,7 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewMod
         ViewCompat.setOnApplyWindowInsetsListener(binding.fcvSettings) { v, insets ->
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = navBar.bottom)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
     }
 

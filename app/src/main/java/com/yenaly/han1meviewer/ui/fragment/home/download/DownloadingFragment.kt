@@ -42,7 +42,7 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding, DownloadView
         ViewCompat.setOnApplyWindowInsetsListener(binding.rvList) { v, insets ->
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = navBar.bottom)
-            insets
+            WindowInsetsCompat.CONSUMED
         }
         adapter.setStateViewLayout(R.layout.layout_empty_view)
         // binding.rvList.itemAnimator?.changeDuration = 0
