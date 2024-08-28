@@ -22,9 +22,9 @@
     <string name="brand">品牌</string>
     <string name="release_date">發佈日期</string>
     <string name="duration">片長</string>
-    <string name="duration_able_reset">片長（復選可取消）</string>
-    <string name="type_able_reset">類型（復選可取消）</string>
-    <string name="sort_option_able_reset">排序方式（復選可取消）</string>
+    <string name="duration_able_reset">片長（複選可取消）</string>
+    <string name="type_able_reset">類型（複選可取消）</string>
+    <string name="sort_option_able_reset">排序方式（複選可取消）</string>
     <string name="cancel_all_tags">取消所有tag</string>
     <string name="alert">提示</string>
     <string name="alert_cancel_all_tags">確認將會取消你所選的所有Tag</string>
@@ -35,7 +35,7 @@
     <string name="pair_widely_alert">較多結果，較不精準。配對所有包含任何一個選擇的標籤的影片，而非全部標籤</string>
     <string name="reset">重設</string>
     <string name="save">保存</string>
-    <string name="save_and_search">保存並搜索</string>
+    <string name="save_and_search">保存並搜尋</string>
     <string name="video_attr">影片屬性</string>
     <string name="relationship">人物關係</string>
     <string name="characteristics">角色設定</string>
@@ -327,8 +327,8 @@
     <string name="long_press_speed_multiplier">長按快進速度是當前速度的</string>
     <string name="slide_sensitivity">滑動調整進度的靈敏度</string>
     <string name="web_link">網頁連結</string>
-    <string name="apply_deep_links">應用深層連結</string>
-    <string name="apply_deep_links_summary">應用後，打開相關網頁後能快速跳轉至本 App</string>
+    <string name="apply_deep_links">預設開啟</string>
+    <string name="apply_deep_links_summary">允許在這個應用程式中開啟網頁連結</string>
     <string name="apply_deep_links_tips">MIUI 隱藏了這個介面，所以你需要從這裡打開然後添加連結</string>
     <string name="switch_player_kernel">切換播放器內核</string>
     <string name="switch_to_year">切換至年</string>
