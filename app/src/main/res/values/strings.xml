@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="hanime_app_name" translatable="false" tools:ignore="Typos">Han1meViewer</string>
-    <string name="home_page">主頁</string>
+    <string name="home_page">首頁</string>
     <string name="h_anime">H動漫</string>
     <string name="latest_hanime">最新裏番</string>
     <string name="fresh">新鮮</string>
@@ -12,10 +12,10 @@
     <string name="hot_video_2">熱門影片</string>
     <string name="trends">動態</string>
     <string name="they_watched">他們在看</string>
-    <string name="search">搜索</string>
-    <string name="advanced_search">高級搜索</string>
+    <string name="search">搜尋</string>
+    <string name="advanced_search">高級搜尋</string>
     <string name="back">返回</string>
-    <string name="input_keyword">請輸入關鍵詞</string>
+    <string name="input_keyword">請輸入關鍵字</string>
     <string name="type">類型</string>
     <string name="tag">標籖</string>
     <string name="sort_option">排序方式</string>
@@ -33,7 +33,7 @@
     <string name="content_tag">內容標籤</string>
     <string name="pair_widely">廣泛配對</string>
     <string name="pair_widely_alert">較多結果，較不精準。配對所有包含任何一個選擇的標籤的影片，而非全部標籤</string>
-    <string name="reset">重置</string>
+    <string name="reset">重設</string>
     <string name="save">保存</string>
     <string name="save_and_search">保存並搜索</string>
     <string name="video_attr">影片屬性</string>
@@ -42,7 +42,7 @@
     <string name="appearance_and_figure">外貌身材</string>
     <string name="story_plot">故事劇情</string>
     <string name="sex_position">性交體位</string>
-    <string name="reset_date">重置日期</string>
+    <string name="reset_date">重設日期</string>
     <string name="copy_to_clipboard">已複製到剪貼簿</string>
     <string name="introduction">簡介</string>
     <string name="comment">評論</string>
@@ -84,8 +84,8 @@
     <string name="check_update_success">當前有新版本：%s，點擊查看</string>
     <string name="current_version">當前版本：%s</string>
     <string name="already_latest_update">已經是最新版本！</string>
-    <string name="app_slogan">非官方 Hanime1.me 客戶端</string>
-    <string name="search_placeholder">今天想看點什麽呢</string>
+    <string name="app_slogan">非官方 Hanime1.me 用戶端</string>
+    <string name="search_placeholder">今天想看點什麼呢</string>
     <string name="downloading">正在下載</string>
     <string name="downloading_s">正在下載：%1$s</string>
     <string name="downloading_update_percent">正在下載更新 %d%%</string>
@@ -123,7 +123,7 @@
     <string name="safe_dns">安全 DNS</string>
     <string name="proxy">代理</string>
     <string name="host_or_ip">Host 或 IP</string>
-    <string name="port">端口</string>
+    <string name="port">埠</string>
     <string name="direct">直接連接</string>
     <string name="system_proxy">系統代理</string>
     <string name="http" translatable="false">HTTP</string>
@@ -143,9 +143,9 @@
     <string name="manage">管理</string>
     <string name="h_keyframe_manage">關鍵H幀管理</string>
     <string name="h_keyframe">關鍵H幀</string>
-    <string name="when_countdown_remind">何時開始倒計時提醒</string>
-    <string name="show_prompt_when_countdown">倒計時顯示提示</string>
-    <string name="will_remind_before_d_seconds">將會在 %d 秒前倒計時提醒</string>
+    <string name="when_countdown_remind">何時開始倒數計時提醒</string>
+    <string name="show_prompt_when_countdown">倒數計時顯示提示</string>
+    <string name="will_remind_before_d_seconds">將會在 %d 秒前倒數計時提醒</string>
     <string name="shared_h_keyframes_enable">採用共享關鍵H幀集</string>
     <string name="shared_h_keyframe_manage">共享關鍵H幀管理</string>
     <string name="shared_h_keyframe_manage_tip">歡迎到 GitHub 上面提交你的關鍵H幀，如果不會提交，討論區有教學文供參考</string>
@@ -178,7 +178,7 @@
     <string name="domain_name">域名</string>
     <string name="use_built_in_hosts">應用內建 Hosts</string>
     <string name="network_settings">網路設定</string>
-    <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\nVPN？那是什麽？</string>
+    <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\nVPN？那是什麼？</string>
     <string name="username">帳號</string>
     <string name="password">密碼</string>
     <string name="try_login_here">試試在這裡登入</string>
@@ -191,7 +191,7 @@
     <string name="update">更新</string>
     <string name="use_ci_update_channel">使用 CI 更新通道。</string>
     <string name="use_ci_update_channel_summary">CI 更新頻道能更快地取得最新變更\n但不保證穩定性</string>
-    <string name="update_popup_interval_days">檢查更新彈窗間隔天數</string>
+    <string name="update_popup_interval_days">檢查更新跳出視窗間隔天數</string>
     <string name="update_failed">更新失敗</string>
     <string name="update_download_background">在背景下載更新</string>
     <string name="allow_install_from_unknown_app_sources">允許當前 App 來源安裝</string>
@@ -202,9 +202,9 @@
     <string name="msg_deny_download_notification">進行或完成時不會通知哦</string>
     <string name="at_any_time">隨時</string>
     <string name="which_days">%d天</string>
-    <string name="last_update_popup_check_time">最近更新彈窗時刻：%s</string>
+    <string name="last_update_popup_check_time">最近更新跳出視窗時刻：%s</string>
     <string name="no_description">您似乎還沒有寫介紹…</string>
-    <string name="share_to_others_tip">複製以下内容，分享給其他人，可以透過頂部右側添加按鈕來將其存入設備：\n%s</string>
+    <string name="share_to_others_tip">複製以下內容，分享給其他人，可以透過頂部右側添加按鈕來將其存入設備：\n%s</string>
     <string name="delete_playlist">刪除播放清單</string>
     <string name="delete_the_playlist">刪除該播放清單</string>
     <string name="s_copy_to_clipboard">「%1$s」已複製到剪貼簿</string>
@@ -240,7 +240,7 @@
     <string name="add_success">添加成功</string>
     <string name="default_">預設</string>
     <string name="alternative">備用</string>
-    <string name="loading">加載中…</string>
+    <string name="loading">載入中…</string>
     <string name="slide_to_choose_list">請從右向左滑動選擇列表</string>
     <string name="create_new_playlist">創建新清單</string>
     <string name="delete_watch_later">刪除待看</string>
@@ -254,7 +254,7 @@
     <string name="cancel_thumb_down_success">取消倒讚成功！</string>
     <string name="thumb_down_success">倒讚成功！</string>
     <string name="interval_must_greater_than_d">間隔太短，必須大於%ds</string>
-    <string name="load_reply_failed">加載回覆失敗捏</string>
+    <string name="load_reply_failed">載入回覆失敗捏</string>
     <string name="send_failed">發送失敗！</string>
     <string name="sending_reply">發表回覆中</string>
     <string name="send_success">發送成功！</string>
@@ -273,7 +273,7 @@
     <string name="download_video_detail_below">將要下載的影片詳情如下</string>
     <string name="name_with_colon">名稱：</string>
     <string name="quality_with_colon">畫質：</string>
-    <string name="after_download_tips">下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裏有詳細儲存路徑</string>
+    <string name="after_download_tips">下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裡有詳細儲存路徑</string>
     <string name="traditional_chinese">正體中文</string>
     <string name="simplified_chinese">簡體中文</string>
     <string name="restart_or_not_working">修改%s需要重啟程式，否則不起作用！</string>
@@ -307,8 +307,8 @@
 · 無VPN用戶，使用 hanime1.me 並開啟內建 Hosts\n
 · 日本用戶，使用 hanime1.com\n
 · 其他地區用戶，使用 hanime1.me 並關閉內建 Hosts</string>
-    <string name="do_not_use_japan_ip">不要使用日本IP地址!!!</string>
-    <string name="website_blocked_msg">看到這裡説明他們網站加固了，能不能恢復只能聽天命了…</string>
+    <string name="do_not_use_japan_ip">不要使用日本IP位址!!!</string>
+    <string name="website_blocked_msg">看到這裡說明他們網站加固了，能不能恢復只能聽天命了…</string>
     <string name="not_logged_in_currently">當前未登入</string>
     <string name="parse_error_msg">可能這個網址解析起來不大一樣…</string>
     <string name="network_unstable_msg">可能是你的網路不穩定，多刷新！</string>
