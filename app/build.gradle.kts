@@ -59,7 +59,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false // 被迫 false，混淆会导致无法获取父类泛型
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signConfig
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
