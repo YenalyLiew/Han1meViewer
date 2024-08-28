@@ -7,7 +7,7 @@ package com.yenaly.han1meviewer.logic.model
 interface HanimeInfoType : MultiItemEntity
 
 /**
- * @project Hanime1
+ * @project Han1meViewer
  * @author Yenaly Liew
  * @time 2022/06/08 008 22:56
  */
