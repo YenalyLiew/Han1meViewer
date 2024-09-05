@@ -341,5 +341,6 @@
     <string name="unsubscribe">取消訂閱</string>
     <string name="unsubscribe_artist">取消訂閱該作者</string>
     <string name="sure_to_unsubscribe">確定要取消訂閱嗎？</string>
+    <string name="action_app_open_by_default_settings_not_support">此設備不支援從程式中開啟預設介面</string>
 
 </resources>
