@@ -311,14 +311,21 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             setTitle(R.string.apply_deep_links)
             setView(R.layout.dialog_apply_deep_links)
             setPositiveButton(R.string.go_to_settings) { _, _ ->
-                val intent = Intent().apply {
-                    action = Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS
-                    addCategory(Intent.CATEGORY_DEFAULT)
-                    data = "package:${context.packageName}".toUri()
-                    flags =
-                        Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                // #issue-197: 有些手机不支持直接从应用里跳转到深层链接界面
+                // 这个权限是一个系统级权限，所以没办法，不支持的手机只能自己找地方开了。
+                try {
+                    val intent = Intent().apply {
+                        action = Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS
+                        addCategory(Intent.CATEGORY_DEFAULT)
+                        data = "package:${context.packageName}".toUri()
+                        flags = Intent.FLAG_ACTIVITY_NO_HISTORY or
+                                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                    }
+                    requireActivity().startActivity(intent)
+                } catch (e: SecurityException) {
+                    showShortToast(R.string.action_app_open_by_default_settings_not_support)
+                    e.printStackTrace()
                 }
-                requireActivity().startActivity(intent)
             }
             setNegativeButton(R.string.cancel, null)
         }
