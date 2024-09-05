@@ -11,7 +11,7 @@
         app:key="proxy"
         app:title="@string/proxy" />
 
-    <SwitchPreferenceCompat
+    <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
         app:iconSpaceReserved="false"
         app:key="use_built_in_hosts"
         app:summary="@string/use_built_in_hosts_summary"

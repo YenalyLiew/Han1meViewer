@@ -55,7 +55,7 @@
             app:key="update"
             app:title="@string/check_update" />
 
-        <SwitchPreferenceCompat
+        <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
             app:defaultValue="false"
             app:key="use_ci_update_channel"
             app:summary="@string/use_ci_update_channel_summary"

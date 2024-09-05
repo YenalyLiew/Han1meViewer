@@ -8,7 +8,7 @@
         app:title="@string/switch_player_kernel"
         app:useSimpleSummaryProvider="true" />
 
-    <SwitchPreferenceCompat
+    <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="show_bottom_progress"
