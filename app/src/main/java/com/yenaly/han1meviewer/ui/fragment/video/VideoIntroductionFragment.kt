@@ -21,11 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import androidx.viewpager2.widget.ViewPager2
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil.load
@@ -75,7 +71,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.format
-import java.util.concurrent.TimeUnit
 
 /**
  * @project Hanime1
@@ -230,14 +225,30 @@ class VideoIntroductionFragment :
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadDownloadedFlow.collect { entity ->
                 if (entity == null) { // 没下
-                    viewModel.hanimeVideoFlow.value?.let { enqueueDownloadWork(it) }
+                    viewModel.hanimeVideoFlow.value?.let {
+                        val checkedQuality = requireNotNull(checkedQuality)
+                        notifyDownload(it.title, checkedQuality) {
+                            launch {
+                                enqueueDownloadWork(it)
+                            }
+                        }
+                    }
                     return@collect
                 }
-                // 没下完或下過了
-                if (!entity.isDownloaded) {
+                if (entity.isDownloaded) {
+                    // #issue-194: 重复下载提示&重新下载
+                    viewModel.hanimeVideoFlow.value?.let {
+                        val checkedQuality = requireNotNull(checkedQuality)
+                        notifyDownload(it.title, checkedQuality, isRedownload = true) {
+                            launch {
+                                enqueueDownloadWork(it, isRedownload = true)
+                            }
+                        }
+                    }
+                } else {
+                    // 没下完或下過了
                     if (entity.isDownloading) showShortToast(R.string.downloading_now)
                     else showShortToast(R.string.already_in_queue)
-                    return@collect
                 }
             }
         }
@@ -277,7 +288,10 @@ class VideoIntroductionFragment :
         }
     }
 
-    private fun notifyDownload(title: String, quality: String, action: () -> Unit) {
+    private fun notifyDownload(
+        title: String, quality: String, isRedownload: Boolean = false,
+        action: () -> Unit
+    ) {
         val notifyMsg = spannable {
             getString(R.string.download_video_detail_below).text()
             newline(2)
@@ -296,7 +310,7 @@ class VideoIntroductionFragment :
             getString(R.string.after_download_tips).text()
         }
         requireContext().showAlertDialog {
-            setTitle(R.string.sure_to_download)
+            setTitle(if (isRedownload) R.string.sure_to_redownload else R.string.sure_to_download)
             setMessage(notifyMsg)
             setPositiveButton(R.string.sure) { _, _ ->
                 action.invoke()
@@ -308,12 +322,9 @@ class VideoIntroductionFragment :
         }
     }
 
-    private suspend fun enqueueDownloadWork(videoData: HanimeVideo) {
+    private suspend fun enqueueDownloadWork(videoData: HanimeVideo, isRedownload: Boolean = false) {
         requireContext().requestPostNotificationPermission()
         val checkedQuality = requireNotNull(checkedQuality)
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
         val data = workDataOf(
             HanimeDownloadWorker.QUALITY to checkedQuality,
             HanimeDownloadWorker.DOWNLOAD_URL to videoData.videoUrls[checkedQuality]?.link,
@@ -321,16 +332,11 @@ class VideoIntroductionFragment :
             HanimeDownloadWorker.HANIME_NAME to videoData.title,
             HanimeDownloadWorker.VIDEO_CODE to viewModel.videoCode,
             HanimeDownloadWorker.COVER_URL to videoData.coverUrl,
+            HanimeDownloadWorker.REDOWNLOAD to isRedownload,
         )
-        val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
-            .addTag(HanimeDownloadWorker.TAG)
-            .setConstraints(constraints)
-            .setBackoffCriteria(
-                BackoffPolicy.LINEAR,
-                HanimeDownloadWorker.BACKOFF_DELAY, TimeUnit.MILLISECONDS
-            )
-            .setInputData(data)
-            .build()
+        val downloadRequest = HanimeDownloadWorker.build {
+            setInputData(data)
+        }
         WorkManager.getInstance(requireContext().applicationContext)
             .beginUniqueWork(viewModel.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
             .enqueue()
@@ -584,7 +590,7 @@ class VideoIntroductionFragment :
                         if (key == HanimeResolution.RES_UNKNOWN) {
                             showShortToast(R.string.cannot_download_here)
                             browse(getHanimeVideoDownloadLink(viewModel.videoCode))
-                        } else notifyDownload(videoData.title, key) {
+                        } else {
                             checkedQuality = key
                             viewModel.findDownloadedHanime(
                                 viewModel.videoCode, quality = key

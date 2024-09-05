@@ -10,8 +10,13 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -33,6 +38,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.RandomAccessFile
 import java.util.concurrent.CancellationException
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 /**
@@ -59,11 +65,30 @@ class HanimeDownloadWorker(
         const val HANIME_NAME = "hanime_name"
         const val VIDEO_CODE = "video_code"
         const val COVER_URL = "cover_url"
+        const val REDOWNLOAD = "redownload"
         // const val RELEASE_DATE = "release_date"
         // const val COVER_DOWNLOAD = "cover_download"
 
         const val PROGRESS = "progress"
         const val FAILED_REASON = "failed_reason"
+
+        /**
+         * 方便统一管理下载 Worker 的创建
+         */
+        inline fun build(
+            action: OneTimeWorkRequest.Builder.() -> Unit = {}
+        ): OneTimeWorkRequest {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+            return OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
+                .addTag(TAG)
+                .setConstraints(constraints)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    BACKOFF_DELAY, TimeUnit.MILLISECONDS
+                ).apply(action).build()
+        }
 
         /**
          * This function is used to collect the output of the download task
@@ -98,14 +123,15 @@ class HanimeDownloadWorker(
     private val videoCode by inputData(VIDEO_CODE, EMPTY_STRING)
     private val coverUrl by inputData(COVER_URL, EMPTY_STRING)
 
-    private val delete by inputData(DELETE, false)
+    private val shouldDelete by inputData(DELETE, false)
+    private val shouldRedownload by inputData(REDOWNLOAD, false)
 
     private val downloadId = Random.nextInt()
     private val successId = Random.nextInt()
     private val failId = Random.nextInt()
 
     override suspend fun doWork(): Result {
-        if (delete) return Result.success()
+        if (shouldDelete) return Result.success()
         if (runAttemptCount > 2) {
             return Result.failure(
                 workDataOf(
@@ -157,7 +183,7 @@ class HanimeDownloadWorker(
                 }
             } catch (e: Exception) {
                 // 创建，但是并没有下载接收到文件大小，删除文件
-                if (file.length() == 0L) file.delete()
+                if (file.exists() && file.length() == 0L) file.delete()
             } finally {
                 raf?.close()
                 response?.close()
@@ -169,6 +195,12 @@ class HanimeDownloadWorker(
     private suspend fun download(): Result {
         return withContext(Dispatchers.IO) {
             val file = getDownloadedHanimeFile(hanimeName, quality, suffix = videoType)
+            if (shouldRedownload) {
+                DatabaseRepo.HanimeDownload.deleteBy(videoCode, quality)
+                if (file.exists()) {
+                    file.delete()
+                }
+            }
             val isExist = DatabaseRepo.HanimeDownload.isExist(videoCode, quality)
             if (!isExist) createNewRaf()
             val entity = DatabaseRepo.HanimeDownload.findBy(videoCode, quality)
