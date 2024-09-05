@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
+    <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="h_keyframes_enable"
@@ -27,14 +27,14 @@
         app:key="shared_h_keyframes_category"
         app:title="@string/shared">
 
-        <SwitchPreferenceCompat
+        <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="shared_h_keyframes_enable"
             app:summary="@string/shared_h_keyframes_enable_tip"
             app:title="@string/shared_h_keyframes_enable" />
 
-        <SwitchPreferenceCompat
+        <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="shared_h_keyframes_use_first"
@@ -54,7 +54,7 @@
         app:key="h_keyframe_custom_category"
         app:title="@string/custom">
 
-        <SwitchPreferenceCompat
+        <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="show_comment_when_countdown"

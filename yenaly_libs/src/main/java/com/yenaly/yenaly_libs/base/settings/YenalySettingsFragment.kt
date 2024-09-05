@@ -1,5 +1,6 @@
 package com.yenaly.yenaly_libs.base.settings
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.XmlRes
@@ -26,6 +27,10 @@ abstract class YenalySettingsFragment(@XmlRes private val xmlRes: Int) :
         initPreferencesVariable()
         onPreferencesCreated(savedInstanceState)
         bindDataObservers()
+    }
+
+    override fun setDivider(divider: Drawable?) {
+        super.setDivider(null)
     }
 
     /**

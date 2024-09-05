@@ -39,7 +39,7 @@ class LoginActivity : FrameActivity() {
 
     private lateinit var binding: ActivityLoginBinding
 
-    private val dialog by unsafeLazy { LoginDialog(R.layout.dialog_login) }
+    private val dialog = unsafeLazy { LoginDialog(R.layout.dialog_login) }
 
     override fun setUiStyle() {
         enableEdgeToEdge(
@@ -80,6 +80,9 @@ class LoginActivity : FrameActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (dialog.isInitialized()) {
+            dialog.value.dismiss()
+        }
         binding.wvLogin.removeAllViews()
         binding.wvLogin.destroy()
         binding.unbind()
@@ -144,7 +147,7 @@ class LoginActivity : FrameActivity() {
                     // #issue-160: 修复字段销毁后调用引发的错误
                     if (!isDestroyed && !isFinishing) {
                         binding.srlLogin.finishRefresh()
-                        dialog.show()
+                        dialog.value.show()
                     }
                 }
             }
@@ -211,6 +214,10 @@ class LoginActivity : FrameActivity() {
 
         fun show() {
             dialog.show()
+        }
+
+        fun dismiss() {
+            dialog.dismiss()
         }
     }
 }
