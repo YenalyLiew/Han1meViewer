@@ -337,5 +337,6 @@
     <string name="unsubscribe">取消关注</string>
     <string name="unsubscribe_artist">取消关注该作者</string>
     <string name="sure_to_unsubscribe">确定要取消关注吗？</string>
+    <string name="action_app_open_by_default_settings_not_support">此设备不支持从程序中开启深层链接设置</string>
 
 </resources>
