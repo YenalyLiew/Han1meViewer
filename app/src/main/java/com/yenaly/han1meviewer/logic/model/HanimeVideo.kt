@@ -58,8 +58,8 @@ data class HanimeVideo(
             var isSelected: Boolean,
         )
 
-        val titleArray get() = myListInfo.mapToArray { it.title }
-        val isSelectedArray get() = myListInfo.map { it.isSelected }.toBooleanArray()
+        val titleArray get() = myListInfo.mapToArray(MyListInfo::title)
+        val isSelectedArray get() = myListInfo.map(MyListInfo::isSelected).toBooleanArray()
     }
 
     data class Playlist(

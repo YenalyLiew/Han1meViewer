@@ -89,6 +89,9 @@ class SearchOptionsPopupFragment :
         }
 
     override fun initData(savedInstanceState: Bundle?, dialog: Dialog) {
+        // #issue-199: 片长搜索官网取消了
+        binding.duration.isAvailable = false
+
         initOptionsChecked()
         initClick()
     }

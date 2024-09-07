@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.widget.Checkable
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.use
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.updatePadding
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.yenaly.han1meviewer.R
@@ -55,6 +56,18 @@ class HOptionChip @JvmOverloads constructor(
         animator.duration = 300
         animator.start()
     }
+
+    var isAvailable: Boolean = true
+        set(available) {
+            field = available
+            isEnabled = available
+            val gd = background as? GradientDrawable
+            if (available) {
+                gd?.setColor(if (isChecked) selectedColor else unselectedColor)
+            } else {
+                gd?.setColor(ColorUtils.setAlphaComponent(unselectedColor, 0x80))
+            }
+        }
 
     override fun setChecked(checked: Boolean) {
         if (mIsChecked == checked) return
