@@ -427,6 +427,10 @@ class VideoIntroductionFragment :
             if (bitset and FAV != 0) {
                 holder.binding.handleFavButton(item.isFav)
             }
+            // #issue-202: 加入清单之后不会正常刷新
+            if (bitset and PLAYLIST != 0) {
+                holder.binding.initMyList(item.myList)
+            }
             if (bitset and SUBSCRIBE != 0) {
                 holder.binding.initArtist(item.artist)
             }
@@ -543,16 +547,23 @@ class VideoIntroductionFragment :
                     showShortToast(R.string.login_first)
                 }
             }
+            initMyList(videoData.myList)
+            btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
+                browse(getHanimeVideoLink(viewModel.videoCode))
+            }
+        }
+
+        private fun ItemVideoIntroductionBinding.initMyList(myList: HanimeVideo.MyList?) {
             btnMyList.setOnClickListener {
-                if (isAlreadyLogin) {
+                if (isAlreadyLogin && myList != null && myList.myListInfo.isNotEmpty()) {
                     requireContext().showAlertDialog {
                         setTitle(R.string.add_to_playlist)
                         setMultiChoiceItems(
-                            videoData.myList?.titleArray,
-                            videoData.myList?.isSelectedArray,
+                            myList.titleArray,
+                            myList.isSelectedArray,
                         ) { _, index, isChecked ->
                             viewModel.modifyMyList(
-                                checkNotNull(videoData.myList?.myListInfo?.get(index)).code,
+                                myList.myListInfo[index].code,
                                 viewModel.videoCode, isChecked, index
                             )
                         }
@@ -561,9 +572,6 @@ class VideoIntroductionFragment :
                 } else {
                     showShortToast(R.string.login_first)
                 }
-            }
-            btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
-                browse(getHanimeVideoLink(viewModel.videoCode))
             }
         }
 
