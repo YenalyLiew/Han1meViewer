@@ -30,7 +30,10 @@ import coil.imageLoader
 import coil.load
 import coil.request.ImageRequest
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.yenaly.han1meviewer.DATE_CODE
+import com.yenaly.han1meviewer.PREVIEW_COMMENT_PREFIX
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ActivityPreviewBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -50,6 +53,7 @@ import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.AppBarLayoutStateChangeListener
 import com.yenaly.yenaly_libs.utils.view.innerRecyclerView
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -76,6 +80,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
     }
 
     private val dateUtils = DateUtils()
+    private val badgeDrawable by unsafeLazy { BadgeDrawable.create(this@PreviewActivity) }
 
     /**
      * 左右滑动 VP 时，不触发 onScrollStateChanged，防止触发两次 binding.vpNews.setCurrentItem
@@ -129,14 +134,27 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             it.setHomeActionContentDescription(R.string.back)
         }
 
+        PreviewCommentPrefetcher.here().tag(PreviewCommentPrefetcher.Scope.PREVIEW_ACTIVITY)
+
         // binding.newsTitle.findViewById<TextView>(R.id.title).setText(R.string.latest_hanime_news)
         // binding.newsTitle.findViewById<TextView>(R.id.sub_title).setText(R.string.introduction)
 
+        dateUtils.current.format(DateUtils.FORMATTED_FORMAT).let { format ->
+            viewModel.getHanimePreview(format)
+            loadComments(format)
+        }
+
         binding.fabPrevious.setOnClickListener {
-            viewModel.getHanimePreview(dateUtils.toPrevDate().format(DateUtils.FORMATTED_FORMAT))
+            dateUtils.toPrevDate().format(DateUtils.FORMATTED_FORMAT).let { format ->
+                viewModel.getHanimePreview(format)
+                loadComments(format)
+            }
         }
         binding.fabNext.setOnClickListener {
-            viewModel.getHanimePreview(dateUtils.toNextDate().format(DateUtils.FORMATTED_FORMAT))
+            dateUtils.toNextDate().format(DateUtils.FORMATTED_FORMAT).let { format ->
+                viewModel.getHanimePreview(format)
+                loadComments(format)
+            }
         }
 
         binding.vpNews.adapter = newsAdapter
@@ -228,7 +246,6 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
 
                         is WebsiteState.Loading -> {
                             //binding.srlPreview.autoRefresh()
-                            viewModel.getHanimePreview(dateUtils.current.format(DateUtils.FORMATTED_FORMAT))
                             binding.fabPrevious.isEnabled = false
                             binding.fabNext.isEnabled = false
                         }
@@ -274,6 +291,22 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                 }
             }
         }
+
+        lifecycleScope.launch {
+            PreviewCommentPrefetcher.here().commentFlow.collectLatest { comments ->
+                badgeDrawable.apply {
+                    isVisible = comments.isNotEmpty()
+                    number = comments.size
+                    badgeGravity = BadgeDrawable.TOP_START
+                }
+                BadgeUtils.attachBadgeDrawable(badgeDrawable, binding.toolbar, R.id.tb_comment)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PreviewCommentPrefetcher.bye(PreviewCommentPrefetcher.Scope.PREVIEW_ACTIVITY)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -296,6 +329,11 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun loadComments(currentFormat: String) {
+        PreviewCommentPrefetcher.here()
+            .fetch(PREVIEW_COMMENT_PREFIX, currentFormat)
     }
 
     private fun handleToolbarColor(index: Int) {

@@ -71,6 +71,10 @@ class CommentViewModel(application: Application) : YenalyViewModel(application) 
         }
     }
 
+    fun updateComments(comments: List<VideoComments.VideoComment>) {
+        _videoCommentFlow.update { comments }
+    }
+
     fun getCommentReply(commentId: String) {
         viewModelScope.launch {
             // 每次获取评论回复时，都会重新加载

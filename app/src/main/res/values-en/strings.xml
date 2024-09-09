@@ -104,7 +104,7 @@
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
     <string name="no_video_links_found">No video links found</string>
-    <string name="child_comment">Child Comment</string>
+    <string name="child_comment">Child Comments</string>
     <string name="search_options_tips">Long press a unit to clear all tags of the selected unit</string>
     <string name="pause">Pause</string>
     <string name="continues">Continue</string>

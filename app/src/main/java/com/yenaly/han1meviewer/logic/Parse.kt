@@ -912,8 +912,10 @@ object Parse {
         funcName: String, varName: String, loginNeeded: Boolean = false,
     ): T? = also {
         if (it == null) {
-            if (loginNeeded && isAlreadyLogin) {
-                Log.d("Parse::$funcName", "[$varName] is null. 而且處於登入狀態，這有點不正常")
+            if (loginNeeded) {
+                if (isAlreadyLogin) {
+                    Log.d("Parse::$funcName", "[$varName] is null. 而且處於登入狀態，這有點不正常")
+                }
             } else {
                 Log.d("Parse::$funcName", "[$varName] is null. 這有點不正常")
             }
