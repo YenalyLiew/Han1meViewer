@@ -143,7 +143,9 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                 viewModel.videoCommentFlow.collectLatest { list ->
                     if (!isPreviewCommentPrefetched) {
                         commentAdapter.submitList(list)
-                        PreviewCommentPrefetcher.here().update(list)
+                        if (context is PreviewCommentActivity) {
+                            PreviewCommentPrefetcher.here().update(list)
+                        }
                     }
                 }
             }
