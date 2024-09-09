@@ -43,11 +43,18 @@ class PreviewCommentActivity : YenalyActivity<ActivityPreviewCommentBinding, Com
 
         viewModel.code = dateCode
 
+        PreviewCommentPrefetcher.here().tag(PreviewCommentPrefetcher.Scope.PREVIEW_COMMENT_ACTIVITY)
+
         val commentFragment =
             CommentFragment().makeBundle(COMMENT_TYPE to PREVIEW_COMMENT_PREFIX)
         supportFragmentManager.beginTransaction().apply {
             add(R.id.fcv_pre_comment, commentFragment)
         }.commit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PreviewCommentPrefetcher.bye(PreviewCommentPrefetcher.Scope.PREVIEW_COMMENT_ACTIVITY)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

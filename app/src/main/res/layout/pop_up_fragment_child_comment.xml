@@ -22,6 +22,7 @@
             android:background="#80FFFFFF" />
 
         <TextView
+            android:id="@+id/tv_child_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

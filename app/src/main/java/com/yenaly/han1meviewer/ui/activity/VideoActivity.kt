@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
@@ -35,10 +36,12 @@ import com.yenaly.han1meviewer.ui.view.video.HMediaKernel
 import com.yenaly.han1meviewer.ui.view.video.HanimeDataSource
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
+import com.yenaly.han1meviewer.util.getOrCreateBadgeOnTextViewAt
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.OrientationManager
 import com.yenaly.yenaly_libs.utils.browse
+import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.intentExtra
 import com.yenaly.yenaly_libs.utils.makeBundle
 import com.yenaly.yenaly_libs.utils.showShortToast
@@ -220,6 +223,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     }
 
     private fun initViewPager() {
+        binding.videoVp.offscreenPageLimit = 1
 
         binding.videoVp.setUpFragmentStateAdapter(this) {
             addFragment { VideoIntroductionFragment() }
@@ -263,6 +267,16 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
             } else {
                 showShortToast(R.string.pause_then_long_press)
             }
+        }
+    }
+
+    fun showRedDotCount(count: Int) {
+        binding.videoTl.getOrCreateBadgeOnTextViewAt(
+            tabNameArray.indexOf(R.string.comment),
+            null, Gravity.START, 2.dp
+        ) {
+            isVisible = count > 0
+            number = count
         }
     }
 }

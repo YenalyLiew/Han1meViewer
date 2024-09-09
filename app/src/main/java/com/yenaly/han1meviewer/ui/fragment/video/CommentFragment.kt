@@ -21,6 +21,9 @@ import com.yenaly.han1meviewer.VIDEO_COMMENT_PREFIX
 import com.yenaly.han1meviewer.databinding.FragmentCommentBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
+import com.yenaly.han1meviewer.ui.activity.PreviewCommentActivity
+import com.yenaly.han1meviewer.ui.activity.PreviewCommentPrefetcher
+import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.adapter.VideoCommentRvAdapter
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
@@ -47,6 +50,11 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         ReplyPopup(requireContext()).also { it.hint = getString(R.string.comment) }
     }
 
+    /**
+     * 是否已经预加载了预览评论
+     */
+    private var isPreviewCommentPrefetched = false
+
     override fun initData(savedInstanceState: Bundle?) {
         binding.state.init {
             onEmpty {
@@ -57,6 +65,14 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         binding.rvComment.layoutManager = LinearLayoutManager(context)
         binding.rvComment.adapter = commentAdapter
         binding.rvComment.clipToPadding = false
+
+        if (context is PreviewCommentActivity) {
+            val comments = PreviewCommentPrefetcher.here().commentFlow.value
+            if (comments.isNotEmpty()) {
+                isPreviewCommentPrefetched = true
+                commentAdapter.submitList(comments)
+            }
+        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.rvComment) { v, insets ->
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = navBar.bottom)
@@ -100,13 +116,16 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                         }
 
                         is WebsiteState.Loading -> {
-                            binding.srlComment.autoRefresh()
+                            if (!isPreviewCommentPrefetched) {
+                                binding.srlComment.autoRefresh()
+                            }
                         }
 
                         is WebsiteState.Success -> {
                             binding.srlComment.finishRefresh()
                             viewModel.csrfToken = state.info.csrfToken
                             viewModel.currentUserId = state.info.currentUserId
+                            showRedDotCount(state.info.videoComment.size)
                             binding.rvComment.isGone = state.info.videoComment.isEmpty()
                             if (state.info.videoComment.isEmpty()) {
                                 binding.state.showEmpty()
@@ -122,7 +141,10 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.videoCommentFlow.collectLatest { list ->
-                    commentAdapter.submitList(list)
+                    if (!isPreviewCommentPrefetched) {
+                        commentAdapter.submitList(list)
+                        PreviewCommentPrefetcher.here().update(list)
+                    }
                 }
             }
         }
@@ -178,5 +200,10 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
                 }
             }
         }
+    }
+
+    private fun showRedDotCount(count: Int) {
+        val parent = context as? VideoActivity
+        parent?.showRedDotCount(count)
     }
 }
