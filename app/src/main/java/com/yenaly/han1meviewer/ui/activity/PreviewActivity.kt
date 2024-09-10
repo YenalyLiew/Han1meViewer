@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.view.ViewCompat
@@ -32,6 +33,7 @@ import coil.request.ImageRequest
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.yenaly.han1meviewer.DATE_CODE
 import com.yenaly.han1meviewer.PREVIEW_COMMENT_PREFIX
 import com.yenaly.han1meviewer.R
@@ -40,6 +42,7 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.adapter.HanimePreviewNewsRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimePreviewTourRvAdapter
 import com.yenaly.han1meviewer.ui.view.CenterLinearLayoutManager
+import com.yenaly.han1meviewer.ui.viewmodel.PreviewCommentPrefetcher
 import com.yenaly.han1meviewer.ui.viewmodel.PreviewViewModel
 import com.yenaly.han1meviewer.util.addUpdateListener
 import com.yenaly.han1meviewer.util.colorTransition
@@ -231,6 +234,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         //}
     }
 
+    @OptIn(ExperimentalBadgeUtils::class)
     @SuppressLint("SetTextI18n")
     override fun bindDataObservers() {
         lifecycleScope.launch {

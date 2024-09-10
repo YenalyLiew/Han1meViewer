@@ -1,9 +1,8 @@
-package com.yenaly.han1meviewer.ui.activity
+package com.yenaly.han1meviewer.ui.viewmodel
 
 import android.util.Log
 import androidx.annotation.IntDef
 import com.yenaly.han1meviewer.logic.model.VideoComments
-import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
 import com.yenaly.yenaly_libs.utils.application
 
 /**

@@ -22,11 +22,11 @@ import com.yenaly.han1meviewer.databinding.FragmentCommentBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.PreviewCommentActivity
-import com.yenaly.han1meviewer.ui.activity.PreviewCommentPrefetcher
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.adapter.VideoCommentRvAdapter
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
+import com.yenaly.han1meviewer.ui.viewmodel.PreviewCommentPrefetcher
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.arguments
 import com.yenaly.yenaly_libs.utils.showShortToast

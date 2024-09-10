@@ -12,6 +12,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ActivityPreviewCommentBinding
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.viewmodel.CommentViewModel
+import com.yenaly.han1meviewer.ui.viewmodel.PreviewCommentPrefetcher
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.makeBundle
 import com.yenaly.yenaly_libs.utils.safeIntentExtra
