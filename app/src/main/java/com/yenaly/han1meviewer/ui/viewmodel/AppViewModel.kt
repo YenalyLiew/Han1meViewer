@@ -1,17 +1,15 @@
 package com.yenaly.han1meviewer.ui.viewmodel
 
-import android.annotation.SuppressLint
-import android.content.Context
+import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.github.Latest
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.worker.HUpdateWorker
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
-import com.yenaly.yenaly_libs.utils.applicationContext
-import kotlinx.coroutines.CoroutineScope
+import com.yenaly.yenaly_libs.base.YenalyViewModel
+import com.yenaly.yenaly_libs.utils.application
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,32 +20,24 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2024/03/29 029 18:00
  */
-@SuppressLint("StaticFieldLeak")
-object AppViewModel {
-
-    /**
-     * App CoroutineScope
-     */
-    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-
-    private val context: Context = applicationContext
+object AppViewModel : YenalyViewModel(application) {
 
     private val _versionFlow = MutableStateFlow<WebsiteState<Latest?>>(WebsiteState.Loading)
     val versionFlow = _versionFlow.asStateFlow()
 
     init {
         // 取消，防止每次启动都有残留的更新任务
-        WorkManager.getInstance(context).pruneWork()
+        WorkManager.getInstance(application).pruneWork()
 
-        appScope.launch(Dispatchers.Main) {
-            HUpdateWorker.collectOutput(context)
+        viewModelScope.launch(Dispatchers.Main) {
+            HUpdateWorker.collectOutput(application)
         }
 
-        appScope.launch(Dispatchers.Main) {
-            HanimeDownloadWorker.collectOutput(context)
+        viewModelScope.launch(Dispatchers.Main) {
+            HanimeDownloadWorker.collectOutput(application)
         }
 
-        appScope.launch {
+        viewModelScope.launch {
             // 不要太提前
             delay(500)
             getLatestVersionSuspend()
@@ -55,7 +45,7 @@ object AppViewModel {
     }
 
     fun getLatestVersion(forceCheck: Boolean = true) {
-        appScope.launch {
+        viewModelScope.launch {
             getLatestVersionSuspend(forceCheck)
         }
     }

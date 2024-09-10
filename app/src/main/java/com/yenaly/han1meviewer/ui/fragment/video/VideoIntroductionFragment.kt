@@ -48,6 +48,7 @@ import com.yenaly.han1meviewer.logic.model.HanimeVideo
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
+import com.yenaly.han1meviewer.ui.adapter.AdapterLikeDataBindingPage
 import com.yenaly.han1meviewer.ui.adapter.BaseSingleDifferAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.RvWrapper.Companion.wrappedWith
@@ -66,6 +67,7 @@ import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import com.yenaly.yenaly_libs.utils.view.clickTrigger
+import com.yenaly.yenaly_libs.utils.view.clickWithCondition
 import com.yenaly.yenaly_libs.utils.view.findParent
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -204,6 +206,9 @@ class VideoIntroductionFragment :
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.addToFavVideoFlow.collect { state ->
+                videoIntroAdapter.binding?.btnAddToFav?.setTag(
+                    R.id.click_condition, state != WebsiteState.Loading
+                )
                 when (state) {
                     is WebsiteState.Error -> {
                         showShortToast(R.string.fav_failed)
@@ -270,6 +275,9 @@ class VideoIntroductionFragment :
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.subscribeArtistFlow.collect { state ->
+                videoIntroAdapter.binding?.btnSubscribe?.setTag(
+                    R.id.click_condition, state != WebsiteState.Loading
+                )
                 when (state) {
                     is WebsiteState.Error -> {
                         showShortToast(R.string.subscribe_failed)
@@ -394,7 +402,9 @@ class VideoIntroductionFragment :
     private inner class VideoIntroductionAdapter :
         BaseSingleDifferAdapter<HanimeVideo, DataBindingHolder<ItemVideoIntroductionBinding>>(
             COMPARATOR
-        ) {
+        ), AdapterLikeDataBindingPage<ItemVideoIntroductionBinding> {
+
+        override var binding: ItemVideoIntroductionBinding? = null
 
         override fun onBindViewHolder(
             holder: DataBindingHolder<ItemVideoIntroductionBinding>,
@@ -402,6 +412,7 @@ class VideoIntroductionFragment :
         ) {
             item ?: return
             holder.binding.apply {
+                this@VideoIntroductionAdapter.binding = this
                 uploadTime.text = item.uploadTime?.format(LOCAL_DATE_FORMAT)
                 views.text = getString(R.string.s_view_times, item.views.toString())
                 tvIntroduction.setContent(item.introduction)
@@ -425,7 +436,7 @@ class VideoIntroductionFragment :
             item.notNull()
             val bitset = payloads.first() as Int
             if (bitset and FAV != 0) {
-                holder.binding.handleFavButton(item.isFav)
+                holder.binding.initFavButton(item)
             }
             // #issue-202: 加入清单之后不会正常刷新
             if (bitset and PLAYLIST != 0) {
@@ -464,13 +475,34 @@ class VideoIntroductionFragment :
             }
         }
 
-        private fun ItemVideoIntroductionBinding.handleFavButton(isFav: Boolean) {
-            if (isFav) {
+        private fun ItemVideoIntroductionBinding.initFavButton(info: HanimeVideo) {
+            if (info.isFav) {
                 btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_24)
                 btnAddToFav.setText(R.string.liked)
             } else {
                 btnAddToFav.setDrawableTop(R.drawable.ic_baseline_favorite_border_24)
                 btnAddToFav.setText(R.string.add_to_fav)
+            }
+            // #issue-204: 收藏可能会导致重复
+            // reason: 1. 在收藏时，可能会多次点击，导致多次请求
+            //         2. payload 后没有重新绑定新 videoData，点击事件未更新
+            btnAddToFav.clickWithCondition(viewLifecycleOwner.lifecycle, R.id.click_condition) {
+                if (isAlreadyLogin) {
+                    it.setTag(R.id.click_condition, false)
+                    if (info.isFav) {
+                        viewModel.removeFromFavVideo(
+                            viewModel.videoCode,
+                            info.currentUserId,
+                        )
+                    } else {
+                        viewModel.addToFavVideo(
+                            viewModel.videoCode,
+                            info.currentUserId,
+                        )
+                    }
+                } else {
+                    showShortToast(R.string.login_first)
+                }
             }
         }
 
@@ -500,13 +532,16 @@ class VideoIntroductionFragment :
                     } else {
                         getString(R.string.subscribe)
                     }
-                    btnSubscribe.clickTrigger(viewLifecycleOwner.lifecycle) {
+                    btnSubscribe.clickWithCondition(
+                        viewLifecycleOwner.lifecycle, R.id.click_condition
+                    ) {
                         if (isAlreadyLogin) {
                             if (artist.isSubscribed) {
                                 context.showAlertDialog {
                                     setTitle(R.string.unsubscribe_artist)
                                     setMessage(R.string.sure_to_unsubscribe)
                                     setPositiveButton(R.string.sure) { _, _ ->
+                                        it.setTag(R.id.click_condition, false)
                                         viewModel.unsubscribeArtist(
                                             artist.post.userId,
                                             artist.post.artistId
@@ -515,6 +550,7 @@ class VideoIntroductionFragment :
                                     setNegativeButton(R.string.no, null)
                                 }
                             } else {
+                                it.setTag(R.id.click_condition, false)
                                 viewModel.subscribeArtist(
                                     artist.post.userId,
                                     artist.post.artistId
@@ -529,24 +565,7 @@ class VideoIntroductionFragment :
         }
 
         private fun ItemVideoIntroductionBinding.initFunctionBar(videoData: HanimeVideo) {
-            handleFavButton(videoData.isFav)
-            btnAddToFav.clickTrigger(viewLifecycleOwner.lifecycle) {
-                if (isAlreadyLogin) {
-                    if (videoData.isFav) {
-                        viewModel.removeFromFavVideo(
-                            viewModel.videoCode,
-                            videoData.currentUserId,
-                        )
-                    } else {
-                        viewModel.addToFavVideo(
-                            viewModel.videoCode,
-                            videoData.currentUserId,
-                        )
-                    }
-                } else {
-                    showShortToast(R.string.login_first)
-                }
-            }
+            initFavButton(videoData)
             initMyList(videoData.myList)
             btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
                 browse(getHanimeVideoLink(viewModel.videoCode))

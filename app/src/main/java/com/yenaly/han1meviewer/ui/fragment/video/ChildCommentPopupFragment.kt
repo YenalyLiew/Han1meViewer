@@ -3,11 +3,13 @@ package com.yenaly.han1meviewer.ui.fragment.video
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
+import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.yenaly.han1meviewer.COMMENT_ID
 import com.yenaly.han1meviewer.CSRF_TOKEN
 import com.yenaly.han1meviewer.R
@@ -106,6 +108,7 @@ class ChildCommentPopupFragment :
         }
     }
 
+    @OptIn(ExperimentalBadgeUtils::class)
     private fun attachRedDotCount(count: Int) {
         val badgeDrawable = BadgeDrawable.create(requireContext())
         badgeDrawable.isVisible = count > 0
