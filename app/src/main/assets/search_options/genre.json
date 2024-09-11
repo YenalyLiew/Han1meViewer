@@ -9,7 +9,7 @@
   },
   {
     "lang": {
-      "zh-rCN": "裏番",
+      "zh-rCN": "里番",
       "en": "Hentai",
       "zh-rTW": "裏番"
     },
@@ -17,7 +17,7 @@
   },
   {
     "lang": {
-      "zh-rCN": "泡麵番",
+      "zh-rCN": "泡面番",
       "en": "Short Anime",
       "zh-rTW": "泡麵番"
     },
@@ -33,7 +33,7 @@
   },
   {
     "lang": {
-      "zh-rCN": "3D動畫",
+      "zh-rCN": "3D动画",
       "en": "3D Animation",
       "zh-rTW": "3D動畫"
     },
@@ -46,6 +46,14 @@
       "zh-rTW": "同人作品"
     },
     "search_key": "同人作品"
+  },
+  {
+    "lang": {
+      "zh-rCN": "MMD",
+      "en": "MMD",
+      "zh-rTW": "MMD"
+    },
+    "search_key": "MMD"
   },
   {
     "lang": {
