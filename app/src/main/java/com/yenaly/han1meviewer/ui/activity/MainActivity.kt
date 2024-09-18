@@ -187,9 +187,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
                     showAlertDialog {
                         setTitle(R.string.sure_to_logout)
                         setPositiveButton(R.string.sure) { _, _ ->
-                            logout()
-                            initHeaderView()
-                            initMenu()
+                            logoutWithRefresh()
                         }
                         setNegativeButton(R.string.no, null)
                     }
@@ -198,11 +196,16 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
                     repeatOnLifecycle(Lifecycle.State.CREATED) {
                         viewModel.homePageFlow.collect { state ->
                             if (state is WebsiteState.Success) {
-                                headerAvatar.load(state.info.avatarUrl) {
-                                    crossfade(true)
-                                    transformations(CircleCropTransformation())
+                                if (state.info.username == null && isAlreadyLogin) {
+                                    logoutWithRefresh()
+                                    showShortToast(R.string.login_expired_auto_logout)
+                                } else {
+                                    headerAvatar.load(state.info.avatarUrl) {
+                                        crossfade(true)
+                                        transformations(CircleCropTransformation())
+                                    }
+                                    headerUsername.text = state.info.username
                                 }
-                                headerUsername.text = state.info.username
                             } else {
                                 headerAvatar.load(R.mipmap.ic_launcher) {
                                     crossfade(true)
@@ -248,6 +251,12 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
     private fun gotoLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         loginDataLauncher.launch(intent)
+    }
+
+    private fun logoutWithRefresh() {
+        logout()
+        initHeaderView()
+        initMenu()
     }
 
     /**
