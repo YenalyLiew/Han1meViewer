@@ -339,5 +339,6 @@
     <string name="sure_to_unsubscribe">确定要取消关注吗？</string>
     <string name="action_app_open_by_default_settings_not_support">此设备不支持从程序中开启深层链接设置</string>
     <string name="sure_to_redownload">确定要重新下载吗？</string>
+    <string name="login_expired_auto_logout">登录已过期，已经自动登出</string>
 
 </resources>
