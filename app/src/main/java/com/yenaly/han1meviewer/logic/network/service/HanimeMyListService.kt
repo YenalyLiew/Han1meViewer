@@ -24,7 +24,7 @@ interface HanimeMyListService {
     @GET("playlist")
     suspend fun getMyListItems(
         @Query("page") @IntRange(from = 1) page: Int,
-        @Query("list") typeOrCode: String, // WL, LL, 12534..
+        @Query("list") typeOrCode: String, // WL, LL, SL, 12534..
     ): Response<ResponseBody>
 
     @FormUrlEncoded

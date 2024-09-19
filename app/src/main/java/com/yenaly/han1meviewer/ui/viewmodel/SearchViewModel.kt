@@ -42,6 +42,8 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
     var month: Int? = null
     var duration: String? = null
 
+    var subscriptionBrand: String? = null
+
     var tagMap = SparseArray<Set<SearchOption>>()
     var brandMap = SparseArray<Set<SearchOption>>()
 

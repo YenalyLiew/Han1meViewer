@@ -4,7 +4,8 @@ import com.yenaly.han1meviewer.EMPTY_STRING
 
 enum class MyListType(val value: String) {
     FAV_VIDEO("LL"),
-    WATCH_LATER("WL")
+    WATCH_LATER("WL"),
+    SUBSCRIPTION("SL")
 }
 
 enum class FavStatus(val value: String) {

@@ -40,13 +40,13 @@ object NetworkRepo {
 
     fun getHomePage() = websiteIOFlow(
         request = { HanimeNetwork.hanimeService.getHomePage() },
-        action = Parse::homePageVer2
+        action = Parser::homePageVer2
     )
 
     @Suppress("DEPRECATION")
     fun getHanimeSearchTags() = websiteIOFlow(
         request = { HanimeNetwork.hanimeService.getHanimeSearchResult() },
-        action = Parse::hanimeSearchTags
+        action = Parser::hanimeSearchTags
     )
 
     fun getHanimeSearchResult(
@@ -61,24 +61,22 @@ object NetworkRepo {
                 year, month, duration, tags, brands
             )
         },
-        action = Parse::hanimeSearch
+        action = Parser::hanimeSearch
     )
 
     fun getHanimeVideo(videoCode: String) = videoIOFlow(
         request = { HanimeNetwork.hanimeService.getHanimeVideo(videoCode) },
-        action = Parse::hanimeVideoVer2
+        action = Parser::hanimeVideoVer2
     )
 
     fun getHanimePreview(date: String) = websiteIOFlow(
         request = { HanimeNetwork.hanimeService.getHanimePreview(date) },
-        action = Parse::hanimePreview
+        action = Parser::hanimePreview
     )
 
     //</editor-fold>
 
     //<editor-fold desc="My List">
-
-    // 为什么用 int 返回，是因为要返回删除的那项的 position，方便 adapter 删除
 
     fun getMyListItems(page: Int, typeOrCode: Any) = pageIOFlow(
         request = {
@@ -93,7 +91,14 @@ object NetworkRepo {
                     throw IllegalArgumentException("typeOrId must be String or MyListType")
             }
         },
-        action = { Parse.myListItems(it, typeOrCode) }
+        action = Parser::myListItems
+    )
+
+    fun getSubscriptions(page: Int) = pageIOFlow(
+        request = {
+            HanimeNetwork.myListService.getMyListItems(page, MyListType.SUBSCRIPTION.value)
+        },
+        action = Parser::subscriptionItems
     )
 
     fun deleteMyListItems(
@@ -132,7 +137,7 @@ object NetworkRepo {
 
     fun getPlaylists() = websiteIOFlow(
         request = HanimeNetwork.myListService::getPlaylists,
-        action = Parse::playlists
+        action = Parser::playlists
     )
 
     fun addToMyFavVideo(
@@ -216,12 +221,12 @@ object NetworkRepo {
 
     fun getComments(type: String, code: String) = websiteIOFlow(
         request = { HanimeNetwork.commentService.getComments(type, code) },
-        action = Parse::comments
+        action = Parser::comments
     )
 
     fun getCommentReply(commentId: String) = websiteIOFlow(
         request = { HanimeNetwork.commentService.getCommentReply(commentId) },
-        action = Parse::commentReply
+        action = Parser::commentReply
     )
 
     fun postComment(
@@ -331,7 +336,7 @@ object NetworkRepo {
         emit(WebsiteState.Loading)
         // 首先获取token
         val loginPage = HanimeNetwork.hanimeService.getLoginPage()
-        val token = loginPage.body()?.string()?.let(Parse::extractTokenFromLoginPage)
+        val token = loginPage.body()?.string()?.let(Parser::extractTokenFromLoginPage)
         val req = HanimeNetwork.hanimeService.login(token, email, password)
         if (req.isSuccessful) {
             // 再次获取登录页面，如果失败则返回 cookie

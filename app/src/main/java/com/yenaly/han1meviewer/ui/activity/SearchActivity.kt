@@ -10,6 +10,8 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
@@ -39,6 +41,7 @@ import com.yenaly.han1meviewer.ui.adapter.HanimeSearchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.HanimeVideoRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.search.HMultiChoicesDialog
 import com.yenaly.han1meviewer.ui.fragment.search.SearchOptionsPopupFragment
+import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.SearchViewModel
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.dp
@@ -62,12 +65,22 @@ import kotlinx.coroutines.launch
  */
 class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(), StateLayoutMixin {
 
+    private val myListViewModel by viewModels<MyListViewModel>()
+
+    val subscribeLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                initSubscription()
+            }
+        }
+
     /**
      * 判断adapter是否已经加载，防止多次加载导致滑动浏览总是跳到顶部。
      */
     private var hasAdapterLoaded = false
 
     private val searchAdapter by unsafeLazy { HanimeVideoRvAdapter() }
+    private val historyAdapter by unsafeLazy { HanimeSearchHistoryRvAdapter() }
 
     private val advancedSearchMap by intentExtra<Any>(ADVANCED_SEARCH_MAP)
 
@@ -87,6 +100,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
         advancedSearchMap?.let(::loadAdvancedSearch)
 
         initSearchBar()
+        initSubscription()
 
         binding.state.init()
 
@@ -226,8 +240,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
             }
             finish()
         }
-        val searchAdapter = HanimeSearchHistoryRvAdapter()
-        searchAdapter.listener = object : HanimeSearchHistoryRvAdapter.OnItemViewClickListener {
+        historyAdapter.listener = object : HanimeSearchHistoryRvAdapter.OnItemViewClickListener {
             override fun onItemClickListener(v: View, history: SearchHistoryEntity?) {
                 binding.searchBar.searchText = history?.query
             }
@@ -237,7 +250,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
             }
         }
         binding.searchBar.apply hsb@{
-            adapter = searchAdapter
+            historyAdapter = this@SearchActivity.historyAdapter
             onTagClickListener = {
                 optionsPopupFragment.showIn(this@SearchActivity)
             }
@@ -259,15 +272,25 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
                 .flatMapLatest {
                     viewModel.loadAllSearchHistories(it)
                 }.flowOn(Dispatchers.IO).onEach {
-                    this@hsb.history = it
+                    this@SearchActivity.historyAdapter.submitList(it)
                 }.flowWithLifecycle(lifecycle).launchIn(lifecycleScope)
         }
+    }
+
+    private fun initSubscription() {
+        myListViewModel.subscription.getSubscriptionsWithSinglePage()
     }
 
     private fun List<HanimeInfo>.buildFlexibleGridLayoutManager(): GridLayoutManager {
         val counts = if (any { it.itemType == HanimeInfo.NORMAL })
             VideoCoverSize.Normal.videoInOneLine else VideoCoverSize.Simplified.videoInOneLine
         return FixedGridLayoutManager(this@SearchActivity, counts)
+    }
+
+    fun setSearchText(text: String?, canTextChange: Boolean = true) {
+        viewModel.query = text
+        binding.searchBar.searchText = text
+        binding.searchBar.canTextChange = canTextChange
     }
 
     /**
@@ -280,14 +303,12 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
     @Suppress("UNCHECKED_CAST")
     private fun loadAdvancedSearch(any: Any) {
         if (any is String) {
-            viewModel.query = any
-            binding.searchBar.searchText = any
+            setSearchText(any)
             return
         }
         val map = any as AdvancedSearchMap
         (map[HAdvancedSearch.QUERY] as? String)?.let {
-            viewModel.query = it
-            binding.searchBar.searchText = it
+            setSearchText(it)
         }
         viewModel.genre = map[HAdvancedSearch.GENRE] as? String
         viewModel.sort = map[HAdvancedSearch.SORT] as? String

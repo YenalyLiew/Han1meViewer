@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment.video
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
@@ -290,6 +291,7 @@ class VideoIntroductionFragment :
                         } else {
                             showShortToast(R.string.unsubscribe_success)
                         }
+                        activity?.setResult(Activity.RESULT_OK)
                     }
                 }
             }

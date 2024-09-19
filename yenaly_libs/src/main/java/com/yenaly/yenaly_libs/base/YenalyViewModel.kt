@@ -2,6 +2,7 @@ package com.yenaly.yenaly_libs.base
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.yenaly.yenaly_libs.utils.unsafeLazy
 
 /**
  * @ProjectName : YenalyModule
@@ -13,11 +14,18 @@ open class YenalyViewModel(
     @JvmField protected val application: Application
 ) : AndroidViewModel(application) {
 
-//    private val singleFlowLaunch = SingleFlowLaunch()
-//
-//    protected fun CoroutineScope.singleLaunch(
-//        context: CoroutineContext = EmptyCoroutineContext,
-//        start: CoroutineStart = CoroutineStart.DEFAULT,
-//        block: suspend CoroutineScope.() -> Unit
-//    ) = singleFlowLaunch.singleLaunch(this, context, start, block)
+    private var parent: YenalyViewModel? = null
+
+    @Suppress("UNCHECKED_CAST")
+    fun <YVM : YenalyViewModel> getParent(): YVM? = parent as? YVM
+
+    fun <YVM : YenalyViewModel> requireParent(): YVM = getParent() ?: error("Parent not found")
+
+    inline fun <reified YVM : YenalyViewModel> sub() = sub(YVM::class.java)
+
+    fun <YVM : YenalyViewModel> sub(clazz: Class<YVM>): Lazy<YVM> = unsafeLazy {
+        clazz.getConstructor(Application::class.java).newInstance(application).also {
+            it.parent = this
+        }
+    }
 }

@@ -61,14 +61,22 @@ abstract class YenalyBottomSheetDialogFragment<DB : ViewDataBinding> : BottomShe
      * 简化fragment内唤出该dialog的方式
      */
     fun showIn(fragment: Fragment) {
-        show(fragment.requireActivity().supportFragmentManager, this.javaClass.simpleName)
+        val fragmentManager = fragment.requireActivity().supportFragmentManager
+        if (fragmentManager.findFragmentByTag(this.javaClass.name) != null) {
+            return
+        }
+        show(fragmentManager, this.javaClass.name)
     }
 
     /**
      * 简化activity内唤出该dialog的方式
      */
     fun showIn(activity: FragmentActivity) {
-        show(activity.supportFragmentManager, this.javaClass.simpleName)
+        val fragmentManager = activity.supportFragmentManager
+        if (fragmentManager.findFragmentByTag(this.javaClass.name) != null) {
+            return
+        }
+        show(fragmentManager, this.javaClass.name)
     }
 
     @Suppress("unchecked_cast")
