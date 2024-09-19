@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
-import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
@@ -37,9 +36,9 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
 
     private var page: Int
         set(value) {
-            viewModel.watchLaterPage = value
+            viewModel.watchLater.watchLaterPage = value
         }
-        get() = viewModel.watchLaterPage
+        get() = viewModel.watchLater.watchLaterPage
 
     private val adapter by unsafeLazy { HanimeMyListVideoAdapter() }
 
@@ -54,7 +53,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
                 setTitle(R.string.delete_watch_later)
                 setMessage(getString(R.string.sure_to_delete_s, item.title))
                 setPositiveButton(R.string.confirm) { _, _ ->
-                    viewModel.deleteMyWatchLater(item.videoCode, position)
+                    viewModel.watchLater.deleteMyWatchLater(item.videoCode, position)
                 }
                 setNegativeButton(R.string.cancel, null)
             }
@@ -81,7 +80,7 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.watchLaterStateFlow.collect { state ->
+                viewModel.watchLater.watchLaterStateFlow.collect { state ->
                     when (state) {
                         is PageLoadingState.Error -> {
                             binding.srlPageList.finishRefresh()
@@ -92,12 +91,12 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
 
                         is PageLoadingState.Loading -> {
                             adapter.stateView = null
-                            if (viewModel.watchLaterFlow.value.isEmpty()) binding.srlPageList.autoRefresh()
+                            if (viewModel.watchLater.watchLaterFlow.value.isEmpty()) binding.srlPageList.autoRefresh()
                         }
 
                         is PageLoadingState.NoMoreData -> {
                             binding.srlPageList.finishLoadMoreWithNoMoreData()
-                            if (viewModel.watchLaterFlow.value.isEmpty()) binding.state.showEmpty()
+                            if (viewModel.watchLater.watchLaterFlow.value.isEmpty()) binding.state.showEmpty()
                         }
 
                         is PageLoadingState.Success -> {
@@ -114,14 +113,14 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.watchLaterFlow.collectLatest {
+                viewModel.watchLater.watchLaterFlow.collectLatest {
                     adapter.submitList(it)
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.deleteMyWatchLaterFlow.collect { state ->
+            viewModel.watchLater.deleteMyWatchLaterFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
                         showShortToast(R.string.delete_failed)
@@ -146,12 +145,12 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
     }
 
     private fun getMyWatchLater() {
-        viewModel.getMyWatchLaterItems(page)
+        viewModel.watchLater.getMyWatchLaterItems(page)
     }
 
     private fun getNewMyWatchLater() {
         page = 1
-        viewModel.clearMyListItems(MyListType.WATCH_LATER)
+        viewModel.watchLater.clearMyListItems()
         getMyWatchLater()
     }
 

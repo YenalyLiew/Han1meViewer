@@ -14,6 +14,8 @@
     <dimen name="hanime_preview_news_pic_width">120dp</dimen>
     <dimen name="hanime_preview_news_pic_height">90dp</dimen>
     <dimen name="avatar_size">36dp</dimen>
+    <dimen name="subscribe_avatar_size">58dp</dimen>
+    <dimen name="subscribe_text_width">78dp</dimen>
 
     <!-- use for comment align -->
     <dimen name="comment_content_margin">44dp</dimen>

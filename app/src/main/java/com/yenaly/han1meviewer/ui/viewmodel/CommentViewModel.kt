@@ -22,11 +22,11 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/06/28 028 14:18
  */
-class CommentViewModel(application: Application) : YenalyViewModel(application) {
+class CommentViewModel(application: Application) : YenalyViewModel(application), IHCsrfToken {
 
     lateinit var code: String
 
-    var csrfToken: String? = null
+    override var csrfToken: String? = null
     var currentUserId: String? = null
 
     private val _videoCommentStateFlow =

@@ -30,7 +30,7 @@ import kotlin.math.abs
  * @author Yenaly Liew
  * @time 2022/06/17 017 19:01
  */
-class VideoViewModel(application: Application) : YenalyViewModel(application) {
+class VideoViewModel(application: Application) : YenalyViewModel(application), IHCsrfToken {
 
     companion object {
         /**
@@ -48,7 +48,7 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
 
     var hKeyframes: HKeyframeEntity? = null
 
-    var csrfToken: String? = null
+    override var csrfToken: String? = null
 
     private val _hanimeVideoStateFlow =
         MutableStateFlow<VideoLoadingState<HanimeVideo>>(VideoLoadingState.Loading)

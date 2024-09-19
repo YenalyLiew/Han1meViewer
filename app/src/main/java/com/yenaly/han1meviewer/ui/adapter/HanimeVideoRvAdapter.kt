@@ -1,6 +1,7 @@
 package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
@@ -185,7 +186,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                             showShortToast(R.string.watching_this_video_now)
                         } else {
                             val videoCode = item.videoCode
-                            context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
+                            context.startVideoActivity(videoCode)
                         }
                     }
                     setOnLongClickListener {
@@ -212,5 +213,16 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    private fun Context.startVideoActivity(videoCode: String) {
+        if (this is SearchActivity) {
+            val intent = Intent(this, VideoActivity::class.java).apply {
+                putExtra(VIDEO_CODE, videoCode)
+            }
+            this.subscribeLauncher.launch(intent)
+            return
+        }
+        activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
     }
 }

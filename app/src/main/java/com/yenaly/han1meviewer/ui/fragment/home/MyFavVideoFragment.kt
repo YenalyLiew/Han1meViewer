@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.databinding.FragmentPageListBinding
-import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
@@ -37,9 +36,9 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
     private var page: Int
         set(value) {
-            viewModel.favVideoPage = value
+            viewModel.fav.favVideoPage = value
         }
-        get() = viewModel.favVideoPage
+        get() = viewModel.fav.favVideoPage
 
     private val adapter by unsafeLazy { HanimeMyListVideoAdapter() }
 
@@ -55,7 +54,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
                 setTitle(R.string.delete_fav)
                 setMessage(getString(R.string.sure_to_delete_s, item.title))
                 setPositiveButton(R.string.confirm) { _, _ ->
-                    viewModel.deleteMyFavVideo(item.videoCode, position)
+                    viewModel.fav.deleteMyFavVideo(item.videoCode, position)
                 }
                 setNegativeButton(R.string.cancel, null)
             }
@@ -82,7 +81,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
     override fun bindDataObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favVideoStateFlow.collect { state ->
+                viewModel.fav.favVideoStateFlow.collect { state ->
                     when (state) {
                         is PageLoadingState.Error -> {
                             binding.srlPageList.finishRefresh()
@@ -93,12 +92,12 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
                         is PageLoadingState.Loading -> {
                             adapter.stateView = null
-                            if (viewModel.favVideoFlow.value.isEmpty()) binding.srlPageList.autoRefresh()
+                            if (viewModel.fav.favVideoFlow.value.isEmpty()) binding.srlPageList.autoRefresh()
                         }
 
                         is PageLoadingState.NoMoreData -> {
                             binding.srlPageList.finishLoadMoreWithNoMoreData()
-                            if (viewModel.favVideoFlow.value.isEmpty()) binding.state.showEmpty()
+                            if (viewModel.fav.favVideoFlow.value.isEmpty()) binding.state.showEmpty()
                         }
 
                         is PageLoadingState.Success -> {
@@ -115,14 +114,14 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.favVideoFlow.collectLatest {
+                viewModel.fav.favVideoFlow.collectLatest {
                     adapter.submitList(it)
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.deleteMyFavVideoFlow.collect { state ->
+            viewModel.fav.deleteMyFavVideoFlow.collect { state ->
                 when (state) {
                     is WebsiteState.Error -> {
                         showShortToast(R.string.delete_failed)
@@ -147,12 +146,12 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding, MyListViewMod
     }
 
     private fun getMyFavVideo() {
-        viewModel.getMyFavVideoItems(page)
+        viewModel.fav.getMyFavVideoItems(page)
     }
 
     private fun getNewMyFavVideo() {
         page = 1
-        viewModel.clearMyListItems(MyListType.FAV_VIDEO)
+        viewModel.fav.clearMyListItems()
         getMyFavVideo()
     }
 

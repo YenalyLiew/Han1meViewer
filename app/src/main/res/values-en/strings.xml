@@ -333,6 +333,7 @@ Recommendations are as follows:\n
     <string name="sure_to_unsubscribe">Are you sure you want to unsubscribe?</string>
     <string name="action_app_open_by_default_settings_not_support">This device does not support opening deep link settings from the app</string>
     <string name="sure_to_redownload">Are you sure you want to redownload?</string>
+    <string name="subscription">Subscription</string>
     <string name="login_expired_auto_logout">Login expired, automatically logged out</string>
 
 </resources>

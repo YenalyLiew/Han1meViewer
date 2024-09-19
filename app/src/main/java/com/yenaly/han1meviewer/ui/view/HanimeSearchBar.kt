@@ -75,7 +75,13 @@ class HanimeSearchBar @JvmOverloads constructor(
         }
     }
 
-    var adapter: BaseQuickAdapter<SearchHistoryEntity, out QuickViewHolder>? = null
+    var canTextChange: Boolean = true
+        set(value) {
+            field = value
+            etSearch.isEnabled = value
+        }
+
+    var historyAdapter: BaseQuickAdapter<SearchHistoryEntity, out QuickViewHolder>? = null
         set(value) {
             field = value
             rvHistory.adapter = value
@@ -140,14 +146,6 @@ class HanimeSearchBar @JvmOverloads constructor(
             etSearch.onFocusChangeListener = null
         }
     }
-
-    var history
-        get() = adapter?.items.orEmpty()
-        set(value) {
-            adapter?.also {
-                it.submitList(value)
-            }
-        }
 
     fun showHistory() {
 //        val slide = Slide(Gravity.BOTTOM).apply {

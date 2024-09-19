@@ -5,22 +5,30 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Checkable
 import androidx.core.util.isNotEmpty
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.interfaces.SimpleCallback
 import com.lxj.xpopupext.listener.TimePickerListener
 import com.lxj.xpopupext.popup.TimePickerPopup
+import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.SEARCH_YEAR_RANGE_END
 import com.yenaly.han1meviewer.SEARCH_YEAR_RANGE_START
 import com.yenaly.han1meviewer.databinding.PopUpFragmentSearchOptionsBinding
 import com.yenaly.han1meviewer.logic.model.SearchOption.Companion.get
+import com.yenaly.han1meviewer.ui.adapter.HSubscriptionAdapter
 import com.yenaly.han1meviewer.ui.popup.HTimePickerPopup
+import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.SearchViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyBottomSheetDialogFragment
 import com.yenaly.yenaly_libs.utils.mapToArray
+import com.yenaly.yenaly_libs.utils.unsafeLazy
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
@@ -37,10 +45,15 @@ class SearchOptionsPopupFragment :
     }
 
     private val viewModel by activityViewModels<SearchViewModel>()
+    val myListViewModel by activityViewModels<MyListViewModel>()
 
     private var genres: Array<String>? = null
     private var sortOptions: Array<String>? = null
     private var durations: Array<String>? = null
+
+    private val subscriptionAdapter by unsafeLazy {
+        HSubscriptionAdapter()
+    }
 
     // Popups
 
@@ -91,9 +104,12 @@ class SearchOptionsPopupFragment :
     override fun initData(savedInstanceState: Bundle?, dialog: Dialog) {
         // #issue-199: 片长搜索官网取消了
         binding.duration.isAvailable = false
+        // 简单的厂商搜索官网取消了
+        binding.brand.isAvailable = false
 
         initOptionsChecked()
         initClick()
+        initSubscription()
     }
 
     private fun initOptionsChecked() {
@@ -291,6 +307,26 @@ class SearchOptionsPopupFragment :
                     initOptionsChecked()
                 }
                 return@lc true
+            }
+        }
+    }
+
+    private fun initSubscription() {
+        binding.rvSubscription.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvSubscription.adapter = subscriptionAdapter
+        if (isAlreadyLogin) {
+            // 暂时只读取第一页
+            lifecycleScope.launch {
+                myListViewModel.subscription.subscriptionFlow.collect {
+                    binding.llSubscription.isVisible = it.isNotEmpty()
+                    subscriptionAdapter.submitList(it.map { subscription ->
+                        subscription.copy(
+                            isDeleteVisible = false,
+                            isCheckBoxVisible = subscription.name == viewModel.subscriptionBrand
+                        )
+                    })
+                }
             }
         }
     }
