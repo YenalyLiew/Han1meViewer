@@ -265,12 +265,10 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     // #issue-160: 修复字段销毁后调用引发的错误
     private fun handlePalette(p: Palette) {
         bindingOrNull?.let { binding ->
-            val darkVibrant = p.getDarkVibrantColor(Color.RED)
-            val darkMuted = p.getDarkMutedColor(Color.RED)
             val lightVibrant = p.getLightVibrantColor(Color.RED)
 
             val buttonBgColor =
-                p.lightVibrantSwatch?.rgb ?: p.lightMutedSwatch?.rgb ?: Color.TRANSPARENT
+                p.darkVibrantSwatch?.rgb ?: p.darkMutedSwatch?.rgb ?: Color.TRANSPARENT
             val darkVibrantForContentScrim =
                 p.darkVibrantSwatch?.rgb ?: p.darkMutedSwatch?.rgb ?: p.lightVibrantSwatch?.rgb
                 ?: p.lightMutedSwatch?.rgb ?: Color.BLACK
@@ -279,17 +277,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
                 colors = intArrayOf(Color.TRANSPARENT, buttonBgColor)
                 orientation = GradientDrawable.Orientation.LEFT_RIGHT
             }
-            colorTransition(
-                fromColor = binding.ivBanner.backgroundTintList?.defaultColor ?: Color.RED,
-                toColor = darkMuted
-            ) {
-                interpolator = animInterpolator
-                duration = animDuration
-                addUpdateListener(viewLifecycleOwner.lifecycle) {
-                    val color = it.animatedValue as Int
-                    binding.ivBanner.backgroundTintList = ColorStateList.valueOf(color)
-                }
-            }
+            binding.ivBanner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             colorTransition(
                 fromColor = (binding.aColor.background as ColorDrawable).color,
                 toColor = lightVibrant
