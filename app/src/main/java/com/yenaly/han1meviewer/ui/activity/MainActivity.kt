@@ -135,6 +135,35 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
                 }
             }
         }
+
+        binding.nvMain.getHeaderView(0)?.let { header ->
+            val headerAvatar = header.findViewById<ImageView>(R.id.header_avatar)
+            val headerUsername = header.findViewById<TextView>(R.id.header_username)
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.CREATED) {
+                    viewModel.homePageFlow.collect { state ->
+                        if (state is WebsiteState.Success) {
+                            if (state.info.username == null && isAlreadyLogin) {
+                                logoutWithRefresh()
+                                showShortToast(R.string.login_expired_auto_logout)
+                            } else {
+                                headerAvatar.load(state.info.avatarUrl) {
+                                    crossfade(true)
+                                    transformations(CircleCropTransformation())
+                                }
+                                headerUsername.text = state.info.username
+                            }
+                        } else {
+                            headerAvatar.load(R.mipmap.ic_launcher) {
+                                crossfade(true)
+                                transformations(CircleCropTransformation())
+                            }
+                            headerUsername.setText(R.string.loading)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -190,30 +219,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
                             logoutWithRefresh()
                         }
                         setNegativeButton(R.string.no, null)
-                    }
-                }
-                lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.CREATED) {
-                        viewModel.homePageFlow.collect { state ->
-                            if (state is WebsiteState.Success) {
-                                if (state.info.username == null && isAlreadyLogin) {
-                                    logoutWithRefresh()
-                                    showShortToast(R.string.login_expired_auto_logout)
-                                } else {
-                                    headerAvatar.load(state.info.avatarUrl) {
-                                        crossfade(true)
-                                        transformations(CircleCropTransformation())
-                                    }
-                                    headerUsername.text = state.info.username
-                                }
-                            } else {
-                                headerAvatar.load(R.mipmap.ic_launcher) {
-                                    crossfade(true)
-                                    transformations(CircleCropTransformation())
-                                }
-                                headerUsername.setText(R.string.loading)
-                            }
-                        }
                     }
                 }
             } else {
