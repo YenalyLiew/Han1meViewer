@@ -103,6 +103,25 @@
 
                         </LinearLayout>
 
+                        <FrameLayout
+                            android:id="@+id/btn_banner"
+                            android:layout_width="64dp"
+                            android:layout_height="40dp"
+                            android:background="@android:color/transparent">
+
+                            <ImageView
+                                android:id="@+id/iv_banner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center|end"
+                                android:layout_marginEnd="4dp"
+                                android:background="@drawable/ic_baseline_arrow_forward_24"
+                                android:backgroundTint="@color/red"
+                                android:contentDescription="@string/enter" />
+
+                        </FrameLayout>
+                        <!--
+
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_banner"
                             style="@style/Widget.Material3.Button.IconButton"
@@ -112,6 +131,7 @@
                             android:backgroundTint="@color/per70_transparent_white"
                             app:icon="@drawable/ic_baseline_arrow_forward_24"
                             app:iconTint="@color/red" />
+                            -->
 
                     </LinearLayout>
 

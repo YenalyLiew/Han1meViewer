@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
@@ -265,21 +266,28 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
     private fun handlePalette(p: Palette) {
         bindingOrNull?.let { binding ->
             val darkVibrant = p.getDarkVibrantColor(Color.RED)
+            val darkMuted = p.getDarkMutedColor(Color.RED)
             val lightVibrant = p.getLightVibrantColor(Color.RED)
 
+            val buttonBgColor =
+                p.lightVibrantSwatch?.rgb ?: p.lightMutedSwatch?.rgb ?: Color.TRANSPARENT
             val darkVibrantForContentScrim =
                 p.darkVibrantSwatch?.rgb ?: p.darkMutedSwatch?.rgb ?: p.lightVibrantSwatch?.rgb
                 ?: p.lightMutedSwatch?.rgb ?: Color.BLACK
             binding.collapsingToolbar.setContentScrimColor(darkVibrantForContentScrim)
+            binding.btnBanner.background = GradientDrawable().apply {
+                colors = intArrayOf(Color.TRANSPARENT, buttonBgColor)
+                orientation = GradientDrawable.Orientation.LEFT_RIGHT
+            }
             colorTransition(
-                fromColor = binding.btnBanner.iconTint.defaultColor,
-                toColor = darkVibrant
+                fromColor = binding.ivBanner.backgroundTintList?.defaultColor ?: Color.RED,
+                toColor = darkMuted
             ) {
                 interpolator = animInterpolator
                 duration = animDuration
                 addUpdateListener(viewLifecycleOwner.lifecycle) {
                     val color = it.animatedValue as Int
-                    binding.btnBanner.iconTint = ColorStateList.valueOf(color)
+                    binding.ivBanner.backgroundTintList = ColorStateList.valueOf(color)
                 }
             }
             colorTransition(
