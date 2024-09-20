@@ -19,7 +19,6 @@ import com.google.android.material.button.MaterialButton
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.COMMENT_ID
-import com.yenaly.han1meviewer.CSRF_TOKEN
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemVideoCommentBinding
@@ -146,8 +145,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                 check(fragment != null && fragment is CommentFragment)
                 item.realReplyId.let { id ->
                     (ChildCommentPopupFragment().makeBundle(
-                        COMMENT_ID to id,
-                        CSRF_TOKEN to fragment.viewModel.csrfToken
+                        COMMENT_ID to id
                     ) as ChildCommentPopupFragment).showIn(context as FragmentActivity)
                 }
             }

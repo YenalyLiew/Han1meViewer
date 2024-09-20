@@ -8,8 +8,7 @@ import com.yenaly.han1meviewer.logic.model.MyListItems
 import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.ui.viewmodel.IHCsrfToken
-import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel.csrfToken
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,11 +18,7 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class FavSubViewModel(application: Application) : YenalyViewModel(application), IHCsrfToken {
-
-    override var csrfToken: String?
-        get() = getParent<MyListViewModel>()?.csrfToken
-        set(_) = error("Setting csrfToken here is not allowed")
+class FavSubViewModel(application: Application) : YenalyViewModel(application) {
 
     var favVideoPage = 1
 

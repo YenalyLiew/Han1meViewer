@@ -123,7 +123,6 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
                         }
 
                         is VideoLoadingState.Success -> {
-                            viewModel.csrfToken = state.info.csrfToken
                             videoTitle = state.info.title
 
                             if (state.info.videoUrls.isEmpty()) {

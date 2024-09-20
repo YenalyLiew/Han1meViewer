@@ -11,7 +11,6 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.yenaly.han1meviewer.COMMENT_ID
-import com.yenaly.han1meviewer.CSRF_TOKEN
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.PopUpFragmentChildCommentBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -36,7 +35,6 @@ class ChildCommentPopupFragment :
     YenalyBottomSheetDialogFragment<PopUpFragmentChildCommentBinding>() {
 
     val commentId by arguments<String>(COMMENT_ID)
-    val csrfToken by arguments<String>(CSRF_TOKEN)
     val viewModel by viewModels<CommentViewModel>()
     private val replyAdapter by unsafeLazy {
         VideoCommentRvAdapter(this)
@@ -45,7 +43,6 @@ class ChildCommentPopupFragment :
     override fun initData(savedInstanceState: Bundle?, dialog: Dialog) {
         if (commentId == null) dialog.dismiss()
 
-        viewModel.csrfToken = csrfToken
         binding.root.minimumHeight = appScreenHeight / 2
         binding.rvReply.layoutManager = LinearLayoutManager(context)
         binding.rvReply.adapter = replyAdapter

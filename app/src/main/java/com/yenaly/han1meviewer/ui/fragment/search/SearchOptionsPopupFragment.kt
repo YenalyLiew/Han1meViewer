@@ -20,6 +20,8 @@ import com.yenaly.han1meviewer.SEARCH_YEAR_RANGE_END
 import com.yenaly.han1meviewer.SEARCH_YEAR_RANGE_START
 import com.yenaly.han1meviewer.databinding.PopUpFragmentSearchOptionsBinding
 import com.yenaly.han1meviewer.logic.model.SearchOption.Companion.get
+import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.adapter.HSubscriptionAdapter
 import com.yenaly.han1meviewer.ui.popup.HTimePickerPopup
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
@@ -27,6 +29,7 @@ import com.yenaly.han1meviewer.ui.viewmodel.SearchViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyBottomSheetDialogFragment
 import com.yenaly.yenaly_libs.utils.mapToArray
+import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -326,6 +329,28 @@ class SearchOptionsPopupFragment :
                             isCheckBoxVisible = subscription.name == viewModel.subscriptionBrand
                         )
                     })
+                }
+            }
+            lifecycleScope.launch {
+                myListViewModel.subscription.deleteSubscriptionFlow.collect { state ->
+                    when (state) {
+                        is WebsiteState.Success -> {
+                            showShortToast(R.string.delete_success)
+                            val position = state.info
+                            val item = subscriptionAdapter.getItem(position) ?: return@collect
+                            val activity = requireContext()
+                            if (activity is SearchActivity && item.name == activity.searchText) {
+                                activity.setSearchText(null)
+                            }
+                        }
+
+                        is WebsiteState.Error -> {
+                            showShortToast(R.string.delete_failed)
+                            state.throwable.printStackTrace()
+                        }
+
+                        WebsiteState.Loading -> Unit
+                    }
                 }
             }
         }

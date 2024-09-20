@@ -15,6 +15,7 @@ import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.model.Subscription
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
+import com.yenaly.han1meviewer.util.showAlertDialog
 
 class HSubscriptionAdapter : BaseDifferAdapter<Subscription, QuickViewHolder>(COMPARATOR) {
 
@@ -22,8 +23,6 @@ class HSubscriptionAdapter : BaseDifferAdapter<Subscription, QuickViewHolder>(CO
         const val DELETE = 1
         const val CHECK = 1 shl 1
     }
-
-    private var lastCheckedItemIndex = -1
 
     private object COMPARATOR : DiffUtil.ItemCallback<Subscription>() {
         override fun areItemsTheSame(oldItem: Subscription, newItem: Subscription): Boolean {
@@ -114,9 +113,7 @@ class HSubscriptionAdapter : BaseDifferAdapter<Subscription, QuickViewHolder>(CO
                         if (context is SearchActivity) {
                             context.viewModel.subscriptionBrand = item.name
                             context.setSearchText(item.name, canTextChange = false)
-                            notifyItemChanged(lastCheckedItemIndex, CHECK)
-                            notifyItemChanged(position, CHECK)
-                            lastCheckedItemIndex = position
+                            notifyItemRangeChanged(0, itemCount, CHECK)
                         }
                     }
                 }
@@ -141,6 +138,22 @@ class HSubscriptionAdapter : BaseDifferAdapter<Subscription, QuickViewHolder>(CO
                     }
                 }
                 true
+            }
+            getView<View>(R.id.btn_delete).setOnClickListener {
+                val position = bindingAdapterPosition
+                val item = getItem(position) ?: return@setOnClickListener
+                context.showAlertDialog {
+                    setTitle(R.string.sure_to_delete)
+                    setMessage(context.getString(R.string.sure_to_delete_s, item.name))
+                    setPositiveButton(R.string.confirm) { _, _ ->
+                        if (context is SearchActivity) {
+                            context.myListViewModel.subscription.deleteSubscription(
+                                item.artistId, position
+                            )
+                        }
+                    }
+                    setNegativeButton(R.string.cancel, null)
+                }
             }
         }
     }

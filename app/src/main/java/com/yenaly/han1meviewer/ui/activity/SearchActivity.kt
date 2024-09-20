@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
  */
 class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(), StateLayoutMixin {
 
-    private val myListViewModel by viewModels<MyListViewModel>()
+    val myListViewModel by viewModels<MyListViewModel>()
 
     val subscribeLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -292,6 +292,8 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
         binding.searchBar.searchText = text
         binding.searchBar.canTextChange = canTextChange
     }
+
+    val searchText: String? get() = binding.searchBar.searchText
 
     /**
      * 分析该 any 并加载给相应 ViewModel 中的参数

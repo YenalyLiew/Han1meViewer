@@ -212,7 +212,6 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                                 }
                             }
                             isAfterRefreshing = true
-                            viewModel.csrfToken = state.info.csrfToken
                             listDesc = state.info.desc
                             binding.statePageList.showContent()
                         }
@@ -234,7 +233,6 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                 viewModel.playlist.playlistsFlow.collect { state ->
                     when (state) {
                         is WebsiteState.Success -> {
-                            viewModel.csrfToken = state.info.csrfToken
                             playlistsAdapter.submitList(state.info.playlists)
                             if (state.info.playlists.isEmpty()) {
                                 binding.statePlaylist.showEmpty()
@@ -266,7 +264,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
                     }
 
                     is WebsiteState.Success -> {
-                        showShortToast(R.string.delete_failed)
+                        showShortToast(R.string.delete_success)
                     }
                 }
             }

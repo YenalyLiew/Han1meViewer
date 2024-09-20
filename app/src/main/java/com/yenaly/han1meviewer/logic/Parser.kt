@@ -49,6 +49,8 @@ object Parser {
 
     fun homePageVer2(body: String): WebsiteState<HomePage> {
         val parseBody = Jsoup.parse(body).body()
+        val csrfToken = parseBody.selectFirst("input[name=_token]")?.attr("value") // csrf token
+
         val homePageParse = parseBody.select("div[id=home-rows-wrapper] > div")
         val userInfo = parseBody.selectFirst("div[id=user-modal-dp-wrapper]")
         val avatarUrl: String? = userInfo?.selectFirst("img")?.absUrl("src")
@@ -158,6 +160,7 @@ object Parser {
         // emit!
         return WebsiteState.Success(
             HomePage(
+                csrfToken,
                 avatarUrl, username, banner = banner,
                 latestHanime = latestHanimeList,
                 latestRelease = latestReleaseList,
@@ -707,7 +710,7 @@ object Parser {
 
         val subscriptionList = mutableListOf<Subscription>()
         val allArtistsClass = parseBody.getElementsByClass("home-rows-videos-wrapper").firstOrNull()
-        allArtistsClass?.let {
+        allArtistsClass?.let { artistClass ->
             if (allArtistsClass.childrenSize() == 0) {
                 return PageLoadingState.NoMoreData
             }
@@ -718,8 +721,16 @@ object Parser {
                     it.getOrNull(1) ?: it.firstOrNull()
                 }?.absUrl("src")
                     .logIfParseNull(Parser::subscriptionItems.name, "avatarUrl", loginNeeded = true)
+                val artistId =
+                    artistClass.selectFirst("input[name=playlist-show-video-id]")
+                        ?.attr("value").logIfParseNull(
+                            Parser::subscriptionItems.name, "artistId", loginNeeded = true
+                        )
                 if (title != null) {
-                    subscriptionList += Subscription(name = title, avatarUrl = avatarUrl)
+                    subscriptionList += Subscription(
+                        name = title, avatarUrl = avatarUrl,
+                        artistId = artistId
+                    )
                 }
             }
         }.logIfParseNull(Parser::subscriptionItems.name, "allArtistsClass_CSS")

@@ -14,6 +14,7 @@ import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeVideo
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel.csrfToken
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +31,7 @@ import kotlin.math.abs
  * @author Yenaly Liew
  * @time 2022/06/17 017 19:01
  */
-class VideoViewModel(application: Application) : YenalyViewModel(application), IHCsrfToken {
+class VideoViewModel(application: Application) : YenalyViewModel(application) {
 
     companion object {
         /**
@@ -48,8 +49,6 @@ class VideoViewModel(application: Application) : YenalyViewModel(application), I
 
     var hKeyframes: HKeyframeEntity? = null
 
-    override var csrfToken: String? = null
-
     private val _hanimeVideoStateFlow =
         MutableStateFlow<VideoLoadingState<HanimeVideo>>(VideoLoadingState.Loading)
     val hanimeVideoStateFlow = _hanimeVideoStateFlow.asStateFlow()
@@ -63,6 +62,7 @@ class VideoViewModel(application: Application) : YenalyViewModel(application), I
                 _hanimeVideoStateFlow.value = state
                 if (state is VideoLoadingState.Success) {
                     _hanimeVideoFlow.update { state.info }
+                    csrfToken = state.info.csrfToken
                 }
             }
         }

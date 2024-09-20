@@ -8,6 +8,7 @@ import com.yenaly.han1meviewer.logic.model.CommentPlace
 import com.yenaly.han1meviewer.logic.model.VideoCommentArgs
 import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel.csrfToken
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import com.yenaly.yenaly_libs.utils.showShortToast
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,11 +23,10 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/06/28 028 14:18
  */
-class CommentViewModel(application: Application) : YenalyViewModel(application), IHCsrfToken {
+class CommentViewModel(application: Application) : YenalyViewModel(application) {
 
     lateinit var code: String
 
-    override var csrfToken: String? = null
     var currentUserId: String? = null
 
     private val _videoCommentStateFlow =

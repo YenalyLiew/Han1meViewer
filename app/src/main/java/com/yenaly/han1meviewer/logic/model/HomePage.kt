@@ -6,6 +6,7 @@ package com.yenaly.han1meviewer.logic.model
  * @time 2022/06/08 008 22:45
  */
 data class HomePage(
+    val csrfToken: String?,
     val avatarUrl: String?,
     val username: String?,
     val banner: Banner?,

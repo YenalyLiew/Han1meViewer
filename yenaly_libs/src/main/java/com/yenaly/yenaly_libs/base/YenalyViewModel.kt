@@ -14,12 +14,13 @@ open class YenalyViewModel(
     @JvmField protected val application: Application
 ) : AndroidViewModel(application) {
 
-    private var parent: YenalyViewModel? = null
+    var parent: YenalyViewModel? = null
+        private set
 
     @Suppress("UNCHECKED_CAST")
-    fun <YVM : YenalyViewModel> getParent(): YVM? = parent as? YVM
+    fun <YVM : YenalyViewModel> parent(): YVM? = parent as? YVM
 
-    fun <YVM : YenalyViewModel> requireParent(): YVM = getParent() ?: error("Parent not found")
+    fun <YVM : YenalyViewModel> requireParent(): YVM = parent() ?: error("Parent not found")
 
     inline fun <reified YVM : YenalyViewModel> sub() = sub(YVM::class.java)
 

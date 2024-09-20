@@ -103,7 +103,6 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
                             page++
                             binding.srlPageList.finishRefresh()
                             binding.srlPageList.finishLoadMore(true)
-                            viewModel.csrfToken = state.info.csrfToken
                             binding.state.showContent()
                         }
                     }
