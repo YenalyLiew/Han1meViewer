@@ -12,9 +12,7 @@ import com.yenaly.yenaly_libs.base.YenalyViewModel
  * @author Yenaly Liew
  * @time 2022/07/04 004 22:46
  */
-class MyListViewModel(application: Application) : YenalyViewModel(application), IHCsrfToken {
-
-    override var csrfToken: String? = null
+class MyListViewModel(application: Application) : YenalyViewModel(application) {
 
     val playlist by sub<PlaylistSubViewModel>()
     val watchLater by sub<WatchLaterSubViewModel>()

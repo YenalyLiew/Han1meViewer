@@ -4,24 +4,21 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.MyListItems
+import com.yenaly.han1meviewer.logic.model.MyListType
 import com.yenaly.han1meviewer.logic.model.Subscription
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
-import com.yenaly.han1meviewer.ui.viewmodel.IHCsrfToken
-import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
+import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel.csrfToken
 import com.yenaly.yenaly_libs.base.YenalyViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SubscriptionSubViewModel(
-    application: Application
-) : YenalyViewModel(application), IHCsrfToken {
-
-    override var csrfToken: String?
-        get() = getParent<MyListViewModel>()?.csrfToken
-        set(_) = error("Setting csrfToken here is not allowed")
+class SubscriptionSubViewModel(application: Application) : YenalyViewModel(application) {
 
     var subscriptionPage = 1
 
@@ -58,6 +55,24 @@ class SubscriptionSubViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private val _deleteSubscriptionFlow = MutableSharedFlow<WebsiteState<Int>>()
+    val deleteSubscriptionFlow = _deleteSubscriptionFlow.asSharedFlow()
+
+    fun deleteSubscription(artistId: String?, position: Int) {
+        artistId ?: return
+        viewModelScope.launch {
+            NetworkRepo.deleteMyListItems(MyListType.SUBSCRIPTION, artistId, position, csrfToken)
+                .collect {
+                    _deleteSubscriptionFlow.emit(it)
+                    _subscriptionFlow.update { list ->
+                        if (it is WebsiteState.Success) {
+                            list.toMutableList().apply { removeAt(position) }
+                        } else list
+                    }
+                }
         }
     }
 }

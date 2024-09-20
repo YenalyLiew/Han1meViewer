@@ -20,7 +20,9 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2024/03/29 029 18:00
  */
-object AppViewModel : YenalyViewModel(application) {
+object AppViewModel : YenalyViewModel(application), IHCsrfToken {
+
+    override var csrfToken: String? = null
 
     private val _versionFlow = MutableStateFlow<WebsiteState<Latest?>>(WebsiteState.Loading)
     val versionFlow = _versionFlow.asStateFlow()

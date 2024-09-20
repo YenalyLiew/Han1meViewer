@@ -123,7 +123,6 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
 
                         is WebsiteState.Success -> {
                             binding.srlComment.finishRefresh()
-                            viewModel.csrfToken = state.info.csrfToken
                             viewModel.currentUserId = state.info.currentUserId
                             showRedDotCount(state.info.videoComment.size)
                             binding.rvComment.isGone = state.info.videoComment.isEmpty()

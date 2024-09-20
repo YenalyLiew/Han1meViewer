@@ -8,6 +8,7 @@ import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HomePage
 import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel.csrfToken
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,9 @@ class MainViewModel(application: Application) : YenalyViewModel(application) {
     fun getHomePage() {
         viewModelScope.launch {
             NetworkRepo.getHomePage().collect { homePage ->
+                if (homePage is WebsiteState.Success) {
+                    csrfToken = homePage.info.csrfToken
+                }
                 _homePageFlow.value = homePage
             }
         }
