@@ -4,7 +4,6 @@ package com.yenaly.yenaly_libs.utils
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import androidx.core.content.getSystemService
 
 /**
@@ -17,28 +16,41 @@ fun copyTextToClipboard(
     text: CharSequence?,
     label: CharSequence? = null,
 ) {
-    val clipboardManager =
-        applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clipboardManager = applicationContext.getSystemService<ClipboardManager>()
     val clipData = ClipData.newPlainText(label, text)
-    clipboardManager.setPrimaryClip(clipData)
+    clipboardManager?.setPrimaryClip(clipData)
 }
 
 @JvmSynthetic
 fun CharSequence?.copyToClipboard(label: CharSequence? = null) = copyTextToClipboard(this, label)
+
+val textsFromClipboard: List<CharSequence?>
+    get() {
+        val context = applicationContext
+        val clipboardManager = context.getSystemService<ClipboardManager>()
+        val clipData = clipboardManager?.primaryClip ?: return emptyList()
+        val texts = mutableListOf<CharSequence?>()
+        for (i in 0..<clipData.itemCount) {
+            clipData.getItemAt(i)?.coerceToText(context)?.let { str ->
+                texts.add(str)
+            }
+        }
+        return texts
+    }
 
 /**
  * 剪贴板中最近一次的内容
  *
  * @return 剪贴板中最近一次的内容
  */
-inline val textFromClipboard: String?
+val textFromClipboard: CharSequence?
     get() {
         val context = applicationContext
         val clipboardManager = context.getSystemService<ClipboardManager>()
         val clipData = clipboardManager?.primaryClip ?: return null
         if (clipData.itemCount > 0) {
             clipData.getItemAt(0)?.let { item ->
-                return item.coerceToText(context)?.toString()
+                return item.coerceToText(context)
             }
         }
         return null
