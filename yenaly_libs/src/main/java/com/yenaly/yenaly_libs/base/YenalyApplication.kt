@@ -21,7 +21,7 @@ open class YenalyApplication : Application(), Application.ActivityLifecycleCallb
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
         // do not forget to register the crash dialog activity!
-        if (!isDebugEnabled) YenalyCrashHandler.getInstance().init(this)
+        if (!isDebugEnabled) YenalyCrashHandler.instance.init(this)
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

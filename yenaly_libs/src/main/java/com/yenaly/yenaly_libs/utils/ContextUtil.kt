@@ -47,6 +47,13 @@ val Context.activity: Activity?
  * Extension function to find an Activity of a specific type from a Context.
  */
 inline fun <reified T : Activity> Context.findActivity(): T {
+    return findActivityOrNull() ?: error("No activity of type ${T::class.java.simpleName} found")
+}
+
+/**
+ * Extension function to find an Activity of a specific type from a Context.
+ */
+inline fun <reified T : Activity> Context.findActivityOrNull(): T? {
     var context = this
     while (context is ContextWrapper) {
         if (context is T) {
@@ -54,8 +61,17 @@ inline fun <reified T : Activity> Context.findActivity(): T {
         }
         context = context.baseContext
     }
-    error("No activity of type ${T::class.java.simpleName} found")
+    return null
 }
+
+/**
+ * Extension function to require an Activity from a Context.
+ * This is mainly used for AlertDialogs which require a Context with a window token.
+ */
+fun Context.requireActivity(): Activity =
+    this.activity
+        ?: ActivityManager.currentActivity.get()
+        ?: error("No Activity found")
 
 /**
  * Extension function to get the ComponentActivity from a Context.

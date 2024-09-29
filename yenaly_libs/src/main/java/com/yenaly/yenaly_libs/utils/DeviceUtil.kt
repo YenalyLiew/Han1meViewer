@@ -7,26 +7,47 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.core.util.TypedValueCompat
 
-/**
- * 通过dp获取相应px值
- */
-
-val Number.dp: Int
-    @JvmName("dpToPx")
+val Number.dpF: Float
+    @JvmName("dpToPxF")
     get() = TypedValueCompat.dpToPx(
         this.toFloat(),
         applicationContext.resources.displayMetrics
-    ).toInt()
+    )
+
+val Number.spF: Float
+    @JvmName("spToPxF")
+    get() = TypedValueCompat.spToPx(
+        this.toFloat(),
+        applicationContext.resources.displayMetrics
+    )
+
+/**
+ * 通过dp获取相应px值
+ */
+val Number.dp: Int
+    @JvmName("dpToPx")
+    get() {
+        val f = dpF
+        val res = (if (f >= 0) f + 0.5f else f - 0.5f).toInt()
+        if (res != 0) return res
+        if (this.toFloat() == 0f) return 0
+        if (this.toFloat() > 0) return 1
+        return -1
+    }
 
 /**
  * 通过sp获取相应px值
  */
 val Number.sp: Int
     @JvmName("spToPx")
-    get() = TypedValueCompat.spToPx(
-        this.toFloat(),
-        applicationContext.resources.displayMetrics
-    ).toInt()
+    get() {
+        val f = spF
+        val res = (if (f >= 0) f + 0.5f else f - 0.5f).toInt()
+        if (res != 0) return res
+        if (this.toFloat() == 0f) return 0
+        if (this.toFloat() > 0) return 1
+        return -1
+    }
 
 /**
  * 获取本地储存状态栏高度px

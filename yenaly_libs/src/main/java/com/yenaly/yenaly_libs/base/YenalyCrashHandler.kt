@@ -1,16 +1,13 @@
 package com.yenaly.yenaly_libs.base
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.os.Looper
 import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.base.dialog.YenalyCrashDialogActivity
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.startActivity
 import java.io.PrintWriter
 import java.io.StringWriter
-import kotlin.concurrent.thread
 
 /**
  * @ProjectName : YenalyModule
@@ -24,22 +21,7 @@ class YenalyCrashHandler private constructor() : Thread.UncaughtExceptionHandler
     private var mDefaultHandler: Thread.UncaughtExceptionHandler? = null
 
     companion object {
-        @SuppressLint("StaticFieldLeak")
-        @JvmStatic
-        @Volatile
-        private var yenalyCrashHandler: YenalyCrashHandler? = null
-
-        @JvmStatic
-        fun getInstance(): YenalyCrashHandler {
-            if (yenalyCrashHandler == null) {
-                synchronized(YenalyCrashHandler::class.java) {
-                    if (yenalyCrashHandler == null) {
-                        yenalyCrashHandler = YenalyCrashHandler()
-                    }
-                }
-            }
-            return yenalyCrashHandler!!
-        }
+        val instance: YenalyCrashHandler by lazy(::YenalyCrashHandler)
     }
 
     fun init(context: Context) {
@@ -63,15 +45,6 @@ class YenalyCrashHandler private constructor() : Thread.UncaughtExceptionHandler
     }
 
     private fun handleError(throwable: Throwable?): Boolean {
-        if (throwable == null) {
-            return false
-        }
-
-        thread {
-            Looper.prepare()
-            // TODO
-            Looper.loop()
-        }
-        return true
+        return throwable != null
     }
 }
