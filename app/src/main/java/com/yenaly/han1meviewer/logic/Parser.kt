@@ -722,7 +722,7 @@ object Parser {
                 }?.absUrl("src")
                     .logIfParseNull(Parser::subscriptionItems.name, "avatarUrl", loginNeeded = true)
                 val artistId =
-                    artistClass.selectFirst("input[name=playlist-show-video-id]")
+                    artistElement.selectFirst("input[name=playlist-show-video-id]")
                         ?.attr("value").logIfParseNull(
                             Parser::subscriptionItems.name, "artistId", loginNeeded = true
                         )
