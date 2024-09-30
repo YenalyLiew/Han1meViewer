@@ -22,6 +22,9 @@ import kotlinx.coroutines.launch
  */
 object AppViewModel : YenalyViewModel(application), IHCsrfToken {
 
+    /**
+     * csrfToken 全局唯一，只需要在首页拉起或点击视频页时更新一下就可以了
+     */
     override var csrfToken: String? = null
 
     private val _versionFlow = MutableStateFlow<WebsiteState<Latest?>>(WebsiteState.Loading)

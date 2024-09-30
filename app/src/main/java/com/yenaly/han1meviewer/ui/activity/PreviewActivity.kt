@@ -37,6 +37,7 @@ import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.yenaly.han1meviewer.DATE_CODE
 import com.yenaly.han1meviewer.PREVIEW_COMMENT_PREFIX
 import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.cialloMessage
 import com.yenaly.han1meviewer.databinding.ActivityPreviewBinding
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.adapter.HanimePreviewNewsRvAdapter
@@ -245,7 +246,7 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
                     when (state) {
                         is WebsiteState.Error -> {
                             //binding.srlPreview.finishRefresh()
-                            supportActionBar?.title = "🥺\n${state.throwable.message}"
+                            supportActionBar?.title = state.throwable.cialloMessage
                         }
 
                         is WebsiteState.Loading -> {

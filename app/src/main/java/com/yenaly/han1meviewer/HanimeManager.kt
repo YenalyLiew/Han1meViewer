@@ -15,6 +15,11 @@ val HJson = Json {
     ignoreUnknownKeys = true
 }
 
+/**
+ * 给用户显示的错误信息
+ */
+val Throwable.cialloMessage: CharSequence get() = "🥺\n$localizedMessage"
+
 // base
 
 val hanimeSpannable
