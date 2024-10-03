@@ -173,85 +173,6 @@ object Parser {
         )
     }
 
-    @Deprecated("暂时没啥用")
-    fun hanimeSearchTags(body: String): WebsiteState<SearchTag> {
-        val parseBody = Jsoup.parse(body).body()
-
-        // for genres
-        val genresList = mutableListOf<String>()
-        val genresItems = parseBody.select("div[class~=genre-option]")
-        genresItems.forEach { genresItem ->
-            genresList.add(genresItem.text())
-        }
-
-        // for tags
-        val tagsMap = linkedMapOf<String, List<String>>()
-        val tagsClass = parseBody.getElementById("tags")!!
-        val tagItems = tagsClass.select("div[class=modal-body]")[0].children()
-        var tagType: String
-        val tags = mutableListOf<String>()
-        tagItems.forEach { tagItem ->
-            if (tagItem.`is`("h5")) {
-                tagType = tagItem.text().substringBefore("：")
-                if (tags.isNotEmpty()) tagsMap[tagType] = tags
-                tags.clear()
-            } else if (tagItem.`is`("label")) {
-                val tagName = tagItem.select("span")[0]
-                tags.add(tagName.text())
-            }
-        }
-
-        // for sort options
-        val sortOptionsList = mutableListOf<String>()
-        val sortOptionsItems = parseBody.select("div[class=hentai-sort-options]")
-        sortOptionsItems.forEach { sortOptionsItem ->
-            sortOptionsList.add(sortOptionsItem.text())
-        }
-
-        // for brands
-        val brandsList = mutableListOf<String>()
-        val brandsClass = parseBody.getElementById("brands")!!
-        val brandsItems = brandsClass.select("label[class=hentai-tags-wrapper] > span")
-        brandsItems.forEach { brandsItem ->
-            brandsList.add(brandsItem.text())
-        }
-
-        // for release date
-        val yearsList = mutableListOf<Pair<String, String>>()
-        val monthsList = mutableListOf<Pair<String, String>>()
-        val yearsClass = parseBody.select("select[id=year]")[0]
-        val monthsClass = parseBody.select("select[id=month]")[0]
-        val yearOptions = yearsClass.select("option")
-        val monthOptions = monthsClass.select("option")
-        yearOptions.forEach { yearOption ->
-            val yearKey = yearOption.text()
-            val yearValue = yearOption.attr("value")
-            yearsList.add(yearKey to yearValue)
-        }
-        monthOptions.forEach { monthOption ->
-            val monthKey = monthOption.text()
-            val monthValue = monthOption.attr("value")
-            monthsList.add(monthKey to monthValue)
-        }
-
-        // for duration options
-        val durationOptionsList = mutableListOf(
-            "全部" to EMPTY_STRING, "短片" to "（4 分鐘內）",
-            "中長片" to "（4 至 20 分鐘）", "長片" to "（20 分鐘以上）"
-        )
-
-        // emit!
-        return WebsiteState.Success(
-            SearchTag(
-                genres = genresList, tags = tagsMap,
-                sortOptions = sortOptionsList, brands = brandsList,
-                releaseDates = SearchTag.ReleaseDate(
-                    years = yearsList, months = monthsList
-                ), durationOptions = durationOptionsList
-            )
-        )
-    }
-
     fun hanimeSearch(body: String): PageLoadingState<MutableList<HanimeInfo>> {
         val parseBody = Jsoup.parse(body).body()
         val allContentsClass =
@@ -771,13 +692,18 @@ object Parser {
         val currentUserId = parseBody.selectFirst("input[name=comment-user-id]")?.attr("value")
         val commentList = mutableListOf<VideoComments.VideoComment>()
         val allCommentsClass = parseBody.getElementById("comment-start")
-        allCommentsClass?.children()?.forEach { child: Element ->
+
+        buildList {
+            allCommentsClass?.children()?.chunked(5)?.forEach { elements ->
+                this += Element("div").apply { appendChildren(elements) }
+            }
+        }.forEach { child: Element ->
             val avatarUrl = child.selectFirst("img")?.absUrl("src")
                 .throwIfParseNull(Parser::comments.name, "avatarUrl")
             val textClass = child.getElementsByClass("comment-index-text")
             val nameAndDateClass = textClass.firstOrNull()
             val username = nameAndDateClass?.selectFirst("a")?.ownText()?.trim()
-                .throwIfParseNull(Parser::comments.name, "name")
+                .throwIfParseNull(Parser::comments.name, "username")
             val date = nameAndDateClass?.selectFirst("span")?.ownText()?.trim()
                 .throwIfParseNull(Parser::comments.name, "date")
             val content = textClass.getOrNull(1)?.text()
