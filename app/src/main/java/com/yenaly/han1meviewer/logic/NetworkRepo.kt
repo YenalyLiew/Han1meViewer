@@ -43,12 +43,6 @@ object NetworkRepo {
         action = Parser::homePageVer2
     )
 
-    @Suppress("DEPRECATION")
-    fun getHanimeSearchTags() = websiteIOFlow(
-        request = { HanimeNetwork.hanimeService.getHanimeSearchResult() },
-        action = Parser::hanimeSearchTags
-    )
-
     fun getHanimeSearchResult(
         page: Int, query: String?, genre: String?,
         sort: String?, broad: Boolean, year: Int?, month: Int?,

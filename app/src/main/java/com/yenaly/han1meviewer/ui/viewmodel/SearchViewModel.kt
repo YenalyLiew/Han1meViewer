@@ -110,14 +110,6 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
-    fun getHanimeSearchTags() {
-        viewModelScope.launch {
-            NetworkRepo.getHanimeSearchTags().collect { tags ->
-                _searchTagFlow.value = tags
-            }
-        }
-    }
-
     fun insertSearchHistory(history: SearchHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             DatabaseRepo.SearchHistory.insert(history)
