@@ -12,7 +12,6 @@ import com.yenaly.han1meviewer.logic.model.HanimeVideo
 import com.yenaly.han1meviewer.logic.model.HomePage
 import com.yenaly.han1meviewer.logic.model.MyListItems
 import com.yenaly.han1meviewer.logic.model.Playlists
-import com.yenaly.han1meviewer.logic.model.SearchTag
 import com.yenaly.han1meviewer.logic.model.Subscription
 import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
