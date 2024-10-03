@@ -9,9 +9,7 @@ import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.logic.model.SearchOption
-import com.yenaly.han1meviewer.logic.model.SearchTag
 import com.yenaly.han1meviewer.logic.state.PageLoadingState
-import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.util.loadAssetAs
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -79,10 +77,6 @@ class SearchViewModel(application: Application) : YenalyViewModel(application) {
 
     private val _searchFlow = MutableStateFlow(emptyList<HanimeInfo>())
     val searchFlow = _searchFlow.asStateFlow()
-
-    private val _searchTagFlow =
-        MutableStateFlow<WebsiteState<SearchTag>>(WebsiteState.Loading)
-    val searchTagFlow = _searchTagFlow.asStateFlow()
 
     fun clearHanimeSearchResult() = _searchStateFlow.update { PageLoadingState.Loading }
 

@@ -2,12 +2,10 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
@@ -25,7 +23,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.viewpager2.widget.ViewPager2
 import coil.imageLoader
 import coil.load
@@ -50,7 +47,6 @@ import com.yenaly.han1meviewer.util.colorTransition
 import com.yenaly.han1meviewer.util.toColorStateList
 import com.yenaly.yenaly_libs.base.YenalyActivity
 import com.yenaly.yenaly_libs.utils.appScreenWidth
-import com.yenaly.yenaly_libs.utils.dp
 import com.yenaly.yenaly_libs.utils.getThemeColor
 import com.yenaly.yenaly_libs.utils.startActivity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -166,28 +162,15 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
         binding.rvTourSimplified.apply {
             layoutManager = tourLayoutManager
             adapter = tourSimplifiedAdapter
-            addItemDecoration(object : ItemDecoration() {
-                override fun getItemOffsets(
-                    outRect: Rect,
-                    view: View,
-                    parent: RecyclerView,
-                    state: RecyclerView.State,
-                ) {
-                    val position = parent.getChildViewHolder(view).bindingAdapterPosition
-                    if (position == 0 || position == state.itemCount - 1) {
-                        val elementWidth = resources.getDimension(
-                            R.dimen.video_cover_simplified_width_small
-                        )
-                        val elementMargin = 4.dp
-                        val padding = appScreenWidth / 2f - elementWidth / 2f - elementMargin
-                        if (position == 0) {
-                            outRect.left = padding.toInt()
-                        } else {
-                            outRect.right = padding.toInt()
-                        }
-                    }
-                }
-            })
+            clipToPadding = false
+            ViewCompat.setOnApplyWindowInsetsListener(this) { view, _ ->
+                val elementWidth = view.resources.getDimension(
+                    R.dimen.video_cover_simplified_width_small
+                )
+                val padding = appScreenWidth / 2f - elementWidth / 2f
+                view.updatePadding(left = padding.toInt(), right = padding.toInt())
+                WindowInsetsCompat.CONSUMED
+            }
             linearSnapHelper.attachToRecyclerView(this)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
