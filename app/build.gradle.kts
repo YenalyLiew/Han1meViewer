@@ -44,7 +44,7 @@ android {
         minSdk = property("min.sdk")?.toString()?.toIntOrNull()
         targetSdk = property("target.sdk")?.toString()?.toIntOrNull()
         versionCode = if (isRelease) createVersionCode() else 1 // 方便调试
-        versionName = versionCode.createVersionName(major = 0, minor = 15, patch = 0)
+        versionName = versionCode.createVersionName(major = 0, minor = 15, patch = 2)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
