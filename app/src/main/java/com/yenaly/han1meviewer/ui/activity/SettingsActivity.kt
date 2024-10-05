@@ -24,7 +24,11 @@ import com.yenaly.yenaly_libs.utils.intentExtra
  */
 class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewModel>() {
 
-    private val shouldNavToHKeyframeSettings by intentExtra("h_keyframe", false)
+    companion object {
+        const val H_KEYFRAME_SETTINGS = "h_keyframe"
+    }
+
+    private val shouldNavToHKeyframeSettings by intentExtra(H_KEYFRAME_SETTINGS, false)
 
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController

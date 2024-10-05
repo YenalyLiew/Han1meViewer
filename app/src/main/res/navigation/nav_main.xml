@@ -22,17 +22,4 @@
     <fragment
         android:id="@id/nv_download"
         android:name="com.yenaly.han1meviewer.ui.fragment.home.DownloadFragment" />
-    <activity
-        android:id="@id/nv_h_keyframe_settings"
-        android:name="com.yenaly.han1meviewer.ui.activity.SettingsActivity">
-
-        <argument
-            android:name="h_keyframe"
-            app:argType="boolean"
-            android:defaultValue="true" />
-
-    </activity>
-    <activity
-        android:id="@id/nv_settings"
-        android:name="com.yenaly.han1meviewer.ui.activity.SettingsActivity" />
 </navigation>

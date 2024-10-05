@@ -85,6 +85,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
     override fun initData(savedInstanceState: Bundle?) {
 
         initHeaderView()
+        initNavActivity()
         initMenu()
 
         navHostFragment =
@@ -230,6 +231,20 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
                 headerAvatar.setOnClickListener {
                     gotoLoginActivity()
                 }
+            }
+        }
+    }
+
+    // #issue-225: 侧滑选单双重点击异常，不能从 xml 里直接定义 activity 块，需要在代码里初始化
+    private fun initNavActivity() {
+        binding.nvMain.menu.apply {
+            findItem(R.id.nv_settings).setOnMenuItemClickListener {
+                startActivity<SettingsActivity>()
+                return@setOnMenuItemClickListener false
+            }
+            findItem(R.id.nv_h_keyframe_settings).setOnMenuItemClickListener {
+                startActivity<SettingsActivity>(SettingsActivity.H_KEYFRAME_SETTINGS to true)
+                return@setOnMenuItemClickListener false
             }
         }
     }
