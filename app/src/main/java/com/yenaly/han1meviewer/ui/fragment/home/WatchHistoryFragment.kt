@@ -1,6 +1,9 @@
 package com.yenaly.han1meviewer.ui.fragment.home
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,10 +26,19 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/07/01 001 21:23
  */
-class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding, MainViewModel>(),
+class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding>(),
     IToolbarFragment<MainActivity>, StateLayoutMixin {
 
+    val viewModel by activityViewModels<MainViewModel>()
+
     private val historyAdapter by unsafeLazy { WatchHistoryRvAdapter() }
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentPageListBinding {
+        return FragmentPageListBinding.inflate(inflater, container, false)
+    }
 
     override fun initData(savedInstanceState: Bundle?) {
         (activity as MainActivity).setupToolbar()

@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.ui.fragment.video
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +40,9 @@ class ChildCommentPopupFragment :
     private val replyAdapter by unsafeLazy {
         VideoCommentRvAdapter(this)
     }
+
+    override fun getViewBinding(layoutInflater: LayoutInflater) =
+        PopUpFragmentChildCommentBinding.inflate(layoutInflater)
 
     override fun initData(savedInstanceState: Bundle?, dialog: Dialog) {
         if (commentId == null) dialog.dismiss()

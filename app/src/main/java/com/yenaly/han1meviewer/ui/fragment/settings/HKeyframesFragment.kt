@@ -1,7 +1,10 @@
 package com.yenaly.han1meviewer.ui.fragment.settings
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,13 +32,21 @@ import kotlin.concurrent.thread
  * @author Yenaly Liew
  * @time 2023/11/13 013 18:46
  */
-class HKeyframesFragment :
-    YenalyFragment<FragmentHKeyframesBinding, SettingsViewModel>(),
+class HKeyframesFragment : YenalyFragment<FragmentHKeyframesBinding>(),
     IToolbarFragment<SettingsActivity>, StateLayoutMixin {
+
+    val viewModel by activityViewModels<SettingsViewModel>()
 
     private val adapter by unsafeLazy { HKeyframesRvAdapter() }
 
     private val hKeyframesShareRegex = Regex(">>>(.+)<<<")
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentHKeyframesBinding {
+        return FragmentHKeyframesBinding.inflate(inflater, container, false)
+    }
 
     override fun onStart() {
         super.onStart()

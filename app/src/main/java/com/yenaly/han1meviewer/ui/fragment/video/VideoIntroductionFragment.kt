@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -80,8 +81,7 @@ import kotlinx.datetime.format
  * @author Yenaly Liew
  * @time 2022/06/18 018 21:09
  */
-class VideoIntroductionFragment :
-    YenalyFragment<FragmentVideoIntroductionBinding, VideoViewModel>() {
+class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBinding>() {
 
     companion object {
         private const val FAV = 1
@@ -109,6 +109,8 @@ class VideoIntroductionFragment :
             }
         }
     }
+
+    val viewModel by activityViewModels<VideoViewModel>()
 
     private var checkedQuality: String? = null
 
@@ -145,6 +147,13 @@ class VideoIntroductionFragment :
      * 保证 submitList 不同时调用
      */
     private val mutex = Mutex()
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+    ): FragmentVideoIntroductionBinding {
+        return FragmentVideoIntroductionBinding.inflate(inflater, container, false)
+    }
 
     override fun initData(savedInstanceState: Bundle?) {
         binding.rvVideoIntro.layoutManager = layoutManager

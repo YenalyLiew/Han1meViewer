@@ -1,6 +1,9 @@
 package com.yenaly.han1meviewer.ui.fragment.home
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentTabViewPagerOnlyBinding
 import com.yenaly.han1meviewer.ui.activity.MainActivity
@@ -19,10 +22,19 @@ import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
  * @author Yenaly Liew
  * @time 2022/08/01 001 17:44
  */
-class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding, DownloadViewModel>(),
+class DownloadFragment : YenalyFragment<FragmentTabViewPagerOnlyBinding>(),
     IToolbarFragment<MainActivity> {
 
+    val viewModel by activityViewModels<DownloadViewModel>()
+
     private val tabNameArray = intArrayOf(R.string.downloading, R.string.downloaded)
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentTabViewPagerOnlyBinding {
+        return FragmentTabViewPagerOnlyBinding.inflate(inflater, container, false)
+    }
 
     override fun initData(savedInstanceState: Bundle?) {
         (activity as MainActivity).setupToolbar()

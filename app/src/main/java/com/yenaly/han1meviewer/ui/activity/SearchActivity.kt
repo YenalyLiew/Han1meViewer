@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.SystemBarStyle
@@ -63,8 +64,9 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/06/13 013 22:29
  */
-class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(), StateLayoutMixin {
+class SearchActivity : YenalyActivity<ActivitySearchBinding>(), StateLayoutMixin {
 
+    val viewModel by viewModels<SearchViewModel>()
     val myListViewModel by viewModels<MyListViewModel>()
 
     val subscribeLauncher =
@@ -85,6 +87,9 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding, SearchViewModel>(),
     private val advancedSearchMap by intentExtra<Any>(ADVANCED_SEARCH_MAP)
 
     private val optionsPopupFragment by unsafeLazy { SearchOptionsPopupFragment() }
+
+    override fun getViewBinding(layoutInflater: LayoutInflater): ActivitySearchBinding =
+        ActivitySearchBinding.inflate(layoutInflater)
 
     override fun setUiStyle() {
         enableEdgeToEdge(

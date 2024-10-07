@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
@@ -51,9 +52,10 @@ import com.yenaly.yenaly_libs.utils.view.setUpFragmentStateAdapter
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
-class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
+class VideoActivity : YenalyActivity<ActivityVideoBinding>(),
     OrientationManager.OrientationChangeListener {
 
+    val viewModel by viewModels<VideoViewModel>()
     private val commentViewModel by viewModels<CommentViewModel>()
 
     private val kernel = HMediaKernel.Type.fromString(Preferences.switchPlayerKernel)
@@ -63,6 +65,9 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding, VideoViewModel>(),
     private var videoCodeByWebsite: String? = null
 
     private val tabNameArray = intArrayOf(R.string.introduction, R.string.comment)
+
+    override fun getViewBinding(layoutInflater: LayoutInflater): ActivityVideoBinding =
+        ActivityVideoBinding.inflate(layoutInflater)
 
     override fun setUiStyle() {
         enableEdgeToEdge(

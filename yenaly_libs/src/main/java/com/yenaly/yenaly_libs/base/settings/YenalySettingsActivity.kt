@@ -1,16 +1,11 @@
 package com.yenaly.yenaly_libs.base.settings
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import androidx.activity.ComponentActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.yenaly.yenaly_libs.R
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
 import com.yenaly.yenaly_libs.databinding.YenalySettingsDataBinding
-import java.lang.reflect.ParameterizedType
 
 /**
  * @ProjectName : YenalyModule
@@ -55,19 +50,4 @@ abstract class YenalySettingsActivity : FrameActivity() {
      * 初始化设置的Fragment
      */
     abstract fun initFragmentContainer(): YenalySettingsFragment
-
-    @Suppress("unchecked_cast")
-    private fun <VM : ViewModel> createViewModel(
-        activity: ComponentActivity,
-        factory: ViewModelProvider.Factory? = null,
-    ): VM {
-        val vmClass =
-            (activity.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<VM>
-        Log.d("vmClass", vmClass.toString())
-        return if (factory != null) {
-            ViewModelProvider(activity, factory)[vmClass]
-        } else {
-            ViewModelProvider(activity)[vmClass]
-        }
-    }
 }

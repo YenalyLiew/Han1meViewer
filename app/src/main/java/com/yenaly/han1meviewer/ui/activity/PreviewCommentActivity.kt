@@ -2,9 +2,11 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import com.yenaly.han1meviewer.COMMENT_TYPE
 import com.yenaly.han1meviewer.DATE_CODE
 import com.yenaly.han1meviewer.PREVIEW_COMMENT_PREFIX
@@ -22,10 +24,15 @@ import com.yenaly.yenaly_libs.utils.safeIntentExtra
  * @author Yenaly Liew
  * @time 2022/06/28 028 12:03
  */
-class PreviewCommentActivity : YenalyActivity<ActivityPreviewCommentBinding, CommentViewModel>() {
+class PreviewCommentActivity : YenalyActivity<ActivityPreviewCommentBinding>() {
+
+    val viewModel by viewModels<CommentViewModel>()
 
     private val date by safeIntentExtra<String>("date") // 感覺沒必要弄成個常量
     private val dateCode by safeIntentExtra<String>(DATE_CODE)
+
+    override fun getViewBinding(layoutInflater: LayoutInflater): ActivityPreviewCommentBinding =
+        ActivityPreviewCommentBinding.inflate(layoutInflater)
 
     override fun setUiStyle() {
         enableEdgeToEdge(
