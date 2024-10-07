@@ -3,7 +3,7 @@
 androidGradle = "8.5.2"
 kotlin = "2.0.20"
 serializationPlugin = "2.0.20"
-ksp = "2.0.20-1.0.24"
+ksp = "2.0.20-1.0.25"
 
 # Dependencies
 about = "2.5.2"
