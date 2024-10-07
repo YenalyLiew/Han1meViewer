@@ -3,6 +3,9 @@ package com.yenaly.han1meviewer.ui.fragment.home
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -31,8 +34,10 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/07/04 004 22:42
  */
-class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewModel>(),
+class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding>(),
     IToolbarFragment<MainActivity>, LoginNeededFragmentMixin, StateLayoutMixin {
+
+    val viewModel by activityViewModels<MyListViewModel>()
 
     private var page: Int
         set(value) {
@@ -41,6 +46,13 @@ class MyWatchLaterFragment : YenalyFragment<FragmentPageListBinding, MyListViewM
         get() = viewModel.watchLater.watchLaterPage
 
     private val adapter by unsafeLazy { HanimeMyListVideoAdapter() }
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentPageListBinding {
+        return FragmentPageListBinding.inflate(inflater, container, false)
+    }
 
     override fun initData(savedInstanceState: Bundle?) {
         checkLogin()

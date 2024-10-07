@@ -1,6 +1,9 @@
 package com.yenaly.han1meviewer.ui.fragment.settings
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,15 +27,23 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2023/11/18 018 17:38
  */
-class SharedHKeyframesFragment :
-    YenalyFragment<FragmentHKeyframesBinding, SettingsViewModel>(),
+class SharedHKeyframesFragment : YenalyFragment<FragmentHKeyframesBinding>(),
     IToolbarFragment<SettingsActivity>, StateLayoutMixin {
+
+    val viewModel by activityViewModels<SettingsViewModel>()
 
     private val adapter by unsafeLazy { SharedHKeyframesRvAdapter() }
 
     override fun onStart() {
         super.onStart()
         (activity as SettingsActivity).setupToolbar()
+    }
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentHKeyframesBinding {
+        return FragmentHKeyframesBinding.inflate(inflater, container, false)
     }
 
     override fun initData(savedInstanceState: Bundle?) {

@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.ui.fragment.search
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Checkable
 import androidx.core.util.isNotEmpty
@@ -103,6 +104,9 @@ class SearchOptionsPopupFragment :
                 .isDarkTheme(true)
                 .asCustom(popup) as TimePickerPopup
         }
+
+    override fun getViewBinding(layoutInflater: LayoutInflater) =
+        PopUpFragmentSearchOptionsBinding.inflate(layoutInflater)
 
     override fun initData(savedInstanceState: Bundle?, dialog: Dialog) {
         // #issue-199: 片长搜索官网取消了

@@ -10,6 +10,8 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.view.ViewCompat
@@ -17,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.fragment.app.activityViewModels
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -56,13 +59,15 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/06/12 012 12:31
  */
-class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(),
+class HomePageFragment : YenalyFragment<FragmentHomePageBinding>(),
     IToolbarFragment<MainActivity>, StateLayoutMixin {
 
     companion object {
         private val animInterpolator = FastOutSlowInInterpolator()
         private val animDuration = 300L
     }
+
+    val viewModel by activityViewModels<MainViewModel>()
 
     private val latestHanimeAdapter = HanimeVideoRvAdapter()
     private val latestReleaseAdapter = HanimeVideoRvAdapter()
@@ -154,6 +159,13 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding, MainViewModel>(
      * 用於判斷是否需要 setExpanded，防止重複喚出 AppBar
      */
     private var isAfterRefreshing = false
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentHomePageBinding {
+        return FragmentHomePageBinding.inflate(inflater, container, false)
+    }
 
     /**
      * 初始化数据

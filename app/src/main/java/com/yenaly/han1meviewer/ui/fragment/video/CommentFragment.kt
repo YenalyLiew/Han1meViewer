@@ -1,12 +1,15 @@
 package com.yenaly.han1meviewer.ui.fragment.video
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -39,8 +42,9 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/06/18 018 21:09
  */
-class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>(),
-    StateLayoutMixin {
+class CommentFragment : YenalyFragment<FragmentCommentBinding>(), StateLayoutMixin {
+
+    val viewModel by activityViewModels<CommentViewModel>()
 
     private val commentTypePrefix by arguments(COMMENT_TYPE, VIDEO_COMMENT_PREFIX)
     private val commentAdapter by unsafeLazy {
@@ -54,6 +58,13 @@ class CommentFragment : YenalyFragment<FragmentCommentBinding, CommentViewModel>
      * 是否已经预加载了预览评论
      */
     private var isPreviewCommentPrefetched = false
+
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentCommentBinding {
+        return FragmentCommentBinding.inflate(inflater, container, false)
+    }
 
     override fun initData(savedInstanceState: Bundle?) {
         binding.state.init {

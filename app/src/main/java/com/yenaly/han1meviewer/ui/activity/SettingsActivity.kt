@@ -3,9 +3,11 @@ package com.yenaly.han1meviewer.ui.activity
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -22,18 +24,22 @@ import com.yenaly.yenaly_libs.utils.intentExtra
  * @author Yenaly Liew
  * @time 2022/07/01 001 13:40
  */
-class SettingsActivity : YenalyActivity<ActivitySettingsBinding, SettingsViewModel>() {
+class SettingsActivity : YenalyActivity<ActivitySettingsBinding>() {
 
     companion object {
         const val H_KEYFRAME_SETTINGS = "h_keyframe"
     }
 
+    val viewModel by viewModels<SettingsViewModel>()
     private val shouldNavToHKeyframeSettings by intentExtra(H_KEYFRAME_SETTINGS, false)
 
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
 
     val currentFragment get() = navHostFragment.childFragmentManager.primaryNavigationFragment
+
+    override fun getViewBinding(layoutInflater: LayoutInflater): ActivitySettingsBinding =
+        ActivitySettingsBinding.inflate(layoutInflater)
 
     override fun setUiStyle() {
         enableEdgeToEdge(

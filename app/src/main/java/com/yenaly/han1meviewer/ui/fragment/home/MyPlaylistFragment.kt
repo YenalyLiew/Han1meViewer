@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -40,8 +43,10 @@ import kotlinx.coroutines.launch
  * @author Yenaly Liew
  * @time 2022/07/04 004 22:43
  */
-class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewModel>(),
+class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding>(),
     IToolbarFragment<MainActivity>, LoginNeededFragmentMixin, StateLayoutMixin {
+
+    val viewModel by activityViewModels<MyListViewModel>()
 
     private var page: Int
         set(value) {
@@ -78,7 +83,13 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
      */
     private var isAfterRefreshing = false
 
-    @SuppressLint("InflateParams")
+    override fun getViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentPlaylistBinding {
+        return FragmentPlaylistBinding.inflate(inflater, container, false)
+    }
+
     override fun initData(savedInstanceState: Bundle?) {
         checkLogin()
         (activity as MainActivity).setupToolbar()
@@ -130,8 +141,7 @@ class MyPlaylistFragment : YenalyFragment<FragmentPlaylistBinding, MyListViewMod
         binding.btnNewPlaylist.setOnClickListener {
             requireContext().showAlertDialog {
                 setTitle(R.string.create_new_playlist)
-                val etView = LayoutInflater.from(context)
-                    .inflate(R.layout.dialog_playlist_modify_edit_text, null)
+                val etView = View.inflate(context, R.layout.dialog_playlist_modify_edit_text, null)
                 val etTitle = etView.findViewById<EditText>(R.id.et_title)
                 val etDesc = etView.findViewById<EditText>(R.id.et_desc)
                 setView(etView)

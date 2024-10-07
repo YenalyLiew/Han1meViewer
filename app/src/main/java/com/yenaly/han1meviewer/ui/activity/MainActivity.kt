@@ -7,12 +7,14 @@ import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -55,7 +57,9 @@ import kotlinx.datetime.Clock
  * @author Yenaly Liew
  * @time 2022/06/08 008 17:35
  */
-class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), DrawerListener {
+class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
+
+    val viewModel by viewModels<MainViewModel>()
 
     lateinit var navHostFragment: NavHostFragment
     lateinit var navController: NavController
@@ -71,6 +75,9 @@ class MainActivity : YenalyActivity<ActivityMainBinding, MainViewModel>(), Drawe
                 initMenu()
             }
         }
+
+    override fun getViewBinding(layoutInflater: LayoutInflater): ActivityMainBinding =
+        ActivityMainBinding.inflate(layoutInflater)
 
     override fun setUiStyle() {
         enableEdgeToEdge(

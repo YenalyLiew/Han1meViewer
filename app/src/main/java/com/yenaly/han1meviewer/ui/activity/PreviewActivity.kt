@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.annotation.OptIn
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.toBitmapOrNull
@@ -72,12 +74,14 @@ import kotlinx.datetime.toLocalDateTime
  * @author Yenaly Liew
  * @time 2022/06/23 023 16:46
  */
-class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>() {
+class PreviewActivity : YenalyActivity<ActivityPreviewBinding>() {
 
     companion object {
         private const val animDuration = 300L
         private val animInterpolator = FastOutSlowInInterpolator()
     }
+
+    val viewModel by viewModels<PreviewViewModel>()
 
     private val dateUtils = DateUtils()
     private val badgeDrawable by unsafeLazy { BadgeDrawable.create(this@PreviewActivity) }
@@ -118,6 +122,9 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding, PreviewViewModel>
             }
         }
     }
+
+    override fun getViewBinding(layoutInflater: LayoutInflater): ActivityPreviewBinding =
+        ActivityPreviewBinding.inflate(layoutInflater)
 
     override fun setUiStyle() {
         enableEdgeToEdge(
