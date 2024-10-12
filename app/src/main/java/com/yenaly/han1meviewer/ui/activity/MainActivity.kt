@@ -151,15 +151,17 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
                 repeatOnLifecycle(Lifecycle.State.CREATED) {
                     viewModel.homePageFlow.collect { state ->
                         if (state is WebsiteState.Success) {
-                            if (state.info.username == null && isAlreadyLogin) {
-                                logoutWithRefresh()
-                                showShortToast(R.string.login_expired_auto_logout)
-                            } else {
-                                headerAvatar.load(state.info.avatarUrl) {
-                                    crossfade(true)
-                                    transformations(CircleCropTransformation())
+                            if (isAlreadyLogin) {
+                                if (state.info.username == null) {
+                                    logoutWithRefresh()
+                                    showShortToast(R.string.login_expired_auto_logout)
+                                } else {
+                                    headerAvatar.load(state.info.avatarUrl) {
+                                        crossfade(true)
+                                        transformations(CircleCropTransformation())
+                                    }
+                                    headerUsername.text = state.info.username
                                 }
-                                headerUsername.text = state.info.username
                             }
                         } else {
                             headerAvatar.load(R.mipmap.ic_launcher) {
