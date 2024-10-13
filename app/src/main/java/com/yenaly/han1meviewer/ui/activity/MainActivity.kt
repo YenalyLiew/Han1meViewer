@@ -162,6 +162,8 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
                                     }
                                     headerUsername.text = state.info.username
                                 }
+                            } else {
+                                initHeaderView()
                             }
                         } else {
                             headerAvatar.load(R.mipmap.ic_launcher) {
