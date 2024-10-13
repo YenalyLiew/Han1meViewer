@@ -10,11 +10,16 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.logEvent
+import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.interfaces.SimpleCallback
 import com.lxj.xpopupext.listener.TimePickerListener
 import com.lxj.xpopupext.popup.TimePickerPopup
+import com.yenaly.han1meviewer.FirebaseConstants
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.SEARCH_YEAR_RANGE_END
@@ -50,6 +55,13 @@ class SearchOptionsPopupFragment :
 
     private val viewModel by activityViewModels<SearchViewModel>()
     val myListViewModel by activityViewModels<MyListViewModel>()
+
+    /**
+     * 是否用户真正使用了高级搜索里面的功能
+     *
+     * 用于 Firebase 统计
+     */
+    private var isUserUsed = false
 
     private var genres: Array<String>? = null
     private var sortOptions: Array<String>? = null
@@ -95,11 +107,12 @@ class SearchOptionsPopupFragment :
                                     viewModel.month = null
                                 }
                             }
+                            isUserUsed = true
                             initOptionsChecked()
                         }
                     })
                 }
-            return XPopup.Builder(requireContext()).setOptionsCheckedCallback()
+            return XPopup.Builder(requireContext()).setOptionsCheckedCallback("release_dates")
                 .borderRadius(POP_UP_BORDER_RADIUS)
                 .isDarkTheme(true)
                 .asCustom(popup) as TimePickerPopup
@@ -142,6 +155,7 @@ class SearchOptionsPopupFragment :
                     setTitle(R.string.type)
                     setSingleChoiceItems(genres, index) { _, which ->
                         viewModel.genre = viewModel.genres.getOrNull(which)?.searchKey
+                        isUserUsed = true
                         initOptionsChecked()
                     }
                     setPositiveButton(R.string.save, null)
@@ -149,8 +163,8 @@ class SearchOptionsPopupFragment :
                         viewModel.genre = null
                         initOptionsChecked()
                     }
-                    setOnDismissListener {
-                        initOptionsChecked()
+                    setOnCancelListener {
+                        logAdvSearchEvent("genres")
                     }
                 }
             }
@@ -162,6 +176,7 @@ class SearchOptionsPopupFragment :
                 return@lc true
             }
         }
+        // deprecated
         binding.brand.apply {
             setOnClickListener {
                 HMultiChoicesDialog(context, R.string.brand, hasSingleItem = true).apply {
@@ -221,11 +236,15 @@ class SearchOptionsPopupFragment :
                     setOnSaveListener {
                         viewModel.tagMap = collectCheckedTags()
                         initOptionsChecked()
+                        isUserUsed = true
                         it.dismiss()
                     }
                     setOnResetListener {
                         clearAllChecks()
                         initOptionsChecked()
+                    }
+                    setOnDismissListener {
+                        logAdvSearchEvent("tags")
                     }
                 }.show()
             }
@@ -250,6 +269,7 @@ class SearchOptionsPopupFragment :
                     setTitle(R.string.sort_option)
                     setSingleChoiceItems(sortOptions, index) { _, which ->
                         viewModel.sort = viewModel.sortOptions.getOrNull(which)?.searchKey
+                        isUserUsed = true
                         initOptionsChecked()
                     }
                     setPositiveButton(R.string.save, null)
@@ -257,8 +277,8 @@ class SearchOptionsPopupFragment :
                         viewModel.sort = null
                         initOptionsChecked()
                     }
-                    setOnDismissListener {
-                        initOptionsChecked()
+                    setOnCancelListener {
+                        logAdvSearchEvent("sort_options")
                     }
                 }
             }
@@ -270,6 +290,7 @@ class SearchOptionsPopupFragment :
                 return@lc true
             }
         }
+        // deprecated
         binding.duration.apply {
             setOnClickListener {
                 // durationPopup.show()
@@ -371,11 +392,26 @@ class SearchOptionsPopupFragment :
         }
     }
 
-    private fun XPopup.Builder.setOptionsCheckedCallback() = apply {
+    private fun XPopup.Builder.setOptionsCheckedCallback(type: String) = apply {
         setPopupCallback(object : SimpleCallback() {
             override fun beforeDismiss(popupView: BasePopupView?) {
                 initOptionsChecked()
             }
+
+            override fun onDismiss(popupView: BasePopupView?) {
+                logAdvSearchEvent(type)
+            }
         })
+    }
+
+    private fun logAdvSearchEvent(type: String, used: Boolean = isUserUsed) {
+        Firebase.analytics.logEvent(FirebaseConstants.ADV_SEARCH_OPT) {
+            // 判断当前点击类型
+            param(FirebaseAnalytics.Param.CONTENT_TYPE, type)
+            // 判断用户是否真正使用了高级搜索
+            param("used", used.toString())
+        }
+        // 重置状态
+        isUserUsed = false
     }
 }

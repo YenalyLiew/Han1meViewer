@@ -335,5 +335,12 @@ Recommendations are as follows:\n
     <string name="sure_to_redownload">Are you sure you want to redownload?</string>
     <string name="subscription">Subscription</string>
     <string name="login_expired_auto_logout">Login expired, automatically logged out</string>
+    <string name="crashlytics_summary">After enabling, crash logs will be automatically reported without manual submission</string>
+    <string name="analytics_summary">Long press to understand the necessity of enabling for developers</string>
+    <string name="crashlytics_title">Automatic Crash Logs Reporting</string>
+    <string name="analytics_title">Usage Statistics</string>
+    <string name="privacy">Privacy</string>
+    <string name="about_analytics_summary">Would you mind if the developer collected your device information and your usage? It will help the developer a lot.&lt;br&gt;&lt;br&gt;Data analysis service is provided by Google Analytics for Firebase. Its privacy policy can be found at &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;.&lt;br&gt;&lt;br&gt;If you agree to join data analysis, your device information and your usage will be collected, including but not limited to Android API version, equipment model, language residence, the application version, conversion time, function times. The developer promise that these information will NOT be collected, including phone number, e-mail address, IMEI.&lt;br&gt;&lt;br&gt;Your information will not be collected until you agree to join data analysis.&lt;br&gt;&lt;br&gt;The collected information will be analyzed by Google Analytics for Firebase. The analysis report can only be viewed by the developer of this application.</string>
+    <string name="about_analytics">About Analytics</string>
 
 </resources>

@@ -2,6 +2,8 @@
 
 import Config.Version.createVersionCode
 import Config.Version.createVersionName
+import Config.Version.source
+import Config.isRelease
 import Config.lastCommitSha
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
@@ -11,10 +13,9 @@ plugins {
     alias(libs.plugins.org.jetbrains.kotlin.plugin.parcelize)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.com.google.gms.google.services)
+    alias(libs.plugins.com.google.firebase.crashlytics)
 }
-
-val isRelease: Boolean
-    get() = gradle.startParameter.taskNames.any { it.contains("Release") }
 
 android {
     compileSdk = property("compile.sdk")?.toString()?.toIntOrNull()
@@ -52,6 +53,7 @@ android {
         buildConfigField("String", "VERSION_NAME", "\"${versionName}\"")
         buildConfigField("int", "VERSION_CODE", "$versionCode")
         buildConfigField("String", "HA1_GITHUB_TOKEN", "\"${githubToken}\"")
+        buildConfigField("String", "HA1_VERSION_SOURCE", "\"${source}\"")
 
         buildConfigField("int", "SEARCH_YEAR_RANGE_END", "${Config.thisYear}")
     }
@@ -146,6 +148,12 @@ dependencies {
     implementation(libs.about)
     implementation(libs.statelayout)
     implementation(libs.circular.reveal.switch)
+
+    // firebase
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     ksp(libs.room.compiler)
 

@@ -70,6 +70,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/privacy">
+
+        <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/baseline_data_usage_24"
+            app:key="use_analytics"
+            app:summary="@string/analytics_summary"
+            app:title="@string/analytics_title" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/other">
 
         <Preference

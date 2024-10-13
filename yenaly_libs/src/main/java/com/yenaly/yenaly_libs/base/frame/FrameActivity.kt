@@ -1,6 +1,7 @@
 package com.yenaly.yenaly_libs.base.frame
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -11,8 +12,12 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentOnAttachListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yenaly.yenaly_libs.R
 import com.yenaly.yenaly_libs.utils.dp
@@ -25,6 +30,7 @@ abstract class FrameActivity : AppCompatActivity() {
 
     private lateinit var loadingDialog: AlertDialog
 
+    @Deprecated("狗都不用")
     @JvmOverloads
     open fun showLoadingDialog(
         loadingText: String = getString(R.string.yenaly_loading),
@@ -43,6 +49,7 @@ abstract class FrameActivity : AppCompatActivity() {
         loadingDialog.window?.setLayout(dialogWidth, dialogHeight)
     }
 
+    @Deprecated("狗都不用")
     open fun hideLoadingDialog() {
         if (this::loadingDialog.isInitialized) {
             loadingDialog.hide()
@@ -55,10 +62,27 @@ abstract class FrameActivity : AppCompatActivity() {
     open fun setUiStyle() {
     }
 
+    /**
+     * 能够监听该 Activity 旗下所有 Fragment 的 onAttach 事件
+     */
+    open val fragmentOnAttachListener: ((Fragment) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setUiStyle()
         super.onCreate(savedInstanceState)
+        if (fragmentOnAttachListener != null) {
+            supportFragmentManager.addFragmentOnAttachListener(object : FragmentOnAttachListener {
+                override fun onAttachFragment(fm: FragmentManager, fragment: Fragment) {
+                    if (fragment is NavHostFragment) {
+                        fm.removeFragmentOnAttachListener(this)
+                        fragment.childFragmentManager.addFragmentOnAttachListener(this)
+                        return
+                    }
+                    fragmentOnAttachListener?.invoke(fragment)
+                    Log.d("FrameActivity", "onAttachFragment: $fragment")
+                }
+            })
+        }
     }
 
 
