@@ -105,6 +105,26 @@ class HJzvdStd @JvmOverloads constructor(
         val speedStringArray = Array(speedArray.size) { "${speedArray[it]}x" }
     }
 
+    init {
+        gestureDetector = GestureDetector(context,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    if (state == STATE_PLAYING || state == STATE_PAUSE) {
+                        Log.d(TAG, "doubleClick [" + this.hashCode() + "] ")
+                        startButton.performClick()
+                    }
+                    return super.onDoubleTap(e)
+                }
+
+                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                    if (!mChangeBrightness && !mChangeVolume) {
+                        onClickUiToggle()
+                    }
+                    return super.onSingleTapConfirmed(e)
+                }
+            })
+    }
+
     /**
      * 用戶定義的是否顯示底部進度條
      */
@@ -235,6 +255,7 @@ class HJzvdStd @JvmOverloads constructor(
     /**
      * 是否觸發了長按快進
      */
+    @Volatile
     private var isSpeedGestureDetected = false
 
     /**
@@ -245,7 +266,7 @@ class HJzvdStd @JvmOverloads constructor(
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onLongPress(e: MotionEvent) {
                 when (e.action) {
-                    MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+                    MotionEvent.ACTION_DOWN -> {
                         if (mediaInterface.isPlaying) {
                             setSpeedInternal(videoSpeed * userDefLongPressSpeedTimes)
                             textureViewContainer.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -306,7 +327,7 @@ class HJzvdStd @JvmOverloads constructor(
             R.id.surface_container -> {
                 speedGestureDetector.onTouchEvent(event)
                 when (event.action) {
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                    MotionEvent.ACTION_UP -> {
                         if (isSpeedGestureDetected) {
                             setSpeedInternal(videoSpeed)
                             isSpeedGestureDetected = false
@@ -322,6 +343,45 @@ class HJzvdStd @JvmOverloads constructor(
         autoFullscreen(if (orientation === OrientationManager.ScreenOrientation.LANDSCAPE) 1.0f else -1.0f)
     }
 
+    override fun onClickUiToggle() {
+        if (!bottomContainer.isVisible) {
+            setSystemTimeAndBattery()
+            clarity.text = jzDataSource.currentKey.toString()
+        }
+        when (state) {
+            STATE_PREPARING -> {
+                changeUiToPreparing()
+                if (!bottomContainer.isVisible) {
+                    setSystemTimeAndBattery()
+                }
+            }
+
+            STATE_PLAYING -> {
+                if (bottomContainer.isVisible) {
+                    changeUiToPlayingClear()
+                } else {
+                    changeUiToPlayingShow()
+                }
+            }
+
+            STATE_PAUSE -> {
+                if (bottomContainer.isVisible) {
+                    changeUiToPauseClear()
+                } else {
+                    changeUiToPauseShow()
+                }
+            }
+
+            STATE_PREPARING_PLAYING -> {
+                if (bottomContainer.isVisible) {
+                    changeUiToPreparingPlayingClear()
+                } else {
+                    changeUiToPreparingPlayingShow()
+                }
+            }
+        }
+    }
+
     override fun onStatePreparingPlaying() {
         super.onStatePreparingPlaying()
         if (jzDataSource.objects == null) {
@@ -329,6 +389,19 @@ class HJzvdStd @JvmOverloads constructor(
             currentSpeedIndex = userDefSpeedIndex
         } else {
             currentSpeedIndex = jzDataSource.objects.first() as Int
+        }
+    }
+
+    // #issue-232: 快进滑动一加载就会出现操作栏，很影响观看体验
+    override fun changeUIToPreparingPlaying() {
+        when (screen) {
+            SCREEN_FULLSCREEN -> {
+                setAllControlsVisiblity(
+                    INVISIBLE, INVISIBLE, INVISIBLE,
+                    VISIBLE, INVISIBLE, INVISIBLE, INVISIBLE
+                )
+                updateStartImage()
+            }
         }
     }
 
@@ -556,7 +629,7 @@ class HJzvdStd @JvmOverloads constructor(
             var match = false
             for ((index, kf) in it.keyframes.withIndex()) {
                 val interval = kf.position - position
-                if (interval in 0L until userDefWhenCountdownRemind) {
+                if (interval in 0L..<userDefWhenCountdownRemind) {
                     val timeLong = interval / 1_000L
                     val spannable = spannable {
                         if (userDefShowCommentWhenCountdown) {
@@ -587,6 +660,28 @@ class HJzvdStd @JvmOverloads constructor(
             }
             tvTimer.isInvisible = !match
         } ?: run { tvTimer.isInvisible = true }
+    }
+
+    private fun changeUiToPreparingPlayingClear() {
+        when (screen) {
+            SCREEN_NORMAL, SCREEN_FULLSCREEN -> {
+                setAllControlsVisiblity(
+                    INVISIBLE, INVISIBLE, INVISIBLE,
+                    VISIBLE, INVISIBLE, INVISIBLE, INVISIBLE
+                )
+            }
+        }
+    }
+
+    private fun changeUiToPreparingPlayingShow() {
+        when (screen) {
+            SCREEN_NORMAL, SCREEN_FULLSCREEN -> {
+                setAllControlsVisiblity(
+                    VISIBLE, VISIBLE, INVISIBLE,
+                    VISIBLE, INVISIBLE, VISIBLE, INVISIBLE
+                )
+            }
+        }
     }
 
     // #issue-14: 之前用 XPopup 三键模式下会有 bug，无法呼出，所以换成这个
