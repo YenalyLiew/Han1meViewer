@@ -90,6 +90,12 @@ class HMultiChoicesDialog(
         onReset = action
     }
 
+    fun setOnDismissListener(action: (AlertDialog) -> Unit) {
+        dialog.setOnDismissListener {
+            action(it as AlertDialog)
+        }
+    }
+
     fun loadSavedTags(saved: SparseArray<Set<SearchOption>>) {
         for (i in 0..<saved.size) {
             val key = saved.keyAt(i)

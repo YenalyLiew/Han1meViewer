@@ -156,4 +156,10 @@ object Preferences {
 
     val proxyPort: Int
         get() = preferenceSp.getInt(NetworkSettingsFragment.PROXY_PORT, -1)
+
+    // 隐私 相關
+
+    val isAnalyticsEnabled: Boolean
+        get() = preferenceSp.getBoolean(HomeSettingsFragment.USE_ANALYTICS, true)
+
 }

@@ -1,12 +1,12 @@
 package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
-import android.text.method.LinkMovementMethod
 import android.util.Base64
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.text.method.LinkMovementMethodCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,7 +68,7 @@ class HKeyframesRvAdapter : BaseDifferAdapter<HKeyframeEntity, QuickViewHolder>(
         holder.setText(R.id.tv_title, item.title)
         holder.setGone(R.id.btn_edit, item.author != null)
         holder.getView<TextView>(R.id.tv_video_code).apply {
-            movementMethod = LinkMovementMethod.getInstance()
+            movementMethod = LinkMovementMethodCompat.getInstance()
             text = spannable {
                 context.getString(R.string.h_keyframe_title_prefix).text()
                 item.videoCode.span {

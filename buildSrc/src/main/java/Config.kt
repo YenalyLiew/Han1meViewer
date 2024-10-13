@@ -12,6 +12,9 @@ import java.time.format.DateTimeFormatter
  */
 object Config {
 
+    val Project.isRelease: Boolean
+        get() = gradle.startParameter.taskNames.any { it.contains("Release") }
+
     object Version {
         fun Int?.createVersionName(
             major: Int,
@@ -28,6 +31,16 @@ object Config {
         fun createVersionCode() = LocalDateTime.now(Clock.systemUTC()).format(
             DateTimeFormatter.ofPattern("yyMMddHH")
         ).toInt().also { println("Version Code: $it") }
+
+        /**
+         * 版本来源，用于区分不同的版本
+         *
+         * @return ci 或 official 或 debug
+         */
+        val Project.source: String
+            get() = System.getenv("HA1_VERSION_SOURCE") ?: kotlin.run {
+                return if (isRelease) "official" else "debug"
+            }
     }
 
     val Project.lastCommitSha: String

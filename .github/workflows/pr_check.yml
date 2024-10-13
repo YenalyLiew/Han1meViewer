@@ -22,6 +22,11 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Load Google Services file
+        env:
+          DATA: ${{ secrets.HA1_GOOGLE_SERVICES_JSON_BASE64 }}
+        run: echo $DATA | base64 -di > app/google-services.json
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 

@@ -7,11 +7,11 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.StaticLayout
 import android.text.TextPaint
-import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
+import androidx.core.text.method.LinkMovementMethodCompat
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.getThemeColor
 import kotlin.math.roundToInt
@@ -36,7 +36,7 @@ fun TextView.setResizableText(
         }
         return
     }
-    movementMethod = LinkMovementMethod.getInstance()
+    movementMethod = LinkMovementMethodCompat.getInstance()
     // Since we take the string character by character, we don't want to break up the Windows-style
     // line endings.
     val adjustedText = fullText.replace("\r\n", "\n")

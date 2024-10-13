@@ -1,7 +1,13 @@
 package com.yenaly.han1meviewer.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.crashlytics.setCustomKeys
+import com.google.firebase.Firebase
+import com.yenaly.han1meviewer.FirebaseConstants
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.github.Latest
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -27,12 +33,23 @@ object AppViewModel : YenalyViewModel(application), IHCsrfToken {
      */
     override var csrfToken: String? = null
 
+    val loginStateFlow = MutableStateFlow(Preferences.isAlreadyLogin)
+
     private val _versionFlow = MutableStateFlow<WebsiteState<Latest?>>(WebsiteState.Loading)
     val versionFlow = _versionFlow.asStateFlow()
 
     init {
         // 取消，防止每次启动都有残留的更新任务
         WorkManager.getInstance(application).pruneWork()
+
+        viewModelScope.launch {
+            loginStateFlow.collect { isLogin ->
+                Log.d("LoginState", "isLogin: $isLogin")
+                Firebase.crashlytics.setCustomKeys {
+                    key(FirebaseConstants.LOGIN_STATE, isLogin)
+                }
+            }
+        }
 
         viewModelScope.launch(Dispatchers.Main) {
             HUpdateWorker.collectOutput(application)

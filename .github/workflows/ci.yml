@@ -22,6 +22,11 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Load Google Services file
+        env:
+          DATA: ${{ secrets.HA1_GOOGLE_SERVICES_JSON_BASE64 }}
+        run: echo $DATA | base64 -di > app/google-services.json
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -30,6 +35,7 @@ jobs:
         env:
           HA1_KEYSTORE_PASSWORD: ${{ secrets.HA1_KEYSTORE_PASSWORD }}
           HA1_GITHUB_TOKEN: ${{ secrets.HA1_GITHUB_TOKEN }}
+          HA1_VERSION_SOURCE: 'ci'
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

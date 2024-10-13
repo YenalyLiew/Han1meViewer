@@ -3,6 +3,7 @@
 package com.yenaly.yenaly_libs.base
 
 import android.content.Context
+import androidx.annotation.CallSuper
 import androidx.startup.Initializer
 import com.yenaly.yenaly_libs.utils.applicationContext
 
@@ -12,7 +13,9 @@ import com.yenaly.yenaly_libs.utils.applicationContext
  * @Time : 2022/04/21 021 14:04
  * @Description : Description...
  */
-class YenalyInitializer : Initializer<Unit> {
+open class YenalyInitializer : Initializer<Unit> {
+
+    @CallSuper
     override fun create(context: Context) {
         applicationContext = context
     }

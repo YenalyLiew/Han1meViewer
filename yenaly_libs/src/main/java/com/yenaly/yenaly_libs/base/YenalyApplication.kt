@@ -17,11 +17,13 @@ import java.lang.ref.WeakReference
  */
 open class YenalyApplication : Application(), Application.ActivityLifecycleCallbacks {
 
+    open val isDefaultCrashHandlerEnabled: Boolean = true
+
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
         // do not forget to register the crash dialog activity!
-        if (!isDebugEnabled) YenalyCrashHandler.instance.init(this)
+        if (isDefaultCrashHandlerEnabled && !isDebugEnabled) YenalyCrashHandler.instance.init(this)
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

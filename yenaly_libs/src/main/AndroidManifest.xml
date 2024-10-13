@@ -5,6 +5,7 @@
     <application
         android:networkSecurityConfig="@xml/http_network_config"
         tools:ignore="UnusedAttribute">
+        <!-- 暂时交给app层
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -14,6 +15,7 @@
                 android:name="com.yenaly.yenaly_libs.base.YenalyInitializer"
                 android:value="androidx.startup" />
         </provider>
+        -->
         <activity
             android:name=".base.dialog.YenalyCrashDialogActivity"
             android:exported="true">

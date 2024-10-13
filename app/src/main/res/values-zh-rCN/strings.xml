@@ -341,5 +341,12 @@
     <string name="sure_to_redownload">确定要重新下载吗？</string>
     <string name="subscription">关注</string>
     <string name="login_expired_auto_logout">登录已过期，已经自动登出</string>
+    <string name="crashlytics_summary">开启后，将会自动上报崩溃日志，无须手动提交</string>
+    <string name="analytics_summary">长按了解开启对开发者的必要性</string>
+    <string name="crashlytics_title">崩溃日志自动上报</string>
+    <string name="analytics_title">使用情况统计</string>
+    <string name="privacy">隐私</string>
+    <string name="about_analytics_summary">您同意让开发者收集您的设备信息与使用情况吗？这将对开发有很大帮助。&lt;br&gt;&lt;br&gt;数据统计服务由 Google Analytics for Firebase 提供，其隐私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意参与数据统计，您的设备信息与应用使用情况将会被记录，其包括但不限于：Android API 版本、设备型号、语言所在地、本应用版本号、会话时长、应用功能使用次数。开发者承诺以下信息并不会被记录：电话号码、电子邮件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意参与数据统计之前，您的信息不会被记录。&lt;br&gt;&lt;br&gt;被记录的数据会由 Google Analytics for Firebase 进行分析，分析报表仅可被本应用开发者访问。</string>
+    <string name="about_analytics">关于使用情况统计</string>
 
 </resources>

@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.coroutines.android)
 
+    implementation(libs.navigation.fragment.ktx)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.preference.ktx)
