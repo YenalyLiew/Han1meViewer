@@ -29,10 +29,7 @@ val Number.dp: Int
     get() {
         val f = dpF
         val res = (if (f >= 0) f + 0.5f else f - 0.5f).toInt()
-        if (res != 0) return res
-        if (this.toFloat() == 0f) return 0
-        if (this.toFloat() > 0) return 1
-        return -1
+        return res
     }
 
 /**
@@ -43,10 +40,7 @@ val Number.sp: Int
     get() {
         val f = spF
         val res = (if (f >= 0) f + 0.5f else f - 0.5f).toInt()
-        if (res != 0) return res
-        if (this.toFloat() == 0f) return 0
-        if (this.toFloat() > 0) return 1
-        return -1
+        return res
     }
 
 /**
