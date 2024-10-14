@@ -7,7 +7,6 @@ import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.Preferences.loginCookie
 import com.yenaly.han1meviewer.logic.network.HCookieJar
-import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
 import com.yenaly.han1meviewer.util.CookieString
 import kotlinx.serialization.json.Json
 
@@ -54,7 +53,6 @@ fun String.toVideoCode() = videoUrlRegex.find(this)?.groupValues?.get(1)
 
 fun logout() {
     isAlreadyLogin = false
-    AppViewModel.loginStateFlow.value = false
     loginCookie = CookieString(EMPTY_STRING)
     HCookieJar.cookieMap.clear()
     CookieManager.getInstance().removeAllCookies(null)
@@ -62,7 +60,6 @@ fun logout() {
 
 fun login(cookies: String) {
     isAlreadyLogin = true
-    AppViewModel.loginStateFlow.value = true
     loginCookie = CookieString(cookies)
 }
 

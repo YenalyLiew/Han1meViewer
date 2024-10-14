@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.util
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import androidx.annotation.ColorInt
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -20,6 +21,14 @@ fun ValueAnimator.addUpdateListener(
             this@addUpdateListener.removeAllUpdateListeners()
         }
     })
+}
+
+fun ValueAnimator.addUpdateListener(
+    fragment: Fragment,
+    listener: ValueAnimator.AnimatorUpdateListener?
+) {
+    if (fragment.isDetached || fragment.view == null) return
+    addUpdateListener(fragment.viewLifecycleOwner.lifecycle, listener)
 }
 
 fun colorTransition(

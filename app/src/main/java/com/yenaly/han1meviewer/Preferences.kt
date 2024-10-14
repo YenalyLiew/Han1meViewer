@@ -13,6 +13,7 @@ import com.yenaly.han1meviewer.util.CookieString
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.getSpValue
 import com.yenaly.yenaly_libs.utils.putSpValue
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlin.time.Duration.Companion.days
@@ -31,16 +32,26 @@ object Preferences {
     /**
      * 是否登入，一般跟[loginCookie]一起賦值
      */
-    var isAlreadyLogin
+    var isAlreadyLogin: Boolean
         get() = getSpValue(ALREADY_LOGIN, false)
-        set(value) = putSpValue(ALREADY_LOGIN, value)
+        set(value) {
+            loginStateFlow.value = value
+            putSpValue(ALREADY_LOGIN, value)
+        }
+
+    val loginStateFlow = MutableStateFlow(isAlreadyLogin)
 
     /**
      * 保存的string格式的登入cookie
      */
     var loginCookie
         get() = CookieString(getSpValue(LOGIN_COOKIE, EMPTY_STRING))
-        set(value) = putSpValue(LOGIN_COOKIE, value.cookie)
+        set(value) {
+            loginCookieStateFlow.value = value
+            putSpValue(LOGIN_COOKIE, value.cookie)
+        }
+
+    val loginCookieStateFlow = MutableStateFlow(loginCookie)
 
     // 更新 相關
 
