@@ -159,8 +159,11 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
                         if (state is WebsiteState.Success) {
                             if (isAlreadyLogin) {
                                 if (state.info.username == null) {
-                                    logoutWithRefresh()
-                                    showShortToast(R.string.login_expired_auto_logout)
+                                    headerAvatar.load(R.mipmap.ic_launcher) {
+                                        crossfade(true)
+                                        transformations(CircleCropTransformation())
+                                    }
+                                    headerUsername.setText(R.string.refresh_page_or_login_expired)
                                 } else {
                                     headerAvatar.load(state.info.avatarUrl) {
                                         crossfade(true)
@@ -278,7 +281,6 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
             loginNeededFragmentList.forEach {
                 binding.nvMain.menu.findItem(it).setOnMenuItemClickListener {
                     showShortToast(R.string.login_first)
-                    gotoLoginActivity()
                     return@setOnMenuItemClickListener false
                 }
             }

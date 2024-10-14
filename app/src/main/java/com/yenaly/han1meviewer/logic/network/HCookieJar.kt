@@ -1,6 +1,6 @@
 package com.yenaly.han1meviewer.logic.network
 
-import com.yenaly.han1meviewer.Preferences.loginCookie
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.util.toLoginCookieList
 import okhttp3.Cookie
 import okhttp3.CookieJar
@@ -24,12 +24,13 @@ class HCookieJar : CookieJar {
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
-        return cookieMap[url.host] ?: loginCookie.toLoginCookieList(url.host)
+        return cookieMap[url.host]
+            ?: Preferences.loginCookieStateFlow.value.toLoginCookieList(url.host)
     }
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         cookieMap[url.host] = cookies.toMutableList().also {
-            it += loginCookie.toLoginCookieList(url.host)
+            it += Preferences.loginCookieStateFlow.value.toLoginCookieList(url.host)
         }
     }
 }

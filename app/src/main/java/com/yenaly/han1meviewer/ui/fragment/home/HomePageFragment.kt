@@ -296,7 +296,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding>(),
             ) {
                 interpolator = animInterpolator
                 duration = animDuration
-                addUpdateListener(viewLifecycleOwner.lifecycle) {
+                addUpdateListener(this@HomePageFragment) {
                     val color = it.animatedValue as Int
                     binding.aColor.setBackgroundColor(color)
                 }

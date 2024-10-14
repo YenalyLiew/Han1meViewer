@@ -3,9 +3,9 @@ package com.yenaly.han1meviewer.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
+import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.crashlytics.setCustomKeys
-import com.google.firebase.Firebase
 import com.yenaly.han1meviewer.FirebaseConstants
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.logic.NetworkRepo
@@ -33,8 +33,6 @@ object AppViewModel : YenalyViewModel(application), IHCsrfToken {
      */
     override var csrfToken: String? = null
 
-    val loginStateFlow = MutableStateFlow(Preferences.isAlreadyLogin)
-
     private val _versionFlow = MutableStateFlow<WebsiteState<Latest?>>(WebsiteState.Loading)
     val versionFlow = _versionFlow.asStateFlow()
 
@@ -43,7 +41,7 @@ object AppViewModel : YenalyViewModel(application), IHCsrfToken {
         WorkManager.getInstance(application).pruneWork()
 
         viewModelScope.launch {
-            loginStateFlow.collect { isLogin ->
+            Preferences.loginStateFlow.collect { isLogin ->
                 Log.d("LoginState", "isLogin: $isLogin")
                 Firebase.crashlytics.setCustomKeys {
                     key(FirebaseConstants.LOGIN_STATE, isLogin)
