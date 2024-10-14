@@ -16,6 +16,7 @@ abstract class YenalyActivity<DB : ViewDataBinding> : FrameActivity(), IViewBind
 
     private var _binding: DB? = null
     override val binding get() = _binding!!
+    val bindingOrNull get() = _binding
 
     /**
      * 取代之前的反射方式，太消耗性能了
@@ -36,7 +37,8 @@ abstract class YenalyActivity<DB : ViewDataBinding> : FrameActivity(), IViewBind
     override fun onDestroy() {
         super.onDestroy()
         _binding?.unbind()
-        _binding = null
+        // 没啥必要
+        // _binding = null
     }
 
     private fun initView() {

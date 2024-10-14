@@ -11,9 +11,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.interfaces.SimpleCallback
