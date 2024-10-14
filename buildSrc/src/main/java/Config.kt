@@ -16,30 +16,40 @@ object Config {
         get() = gradle.startParameter.taskNames.any { it.contains("Release") }
 
     object Version {
-        fun Int?.createVersionName(
-            major: Int,
-            minor: Int,
-            patch: Int,
-            isPreRelease: Boolean = false,
-        ): String {
-            val version = if (isPreRelease) {
-                "${major}.${minor}.${patch}-pre+${this}"
-            } else "${major}.${minor}.${patch}+${this}"
-            return version.also { println("Version Name: $it") }
-        }
 
-        fun createVersionCode() = LocalDateTime.now(Clock.systemUTC()).format(
-            DateTimeFormatter.ofPattern("yyMMddHH")
-        ).toInt().also { println("Version Code: $it") }
+        const val DEBUG = "debug"
+        const val RELEASE = "release"
+        const val CI = "ci"
+
+        /**
+         * 创建版本号
+         *
+         * @return 版本号和版本名
+         */
+        fun Project.createVersion(
+            major: Int, minor: Int, patch: Int
+        ): Pair<Int, String> {
+            val source = this.source
+            val versionCode = when (source) {
+                DEBUG -> 1
+                else -> LocalDateTime.now(Clock.systemUTC()).format(
+                    DateTimeFormatter.ofPattern("yyMMddHH")
+                ).toInt()
+            }
+            val versionName = "${major}.${minor}.${patch}-$source+$versionCode"
+            println("Version Code: $versionCode")
+            println("Version Name: $versionName")
+            return versionCode to versionName
+        }
 
         /**
          * 版本来源，用于区分不同的版本
          *
-         * @return ci 或 official 或 debug
+         * @return ci 或 release 或 debug
          */
         val Project.source: String
             get() = System.getenv("HA1_VERSION_SOURCE") ?: kotlin.run {
-                return if (isRelease) "official" else "debug"
+                return if (isRelease) RELEASE else DEBUG
             }
     }
 
