@@ -31,6 +31,7 @@ abstract class FrameFragment : Fragment {
 
     private lateinit var loadingDialog: AlertDialog
 
+    @Deprecated("狗都不用")
     @JvmOverloads
     open fun showLoadingDialog(
         loadingText: String = getString(R.string.yenaly_loading),
@@ -49,6 +50,7 @@ abstract class FrameFragment : Fragment {
         loadingDialog.window?.setLayout(dialogWidth, dialogHeight)
     }
 
+    @Deprecated("狗都不用")
     open fun hideLoadingDialog() {
         if (this::loadingDialog.isInitialized) {
             loadingDialog.hide()

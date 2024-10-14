@@ -21,3 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 -keepattributes SourceFile, LineNumberTable
+-keepnames class * extends com.yenaly.yenaly_libs.base.frame.FrameActivity
+-keepnames class * extends com.yenaly.yenaly_libs.base.frame.FrameFragment

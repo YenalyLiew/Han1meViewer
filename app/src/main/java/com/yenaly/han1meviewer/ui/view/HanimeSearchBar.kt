@@ -63,7 +63,15 @@ class HanimeSearchBar @JvmOverloads constructor(
             setInterpolator(LayoutTransition.CHANGING, animInterpolator)
         }
         rvHistory.layoutManager = LinearLayoutManager(context)
-        rvHistory.itemAnimator?.removeDuration = 0
+
+        // #issue-176: 禁用默认动画，涉及到许多崩溃，到现在官方也没解决问题，不得不牺牲体验
+        // 根本问题：RecyclerView 的 itemAnimator 与 LayoutTransition 有冲突
+        // 与其相关的网站链接：
+        // https://github.com/google/flexbox-layout/issues/240
+        // https://github.com/airbnb/epoxy/issues/689
+        // https://stackoverflow.com/questions/30078834
+        rvHistory.itemAnimator = null
+
         etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 onSearchClickListener?.let { listener ->

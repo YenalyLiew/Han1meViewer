@@ -37,7 +37,6 @@ abstract class YenalyFragment<DB : ViewDataBinding> : FrameFragment(), IViewBind
     override fun onDestroyView() {
         super.onDestroyView()
         _binding?.unbind()
-        _binding = null
     }
 
     private fun initView(

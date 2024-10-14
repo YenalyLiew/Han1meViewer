@@ -409,7 +409,6 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding>() {
                             .setInterpolator(animInterpolator).start()
                         binding.fabNext.animate().translationX(500F).setDuration(animDuration)
                             .setInterpolator(animInterpolator).start()
-
                     }
 
                     State.COLLAPSED -> {

@@ -1,6 +1,7 @@
 package com.yenaly.han1meviewer.util
 
 import android.app.Activity
+import android.util.Log
 import androidx.fragment.app.Fragment
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -12,6 +13,7 @@ fun Activity.logScreenViewEvent(fragment: Fragment) {
         // example: MainActivity-HomePageFragment
         val screenName = this@logScreenViewEvent.javaClass.simpleName +
                 "-" + fragment.javaClass.simpleName
+        Log.d("logScreenViewEvent", "screenName: $screenName")
         param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
         param(FirebaseAnalytics.Param.SCREEN_CLASS, fragment.javaClass.name)
     }
