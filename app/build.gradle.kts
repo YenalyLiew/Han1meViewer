@@ -1,7 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-import Config.Version.createVersionCode
-import Config.Version.createVersionName
+import Config.Version.createVersion
 import Config.Version.source
 import Config.isRelease
 import Config.lastCommitSha
@@ -44,8 +43,9 @@ android {
         applicationId = "com.yenaly.han1meviewer"
         minSdk = property("min.sdk")?.toString()?.toIntOrNull()
         targetSdk = property("target.sdk")?.toString()?.toIntOrNull()
-        versionCode = if (isRelease) createVersionCode() else 1 // 方便调试
-        versionName = versionCode.createVersionName(major = 0, minor = 15, patch = 2)
+        val (code, name) = createVersion(major = 0, minor = 15, patch = 2)
+        versionCode = code
+        versionName = name
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
