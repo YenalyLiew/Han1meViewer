@@ -43,7 +43,7 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding>() {
     override fun getViewBinding(layoutInflater: LayoutInflater): ActivitySettingsBinding =
         ActivitySettingsBinding.inflate(layoutInflater)
 
-    override val fragmentOnAttachListener: (Fragment) -> Unit = { fragment ->
+    override val onFragmentResumedListener: (Fragment) -> Unit = { fragment ->
         logScreenViewEvent(fragment)
     }
 
