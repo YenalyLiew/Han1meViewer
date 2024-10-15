@@ -163,7 +163,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun isPlaying(): Boolean {
-        return exoPlayer.playWhenReady
+        return _exoPlayer?.playWhenReady ?: false
     }
 
     override fun seekTo(time: Long) {
@@ -193,11 +193,11 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun getCurrentPosition(): Long {
-        return exoPlayer.currentPosition
+        return _exoPlayer?.currentPosition ?: 0L
     }
 
     override fun getDuration(): Long {
-        return exoPlayer.duration
+        return _exoPlayer?.duration ?: 0L
     }
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {
@@ -268,7 +268,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun setSurface(surface: Surface?) {
-        exoPlayer.setVideoSurface(surface)
+        _exoPlayer?.setVideoSurface(surface)
     }
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
