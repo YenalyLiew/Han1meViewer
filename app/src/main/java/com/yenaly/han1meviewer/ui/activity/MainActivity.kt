@@ -88,7 +88,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
         )
     }
 
-    override val fragmentOnAttachListener: (Fragment) -> Unit = { fragment ->
+    override val onFragmentResumedListener: (Fragment) -> Unit = { fragment ->
         logScreenViewEvent(fragment)
     }
 

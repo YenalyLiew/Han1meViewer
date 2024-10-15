@@ -93,7 +93,7 @@ class SearchActivity : YenalyActivity<ActivitySearchBinding>(), StateLayoutMixin
     override fun getViewBinding(layoutInflater: LayoutInflater): ActivitySearchBinding =
         ActivitySearchBinding.inflate(layoutInflater)
 
-    override val fragmentOnAttachListener: (Fragment) -> Unit = { fragment ->
+    override val onFragmentResumedListener: (Fragment) -> Unit = { fragment ->
         logScreenViewEvent(fragment)
     }
 

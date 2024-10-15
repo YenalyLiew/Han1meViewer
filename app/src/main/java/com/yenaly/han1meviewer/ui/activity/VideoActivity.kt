@@ -77,7 +77,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding>(),
     override fun getViewBinding(layoutInflater: LayoutInflater): ActivityVideoBinding =
         ActivityVideoBinding.inflate(layoutInflater)
 
-    override val fragmentOnAttachListener: (Fragment) -> Unit = { fragment ->
+    override val onFragmentResumedListener: (Fragment) -> Unit = { fragment ->
         logScreenViewEvent(fragment)
     }
 

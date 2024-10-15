@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentOnAttachListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.NavHostFragment
@@ -63,28 +62,24 @@ abstract class FrameActivity : AppCompatActivity() {
     }
 
     /**
-     * 能够监听该 Activity 旗下所有 Fragment 的 onAttach 事件
+     * 能够监听该 Activity 旗下所有 Fragment 的 onResume 事件
      */
-    open val fragmentOnAttachListener: ((Fragment) -> Unit)? = null
+    open val onFragmentResumedListener: ((Fragment) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setUiStyle()
         super.onCreate(savedInstanceState)
-        if (fragmentOnAttachListener != null) {
-            supportFragmentManager.addFragmentOnAttachListener(object : FragmentOnAttachListener {
-                override fun onAttachFragment(fm: FragmentManager, fragment: Fragment) {
-                    if (fragment is NavHostFragment) {
-                        fm.removeFragmentOnAttachListener(this)
-                        fragment.childFragmentManager.addFragmentOnAttachListener(this)
-                        return
-                    }
-                    fragmentOnAttachListener?.invoke(fragment)
-                    Log.d("FrameActivity", "onAttachFragment: $fragment")
+        if (onFragmentResumedListener != null) {
+            supportFragmentManager.registerFragmentLifecycleCallbacks(object :
+                FragmentManager.FragmentLifecycleCallbacks() {
+                override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+                    if (f is NavHostFragment) return
+                    onFragmentResumedListener?.invoke(f)
+                    Log.d("FrameActivity", "onFragmentResumed: $f")
                 }
-            })
+            }, true)
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
