@@ -15,6 +15,6 @@ fun Activity.logScreenViewEvent(fragment: Fragment) {
                 "-" + fragment.javaClass.simpleName
         Log.d("logScreenViewEvent", "screenName: $screenName")
         param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-        param(FirebaseAnalytics.Param.SCREEN_CLASS, fragment.javaClass.name)
+        param(FirebaseAnalytics.Param.SCREEN_CLASS, fragment.javaClass.simpleName)
     }
 }
