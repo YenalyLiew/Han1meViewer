@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.gms.google.services)
     alias(libs.plugins.com.google.firebase.crashlytics)
+    alias(libs.plugins.com.google.firebase.firebase.pref)
 }
 
 android {
@@ -154,6 +155,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
+    implementation(libs.firebase.config)
 
     ksp(libs.room.compiler)
 

@@ -145,6 +145,8 @@ desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", ver
 # firebase
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 
 [bundles]
@@ -176,3 +178,4 @@ org-jetbrains-kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.
 org-jetbrains-kotlin-plugin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 com-google-gms-google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
 com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
+com-google-firebase-firebase-pref = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
