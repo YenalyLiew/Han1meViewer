@@ -28,6 +28,7 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.jzvd.JZDataSource
+import cn.jzvd.JZMediaInterface
 import cn.jzvd.JZUtils
 import cn.jzvd.JzvdStd
 import com.itxca.spannablex.spannable
@@ -215,7 +216,7 @@ class HJzvdStd @JvmOverloads constructor(
         HKeyframeRvAdapter(videoCode).apply {
             setOnItemClickListener { _, _, position ->
                 val keyframe = getItem(position).notNull()
-                mediaInterface.seekTo(keyframe.position)
+                mediaInterface?.seekTo(keyframe.position)
                 startProgressTimer()
             }
         }
@@ -245,10 +246,14 @@ class HJzvdStd @JvmOverloads constructor(
     private var videoSpeed: Float = userDefSpeed
         set(value) {
             field = value
-            val isPlaying = mediaInterface.isPlaying
-            mediaInterface.setSpeed(value)
-            if (!isPlaying) {
-                mediaInterface.pause()
+            // #issue-crashlytics-c8636c4bb0b8516675cbeb9e8776bf0b:
+            // 有些机器到这里可能会报空指针异常，所以加了个判断，但是不知道为什么会报空指针异常
+            mediaInterface?.let { mi ->
+                val isPlaying = mi.isPlaying
+                mi.setSpeed(value)
+                if (!isPlaying) {
+                    mi.pause()
+                }
             }
         }
 
@@ -267,7 +272,8 @@ class HJzvdStd @JvmOverloads constructor(
             override fun onLongPress(e: MotionEvent) {
                 when (e.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        if (mediaInterface.isPlaying) {
+                        val mi: JZMediaInterface? = mediaInterface
+                        if (mi != null && mi.isPlaying) {
                             setSpeedInternal(videoSpeed * userDefLongPressSpeedTimes)
                             textureViewContainer.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                             isSpeedGestureDetected = true
@@ -739,7 +745,7 @@ class HJzvdStd @JvmOverloads constructor(
      * 那么那个机型就先别用这个功能了。
      */
     private fun setSpeedInternal(speed: Float) {
-        mediaInterface.setSpeed(speed)
+        mediaInterface?.setSpeed(speed)
     }
 
     /**

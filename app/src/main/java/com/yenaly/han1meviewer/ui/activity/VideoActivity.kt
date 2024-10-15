@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import cn.jzvd.JZMediaInterface
 import cn.jzvd.Jzvd
 import coil.load
 import com.google.firebase.Firebase
@@ -259,7 +260,8 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding>(),
             binding.videoPlayer.clickHKeyframe(v)
         }
         binding.videoPlayer.onKeyframeLongClickListener = {
-            if (!binding.videoPlayer.mediaInterface.isPlaying) {
+            val mi: JZMediaInterface? = binding.videoPlayer.mediaInterface
+            if (mi != null && !mi.isPlaying) {
                 val currentPosition = binding.videoPlayer.currentPositionWhenPlaying
                 it.context.showAlertDialog {
                     setTitle(R.string.add_to_h_keyframe)
