@@ -22,7 +22,7 @@
 
 -keepattributes SourceFile, LineNumberTable
 
--keepnames class * extends com.yenaly.yenaly_libs.base.frame.FrameActivity
--keepnames class * extends com.yenaly.yenaly_libs.base.frame.FrameFragment
+-keepnames class * extends android.app.Activity
+-keepnames class * extends androidx.fragment.app.Fragment
 
 -keep class * extends cn.jzvd.** { *; }
