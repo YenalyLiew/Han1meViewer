@@ -22,7 +22,7 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Load Google Services file
+      - name: Load Google Services File
         env:
           DATA: ${{ secrets.HA1_GOOGLE_SERVICES_JSON_BASE64 }}
         run: echo $DATA | base64 -di > app/google-services.json
@@ -37,7 +37,7 @@ jobs:
           HA1_GITHUB_TOKEN: ${{ secrets.HA1_GITHUB_TOKEN }}
           HA1_VERSION_SOURCE: 'ci'
 
-      - name: Upload APK
+      - name: Upload APK Zip
         uses: actions/upload-artifact@v4
         with:
           name: app-release-${{ github.sha }}

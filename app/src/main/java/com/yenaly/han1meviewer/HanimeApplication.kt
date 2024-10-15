@@ -7,6 +7,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.crashlytics.setCustomKeys
+import com.google.firebase.remoteconfig.remoteConfig
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -43,6 +44,7 @@ class HanimeApplication : YenalyApplication() {
         super.onCreate()
         DynamicColors.applyToActivitiesIfAvailable(this)
         HProxySelector.rebuildNetwork()
+
         // 用于处理 Firebase Analytics 初始化
         Firebase.analytics.setAnalyticsCollectionEnabled(Preferences.isAnalyticsEnabled)
         // 用于处理 Firebase Crashlytics 初始化
@@ -50,6 +52,8 @@ class HanimeApplication : YenalyApplication() {
             key(FirebaseConstants.APP_LANGUAGE, LanguageHelper.preferredLanguage.toLanguageTag())
             key(FirebaseConstants.VERSION_SOURCE, BuildConfig.HA1_VERSION_SOURCE)
         }
+        // 用于处理 Firebase Remote Config 初始化
+        Firebase.remoteConfig.setDefaultsAsync(FirebaseConstants.remoteConfigDefaults)
 
         initNotificationChannel()
     }
