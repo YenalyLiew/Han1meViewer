@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.yenaly.han1meviewer.util.createDecorBlurEffect
 import com.yenaly.han1meviewer.util.getDialogDefaultDrawable
+import com.yenaly.han1meviewer.util.showWithBlurEffect
 
 /**
  * @project Han1meViewer
@@ -37,8 +37,6 @@ class MaterialDialogPreference : ListPreference {
                 di.dismiss()
             }
         }
-        dialog.create().apply {
-            createDecorBlurEffect()
-        }.show()
+        dialog.create().showWithBlurEffect()
     }
 }

@@ -336,7 +336,7 @@ Recommendations are as follows:\n
     <string name="subscription">Subscription</string>
     <string name="login_expired_auto_logout">Login expired, automatically logged out</string>
     <string name="crashlytics_summary">After enabling, crash logs will be automatically reported without manual submission</string>
-    <string name="analytics_summary">Long press to understand the necessity of enabling for developers</string>
+    <string name="analytics_summary">Long press to understand the importance of enabling this for developers</string>
     <string name="crashlytics_title">Automatic Crash Logs Reporting</string>
     <string name="analytics_title">Collect Usage Data</string>
     <string name="privacy">Privacy</string>

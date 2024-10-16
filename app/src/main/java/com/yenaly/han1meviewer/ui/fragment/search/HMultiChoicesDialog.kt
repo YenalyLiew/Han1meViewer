@@ -15,6 +15,7 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.model.SearchOption
 import com.yenaly.han1meviewer.ui.adapter.HSearchTagAdapter
 import com.yenaly.han1meviewer.util.createAlertDialog
+import com.yenaly.han1meviewer.util.showWithBlurEffect
 import com.yenaly.yenaly_libs.utils.findActivity
 import com.yenaly.yenaly_libs.utils.view.SimpleFragmentStateAdapter
 import com.yenaly.yenaly_libs.utils.view.attach
@@ -135,6 +136,6 @@ class HMultiChoicesDialog(
                 tab.setText(nameResList[pos])
             }
         }
-        dialog.show()
+        dialog.showWithBlurEffect()
     }
 }
