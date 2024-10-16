@@ -42,7 +42,7 @@ class CollapsibleTags @JvmOverloads constructor(
 
     companion object {
         val animInterpolator = FastOutSlowInInterpolator()
-        const val animDuration = 300L
+        const val ANIM_DURATION = 300L
     }
 
     /**
@@ -114,7 +114,8 @@ class CollapsibleTags @JvmOverloads constructor(
         }
 
         post {
-            toggleButton.animate().rotation(if (isCollapsed) 0F else 180F).setDuration(animDuration)
+            toggleButton.animate().rotation(if (isCollapsed) 0F else 180F)
+                .setDuration(ANIM_DURATION)
                 .setInterpolator(animInterpolator).start()
         }
     }
@@ -140,18 +141,18 @@ class CollapsibleTags @JvmOverloads constructor(
     }
 
     private fun handleWhenCollapsed(isCollapsed: Boolean) {
-        toggleButton.animate().rotation(if (isCollapsed) 0F else 180F).setDuration(animDuration)
+        toggleButton.animate().rotation(if (isCollapsed) 0F else 180F).setDuration(ANIM_DURATION)
             .setInterpolator(animInterpolator).start()
 
         if (isCollapsed) {
-            chipGroup.animate().setDuration(animDuration).setInterpolator(animInterpolator)
+            chipGroup.animate().setDuration(ANIM_DURATION).setInterpolator(animInterpolator)
                 .alpha(0F).withStartAction {
                     collapseValueAnimator?.start()
                 }.withEndAction {
                     chipGroup.visibility = INVISIBLE
                 }.start()
         } else {
-            chipGroup.animate().setDuration(animDuration).setInterpolator(animInterpolator)
+            chipGroup.animate().setDuration(ANIM_DURATION).setInterpolator(animInterpolator)
                 .alpha(1F).withStartAction {
                     chipGroup.visibility = VISIBLE
                     expandValueAnimator?.start()
@@ -169,7 +170,7 @@ class CollapsibleTags @JvmOverloads constructor(
 
     private fun buildChipGroupAnimator(start: Int, end: Int): ValueAnimator {
         return ValueAnimator.ofInt(start, end).apply {
-            duration = animDuration
+            duration = ANIM_DURATION
             interpolator = animInterpolator
             addUpdateListener(lifecycle) {
                 val value = it.animatedValue as Int

@@ -12,7 +12,6 @@ import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.model.github.Latest
 import com.yenaly.han1meviewer.worker.HUpdateWorker
-import com.yenaly.yenaly_libs.utils.requireComponentActivity
 import com.yenaly.yenaly_libs.utils.showShortToast
 import java.io.File
 
@@ -24,7 +23,6 @@ fun checkNeedUpdate(versionName: String): Boolean {
 }
 
 suspend fun Context.showUpdateDialog(latest: Latest) {
-    val activity = this.requireComponentActivity()
     val spannable = spannable {
         getString(R.string.new_version_found).span {
             style(Typeface.BOLD)

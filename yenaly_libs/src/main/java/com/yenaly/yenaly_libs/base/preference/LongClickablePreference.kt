@@ -31,7 +31,7 @@ open class LongClickablePreference @JvmOverloads constructor(
         if (!isEnabled || !isSelectable) {
             return false
         }
-        return onPreferenceLongClickListener?.onPreferenceLongClick(this) ?: false
+        return onPreferenceLongClickListener?.onPreferenceLongClick(this) == true
     }
 
     fun interface OnPreferenceLongClickListener {
