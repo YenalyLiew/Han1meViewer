@@ -17,8 +17,10 @@ val HJson = Json {
 
 /**
  * 给用户显示的错误信息
+ *
+ * ぴえん化
  */
-val Throwable.cialloMessage: CharSequence get() = "🥺\n$localizedMessage"
+val Throwable.pienization: CharSequence get() = "🥺\n$localizedMessage"
 
 // base
 

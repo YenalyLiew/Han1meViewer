@@ -304,7 +304,7 @@
 · 日本用户，使用 hanime1.com\n
 · 其他地区用户，使用 hanime1.me 并关闭内置 Hosts</string>
     <string name="do_not_use_japan_ip">不要使用日本IP地址!!!</string>
-    <string name="website_blocked_msg">看到这里说明他们网站加固了，能不能恢复只能听天命了…</string>
+    <string name="website_blocked_msg">看到这里说明他们网站被加固了，能不能恢复只能听天命了…</string>
     <string name="not_logged_in_currently">当前未登录</string>
     <string name="parse_error_msg">可能这个网址解析起来不太一样…</string>
     <string name="network_unstable_msg">可能是你的网络不稳定，多刷新！</string>
@@ -349,5 +349,7 @@
     <string name="about_analytics_summary">您同意让开发者收集您的设备信息与使用情况吗？这将对开发有很大帮助。&lt;br&gt;&lt;br&gt;数据统计服务由 Google Analytics for Firebase 提供，其隐私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意参与数据统计，您的设备信息与应用使用情况将会被记录，其包括但不限于：Android API 版本、设备型号、语言所在地、本应用版本号、会话时长、应用功能使用次数。开发者承诺以下信息并不会被记录：电话号码、电子邮件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意参与数据统计之前，您的信息不会被记录。&lt;br&gt;&lt;br&gt;被记录的数据会由 Google Analytics for Firebase 进行分析，分析报表仅可被本应用开发者访问。</string>
     <string name="about_analytics">关于使用情况统计</string>
     <string name="refresh_page_or_login_expired">刷新一下页面试试\n也可能登入已过期</string>
+    <string name="website_blocked_msg_2">网站被加固，修改为另外一个域名可能有奇效！</string>
+    <string name="website_blocked_msg_3">可以提醒一下开发者，但不要催，网站被加固跟他没有任何关系哦～</string>
 
 </resources>

@@ -419,7 +419,7 @@ object NetworkRepo {
                         throw IPBlockedException(getString(R.string.do_not_use_japan_ip))
 
                     "Just a moment" in body ->
-                        throw CloudFlareBlockedException(getString(R.string.website_blocked_msg))
+                        throw CloudFlareBlockedException(getString(CloudFlareBlockedException.localizedMessages.random()))
 
                     else ->
                         throw HanimeNotFoundException(getString(R.string.video_might_not_exist)) // 主要出現在影片界面，當你v數不大時會報403
@@ -430,7 +430,9 @@ object NetworkRepo {
 
             404 -> if (!isAlreadyLogin) {
                 throw IllegalStateException(getString(R.string.not_logged_in_currently))
-            } else throw IllegalStateException("$code ${message()}")
+            } else {
+                throw IllegalStateException("$code ${message()}")
+            }
 
             else -> throw IllegalStateException("$code ${message()}")
         }
