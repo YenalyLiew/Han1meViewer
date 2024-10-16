@@ -38,7 +38,7 @@ class HanimeSearchBar @JvmOverloads constructor(
 
     companion object {
         val animInterpolator = FastOutSlowInInterpolator()
-        const val animDuration = 300L
+        const val ANIM_DURATION = 300L
     }
 
     private val window = checkNotNull(context.activity?.window)
@@ -59,7 +59,7 @@ class HanimeSearchBar @JvmOverloads constructor(
         // init
         root.layoutTransition = LayoutTransition().apply {
             enableTransitionType(LayoutTransition.CHANGING)
-            setDuration(LayoutTransition.CHANGING, animDuration)
+            setDuration(LayoutTransition.CHANGING, ANIM_DURATION)
             setInterpolator(LayoutTransition.CHANGING, animInterpolator)
         }
         rvHistory.layoutManager = LinearLayoutManager(context)
@@ -77,7 +77,7 @@ class HanimeSearchBar @JvmOverloads constructor(
                 onSearchClickListener?.let { listener ->
                     listener(etSearch, etSearch.text?.toString().orEmpty())
                     true
-                } ?: false
+                } == true
             }
             false
         }
@@ -163,10 +163,10 @@ class HanimeSearchBar @JvmOverloads constructor(
 //        }
 //        TransitionManager.beginDelayedTransition(searchBar, slide)
 
-        rvHistory.visibility = View.VISIBLE
+        rvHistory.visibility = VISIBLE
         back.animate()
             .setInterpolator(animInterpolator)
-            .setDuration(animDuration)
+            .setDuration(ANIM_DURATION)
             .rotation(45F)
             .start()
         isCollapsed = false
@@ -183,10 +183,10 @@ class HanimeSearchBar @JvmOverloads constructor(
 //        }
 //        TransitionManager.beginDelayedTransition(searchBar, slide)
 
-        rvHistory.visibility = View.GONE
+        rvHistory.visibility = GONE
         back.animate()
             .setInterpolator(animInterpolator)
-            .setDuration(animDuration)
+            .setDuration(ANIM_DURATION)
             .rotation(0F)
             .start()
         isCollapsed = true

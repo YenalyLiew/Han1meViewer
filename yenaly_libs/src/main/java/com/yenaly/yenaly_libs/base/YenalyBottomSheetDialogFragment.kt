@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -52,7 +51,7 @@ abstract class YenalyBottomSheetDialogFragment<DB : ViewDataBinding> :
      * 默认为透明，需要自己在rootView上添加背景
      */
     open fun setStyle() {
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.YenalyBottomSheetDialog)
+        setStyle(STYLE_NORMAL, R.style.YenalyBottomSheetDialog)
     }
 
     abstract fun getViewBinding(layoutInflater: LayoutInflater): DB

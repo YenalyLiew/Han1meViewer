@@ -64,7 +64,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding>(),
 
     companion object {
         private val animInterpolator = FastOutSlowInInterpolator()
-        private val animDuration = 300L
+        private const val ANIM_DURATION = 300L
     }
 
     val viewModel by activityViewModels<MainViewModel>()
@@ -295,7 +295,7 @@ class HomePageFragment : YenalyFragment<FragmentHomePageBinding>(),
                 toColor = lightVibrant
             ) {
                 interpolator = animInterpolator
-                duration = animDuration
+                duration = ANIM_DURATION
                 addUpdateListener(this@HomePageFragment) {
                     val color = it.animatedValue as Int
                     binding.aColor.setBackgroundColor(color)

@@ -62,7 +62,7 @@ class HanimeApplication : YenalyApplication() {
             })
             setDefaultsAsync(FirebaseConstants.remoteConfigDefaults)
             fetchAndActivate().addOnCompleteListener {
-                AppViewModel.getLatestVersion(delayMillis = 500)
+                AppViewModel.getLatestVersion(delayMillis = 200)
             }
         }
         initNotificationChannel()

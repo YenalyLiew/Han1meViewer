@@ -33,7 +33,7 @@ fun getDownloadedHanimeFile(title: String, quality: String, suffix: String = DEF
 fun checkDownloadedHanimeFile(startsWith: String): Boolean {
     return hanimeVideoLocalFolder?.let { folder ->
         folder.listFiles()?.any { it.name.startsWith(startsWith) }
-    } ?: false
+    } == true
 }
 
 /**

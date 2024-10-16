@@ -445,11 +445,11 @@ class HJzvdStd @JvmOverloads constructor(
     override fun clickBack() {
         Log.i(TAG, "backPress")
         when {
-            CONTAINER_LIST.size != 0 && CURRENT_JZVD != null -> { //判断条件，因为当前所有goBack都是回到普通窗口
+            CONTAINER_LIST.isNotEmpty() && CURRENT_JZVD != null -> { //判断条件，因为当前所有goBack都是回到普通窗口
                 CURRENT_JZVD.gotoNormalScreen()
             }
 
-            CONTAINER_LIST.size == 0 && CURRENT_JZVD != null && CURRENT_JZVD.screen != SCREEN_NORMAL -> { //退出直接进入的全屏
+            CONTAINER_LIST.isEmpty() && CURRENT_JZVD != null && CURRENT_JZVD.screen != SCREEN_NORMAL -> { //退出直接进入的全屏
                 CURRENT_JZVD.clearFloatScreen()
             }
 
@@ -747,7 +747,7 @@ class HJzvdStd @JvmOverloads constructor(
         val adapter = hKeyframeAdapter
         rv.adapter = adapter
         adapter.setStateViewLayout(
-            View.inflate(v.context, R.layout.layout_empty_view, null),
+            inflate(v.context, R.layout.layout_empty_view, null),
             this@HJzvdStd.context.getString(R.string.here_is_empty) + "\n"
                     + this@HJzvdStd.context.getString(R.string.long_press_to_add_h_keyframe)
         )
