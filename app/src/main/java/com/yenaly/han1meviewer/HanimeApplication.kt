@@ -8,10 +8,12 @@ import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.crashlytics.setCustomKeys
 import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.yenaly.han1meviewer.logic.network.HProxySelector
+import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
 import com.yenaly.yenaly_libs.base.YenalyApplication
 import com.yenaly.yenaly_libs.utils.LanguageHelper
 
@@ -53,8 +55,16 @@ class HanimeApplication : YenalyApplication() {
             key(FirebaseConstants.VERSION_SOURCE, BuildConfig.HA1_VERSION_SOURCE)
         }
         // 用于处理 Firebase Remote Config 初始化
-        Firebase.remoteConfig.setDefaultsAsync(FirebaseConstants.remoteConfigDefaults)
-
+        Firebase.remoteConfig.apply {
+            setConfigSettingsAsync(remoteConfigSettings {
+                minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 0 else 3 * 60 * 60
+                fetchTimeoutInSeconds = 10
+            })
+            setDefaultsAsync(FirebaseConstants.remoteConfigDefaults)
+            fetchAndActivate().addOnCompleteListener {
+                AppViewModel.getLatestVersion(delayMillis = 500)
+            }
+        }
         initNotificationChannel()
     }
 
