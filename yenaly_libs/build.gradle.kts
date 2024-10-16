@@ -33,7 +33,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn", "-Xskip-prerelease-check")
+        freeCompilerArgs = listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xskip-prerelease-check",
+            "-opt-in=kotlin.ExperimentalStdlibApi"
+        )
     }
     resourcePrefix = "yenaly_"
     namespace = "com.yenaly.yenaly_libs"
