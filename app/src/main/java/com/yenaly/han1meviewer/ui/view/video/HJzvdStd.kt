@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnLongClickListener
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.ProgressBar
@@ -588,6 +589,23 @@ class HJzvdStd @JvmOverloads constructor(
             showBrightnessDialog(brightnessPercent)
 //            mDownY = y;
         }
+    }
+
+    override fun gotoNormalScreen() {
+        gobakFullscreenTime = System.currentTimeMillis()
+        val vg = JZUtils.scanForActivity(context).window.decorView as ViewGroup
+        vg.removeView(this)
+        // #issue-crashlytics-1b3cebd1278de6fc52230eb5517be879:
+        // 你永远要给不更新的 JZVD 擦屁股才能保持稳定
+        CONTAINER_LIST.peekLast()?.apply {
+            removeViewAt(blockIndex)
+            addView(this, blockIndex, blockLayoutParams)
+        }
+        CONTAINER_LIST.poll()
+        setScreenNormal()
+        JZUtils.showStatusBar(jzvdContext)
+        JZUtils.setRequestedOrientation(jzvdContext, NORMAL_ORIENTATION)
+        JZUtils.showSystemUI(jzvdContext)
     }
 
     override fun onStatePreparingChangeUrl() {
