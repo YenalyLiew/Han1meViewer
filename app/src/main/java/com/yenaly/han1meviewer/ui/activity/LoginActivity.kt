@@ -30,6 +30,7 @@ import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.login
 import com.yenaly.han1meviewer.util.createAlertDialog
+import com.yenaly.han1meviewer.util.showWithBlurEffect
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -111,6 +112,7 @@ class LoginActivity : FrameActivity() {
         binding.wvLogin.apply {
             // #issue-17: 谷歌登录需要开启JavaScript，但是谷歌拒絕這種登錄方式，遂放棄
             settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
             settings.userAgentString = USER_AGENT
 
             webViewClient = object : WebViewClient() {
@@ -136,7 +138,6 @@ class LoginActivity : FrameActivity() {
                     return super.shouldOverrideUrlLoading(view, request)
                 }
 
-                @Suppress("OVERRIDE_DEPRECATION")
                 override fun onReceivedError(
                     view: WebView?,
                     errorCode: Int,
@@ -213,7 +214,7 @@ class LoginActivity : FrameActivity() {
         }
 
         fun show() {
-            dialog.show()
+            dialog.showWithBlurEffect()
         }
 
         fun dismiss() {

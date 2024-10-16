@@ -346,7 +346,7 @@
     <string name="subscription">訂閱</string>
     <string name="login_expired_auto_logout">登入已過期，已自動登出</string>
     <string name="crashlytics_summary">開啟後，將會自動上報崩潰日誌，無須手動提交</string>
-    <string name="analytics_summary">長按了解開啟對開發者的必要性</string>
+    <string name="analytics_summary">長按了解開啟對開發者的重要性</string>
     <string name="crashlytics_title">崩潰日誌自動上報</string>
     <string name="analytics_title">使用情況統計</string>
     <string name="privacy">隱私</string>

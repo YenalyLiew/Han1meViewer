@@ -7,13 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
-import androidx.core.text.method.LinkMovementMethodCompat
-import androidx.core.text.parseAsHtml
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -34,15 +29,15 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
+import com.yenaly.han1meviewer.ui.view.pref.HPrivacyPreference
 import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
 import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
-import com.yenaly.han1meviewer.util.createAlertDialog
 import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.util.showUpdateDialog
+import com.yenaly.han1meviewer.util.showWithBlurEffect
 import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.base.preference.LongClickablePreference
-import com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 import com.yenaly.yenaly_libs.utils.browse
 import com.yenaly.yenaly_libs.utils.copyToClipboard
@@ -113,7 +108,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
     private val applyDeepLinks
             by safePreference<Preference>(APPLY_DEEP_LINKS)
     private val useAnalytics
-            by safePreference<MaterialSwitchPreference>(USE_ANALYTICS)
+            by safePreference<HPrivacyPreference>(USE_ANALYTICS)
 
     private var checkUpdateTimes = 0
 
@@ -274,7 +269,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 return@setOnPreferenceChangeListener true
             }
             setOnPreferenceLongClickListener {
-                showAnalyticsDialog(it.context)
+                privacyDialog.showWithBlurEffect()
                 return@setOnPreferenceLongClickListener true
             }
         }
@@ -363,24 +358,6 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             }
             setNegativeButton(R.string.cancel, null)
         }
-    }
-
-    private fun showAnalyticsDialog(context: Context) {
-        context.createAlertDialog {
-            setTitle(R.string.about_analytics)
-            setMessage(getString(R.string.about_analytics_summary).parseAsHtml())
-            setPositiveButton(R.string.ok, null)
-        }.apply {
-            setOnShowListener {
-                // 另辟蹊径，我不信我访问不到
-                val ad = it as AlertDialog
-                val anchorView = ad.getButton(AlertDialog.BUTTON_POSITIVE)
-                val contentView = anchorView.rootView as ViewGroup
-                contentView.findViewById<TextView>(android.R.id.message).apply {
-                    movementMethod = LinkMovementMethodCompat.getInstance()
-                }
-            }
-        }.show()
     }
 
     private fun generateClearCacheSummary(size: Long): CharSequence {

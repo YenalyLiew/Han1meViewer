@@ -72,7 +72,7 @@
 
     <PreferenceCategory app:title="@string/privacy">
 
-        <com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
+        <com.yenaly.han1meviewer.ui.view.pref.HPrivacyPreference
             app:defaultValue="true"
             app:icon="@drawable/baseline_data_usage_24"
             app:key="use_analytics"

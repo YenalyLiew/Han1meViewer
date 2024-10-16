@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.fragment.settings
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.IdRes
@@ -7,7 +8,6 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.preference.Preference
-import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.yenaly.han1meviewer.EMPTY_STRING
@@ -25,7 +25,9 @@ import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
 import com.yenaly.han1meviewer.util.createAlertDialog
 import com.yenaly.han1meviewer.util.showAlertDialog
+import com.yenaly.han1meviewer.util.showWithBlurEffect
 import com.yenaly.yenaly_libs.ActivityManager
+import com.yenaly.yenaly_libs.base.preference.MaterialSwitchPreference
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.unsafeLazy
@@ -52,7 +54,7 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
     private val domainName
             by safePreference<MaterialDialogPreference>(DOMAIN_NAME)
     private val useBuiltInHosts
-            by safePreference<SwitchPreferenceCompat>(USE_BUILT_IN_HOSTS)
+            by safePreference<MaterialSwitchPreference>(USE_BUILT_IN_HOSTS)
 
     private val proxyDialog by unsafeLazy {
         ProxyDialog(proxy, R.layout.dialog_proxy)
@@ -173,6 +175,7 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
             }
         }
 
+        @SuppressLint("SetTextI18n")
         private fun initView() {
             when (Preferences.proxyType) {
                 HProxySelector.TYPE_DIRECT -> cgTypes.check(R.id.chip_direct)
@@ -242,7 +245,7 @@ class NetworkSettingsFragment : YenalySettingsFragment(R.xml.settings_network),
 
         fun show() {
             initView()
-            dialog.show()
+            dialog.showWithBlurEffect()
         }
     }
 

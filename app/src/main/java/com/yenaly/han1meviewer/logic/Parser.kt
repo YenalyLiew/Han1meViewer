@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.logic
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.HanimeResolution
@@ -312,7 +313,7 @@ object Parser {
             val listInput = it.selectFirst("input")
             val listCode = listInput?.attr("id")
                 .logIfParseNull(Parser::hanimeVideoVer2.name, "myListCode", loginNeeded = true)
-            val isSelected = listInput?.hasAttr("checked") ?: false
+            val isSelected = listInput?.hasAttr("checked") == true
             if (listTitle != null && listCode != null) {
                 myListInfo += HanimeVideo.MyList.MyListInfo(
                     code = listCode, title = listTitle, isSelected = isSelected
@@ -320,7 +321,7 @@ object Parser {
             }
         }
         val isWatchLater = parseBody.getElementById("playlist-save-checkbox")
-            ?.selectFirst("input")?.hasAttr("checked") ?: false
+            ?.selectFirst("input")?.hasAttr("checked") == true
         val myList = HanimeVideo.MyList(isWatchLater = isWatchLater, myListInfo = myListInfo)
 
         val playlistWrapper = parseBody.selectFirst("div[id=video-playlist-wrapper]")
@@ -336,7 +337,7 @@ object Parser {
                 val eachIsPlaying = cardMobilePanel?.select("div > div > div > div")
                     ?.firstOrNull()
                     ?.text()
-                    ?.contains("播放") ?: false
+                    ?.contains("播放") == true
                 val cardMobileDuration = cardMobilePanel?.select("div[class=card-mobile-duration]")
                 val eachDuration = cardMobileDuration?.firstOrNull()?.text()
                 val eachViews = cardMobileDuration?.getOrNull(1)?.text()
@@ -683,6 +684,7 @@ object Parser {
         return WebsiteState.Success(Playlists(playlists = playlists, csrfToken = csrfToken))
     }
 
+    @SuppressLint("BuildListAdds")
     fun comments(body: String): WebsiteState<VideoComments> {
         val jsonObject = JSONObject(body)
         val commentBody = jsonObject.get("comments").toString()
@@ -853,7 +855,7 @@ object Parser {
     private fun Element.childOrNull(index: Int): Element? {
         return try {
             child(index)
-        } catch (e: IndexOutOfBoundsException) {
+        } catch (_: IndexOutOfBoundsException) {
             null
         }
     }

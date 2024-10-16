@@ -20,7 +20,7 @@ plugins {
 android {
     compileSdk = property("compile.sdk")?.toString()?.toIntOrNull()
 
-    val commitSha = if (isRelease) lastCommitSha else "8ea5a9c" // 方便调试
+    val commitSha = if (isRelease) lastCommitSha else "b8eace8" // 方便调试
 
     // 先 Github Secrets 再读取环境变量，若没有则读取本地文件
     val signPwd = System.getenv("HA1_KEYSTORE_PASSWORD") ?: File(
@@ -88,11 +88,11 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.VERSION_21.toString()
         freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all-compatibility")
     }
     namespace = "com.yenaly.han1meviewer"
