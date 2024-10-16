@@ -1,7 +1,9 @@
 package com.yenaly.yenaly_libs
 
-import com.yenaly.yenaly_libs.utils.*
-import org.junit.Assert.*
+import com.yenaly.yenaly_libs.utils.formatPlayCount
+import com.yenaly.yenaly_libs.utils.fromJson
+import com.yenaly.yenaly_libs.utils.secondToTimeCase
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
@@ -20,7 +22,6 @@ class ExampleUnitTest {
         val foobar = """
             [{"foo":"123","bar":"456"},{"foo":"789","bar":"012"}]
         """.trimIndent()
-        val foo = GsonUtil.parseGsonArray(foobar, Array<TestBean>::class.java)
         val bar = foobar.fromJson<List<TestBean>>()
         println(bar[1].foo)
     }

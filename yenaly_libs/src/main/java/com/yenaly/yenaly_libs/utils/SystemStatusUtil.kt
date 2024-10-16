@@ -108,9 +108,6 @@ fun Window.setSystemBarIconLightMode(statusBar: Boolean, navBar: Boolean = false
     val controller = WindowCompat.getInsetsController(this, decorView)
     controller.isAppearanceLightStatusBars = statusBar
     controller.isAppearanceLightNavigationBars = navBar
-    if (controller.isAppearanceLightStatusBars != statusBar) {
-        SystemStatusUtil.setStatusIconDarkMode(this, statusBar)
-    }
 }
 
 /**
