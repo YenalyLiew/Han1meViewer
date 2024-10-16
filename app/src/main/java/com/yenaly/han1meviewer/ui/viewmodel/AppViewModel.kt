@@ -56,16 +56,11 @@ object AppViewModel : YenalyViewModel(application), IHCsrfToken {
         viewModelScope.launch(Dispatchers.Main) {
             HanimeDownloadWorker.collectOutput(application)
         }
-
-        viewModelScope.launch {
-            // 不要太提前
-            delay(500)
-            getLatestVersionSuspend()
-        }
     }
 
-    fun getLatestVersion(forceCheck: Boolean = true) {
+    fun getLatestVersion(forceCheck: Boolean = true, delayMillis: Long = 0) {
         viewModelScope.launch {
+            delay(delayMillis)
             getLatestVersionSuspend(forceCheck)
         }
     }
