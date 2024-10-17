@@ -1,7 +1,9 @@
 package com.yenaly.han1meviewer.ui.fragment.search
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Checkable
@@ -10,10 +12,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
-import com.google.firebase.Firebase
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.interfaces.SimpleCallback
@@ -148,7 +150,9 @@ class SearchOptionsPopupFragment :
                 if (genres == null) {
                     genres = viewModel.genres.mapToArray { it.value }
                 }
-                requireContext().showAlertDialog {
+                requireContext().showAlertDialog(DialogInterface.OnDismissListener {
+                    logAdvSearchEvent("genres")
+                }) {
                     val index = viewModel.genres.indexOfFirst {
                         it.searchKey == viewModel.genre
                     }
@@ -162,9 +166,6 @@ class SearchOptionsPopupFragment :
                     setNeutralButton(R.string.reset) { _, _ ->
                         viewModel.genre = null
                         initOptionsChecked()
-                    }
-                    setOnCancelListener {
-                        logAdvSearchEvent("genres")
                     }
                 }
             }
@@ -262,7 +263,9 @@ class SearchOptionsPopupFragment :
                 if (sortOptions == null) {
                     sortOptions = viewModel.sortOptions.mapToArray { it.value }
                 }
-                requireContext().showAlertDialog {
+                requireContext().showAlertDialog(DialogInterface.OnDismissListener {
+                    logAdvSearchEvent("sort_options")
+                }) {
                     val index = viewModel.sortOptions.indexOfFirst {
                         it.searchKey == viewModel.sort
                     }
@@ -276,9 +279,6 @@ class SearchOptionsPopupFragment :
                     setNeutralButton(R.string.reset) { _, _ ->
                         viewModel.sort = null
                         initOptionsChecked()
-                    }
-                    setOnCancelListener {
-                        logAdvSearchEvent("sort_options")
                     }
                 }
             }
@@ -297,7 +297,9 @@ class SearchOptionsPopupFragment :
                 if (durations == null) {
                     durations = viewModel.durations.mapToArray { it.value }
                 }
-                requireContext().showAlertDialog {
+                requireContext().showAlertDialog(DialogInterface.OnDismissListener {
+                    initOptionsChecked()
+                }) {
                     val index = viewModel.durations.indexOfFirst {
                         it.searchKey == viewModel.duration
                     }
@@ -309,9 +311,6 @@ class SearchOptionsPopupFragment :
                     setPositiveButton(R.string.save, null)
                     setNeutralButton(R.string.reset) { _, _ ->
                         viewModel.duration = null
-                        initOptionsChecked()
-                    }
-                    setOnDismissListener {
                         initOptionsChecked()
                     }
                 }
@@ -405,6 +404,7 @@ class SearchOptionsPopupFragment :
     }
 
     private fun logAdvSearchEvent(type: String, used: Boolean = isUserUsed) {
+        Log.d("HFirebase", "logAdvSearchEvent: $type, $used")
         Firebase.analytics.logEvent(FirebaseConstants.ADV_SEARCH_OPT) {
             // 判断当前点击类型
             param(FirebaseAnalytics.Param.CONTENT_TYPE, type)
