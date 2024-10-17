@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.ui.fragment.search
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.util.SparseArray
 import android.view.View
 import androidx.annotation.StringRes
@@ -41,6 +42,7 @@ class HMultiChoicesDialog(
 
     private var onSave: ((AlertDialog) -> Unit)? = null
     private var onReset: ((AlertDialog) -> Unit)? = null
+    private var onDismiss: DialogInterface.OnDismissListener? = null
 
     private var isAdded = false
 
@@ -91,10 +93,8 @@ class HMultiChoicesDialog(
         onReset = action
     }
 
-    fun setOnDismissListener(action: (AlertDialog) -> Unit) {
-        dialog.setOnDismissListener {
-            action(it as AlertDialog)
-        }
+    fun setOnDismissListener(action: DialogInterface.OnDismissListener?) {
+        onDismiss = action
     }
 
     fun loadSavedTags(saved: SparseArray<Set<SearchOption>>) {
@@ -136,6 +136,6 @@ class HMultiChoicesDialog(
                 tab.setText(nameResList[pos])
             }
         }
-        dialog.showWithBlurEffect()
+        dialog.showWithBlurEffect(onDismiss)
     }
 }

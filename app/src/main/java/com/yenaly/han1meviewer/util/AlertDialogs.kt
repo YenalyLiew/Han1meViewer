@@ -27,7 +27,7 @@ fun Context.getDialogDefaultDrawable(): Drawable {
  * 注意：占用了 setOnDismissListener，
  * 使用时不要忘了这一点！
  */
-fun AlertDialog.createDecorBlurEffect() {
+fun AlertDialog.createDecorBlurEffect(dismissListener: DialogInterface.OnDismissListener? = null) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         context.activity?.let { activity ->
             activity.window.decorView.setRenderEffect(
@@ -39,8 +39,11 @@ fun AlertDialog.createDecorBlurEffect() {
             )
             setOnDismissListener {
                 activity.window.decorView.setRenderEffect(null)
+                dismissListener?.onDismiss(it)
             }
         }
+    } else {
+        setOnDismissListener(dismissListener)
     }
 }
 
@@ -53,13 +56,16 @@ inline fun Context.createAlertDialog(action: MaterialAlertDialogBuilder.() -> Un
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun AlertDialog.showWithBlurEffect() {
-    createDecorBlurEffect()
+inline fun AlertDialog.showWithBlurEffect(dismissListener: DialogInterface.OnDismissListener? = null) {
+    createDecorBlurEffect(dismissListener)
     show()
 }
 
-inline fun Context.showAlertDialog(action: MaterialAlertDialogBuilder.() -> Unit) {
-    createAlertDialog(action).showWithBlurEffect()
+inline fun Context.showAlertDialog(
+    dismissListener: DialogInterface.OnDismissListener? = null,
+    action: MaterialAlertDialogBuilder.() -> Unit
+) {
+    createAlertDialog(action).showWithBlurEffect(dismissListener)
 }
 
 /**
@@ -69,6 +75,7 @@ suspend fun AlertDialog.await(
     positiveText: String? = null,
     negativeText: String? = null,
     neutralText: String? = null,
+    dismissListener: DialogInterface.OnDismissListener? = null,
 ) = suspendCancellableCoroutine { cont ->
     val listener = DialogInterface.OnClickListener { _, which ->
         when (which) {
@@ -93,5 +100,5 @@ suspend fun AlertDialog.await(
 
     // remember to show the dialog before returning from the block,
     // you won't be able to do it after this function is called!
-    showWithBlurEffect()
+    showWithBlurEffect(dismissListener)
 }
