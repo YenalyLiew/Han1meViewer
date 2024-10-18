@@ -62,6 +62,10 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     private var _exoPlayer: ExoPlayer? = null
+
+    /**
+     * 尽量少用，用了之后容易出bug
+     */
     private val exoPlayer get() = _exoPlayer!!
 
     private var callback: Runnable? = null
@@ -134,7 +138,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
 
     override fun start() {
         mMediaHandler.post {
-            exoPlayer.playWhenReady = true
+            _exoPlayer?.playWhenReady = true
         }
     }
 
@@ -158,7 +162,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
 
     override fun pause() {
         mMediaHandler.post {
-            exoPlayer.playWhenReady = false
+            _exoPlayer?.playWhenReady = false
         }
     }
 
@@ -169,12 +173,14 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     override fun seekTo(time: Long) {
         mMediaHandler.post {
             if (time != prevSeek) {
-                if (time >= exoPlayer.bufferedPosition) {
-                    jzvd.onStatePreparingPlaying()
+                _exoPlayer?.let { exoPlayer ->
+                    if (time >= exoPlayer.bufferedPosition) {
+                        jzvd.onStatePreparingPlaying()
+                    }
+                    exoPlayer.seekTo(time)
+                    prevSeek = time
+                    jzvd.seekToInAdvance = time
                 }
-                exoPlayer.seekTo(time)
-                prevSeek = time
-                jzvd.seekToInAdvance = time
             }
         }
     }
@@ -202,7 +208,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {
         mMediaHandler.post {
-            exoPlayer.volume = (leftVolume + rightVolume) / 2
+            _exoPlayer?.volume = (leftVolume + rightVolume) / 2
         }
     }
 
@@ -222,7 +228,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-        if (playWhenReady && exoPlayer.playbackState == Player.STATE_READY) {
+        if (playWhenReady && _exoPlayer?.playbackState == Player.STATE_READY) {
             handler.post {
                 jzvd.onStatePlaying()
             }
@@ -314,7 +320,7 @@ class SystemMediaKernel(jzvd: Jzvd) : JZMediaSystem(jzvd), HMediaKernel {
                 val pp = mediaPlayer.playbackParams
                 pp.speed = speed.absoluteValue
                 mediaPlayer.playbackParams = pp
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 try {
                     val opp = PlaybackParams().setSpeed(speed.absoluteValue)
                     mediaPlayer.playbackParams = opp

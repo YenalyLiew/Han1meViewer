@@ -144,9 +144,9 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                 val item = getItem(position).notNull()
                 check(fragment != null && fragment is CommentFragment)
                 item.realReplyId.let { id ->
-                    (ChildCommentPopupFragment().makeBundle(
+                    ChildCommentPopupFragment().makeBundle(
                         COMMENT_ID to id
-                    ) as ChildCommentPopupFragment).showIn(context as FragmentActivity)
+                    ).showIn(context as FragmentActivity)
                 }
             }
             viewHolder.binding.btnThumbUp.setOnClickListener {

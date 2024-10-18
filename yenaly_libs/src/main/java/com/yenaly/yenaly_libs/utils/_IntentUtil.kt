@@ -358,7 +358,7 @@ infix fun Fragment.browse(uri: String) {
  *
  * @return 带值的本身
  */
-fun Fragment.makeBundle(vararg params: Pair<String, Any?>): Fragment {
+fun <F : Fragment> F.makeBundle(vararg params: Pair<String, Any?>): F {
     return this.apply {
         arguments = bundleOf(*params)
     }
