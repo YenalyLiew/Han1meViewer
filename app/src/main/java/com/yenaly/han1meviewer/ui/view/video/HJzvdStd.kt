@@ -599,7 +599,7 @@ class HJzvdStd @JvmOverloads constructor(
         // 你永远要给不更新的 JZVD 擦屁股才能保持稳定
         CONTAINER_LIST.peekLast()?.apply {
             removeViewAt(blockIndex)
-            addView(this, blockIndex, blockLayoutParams)
+            addView(this@HJzvdStd, blockIndex, blockLayoutParams)
         }
         CONTAINER_LIST.poll()
         setScreenNormal()
