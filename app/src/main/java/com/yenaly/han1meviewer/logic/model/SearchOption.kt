@@ -1,15 +1,18 @@
 package com.yenaly.han1meviewer.logic.model
 
+import android.os.Parcelable
 import android.util.SparseArray
 import androidx.core.util.valueIterator
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.LanguageHelper
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.Locale
 
 @Suppress("EqualsOrHashCode")
 @Serializable
+@Parcelize
 data class SearchOption(
     @SerialName("lang")
     val lang: Language? = null,
@@ -17,7 +20,7 @@ data class SearchOption(
     val name: String? = null,
     @SerialName("search_key")
     val searchKey: String? = null,
-) {
+) : Parcelable {
 
     companion object {
         fun SparseArray<Set<SearchOption>>.flatten(): Set<String> = buildSet {
@@ -51,6 +54,7 @@ data class SearchOption(
     }
 
     @Serializable
+    @Parcelize
     data class Language(
         @SerialName("zh-rCN")
         val zhrCN: String? = null,
@@ -58,7 +62,7 @@ data class SearchOption(
         val zhrTW: String? = null,
         @SerialName("en")
         val en: String? = null,
-    )
+    ) : Parcelable
 
     override fun hashCode(): Int = searchKey.hashCode()
 

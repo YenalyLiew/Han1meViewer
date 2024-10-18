@@ -6,18 +6,43 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.chad.library.adapter4.BaseQuickAdapter
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.model.SearchOption
+import com.yenaly.han1meviewer.ui.fragment.search.HMultiChoicesDialog.Companion.UNKNOWN_ADAPTER
 import com.yenaly.yenaly_libs.base.frame.FrameFragment
+import com.yenaly.yenaly_libs.utils.arguments
 import com.yenaly.yenaly_libs.utils.dp
+import com.yenaly.yenaly_libs.utils.makeBundle
+import com.yenaly.yenaly_libs.utils.unsafeLazy
 
+class HCheckBoxFragment : FrameFragment() {
 
-class HCheckBoxFragment(
-    private val adapter: BaseQuickAdapter<SearchOption, *>,
-    private val items: List<SearchOption>?,
-    private val spanCount: Int = 3,
-) : FrameFragment() {
+    companion object {
+
+        const val SCOPE_NAME_RES = "scope_name_res"
+        const val ITEMS = "items"
+        const val SPAN_COUNT = "span_count"
+
+        const val DEF_SPAN_COUNT = 3
+
+        fun newInstance(
+            scopeNameRes: Int,
+            items: List<SearchOption>,
+            spanCount: Int = DEF_SPAN_COUNT,
+        ) = HCheckBoxFragment().makeBundle(
+            SCOPE_NAME_RES to scopeNameRes,
+            ITEMS to items,
+            SPAN_COUNT to spanCount
+        )
+    }
+
+    val scopeNameRes by arguments(SCOPE_NAME_RES, UNKNOWN_ADAPTER)
+    val items by arguments(ITEMS, emptyList<SearchOption>())
+    val spanCount by arguments(SPAN_COUNT, DEF_SPAN_COUNT)
+
+    val adapter by unsafeLazy {
+        HMultiChoicesDialog.adapterMap?.get(scopeNameRes)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +68,6 @@ class HCheckBoxFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter.submitList(items)
+        this@HCheckBoxFragment.adapter?.submitList(items)
     }
 }

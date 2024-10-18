@@ -142,10 +142,13 @@ class HanimeDownloadWorker(
             )
         } else if (runAttemptCount > 0) {
             Handler(Looper.getMainLooper()).post {
+                // #issue-crashlytics-e2c7b3bb39a096026b99d4d90861f09a:
+                // 他就是可能为空，但是我不知道为什么会为空
+                @Suppress("USELESS_ELVIS")
                 showShortToast(
                     context.getString(
                         R.string.download_failed_d_times_and_retry_s,
-                        runAttemptCount, hanimeName
+                        runAttemptCount, hanimeName ?: EMPTY_STRING
                     )
                 )
             }
@@ -181,7 +184,7 @@ class HanimeDownloadWorker(
                         }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // 创建，但是并没有下载接收到文件大小，删除文件
                 if (file.exists() && file.length() == 0L) file.delete()
             } finally {

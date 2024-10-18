@@ -29,6 +29,7 @@ class HMultiChoicesDialog(
 
     companion object {
         const val UNKNOWN_ADAPTER = -1
+        var adapterMap: SparseArray<HSearchTagAdapter>? = null
     }
 
     private val pageAdapter = SimpleFragmentStateAdapter(context.findActivity())
@@ -37,7 +38,7 @@ class HMultiChoicesDialog(
     private val tab = coreView.findViewById<TabLayout>(R.id.tl_tag)
     private val page = coreView.findViewById<ViewPager2>(R.id.vp_tag)
 
-    private val adapterMap: SparseArray<HSearchTagAdapter> = SparseArray()
+    val adapterMap: SparseArray<HSearchTagAdapter>
     private val nameResList = mutableListOf<Int>()
 
     private var onSave: ((AlertDialog) -> Unit)? = null
@@ -54,6 +55,9 @@ class HMultiChoicesDialog(
     }
 
     init {
+        HMultiChoicesDialog.adapterMap = SparseArray()
+        adapterMap = HMultiChoicesDialog.adapterMap!!
+
         page.adapter = pageAdapter
         page.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 
@@ -82,7 +86,11 @@ class HMultiChoicesDialog(
         val tagAdapter = HSearchTagAdapter()
         adapterMap[scopeNameRes ?: UNKNOWN_ADAPTER] = tagAdapter
         nameResList += scopeNameRes ?: UNKNOWN_ADAPTER
-        pageAdapter.addFragment { HCheckBoxFragment(tagAdapter, items, spanCount) }
+        pageAdapter.addFragment {
+            HCheckBoxFragment.newInstance(
+                scopeNameRes ?: UNKNOWN_ADAPTER, items, spanCount
+            )
+        }
     }
 
     fun setOnSaveListener(action: (AlertDialog) -> Unit) {
@@ -136,6 +144,9 @@ class HMultiChoicesDialog(
                 tab.setText(nameResList[pos])
             }
         }
-        dialog.showWithBlurEffect(onDismiss)
+        dialog.showWithBlurEffect(DialogInterface.OnDismissListener {
+            onDismiss?.onDismiss(it)
+            HMultiChoicesDialog.adapterMap = null
+        })
     }
 }
