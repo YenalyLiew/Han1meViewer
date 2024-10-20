@@ -14,7 +14,6 @@ import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.startActivity
 
@@ -48,7 +47,7 @@ class HanimeMyListVideoAdapter : BaseDifferAdapter<HanimeInfo, QuickViewHolder>(
     }
 
     override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfo?) {
-        item.notNull()
+        item ?: return
         holder.getView<TextView>(R.id.title).text = item.title
         holder.getView<ImageView>(R.id.cover).load(item.coverUrl) {
             crossfade(true)
@@ -69,7 +68,7 @@ class HanimeMyListVideoAdapter : BaseDifferAdapter<HanimeInfo, QuickViewHolder>(
             viewHolder.itemView.apply {
                 setOnClickListener {
                     val position = viewHolder.bindingAdapterPosition
-                    val item = getItem(position).notNull()
+                    val item = getItem(position) ?: return@setOnClickListener
                     val videoCode = item.videoCode
                     context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
                 }

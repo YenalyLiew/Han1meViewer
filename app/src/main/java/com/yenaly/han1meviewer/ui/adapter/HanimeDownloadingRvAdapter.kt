@@ -27,7 +27,6 @@ import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadingBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
 import com.yenaly.han1meviewer.util.await
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.utils.formatFileSize
@@ -88,7 +87,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         position: Int,
         item: HanimeDownloadEntity?,
     ) {
-        item.notNull()
+        item ?: return
         holder.binding.tvTitle.text = item.title
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
@@ -113,7 +112,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
     ) {
         if (payloads.isEmpty() || payloads.first() == 0)
             return super.onBindViewHolder(holder, position, item, payloads)
-        item.notNull()
+        item ?: return
         val bitset = payloads.first() as Int
         if (bitset and DOWNLOADING != 0) {
             holder.binding.tvSize.text = spannable {
@@ -141,7 +140,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         ).also { viewHolder ->
             viewHolder.binding.btnStart.setOnClickListener {
                 val pos = viewHolder.bindingAdapterPosition
-                val item = getItem(pos).notNull()
+                val item = getItem(pos) ?: return@setOnClickListener
                 if (item.isDownloading) {
                     item.isDownloading = false
                     fragment.viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
@@ -156,7 +155,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
             }
             viewHolder.binding.btnCancel.setOnClickListener {
                 val pos = viewHolder.bindingAdapterPosition
-                val item = getItem(pos).notNull()
+                val item = getItem(pos) ?: return@setOnClickListener
                 context.showAlertDialog {
                     setTitle(R.string.sure_to_delete)
                     setMessage(

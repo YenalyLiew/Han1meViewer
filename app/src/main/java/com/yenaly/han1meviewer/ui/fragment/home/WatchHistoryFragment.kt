@@ -14,7 +14,6 @@ import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.WatchHistoryRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
@@ -50,7 +49,7 @@ class WatchHistoryFragment : YenalyFragment<FragmentPageListBinding>(),
         binding.srlPageList.finishRefreshWithNoMoreData()
         historyAdapter.setStateViewLayout(R.layout.layout_empty_view)
         historyAdapter.setOnItemLongClickListener { _, _, position ->
-            val data = historyAdapter.getItem(position).notNull()
+            val data = historyAdapter.getItem(position) ?: return@setOnItemLongClickListener true
             requireContext().showAlertDialog {
                 setTitle(R.string.delete_history)
                 setMessage(getString(R.string.sure_to_delete_s, data.title))

@@ -8,7 +8,6 @@ import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.model.Playlists
 import com.yenaly.han1meviewer.ui.fragment.home.MyPlaylistFragment
-import com.yenaly.han1meviewer.util.notNull
 
 /**
  * @project Han1meViewer
@@ -27,7 +26,7 @@ class PlaylistRvAdapter(private val fragment: Fragment) :
         position: Int,
         item: Playlists.Playlist?,
     ) {
-        item.notNull()
+        item ?: return
         holder.setText(R.id.tv_title, item.title)
         holder.setText(R.id.tv_count, item.total.toString())
     }
@@ -41,7 +40,7 @@ class PlaylistRvAdapter(private val fragment: Fragment) :
             check(fragment is MyPlaylistFragment)
             viewHolder.itemView.setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
+                val item = getItem(position) ?: return@setOnClickListener
                 fragment.listCode = item.listCode
                 fragment.listTitle = item.title
                 fragment.getNewPlaylistItems()

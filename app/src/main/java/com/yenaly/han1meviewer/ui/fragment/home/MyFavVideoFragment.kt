@@ -21,7 +21,6 @@ import com.yenaly.han1meviewer.ui.adapter.HanimeMyListVideoAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.fragment.LoginNeededFragmentMixin
 import com.yenaly.han1meviewer.ui.viewmodel.MyListViewModel
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.showShortToast
@@ -61,7 +60,7 @@ class MyFavVideoFragment : YenalyFragment<FragmentPageListBinding>(),
         binding.state.init()
 
         adapter.setOnItemLongClickListener { _, _, position ->
-            val item = adapter.getItem(position).notNull()
+            val item = adapter.getItem(position) ?: return@setOnItemLongClickListener true
             requireContext().showAlertDialog {
                 setTitle(R.string.delete_fav)
                 setMessage(getString(R.string.sure_to_delete_s, item.title))

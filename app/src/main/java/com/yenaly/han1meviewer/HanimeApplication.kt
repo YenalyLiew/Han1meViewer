@@ -50,9 +50,18 @@ class HanimeApplication : YenalyApplication() {
         // 用于处理 Firebase Analytics 初始化
         Firebase.analytics.setAnalyticsCollectionEnabled(Preferences.isAnalyticsEnabled)
         // 用于处理 Firebase Crashlytics 初始化
-        Firebase.crashlytics.setCustomKeys {
-            key(FirebaseConstants.APP_LANGUAGE, LanguageHelper.preferredLanguage.toLanguageTag())
-            key(FirebaseConstants.VERSION_SOURCE, BuildConfig.HA1_VERSION_SOURCE)
+        Firebase.crashlytics.apply {
+            isCrashlyticsCollectionEnabled = !BuildConfig.DEBUG
+            setCustomKeys {
+                key(
+                    FirebaseConstants.APP_LANGUAGE,
+                    LanguageHelper.preferredLanguage.toLanguageTag()
+                )
+                key(
+                    FirebaseConstants.VERSION_SOURCE,
+                    BuildConfig.HA1_VERSION_SOURCE
+                )
+            }
         }
         // 用于处理 Firebase Remote Config 初始化
         Firebase.remoteConfig.apply {

@@ -38,7 +38,6 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
 import com.yenaly.han1meviewer.ui.adapter.HKeyframeRvAdapter
 import com.yenaly.han1meviewer.ui.adapter.VideoSpeedAdapter
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.OrientationManager
@@ -216,7 +215,7 @@ class HJzvdStd @JvmOverloads constructor(
         }
         HKeyframeRvAdapter(videoCode).apply {
             setOnItemClickListener { _, _, position ->
-                val keyframe = getItem(position).notNull()
+                val keyframe = getItem(position) ?: return@setOnItemClickListener
                 mediaInterface?.seekTo(keyframe.position)
                 startProgressTimer()
             }

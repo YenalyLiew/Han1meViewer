@@ -340,7 +340,8 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                                 Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
                     }
                     requireActivity().startActivity(intent)
-                } catch (e: SecurityException) {
+                } catch (e: Exception) {
+                    // 竟然还有手机不支持打开的
                     showShortToast(R.string.action_app_open_by_default_settings_not_support)
                     e.printStackTrace()
                 }

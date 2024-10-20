@@ -53,6 +53,7 @@ suspend fun <T : Any> BaseDifferAdapter<T, *>.awaitSubmitList(list: List<T>?) =
  */
 @OptIn(ExperimentalContracts::class)
 @Suppress("NOTHING_TO_INLINE")
+@Deprecated("Use safe call instead, this can easily cause NPE.", ReplaceWith("this ?: return"))
 inline fun <T> T?.notNull(): T {
     contract {
         returns() implies (this@notNull != null)

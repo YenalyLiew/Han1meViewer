@@ -8,7 +8,6 @@ import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
-import com.yenaly.han1meviewer.util.notNull
 
 /**
  * @project Han1meViewer
@@ -47,7 +46,7 @@ class HanimeSearchHistoryRvAdapter :
         position: Int,
         item: SearchHistoryEntity?,
     ) {
-        item.notNull()
+        item ?: return
         holder.setText(R.id.tv_text, item.query)
     }
 
