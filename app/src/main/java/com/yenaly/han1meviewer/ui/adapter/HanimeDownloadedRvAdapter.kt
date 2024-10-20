@@ -18,7 +18,6 @@ import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadedBinding
 import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadedFragment
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.han1meviewer.util.openDownloadedHanimeVideoLocally
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
@@ -66,7 +65,7 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
         position: Int,
         item: HanimeDownloadEntity?,
     ) {
-        item.notNull()
+        item ?: return
         holder.binding.tvTitle.text = item.title
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
@@ -96,7 +95,7 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
         ).also { viewHolder ->
             viewHolder.itemView.setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
+                val item = getItem(position) ?: return@setOnClickListener
                 context.activity?.startActivity<VideoActivity>(VIDEO_CODE to item.videoCode)
             }
             viewHolder.binding.btnDelete.setOnClickListener {
@@ -118,7 +117,7 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
             }
             viewHolder.binding.btnLocalPlayback.setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
+                val item = getItem(position) ?: return@setOnClickListener
                 context.openDownloadedHanimeVideoLocally(item.videoUri, onFileNotFound = {
                     context.showAlertDialog {
                         setTitle(R.string.video_not_exist)

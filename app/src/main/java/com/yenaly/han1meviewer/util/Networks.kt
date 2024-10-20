@@ -12,7 +12,6 @@ import java.util.concurrent.Executor
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-@Suppress("BlockingMethodInNonBlockingContext")
 suspend fun <R> ListenableFuture<R>.await(): R {
     // Fast path
     if (isDone) {

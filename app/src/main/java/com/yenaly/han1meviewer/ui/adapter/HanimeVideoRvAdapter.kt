@@ -26,7 +26,6 @@ import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.SearchActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.fragment.home.HomePageFragment
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.copyTextToClipboard
 import com.yenaly.yenaly_libs.utils.dp
@@ -68,7 +67,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
     }
 
     override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: HanimeInfo?) {
-        item.notNull()
+        item ?: return
         // stackoverflow-64362192
         when (getItemViewType(position)) {
             HanimeInfo.SIMPLIFIED -> {
@@ -181,7 +180,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                 if (context !is PreviewActivity) {
                     setOnClickListener {
                         val position = viewHolder.bindingAdapterPosition
-                        val item = getItem(position).notNull()
+                        val item = getItem(position) ?: return@setOnClickListener
                         if (item.isPlaying) {
                             showShortToast(R.string.watching_this_video_now)
                         } else {
@@ -191,7 +190,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                     }
                     setOnLongClickListener {
                         val position = viewHolder.bindingAdapterPosition
-                        val item = getItem(position).notNull()
+                        val item = getItem(position) ?: return@setOnLongClickListener true
                         copyTextToClipboard("${item.title}\n${getHanimeVideoLink(item.videoCode)}")
                         showShortToast(R.string.copy_to_clipboard)
                         return@setOnLongClickListener true

@@ -26,7 +26,6 @@ import com.yenaly.han1meviewer.logic.model.VideoComments
 import com.yenaly.han1meviewer.ui.fragment.video.ChildCommentPopupFragment
 import com.yenaly.han1meviewer.ui.fragment.video.CommentFragment
 import com.yenaly.han1meviewer.ui.popup.ReplyPopup
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.makeBundle
 import com.yenaly.yenaly_libs.utils.showShortToast
 
@@ -89,7 +88,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         position: Int,
         item: VideoComments.VideoComment?,
     ) {
-        item.notNull()
+        item ?: return
 
         // 在release版中，主评论内容无法被复制，此为解决方法。
         holder.binding.tvContent.fixTextSelection()
@@ -121,7 +120,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         payloads: List<Any>,
     ) {
         if (payloads.isEmpty()) return super.onBindViewHolder(holder, position, item, payloads)
-        item.notNull()
+        item ?: return
         if (payloads.first() == THUMB) {
             holder.binding.btnThumbUp.setThumbUpIcon(item.post.likeCommentStatus)
             holder.binding.btnThumbDown.setThumbDownIcon(item.post.unlikeCommentStatus)
@@ -141,7 +140,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
         ).also { viewHolder ->
             viewHolder.binding.btnViewMoreReplies.setOnClickListener {
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
+                val item = getItem(position) ?: return@setOnClickListener
                 check(fragment != null && fragment is CommentFragment)
                 item.realReplyId.let { id ->
                     ChildCommentPopupFragment().makeBundle(
@@ -155,7 +154,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                     return@setOnClickListener
                 }
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
+                val item = getItem(position) ?: return@setOnClickListener
 
                 if (item.isChildComment) {
                     check(fragment != null && fragment is ChildCommentPopupFragment)
@@ -177,7 +176,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                     return@setOnClickListener
                 }
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
+                val item = getItem(position) ?: return@setOnClickListener
                 if (item.isChildComment) {
                     check(fragment != null && fragment is ChildCommentPopupFragment)
                     fragment.viewModel.likeChildComment(
@@ -198,7 +197,7 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                     return@setOnClickListener
                 }
                 val position = viewHolder.bindingAdapterPosition
-                val item = getItem(position).notNull()
+                val item = getItem(position) ?: return@setOnClickListener
 
                 ReplyPopup(context).also { commentPopup ->
                     this.replyPopup = commentPopup

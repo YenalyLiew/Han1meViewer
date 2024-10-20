@@ -12,7 +12,6 @@ import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemWatchHistoryBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.datetime.Instant
@@ -55,7 +54,7 @@ class WatchHistoryRvAdapter :
         position: Int,
         item: WatchHistoryEntity?,
     ) {
-        item.notNull()
+        item ?: return
         holder.binding.ivCover.load(item.coverUrl) {
             crossfade(true)
         }
@@ -81,7 +80,7 @@ class WatchHistoryRvAdapter :
             viewHolder.itemView.apply {
                 setOnClickListener {
                     val position = viewHolder.bindingAdapterPosition
-                    val item = getItem(position).notNull()
+                    val item = getItem(position) ?: return@setOnClickListener
                     val videoCode = item.videoCode
                     context.activity?.startActivity<VideoActivity>(VIDEO_CODE to videoCode)
                 }

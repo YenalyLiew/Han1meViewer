@@ -18,7 +18,6 @@ import com.yenaly.han1meviewer.ui.activity.PreviewActivity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.han1meviewer.ui.popup.CoilImageLoader
 import com.yenaly.han1meviewer.ui.view.BlurTransformation
-import com.yenaly.han1meviewer.util.notNull
 import com.yenaly.yenaly_libs.utils.startActivity
 
 /**
@@ -40,7 +39,7 @@ class HanimePreviewNewsRvAdapter :
         position: Int,
         item: HanimePreview.PreviewInfo?,
     ) {
-        item.notNull()
+        item ?: return
         holder.binding.ivCoverBig.load(item.coverUrl) {
             crossfade(true)
             transformations(BlurTransformation(context))
@@ -74,7 +73,7 @@ class HanimePreviewNewsRvAdapter :
             viewHolder.itemView.apply {
                 setOnClickListener {
                     val position = viewHolder.bindingAdapterPosition
-                    val item = getItem(position).notNull()
+                    val item = getItem(position) ?: return@setOnClickListener
                     if (context is PreviewActivity) {
                         context.startActivity<VideoActivity>(VIDEO_CODE to item.videoCode)
                     }
