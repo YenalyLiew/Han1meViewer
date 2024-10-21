@@ -47,6 +47,11 @@ class HanimeApplication : YenalyApplication() {
         DynamicColors.applyToActivitiesIfAvailable(this)
         HProxySelector.rebuildNetwork()
 
+        initFirebase()
+        initNotificationChannel()
+    }
+
+    private fun initFirebase() {
         // 用于处理 Firebase Analytics 初始化
         Firebase.analytics.setAnalyticsCollectionEnabled(Preferences.isAnalyticsEnabled)
         // 用于处理 Firebase Crashlytics 初始化
@@ -74,7 +79,6 @@ class HanimeApplication : YenalyApplication() {
                 AppViewModel.getLatestVersion(delayMillis = 200)
             }
         }
-        initNotificationChannel()
     }
 
     private fun initNotificationChannel() {

@@ -6,7 +6,7 @@
 
 要使用此应用，您的 Android 版本必须**不小于 7.0**。
 
-本项目仅用于学习和交流代码，不可闭源。
+本项目仅用于学习和交流代码。
 
 An **unofficial** [Hanime1](https://hanime1.me/) Application for Android.
 
