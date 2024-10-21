@@ -26,3 +26,6 @@
 -keepnames class * extends androidx.fragment.app.Fragment
 
 -keep class * extends cn.jzvd.** { *; }
+
+-keep class com.google.android.gms.** { *; }
+-keep interface com.google.android.gms.** { *; }

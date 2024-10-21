@@ -95,6 +95,9 @@ android {
         jvmTarget = JavaVersion.VERSION_21.toString()
         freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all-compatibility")
     }
+    lint {
+        disable += setOf("EnsureInitializerMetadata")
+    }
     namespace = "com.yenaly.han1meviewer"
 }
 

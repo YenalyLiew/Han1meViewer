@@ -347,4 +347,10 @@ class SystemMediaKernel(jzvd: Jzvd) : JZMediaSystem(jzvd), HMediaKernel {
             mediaPlayer?.pause()
         }
     }
+
+    // #issue-crashlytics-c8636c4bb0b8516675cbeb9e8776bf0b:
+    // 有些机器到这里可能会报空指针异常，所以加了个判断，但是不知道为什么会报空指针异常
+    override fun isPlaying(): Boolean {
+        return mediaPlayer?.isPlaying == true
+    }
 }
