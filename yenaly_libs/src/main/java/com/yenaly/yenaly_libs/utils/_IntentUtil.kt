@@ -351,6 +351,13 @@ infix fun Fragment.browse(uri: String) {
     startActivity(intent)
 }
 
+infix fun Context.browse(uri: String) {
+    val mUri = Uri.parse(uri)
+    val intent = Intent(Intent.ACTION_VIEW, mUri)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    startActivity(intent)
+}
+
 /**
  * 快捷给Fragment传值
  *

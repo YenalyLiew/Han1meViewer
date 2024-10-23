@@ -19,7 +19,7 @@ import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_MATCH_PARENT
 import com.yenaly.han1meviewer.VIDEO_LAYOUT_WRAP_CONTENT
 import com.yenaly.han1meviewer.VideoCoverSize
-import com.yenaly.han1meviewer.getHanimeVideoLink
+import com.yenaly.han1meviewer.getHanimeShareText
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.activity.PreviewActivity
@@ -191,7 +191,7 @@ class HanimeVideoRvAdapter(private val videoWidthType: Int = -1) : // videoWidth
                     setOnLongClickListener {
                         val position = viewHolder.bindingAdapterPosition
                         val item = getItem(position) ?: return@setOnLongClickListener true
-                        copyTextToClipboard("${item.title}\n${getHanimeVideoLink(item.videoCode)}")
+                        copyTextToClipboard(getHanimeShareText(item.title, item.videoCode))
                         showShortToast(R.string.copy_to_clipboard)
                         return@setOnLongClickListener true
                     }

@@ -1,4 +1,4 @@
-@file:JvmName("PermissionUtil")
+@file:JvmName("ActivityResultUtil")
 
 package com.yenaly.yenaly_libs.utils
 
@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -45,13 +46,20 @@ suspend fun <I, O> Context.awaitActivityResult(
 
     return withContext(Dispatchers.Main) {
         lifecycle.addObserver(observer)
-        suspendCoroutine { cont -> // No cancellation support here since we cannot cancel a launched Intent
-            launcher = activity.activityResultRegistry.register(key, contract) {
-                launcher?.unregister()
-                lifecycle.removeObserver(observer)
-                cont.resume(it)
-            }.apply { launch(input) }
-        }
+        suspendCoroutine(object : Function1<Continuation<O>, Unit> {
+            private var resumed = false
+            override fun invoke(cont: Continuation<O>) {
+                // #issue-crashlytics-7b7eaa428e2541056ce949dff5fe4c55
+                launcher = activity.activityResultRegistry.register(key, contract) {
+                    if (!resumed) {
+                        resumed = true
+                        launcher?.unregister()
+                        lifecycle.removeObserver(observer)
+                        cont.resume(it)
+                    }
+                }.apply { launch(input) }
+            }
+        })
     }
 }
 

@@ -57,6 +57,9 @@ inline fun Context.createAlertDialog(action: MaterialAlertDialogBuilder.() -> Un
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun AlertDialog.showWithBlurEffect(dismissListener: DialogInterface.OnDismissListener? = null) {
+    // #issue-crashlytics-41e42043fa7396bab68df6aec4578fd2
+    val activity = context.activity
+    if (activity == null || activity.isFinishing) return
     createDecorBlurEffect(dismissListener)
     show()
 }

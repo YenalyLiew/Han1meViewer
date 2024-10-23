@@ -351,5 +351,7 @@
     <string name="refresh_page_or_login_expired">刷新一下页面试试\n也可能登入已过期</string>
     <string name="website_blocked_msg_2">网站被加固，修改为另外一个域名可能有奇效！</string>
     <string name="website_blocked_msg_3">可以提醒一下开发者，但不要催，网站被加固跟他没有任何关系哦～</string>
+    <string name="action_not_support">此设备不支持该操作</string>
+
 
 </resources>

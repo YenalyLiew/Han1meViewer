@@ -42,6 +42,15 @@ val hanimeSpannable
 fun getHanimeVideoLink(videoCode: String) = HANIME_BASE_URL + "watch?v=" + videoCode
 
 /**
+ * 獲取 Hanime 影片分享文本
+ */
+fun getHanimeShareText(title: String, videoCode: String): String = buildString {
+    appendLine(title)
+    appendLine(getHanimeVideoLink(videoCode))
+    append("- From Han1meViewer -")
+}
+
+/**
  * 獲取 Hanime 影片**官方**下載地址
  */
 fun getHanimeVideoDownloadLink(videoCode: String) =

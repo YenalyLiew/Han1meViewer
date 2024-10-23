@@ -345,5 +345,6 @@ Recommendations are as follows:\n
     <string name="refresh_page_or_login_expired">Try refreshing the page\nor your login may have expired</string>
     <string name="website_blocked_msg_2">The website is blocked, changing to another domain name might work!</string>
     <string name="website_blocked_msg_3">You can notify the developer, but don\'t rush them, the website being blocked is not their fault~</string>
+    <string name="action_not_support">This device does not support this action</string>
 
 </resources>

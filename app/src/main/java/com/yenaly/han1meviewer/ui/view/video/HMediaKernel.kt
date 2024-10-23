@@ -81,7 +81,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
         mMediaHandlerThread.start()
         mMediaHandler = Handler(Looper.getMainLooper())
         handler = Handler(Looper.getMainLooper())
-        mMediaHandler.post {
+        mMediaHandler?.post {
             val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
             val trackSelector = DefaultTrackSelector(context, videoTrackSelectionFactory)
 
@@ -137,7 +137,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun start() {
-        mMediaHandler.post {
+        mMediaHandler?.post {
             _exoPlayer?.playWhenReady = true
         }
     }
@@ -161,7 +161,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun pause() {
-        mMediaHandler.post {
+        mMediaHandler?.post {
             _exoPlayer?.playWhenReady = false
         }
     }
@@ -171,7 +171,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun seekTo(time: Long) {
-        mMediaHandler.post {
+        mMediaHandler?.post {
             if (time != prevSeek) {
                 _exoPlayer?.let { exoPlayer ->
                     if (time >= exoPlayer.bufferedPosition) {
@@ -190,7 +190,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
             val tmpHandlerThread = mMediaHandlerThread
             val tmpMediaPlayer = exoPlayer
             SAVED_SURFACE = null
-            mMediaHandler.post {
+            mMediaHandler?.post {
                 tmpMediaPlayer.release() //release就不能放到主线程里，界面会卡顿
                 tmpHandlerThread.quit()
                 _exoPlayer = null
@@ -207,13 +207,13 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
     }
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {
-        mMediaHandler.post {
+        mMediaHandler?.post {
             _exoPlayer?.volume = (leftVolume + rightVolume) / 2
         }
     }
 
     override fun setSpeed(speed: Float) {
-        mMediaHandler.post {
+        mMediaHandler?.post {
             val playbackParams = PlaybackParameters(speed, 1.0F)
             _exoPlayer?.playbackParameters = playbackParams
         }
@@ -229,14 +229,14 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
 
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
         if (playWhenReady && _exoPlayer?.playbackState == Player.STATE_READY) {
-            handler.post {
+            handler?.post {
                 jzvd.onStatePlaying()
             }
         }
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
-        handler.post {
+        handler?.post {
             when (playbackState) {
                 Player.STATE_BUFFERING -> {
                     jzvd.onStatePreparingPlaying()
@@ -260,7 +260,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
 
     override fun onPlayerError(error: PlaybackException) {
         Log.e(TAG, "onPlayerError: $error")
-        handler.post { jzvd.onError(1000, 1000) }
+        handler?.post { jzvd.onError(1000, 1000) }
     }
 
     override fun onPositionDiscontinuity(
@@ -269,7 +269,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
         reason: Int,
     ) {
         if (reason == Player.DISCONTINUITY_REASON_SEEK) {
-            handler.post { jzvd.onSeekComplete() }
+            handler?.post { jzvd.onSeekComplete() }
         }
     }
 
@@ -315,7 +315,7 @@ class SystemMediaKernel(jzvd: Jzvd) : JZMediaSystem(jzvd), HMediaKernel {
     // #issue-26: 有的手機長按快進會報錯，合理懷疑是不是因爲沒有加 post
     // #issue-28: 有的平板长按快进也会报错，结果是 IllegalArgumentException，很奇怪，两次 try-catch 处理试试。
     override fun setSpeed(speed: Float) {
-        mMediaHandler.post {
+        mMediaHandler?.post {
             try {
                 val pp = mediaPlayer.playbackParams
                 pp.speed = speed.absoluteValue
@@ -343,7 +343,7 @@ class SystemMediaKernel(jzvd: Jzvd) : JZMediaSystem(jzvd), HMediaKernel {
 
     // #issue-139: 部分机型暂停报错，没判空导致的
     override fun pause() {
-        mMediaHandler.post {
+        mMediaHandler?.post {
             mediaPlayer?.pause()
         }
     }

@@ -29,6 +29,8 @@ import androidx.work.workDataOf
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.chad.library.adapter4.viewholder.DataBindingHolder
+import com.ctetin.expandabletextviewlibrary.ExpandableTextView
+import com.ctetin.expandabletextviewlibrary.app.LinkType
 import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
@@ -43,6 +45,7 @@ import com.yenaly.han1meviewer.VideoCoverSize
 import com.yenaly.han1meviewer.advancedSearchMapOf
 import com.yenaly.han1meviewer.databinding.FragmentVideoIntroductionBinding
 import com.yenaly.han1meviewer.databinding.ItemVideoIntroductionBinding
+import com.yenaly.han1meviewer.getHanimeShareText
 import com.yenaly.han1meviewer.getHanimeVideoDownloadLink
 import com.yenaly.han1meviewer.getHanimeVideoLink
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
@@ -416,6 +419,26 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
 
         override var binding: ItemVideoIntroductionBinding? = null
 
+        private val onLinkClickListener = object : ExpandableTextView.OnLinkClickListener {
+            override fun onLinkClickListener(
+                type: LinkType, content: String?, selfContent: String?
+            ) {
+                when (type) {
+                    LinkType.LINK_TYPE -> {
+                        // #issue-crashlytics-8a65dcf527b961e98d9991352e36a425
+                        try {
+                            content?.let(context::browse)
+                        } catch (_: Exception) {
+                            content?.copyToClipboard()
+                            showShortToast(R.string.copy_to_clipboard)
+                        }
+                    }
+
+                    else -> Unit
+                }
+            }
+        }
+
         override fun onBindViewHolder(
             holder: DataBindingHolder<ItemVideoIntroductionBinding>,
             item: HanimeVideo?,
@@ -425,6 +448,7 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
                 this@VideoIntroductionAdapter.binding = this
                 uploadTime.text = item.uploadTime?.format(LOCAL_DATE_FORMAT)
                 views.text = getString(R.string.s_view_times, item.views.toString())
+                tvIntroduction.linkClickListener = onLinkClickListener
                 tvIntroduction.setContent(item.introduction)
                 tags.tags = item.tags
                 tags.lifecycle = viewLifecycleOwner.lifecycle
@@ -605,8 +629,7 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
         }
 
         private fun ItemVideoIntroductionBinding.initShareButton(title: String) {
-            val shareText =
-                title + "\n" + getHanimeVideoLink(viewModel.videoCode) + "\n" + "- From Han1meViewer -"
+            val shareText = getHanimeShareText(title, viewModel.videoCode)
             btnShare.setOnClickListener {
                 shareText(shareText, getString(R.string.long_press_share_to_copy))
             }

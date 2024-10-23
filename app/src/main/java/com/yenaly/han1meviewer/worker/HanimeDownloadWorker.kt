@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -31,7 +29,9 @@ import com.yenaly.han1meviewer.util.DEF_VIDEO_TYPE
 import com.yenaly.han1meviewer.util.await
 import com.yenaly.han1meviewer.util.getDownloadedHanimeFile
 import com.yenaly.yenaly_libs.utils.showShortToast
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Request
 import okhttp3.Response
@@ -130,7 +130,13 @@ class HanimeDownloadWorker(
     private val successId = Random.nextInt()
     private val failId = Random.nextInt()
 
+    private val mainScope = CoroutineScope(Dispatchers.Main.immediate)
+
     override suspend fun doWork(): Result {
+
+        // 先初始化好，防止出现空指针异常
+        val hanimeName = this.hanimeName
+
         if (shouldDelete) return Result.success()
         if (runAttemptCount > 2) {
             return Result.failure(
@@ -141,14 +147,13 @@ class HanimeDownloadWorker(
                 )
             )
         } else if (runAttemptCount > 0) {
-            Handler(Looper.getMainLooper()).post {
+            mainScope.launch {
                 // #issue-crashlytics-e2c7b3bb39a096026b99d4d90861f09a:
-                // 他就是可能为空，但是我不知道为什么会为空
-                @Suppress("USELESS_ELVIS")
+                // hanimeName 他就是可能为空，但是我不知道为什么会为空
                 showShortToast(
                     context.getString(
                         R.string.download_failed_d_times_and_retry_s,
-                        runAttemptCount, hanimeName ?: EMPTY_STRING
+                        runAttemptCount, hanimeName
                     )
                 )
             }
