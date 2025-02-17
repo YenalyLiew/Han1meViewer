@@ -1,22 +1,15 @@
 package com.yenaly.yenaly_libs.base.frame
 
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.ViewGroup
 import android.view.Window
-import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.MenuRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.yenaly.yenaly_libs.R
-import com.yenaly.yenaly_libs.utils.dp
 
 /**
  * @author : Yenaly Liew
@@ -28,41 +21,6 @@ abstract class FrameFragment : Fragment {
     constructor(@LayoutRes resId: Int) : super(resId)
 
     val window: Window get() = requireActivity().window
-
-    private lateinit var loadingDialog: AlertDialog
-
-    @Deprecated("狗都不用")
-    @JvmOverloads
-    open fun showLoadingDialog(
-        loadingText: String = getString(R.string.yenaly_loading),
-        cancelable: Boolean = false,
-        dialogWidth: Int = 260.dp,
-        dialogHeight: Int = ViewGroup.LayoutParams.WRAP_CONTENT
-    ) {
-        val loadingDialogView =
-            LayoutInflater.from(activity).inflate(R.layout.yenaly_dialog_loading, null)
-        loadingDialogView.findViewById<TextView>(R.id.loading_text).text = loadingText
-        loadingDialog = MaterialAlertDialogBuilder(requireContext())
-            .setCancelable(cancelable)
-            .setView(loadingDialogView)
-            .create()
-        loadingDialog.show()
-        loadingDialog.window?.setLayout(dialogWidth, dialogHeight)
-    }
-
-    @Deprecated("狗都不用")
-    open fun hideLoadingDialog() {
-        if (this::loadingDialog.isInitialized) {
-            loadingDialog.hide()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (this::loadingDialog.isInitialized) {
-            loadingDialog.dismiss()
-        }
-    }
 
     /**
      * 快捷构建 Menu

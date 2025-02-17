@@ -1,7 +1,20 @@
 package com.yenaly.yenaly_libs.utils.view
 
 import com.google.android.material.appbar.AppBarLayout
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.math.abs
+
+fun AppBarLayout.offsetChanges(): Flow<Int> {
+    return callbackFlow {
+        val listener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+            trySend(verticalOffset)
+        }
+        addOnOffsetChangedListener(listener)
+        awaitClose { removeOnOffsetChangedListener(listener) }
+    }
+}
 
 /**
  * 用于监听AppBarLayout是否展开或折叠
