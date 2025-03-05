@@ -12,7 +12,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
@@ -28,30 +27,31 @@ import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
+import com.yenaly.han1meviewer.ui.activity.SettingsRouter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.pref.HPrivacyPreference
 import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
 import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
-import com.yenaly.han1meviewer.util.hanimeVideoLocalFolder
+import com.yenaly.han1meviewer.util.setSummaryConverter
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.util.showUpdateDialog
 import com.yenaly.han1meviewer.util.showWithBlurEffect
 import com.yenaly.yenaly_libs.ActivityManager
-import com.yenaly.yenaly_libs.base.preference.LongClickablePreference
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 import com.yenaly.yenaly_libs.utils.browse
-import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.folderSize
-import com.yenaly.yenaly_libs.utils.formatFileSize
+import com.yenaly.yenaly_libs.utils.formatFileSizeV2
 import com.yenaly.yenaly_libs.utils.showShortToast
 import com.yenaly.yenaly_libs.utils.startActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.toLocalDateTime
-import kotlin.concurrent.thread
 
 /**
  * @project Han1meViewer
@@ -67,12 +67,12 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         const val H_KEYFRAME_SETTINGS = "h_keyframe_settings"
         const val UPDATE = "update"
         const val ABOUT = "about"
-        const val DOWNLOAD_PATH = "download_path"
         const val CLEAR_CACHE = "clear_cache"
         const val SUBMIT_BUG = "submit_bug"
         const val FORUM = "forum"
         const val NETWORK_SETTINGS = "network_settings"
         const val APPLY_DEEP_LINKS = "apply_deep_links"
+        const val DOWNLOAD_SETTINGS = "download_settings"
 
         const val LAST_UPDATE_POPUP_TIME = "last_update_popup_time"
         const val UPDATE_POPUP_INTERVAL_DAYS = "update_popup_interval_days"
@@ -87,6 +87,8 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             by safePreference<Preference>(PLAYER_SETTINGS)
     private val hKeyframeSettings
             by safePreference<Preference>(H_KEYFRAME_SETTINGS)
+    private val downloadSettings
+            by safePreference<Preference>(DOWNLOAD_SETTINGS)
     private val update
             by safePreference<Preference>(UPDATE)
     private val useCIUpdateChannel
@@ -95,8 +97,6 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             by safePreference<SeekBarPreference>(UPDATE_POPUP_INTERVAL_DAYS)
     private val about
             by safePreference<Preference>(ABOUT)
-    private val downloadPath
-            by safePreference<LongClickablePreference>(DOWNLOAD_PATH)
     private val clearCache
             by safePreference<Preference>(CLEAR_CACHE)
     private val submitBug
@@ -150,11 +150,15 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             }
         }
         playerSettings.setOnPreferenceClickListener {
-            findNavController().navigate(R.id.action_homeSettingsFragment_to_playerSettingsFragment)
+            SettingsRouter.with(this).navigateWithinSettings(R.id.playerSettingsFragment)
             return@setOnPreferenceClickListener true
         }
         hKeyframeSettings.setOnPreferenceClickListener {
-            findNavController().navigate(R.id.action_homeSettingsFragment_to_hKeyframeSettingsFragment)
+            SettingsRouter.with(this).navigateWithinSettings(R.id.hKeyframeSettingsFragment)
+            return@setOnPreferenceClickListener true
+        }
+        downloadSettings.setOnPreferenceClickListener {
+            SettingsRouter.with(this).navigateWithinSettings(R.id.downloadSettingsFragment)
             return@setOnPreferenceClickListener true
         }
         about.apply {
@@ -169,26 +173,6 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 return@setOnPreferenceClickListener true
             }
         }
-        downloadPath.apply {
-            val path = hanimeVideoLocalFolder?.path
-            summary = path
-            setOnPreferenceClickListener {
-                requireContext().showAlertDialog {
-                    setTitle(R.string.not_allow_to_change)
-                    setMessage(
-                        getString(R.string.detailed_path_s, path) + "\n"
-                                + getString(R.string.long_press_pref_to_copy)
-                    )
-                    setPositiveButton(R.string.ok, null)
-                }
-                return@setOnPreferenceClickListener true
-            }
-            setOnPreferenceLongClickListener {
-                path.copyToClipboard()
-                showShortToast(R.string.copy_to_clipboard)
-                return@setOnPreferenceLongClickListener true
-            }
-        }
         clearCache.apply {
             val cacheDir = context.cacheDir
             var folderSize = cacheDir?.folderSize ?: 0L
@@ -199,16 +183,16 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                         setTitle(R.string.sure_to_clear)
                         setMessage(R.string.sure_to_clear_cache)
                         setPositiveButton(R.string.confirm) { _, _ ->
-                            thread {
+                            CoroutineScope(Dispatchers.IO).launch {
                                 if (cacheDir?.deleteRecursively() == true) {
                                     folderSize = cacheDir.folderSize
-                                    activity?.runOnUiThread {
+                                    withContext(Dispatchers.Main.immediate) {
                                         showShortToast(R.string.clear_success)
                                         summary = generateClearCacheSummary(folderSize)
                                     }
                                 } else {
                                     folderSize = cacheDir.folderSize
-                                    activity?.runOnUiThread {
+                                    withContext(Dispatchers.Main.immediate) {
                                         showShortToast(R.string.clear_failed)
                                         summary = generateClearCacheSummary(folderSize)
                                     }
@@ -235,7 +219,8 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
         networkSettings.apply {
             setOnPreferenceClickListener {
-                findNavController().navigate(R.id.action_homeSettingsFragment_to_networkSettingsFragment)
+                SettingsRouter.with(this@HomeSettingsFragment)
+                    .navigateWithinSettings(R.id.networkSettingsFragment)
                 return@setOnPreferenceClickListener true
             }
         }
@@ -257,11 +242,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
             }
         }
         updatePopupIntervalDays.apply {
-            summary = Preferences.updatePopupIntervalDays.toIntervalDaysPrettyString()
-            setOnPreferenceChangeListener { _, newValue ->
-                summary = (newValue as Int).toIntervalDaysPrettyString()
-                return@setOnPreferenceChangeListener true
-            }
+            setSummaryConverter(defValue = 0, converter = ::toIntervalDaysPrettyString)
         }
         useAnalytics.apply {
             setOnPreferenceChangeListener { _, newValue ->
@@ -363,7 +344,7 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
 
     private fun generateClearCacheSummary(size: Long): CharSequence {
         return spannable {
-            size.formatFileSize().span {
+            size.formatFileSizeV2().span {
                 style(Typeface.BOLD)
             }
             " ".text()
@@ -371,10 +352,10 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
         }
     }
 
-    private fun Int.toIntervalDaysPrettyString(): String {
-        return when (this) {
+    private fun toIntervalDaysPrettyString(value: Int): String {
+        return when (value) {
             0 -> getString(R.string.at_any_time)
-            else -> getString(R.string.which_days, this)
+            else -> getString(R.string.which_days, value)
         } + "\n" + getString(
             R.string.last_update_popup_check_time,
             Instant.fromEpochSeconds(Preferences.lastUpdatePopupTime)

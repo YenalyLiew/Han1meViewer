@@ -23,9 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import androidx.viewpager2.widget.ViewPager2
-import androidx.work.ExistingWorkPolicy
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.chad.library.adapter4.viewholder.DataBindingHolder
@@ -35,6 +32,7 @@ import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.ADVANCED_SEARCH_MAP
 import com.yenaly.han1meviewer.HAdvancedSearch
+import com.yenaly.han1meviewer.HCacheManager
 import com.yenaly.han1meviewer.HanimeResolution
 import com.yenaly.han1meviewer.LOCAL_DATE_FORMAT
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
@@ -62,6 +60,7 @@ import com.yenaly.han1meviewer.ui.viewmodel.VideoViewModel
 import com.yenaly.han1meviewer.util.requestPostNotificationPermission
 import com.yenaly.han1meviewer.util.setDrawableTop
 import com.yenaly.han1meviewer.util.showAlertDialog
+import com.yenaly.han1meviewer.worker.HanimeDownloadManagerV2
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.browse
@@ -127,10 +126,7 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
         VideoColumnTitleAdapter(title = R.string.related_video)
     private val relatedAdapter = HanimeVideoRvAdapter(VIDEO_LAYOUT_MATCH_PARENT)
 
-    private val multi by unsafeLazy {
-        // 后期添加
-        ConcatAdapter()
-    }
+    private var multi = ConcatAdapter()
 
     private val layoutManager by unsafeLazy {
         GridLayoutManager(context, 1).apply {
@@ -181,11 +177,15 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
 
                         is VideoLoadingState.Success -> {
                             val video = state.info
+                            // 重新赋值，防止重复添加
+                            multi = ConcatAdapter()
+                            binding.rvVideoIntro.adapter = multi
+
                             mutex.withLock {
                                 videoIntroAdapter.submit(video) // 挂起是为了让它在首位
                             }
                             multi.addAdapter(videoIntroAdapter)
-                            if (video.playlist != null) {
+                            if (video.playlist != null && !viewModel.fromDownload) {
                                 playlistTitleAdapter.subtitle = video.playlist.playlistName
                                 multi.addAdapter(playlistTitleAdapter)
                                 playlistAdapter.submitList(video.playlist.video)
@@ -194,10 +194,12 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
                                 multi.removeAdapter(playlistTitleAdapter)
                                 multi.removeAdapter(playlistWrapper)
                             }
-                            multi.addAdapter(relatedTitleAdapter)
-                            relatedAdapter.submitList(video.relatedHanimes)
-                            multi.addAdapter(relatedAdapter)
-                            layoutManager.spanCount = video.relatedHanimes.eachGridCounts
+                            if (!viewModel.fromDownload) {
+                                multi.addAdapter(relatedTitleAdapter)
+                                relatedAdapter.submitList(video.relatedHanimes)
+                                multi.addAdapter(relatedAdapter)
+                                layoutManager.spanCount = video.relatedHanimes.eachGridCounts
+                            }
                         }
 
                         is VideoLoadingState.NoContent -> Unit
@@ -244,28 +246,24 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
                 if (entity == null) { // 没下
                     viewModel.hanimeVideoFlow.value?.let {
                         val checkedQuality = requireNotNull(checkedQuality)
-                        notifyDownload(it.title, checkedQuality) {
+                        notifyDownload(it, oldQuality = null, newQuality = checkedQuality) {
                             launch {
                                 enqueueDownloadWork(it)
                             }
                         }
                     }
-                    return@collect
-                }
-                if (entity.isDownloaded) {
-                    // #issue-194: 重复下载提示&重新下载
+                } else {
                     viewModel.hanimeVideoFlow.value?.let {
+                        // #issue-194: 重复下载提示&重新下载
                         val checkedQuality = requireNotNull(checkedQuality)
-                        notifyDownload(it.title, checkedQuality, isRedownload = true) {
+                        notifyDownload(
+                            it, oldQuality = entity.quality, newQuality = checkedQuality
+                        ) {
                             launch {
-                                enqueueDownloadWork(it, isRedownload = true)
+                                enqueueDownloadWork(it, redownload = true)
                             }
                         }
                     }
-                } else {
-                    // 没下完或下過了
-                    if (entity.isDownloading) showShortToast(R.string.downloading_now)
-                    else showShortToast(R.string.already_in_queue)
                 }
             }
         }
@@ -310,28 +308,39 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
     }
 
     private fun notifyDownload(
-        title: String, quality: String, isRedownload: Boolean = false,
+        info: HanimeVideo, oldQuality: String?, newQuality: String,
         action: () -> Unit
     ) {
         val notifyMsg = spannable {
             getString(R.string.download_video_detail_below).text()
             newline(2)
+            if (oldQuality != null) {
+                getString(R.string.check_video_exists_in_download, oldQuality).text()
+                newline(2)
+            }
             getString(R.string.name_with_colon).text()
             newline()
-            title.span {
+            info.title.span {
                 style(Typeface.BOLD)
             }
             newline()
             getString(R.string.quality_with_colon).text()
             newline()
-            quality.span {
-                style(Typeface.BOLD)
+            if (oldQuality != null && oldQuality != newQuality) {
+                "$oldQuality → ".text()
+                newQuality.span {
+                    style(Typeface.BOLD)
+                }
+            } else {
+                newQuality.span {
+                    style(Typeface.BOLD)
+                }
             }
             newline(2)
             getString(R.string.after_download_tips).text()
         }
         requireContext().showAlertDialog {
-            setTitle(if (isRedownload) R.string.sure_to_redownload else R.string.sure_to_download)
+            setTitle(if (oldQuality != null) R.string.sure_to_redownload else R.string.sure_to_download)
             setMessage(notifyMsg)
             setPositiveButton(R.string.sure) { _, _ ->
                 action.invoke()
@@ -343,31 +352,30 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
         }
     }
 
-    private suspend fun enqueueDownloadWork(videoData: HanimeVideo, isRedownload: Boolean = false) {
+    private suspend fun enqueueDownloadWork(videoData: HanimeVideo, redownload: Boolean = false) {
         requireContext().requestPostNotificationPermission()
         val checkedQuality = requireNotNull(checkedQuality)
-        val data = workDataOf(
-            HanimeDownloadWorker.QUALITY to checkedQuality,
-            HanimeDownloadWorker.DOWNLOAD_URL to videoData.videoUrls[checkedQuality]?.link,
-            HanimeDownloadWorker.VIDEO_TYPE to videoData.videoUrls[checkedQuality]?.suffix,
-            HanimeDownloadWorker.HANIME_NAME to videoData.title,
-            HanimeDownloadWorker.VIDEO_CODE to viewModel.videoCode,
-            HanimeDownloadWorker.COVER_URL to videoData.coverUrl,
-            HanimeDownloadWorker.REDOWNLOAD to isRedownload,
+        HCacheManager.saveHanimeVideoInfo(viewModel.videoCode, videoData)
+        // HanimeDownloadManager.addTask(
+        HanimeDownloadManagerV2.addTask(
+            HanimeDownloadWorker.Args(
+                quality = checkedQuality,
+                downloadUrl = videoData.videoUrls[checkedQuality]?.link,
+                videoType = videoData.videoUrls[checkedQuality]?.suffix,
+                hanimeName = videoData.title,
+                videoCode = viewModel.videoCode,
+                coverUrl = videoData.coverUrl,
+            ),
+            redownload = redownload
         )
-        val downloadRequest = HanimeDownloadWorker.build {
-            setInputData(data)
-        }
-        WorkManager.getInstance(requireContext().applicationContext)
-            .beginUniqueWork(viewModel.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
-            .enqueue()
-
     }
 
     private val List<HanimeInfo>.eachGridCounts
-        get() = if (any { it.itemType == HanimeInfo.NORMAL }) {
+        get() = if (isNotEmpty() && this.first().itemType == HanimeInfo.NORMAL) {
             VideoCoverSize.Normal.videoInOneLine
-        } else VideoCoverSize.Simplified.videoInOneLine
+        } else {
+            VideoCoverSize.Simplified.videoInOneLine
+        }
 
     private inner class VideoIntroTouchListener : OnItemTouchListener {
 
@@ -419,10 +427,8 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
 
         override var binding: ItemVideoIntroductionBinding? = null
 
-        private val onLinkClickListener = object : ExpandableTextView.OnLinkClickListener {
-            override fun onLinkClickListener(
-                type: LinkType, content: String?, selfContent: String?
-            ) {
+        private val onLinkClickListener =
+            ExpandableTextView.OnLinkClickListener { type, content, _ ->
                 when (type) {
                     LinkType.LINK_TYPE -> {
                         // #issue-crashlytics-8a65dcf527b961e98d9991352e36a425
@@ -437,7 +443,6 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
                     else -> Unit
                 }
             }
-        }
 
         override fun onBindViewHolder(
             holder: DataBindingHolder<ItemVideoIntroductionBinding>,
@@ -447,7 +452,11 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
             holder.binding.apply {
                 this@VideoIntroductionAdapter.binding = this
                 uploadTime.text = item.uploadTime?.format(LOCAL_DATE_FORMAT)
-                views.text = getString(R.string.s_view_times, item.views.toString())
+                views.text = if (viewModel.fromDownload) {
+                    getString(R.string.s_view_times, "0721")
+                } else {
+                    getString(R.string.s_view_times, item.views.toString())
+                }
                 tvIntroduction.linkClickListener = onLinkClickListener
                 tvIntroduction.setContent(item.introduction)
                 tags.tags = item.tags
@@ -599,10 +608,15 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
         }
 
         private fun ItemVideoIntroductionBinding.initFunctionBar(videoData: HanimeVideo) {
-            initFavButton(videoData)
-            initMyList(videoData.myList)
-            btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
-                browse(getHanimeVideoLink(viewModel.videoCode))
+            if (viewModel.fromDownload) {
+                nsvButtons.isGone = true
+            } else {
+                nsvButtons.isVisible = true
+                initFavButton(videoData)
+                initMyList(videoData.myList)
+                btnToWebpage.clickTrigger(viewLifecycleOwner.lifecycle) {
+                    browse(getHanimeVideoLink(viewModel.videoCode))
+                }
             }
         }
 
@@ -652,9 +666,7 @@ class VideoIntroductionFragment : YenalyFragment<FragmentVideoIntroductionBindin
                             browse(getHanimeVideoDownloadLink(viewModel.videoCode))
                         } else {
                             checkedQuality = key
-                            viewModel.findDownloadedHanime(
-                                viewModel.videoCode, quality = key
-                            )
+                            viewModel.findDownloadedHanime(viewModel.videoCode)
                         }
                     }.show()
             }

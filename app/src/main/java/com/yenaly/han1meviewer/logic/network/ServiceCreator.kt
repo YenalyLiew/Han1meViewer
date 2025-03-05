@@ -4,8 +4,10 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.yenaly.han1meviewer.BuildConfig
 import com.yenaly.han1meviewer.HA1_GITHUB_API_URL
 import com.yenaly.han1meviewer.HJson
-import com.yenaly.han1meviewer.USER_AGENT
+import com.yenaly.han1meviewer.logic.network.interceptor.SpeedLimitInterceptor
+import com.yenaly.han1meviewer.logic.network.interceptor.UserAgentInterceptor
 import com.yenaly.yenaly_libs.utils.applicationContext
+import com.yenaly.yenaly_libs.utils.unsafeLazy
 import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -25,9 +27,13 @@ object ServiceCreator {
         maxSize = 10 * 1024 * 1024
     )
 
+    private val downloadSpeedLimitInterceptor by unsafeLazy {
+        SpeedLimitInterceptor(maxSpeed = SpeedLimitInterceptor.NO_LIMIT)
+    }
+
     inline fun <reified T> create(baseUrl: String): T = Retrofit.Builder()
         .baseUrl(baseUrl)
-        .client(okHttpClient)
+        .client(hClient)
         .build()
         .create(T::class.java)
 
@@ -41,34 +47,41 @@ object ServiceCreator {
     /**
      * OkHttpClient
      */
-    var okHttpClient: OkHttpClient = buildOkHttpClient()
+    var hClient: OkHttpClient = buildHClient()
         private set
 
     var githubClient: OkHttpClient = buildGithubClient()
+        private set
+
+    var downloadClient: OkHttpClient = buildDownloadClient()
         private set
 
     /**
      * Rebuild OkHttpClient
      */
     fun rebuildOkHttpClient() {
-        okHttpClient = buildOkHttpClient()
-        githubClient = buildGithubClient()
+        hClient = buildHClient()
+    }
+
+    fun changeDownloadSpeedLimit(maxSpeed: Long) {
+        downloadSpeedLimitInterceptor.maxSpeed = maxSpeed
+    }
+
+    private fun buildDownloadClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .addInterceptor(UserAgentInterceptor)
+            .addInterceptor(downloadSpeedLimitInterceptor)
+            .build()
     }
 
     /**
      * Build OkHttpClient
      */
-    private fun buildOkHttpClient(): OkHttpClient {
+    private fun buildHClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder().addHeader(
-                    "User-Agent", USER_AGENT
-                ).build()
-                return@addInterceptor chain.proceed(request)
-            }
+            .addInterceptor(UserAgentInterceptor)
             .cache(cache)
             .cookieJar(HCookieJar())
             .proxySelector(HProxySelector())

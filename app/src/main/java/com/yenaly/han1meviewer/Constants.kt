@@ -9,6 +9,8 @@ import kotlinx.datetime.format.char
  */
 const val EMPTY_STRING = ""
 
+const val APP_NAME = "Han1meViewer"
+
 // 标准时间格式
 
 /* yyyy-MM-dd */
@@ -40,6 +42,8 @@ const val SEARCH_YEAR_RANGE_START = 1990
 const val SEARCH_YEAR_RANGE_END = BuildConfig.SEARCH_YEAR_RANGE_END
 
 // intent傳值用名稱
+
+const val FROM_DOWNLOAD = "FROM_DOWNLOAD"
 
 const val VIDEO_CODE = "VIDEO_CODE"
 

@@ -7,9 +7,9 @@ import com.yenaly.han1meviewer.logic.dao.MiscellanyDatabase
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
 import com.yenaly.han1meviewer.logic.entity.HKeyframeHeader
 import com.yenaly.han1meviewer.logic.entity.HKeyframeType
-import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.entity.SearchHistoryEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
+import com.yenaly.han1meviewer.logic.entity.download.HanimeDownloadEntity
 import com.yenaly.yenaly_libs.utils.applicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -143,6 +143,9 @@ object DatabaseRepo {
         suspend fun deleteAll() =
             watchHistoryDao.deleteAll()
 
+        suspend fun update(history: WatchHistoryEntity) =
+            watchHistoryDao.update(history)
+
         suspend fun insert(history: WatchHistoryEntity) =
             watchHistoryDao.insertOrUpdate(history)
     }
@@ -153,13 +156,25 @@ object DatabaseRepo {
         fun loadAllDownloadingHanime() =
             hanimeDownloadDao.loadAllDownloadingHanime()
 
+        /**
+         * 查询所有视频，并且每个视频要有当前他在的分类
+         */
         fun loadAllDownloadedHanime(
             sortedBy: HanimeDownloadEntity.SortedBy,
             ascending: Boolean,
-        ) = hanimeDownloadDao.loadAllDownloadedHanime(sortedBy, ascending)
+        ) = when (sortedBy) {
+            HanimeDownloadEntity.SortedBy.TITLE ->
+                hanimeDownloadDao.loadAllDownloadedHanimeByTitle(ascending)
 
-        suspend fun deleteBy(videoCode: String, quality: String) =
-            hanimeDownloadDao.deleteBy(videoCode, quality)
+            HanimeDownloadEntity.SortedBy.ID ->
+                hanimeDownloadDao.loadAllDownloadedHanimeById(ascending)
+        }
+
+        suspend fun delete(videoCode: String, quality: String) =
+            hanimeDownloadDao.delete(videoCode, quality)
+
+        suspend fun delete(videoCode: String) =
+            hanimeDownloadDao.delete(videoCode)
 
         suspend fun pauseAll() =
             hanimeDownloadDao.pauseAll()
@@ -173,10 +188,14 @@ object DatabaseRepo {
         suspend fun update(entity: HanimeDownloadEntity) =
             hanimeDownloadDao.update(entity)
 
-        suspend fun findBy(videoCode: String, quality: String) =
-            hanimeDownloadDao.findBy(videoCode, quality)
+        suspend fun find(videoCode: String, quality: String) =
+            hanimeDownloadDao.find(videoCode, quality)
 
-        suspend fun isExist(videoCode: String, quality: String) =
-            hanimeDownloadDao.isExist(videoCode, quality)
+        suspend fun find(videoCode: String) =
+            hanimeDownloadDao.find(videoCode)
+
+        @Deprecated("查屁")
+        suspend fun countBy(videoCode: String) =
+            hanimeDownloadDao.countBy(videoCode)
     }
 }

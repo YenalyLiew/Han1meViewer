@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.yenaly.yenaly_libs.base.preference.LongClickablePreference
+        app:iconSpaceReserved="false"
+        app:key="download_path"
+        app:title="@string/download_path" />
+
+    <SeekBarPreference
+        android:max="10"
+        app:defaultValue="2"
+        app:iconSpaceReserved="false"
+        app:key="download_count_limit"
+        app:min="0"
+        app:title="@string/download_count_limit"
+        app:updatesContinuously="true" />
+
+    <SeekBarPreference
+        app:iconSpaceReserved="false"
+        app:key="download_speed_limit"
+        app:title="@string/download_speed_limit"
+        app:updatesContinuously="true" />
+
+</androidx.preference.PreferenceScreen>

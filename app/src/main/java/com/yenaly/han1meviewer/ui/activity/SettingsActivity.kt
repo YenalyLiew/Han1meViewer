@@ -19,7 +19,6 @@ import com.yenaly.han1meviewer.databinding.ActivitySettingsBinding
 import com.yenaly.han1meviewer.ui.viewmodel.SettingsViewModel
 import com.yenaly.han1meviewer.util.logScreenViewEvent
 import com.yenaly.yenaly_libs.base.YenalyActivity
-import com.yenaly.yenaly_libs.utils.intentExtra
 
 /**
  * @project Han1meViewer
@@ -28,12 +27,7 @@ import com.yenaly.yenaly_libs.utils.intentExtra
  */
 class SettingsActivity : YenalyActivity<ActivitySettingsBinding>() {
 
-    companion object {
-        const val H_KEYFRAME_SETTINGS = "h_keyframe"
-    }
-
     val viewModel by viewModels<SettingsViewModel>()
-    private val shouldNavToHKeyframeSettings by intentExtra(H_KEYFRAME_SETTINGS, false)
 
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
@@ -78,9 +72,7 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding>() {
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fcv_settings) as NavHostFragment
         navController = navHostFragment.navController
-        if (shouldNavToHKeyframeSettings) {
-            navController.navigate(R.id.action_homeSettingsFragment_pop_to_hKeyframeSettingsFragment)
-        }
+        SettingsRouter.with(navController).navigateFromActivity(inclusive = true)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.fcvSettings) { v, insets ->
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())

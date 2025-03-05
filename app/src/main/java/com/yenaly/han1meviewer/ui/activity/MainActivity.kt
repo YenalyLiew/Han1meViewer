@@ -96,16 +96,15 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
      * 初始化数据
      */
     override fun initData(savedInstanceState: Bundle?) {
-
-        initHeaderView()
-        initNavActivity()
-        initMenu()
-
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fcv_main) as NavHostFragment
         navController = navHostFragment.navController
         binding.nvMain.setupWithNavController(navController)
         binding.dlMain.addDrawerListener(this)
+
+        initHeaderView()
+        initNavActivity()
+        initMenu()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.nvMain) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -259,11 +258,11 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
     private fun initNavActivity() {
         binding.nvMain.menu.apply {
             findItem(R.id.nv_settings).setOnMenuItemClickListener {
-                startActivity<SettingsActivity>()
+                SettingsRouter.with(navController).toSettingsActivity()
                 return@setOnMenuItemClickListener false
             }
             findItem(R.id.nv_h_keyframe_settings).setOnMenuItemClickListener {
-                startActivity<SettingsActivity>(SettingsActivity.H_KEYFRAME_SETTINGS to true)
+                SettingsRouter.with(navController).toSettingsActivity(R.id.hKeyframeSettingsFragment)
                 return@setOnMenuItemClickListener false
             }
         }

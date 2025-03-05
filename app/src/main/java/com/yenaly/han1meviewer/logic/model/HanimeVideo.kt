@@ -3,19 +3,22 @@ package com.yenaly.han1meviewer.logic.model
 import com.yenaly.han1meviewer.ResolutionLinkMap
 import com.yenaly.yenaly_libs.utils.mapToArray
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * @project Hanime1
  * @author Yenaly Liew
  * @time 2022/06/11 011 20:30
  */
+@Serializable
 data class HanimeVideo(
     val title: String,
     val coverUrl: String,
     val chineseTitle: String?,
     val introduction: String?,
     val uploadTime: LocalDate?,
-    val views: String?,
+    @Transient val views: String? = null,
 
     // resolution to video url
     val videoUrls: ResolutionLinkMap,
@@ -24,18 +27,18 @@ data class HanimeVideo(
     /**
      * 注意，這裏的myList是指用戶的播放清單playlist
      */
-    val myList: MyList?,
+    @Transient val myList: MyList? = null,
     /**
      * 注意，這裏的playlist是指該影片的系列影片，並非用戶的播放清單
      */
-    val playlist: Playlist?,
-    val relatedHanimes: List<HanimeInfo>,
-    val artist: Artist?,
+    @Transient val playlist: Playlist? = null,
+    @Transient val relatedHanimes: List<HanimeInfo> = emptyList(),
+    val artist: Artist? = null,
 
-    val favTimes: Int?,
-    val isFav: Boolean = false,
-    val csrfToken: String? = null,
-    val currentUserId: String? = null,
+    @Transient val favTimes: Int? = null,
+    @Transient val isFav: Boolean = false,
+    @Transient val csrfToken: String? = null,
+    @Transient val currentUserId: String? = null,
 ) {
 
     fun incFavTime() = copy(favTimes = favTimes?.let { it + 1 }, isFav = true)
@@ -67,11 +70,12 @@ data class HanimeVideo(
         val video: List<HanimeInfo>,
     )
 
+    @Serializable
     data class Artist(
         val name: String,
         val avatarUrl: String,
         val genre: String,
-        val post: POST?,
+        @Transient val post: POST? = null,
     ) {
         val isSubscribed: Boolean get() = post != null && post.isSubscribed
 

@@ -32,7 +32,8 @@
         app:iconSpaceReserved="false"
         app:key="slide_sensitivity"
         app:min="1"
-        app:title="@string/slide_sensitivity" />
+        app:title="@string/slide_sensitivity"
+        app:updatesContinuously="true" />
 
 
 </PreferenceScreen>

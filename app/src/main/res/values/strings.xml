@@ -320,6 +320,7 @@
     <string name="this_data_exists">該檔案已存在！</string>
     <string name="download_failed_s_exists">下載失敗：%1$s 已存在</string>
     <string name="download_task_failed">下載任務失敗！</string>
+    <string name="download_task_failed_s">下載任務失敗：%1$s</string>
     <string name="download_task_failed_s_reason_s">下載失敗：%1$s\n原因為：%2$s</string>
     <string name="custom">自訂</string>
     <string name="show_bottom_progress">顯示底部進度條</string>
@@ -356,5 +357,12 @@
     <string name="website_blocked_msg_2">網站被加固，修改為另外一個域名可能有奇效！</string>
     <string name="website_blocked_msg_3">可以提醒一下開發者，但不要催，網站被加固跟他沒有任何關係哦～</string>
     <string name="action_not_support">此設備不支援此操作</string>
+    <string name="category">分類</string>
+    <string name="get_file_info_failed">獲取檔案資訊失敗</string>
+    <string name="download_settings">下載設定</string>
+    <string name="download_count_limit">同時下載數量限制</string>
+    <string name="download_speed_limit">下載速度限制</string>
+    <string name="no_limit">無限制</string>
+    <string name="check_video_exists_in_download">我注意到你好像下載過畫質為 %s 的該影片</string>
 
 </resources>

@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.com.google.gms.google.services)
     alias(libs.plugins.com.google.firebase.crashlytics)
     alias(libs.plugins.com.google.firebase.firebase.pref)
+    // alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -85,6 +86,7 @@ android {
         //noinspection DataBindingWithoutKapt
         dataBinding = true
         buildConfig = true
+        // compose = true
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -110,6 +112,14 @@ dependencies {
     implementation(libs.bundles.android.base)
     implementation(libs.bundles.android.jetpack)
     implementation(libs.palette)
+
+//    implementation(platform(libs.compose.compose.bom))
+//    androidTestImplementation(platform(libs.compose.compose.bom))
+//    implementation(libs.compose.material3)
+//    implementation(libs.androidx.activity.compose)
+//    implementation(libs.compose.ui.graphics)
+//    implementation(libs.compose.ui.ui.tooling.preview)
+//    debugImplementation(libs.compose.ui.ui.tooling)
 
     // datetime
 

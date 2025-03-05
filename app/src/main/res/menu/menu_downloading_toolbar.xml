@@ -2,13 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/tb_test"
+        android:icon="@drawable/ic_baseline_download_24"
+        android:title="test"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/tb_start_all"
         android:icon="@drawable/ic_baseline_play_arrow_24_tintwhite"
-        app:showAsAction="always"
-        android:title="@string/start_all" />
+        android:title="@string/start_all"
+        app:showAsAction="always" />
     <item
         android:id="@+id/tb_pause_all"
         android:icon="@drawable/ic_baseline_pause_24_tintwhite"
-        app:showAsAction="always"
-        android:title="@string/pause_all" />
+        android:title="@string/pause_all"
+        app:showAsAction="always" />
 </menu>

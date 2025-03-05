@@ -1,9 +1,12 @@
 package com.yenaly.han1meviewer.worker
 
+import android.annotation.SuppressLint
+import android.app.Notification
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.work.Constraints
@@ -91,6 +94,8 @@ class HUpdateWorker(
             }
     }
 
+    private val notificationManager = NotificationManagerCompat.from(context)
+
     private val downloadLink by inputData(DOWNLOAD_LINK, EMPTY_STRING)
     private val nodeId by inputData(NODE_ID, EMPTY_STRING)
     private val downloadId = Random.nextInt()
@@ -99,9 +104,9 @@ class HUpdateWorker(
         with(HUpdater) {
             val file = context.updateFile.apply { delete() }
             val inject = runSuspendCatching {
-                setForeground(createForegroundInfo(progress = 0))
+                setForeground(createForegroundInfo())
                 file.injectUpdate(downloadLink) { progress ->
-                    setForeground(createForegroundInfo(progress))
+                    updateNotification(progress)
                 }
             }
             if (inject.isSuccess) {
@@ -116,17 +121,26 @@ class HUpdateWorker(
         }
     }
 
+    private fun createNotification(progress: Int = 0): Notification {
+        return NotificationCompat.Builder(context, UPDATE_NOTIFICATION_CHANNEL)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setOngoing(true)
+            .setContentTitle(context.getString(R.string.downloading_update_percent, progress))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setOnlyAlertOnce(true)
+            .setProgress(100, progress, false)
+            .build()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun updateNotification(progress: Int) {
+        notificationManager.notify(downloadId, createNotification(progress))
+    }
+
     private fun createForegroundInfo(progress: Int = 0): ForegroundInfo {
         return ForegroundInfo(
             downloadId,
-            NotificationCompat.Builder(context, UPDATE_NOTIFICATION_CHANNEL)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setOngoing(true)
-                .setContentTitle(context.getString(R.string.downloading_update_percent, progress))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setSilent(true)  // #issue-98: 下载时不发出声音
-                .setProgress(100, progress, false)
-                .build(),
+            createNotification(progress),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             } else 0

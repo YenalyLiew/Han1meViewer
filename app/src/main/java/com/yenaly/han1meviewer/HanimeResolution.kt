@@ -1,7 +1,6 @@
 package com.yenaly.han1meviewer
 
-import com.yenaly.han1meviewer.util.DEF_VIDEO_TYPE
-import okhttp3.MediaType
+import kotlinx.serialization.Serializable
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
 /**
@@ -42,7 +41,7 @@ class HanimeResolution {
         val mediaType = type?.toMediaTypeOrNull()?.takeIf {
             it.type.equals("video", ignoreCase = true)
         }
-        val link = HanimeLink(resLink, mediaType)
+        val link = HanimeLink(resLink, mediaType?.subtype)
         when (resString) {
             RES_1080P -> resArray[0] = RES_1080P to link
             RES_720P -> resArray[1] = RES_720P to link
@@ -57,12 +56,13 @@ class HanimeResolution {
     }
 }
 
+@Serializable
 data class HanimeLink(
     val link: String,
-    val type: MediaType?,
+    val subtype: String?,
 ) {
     val suffix: String
-        get() = when (type?.subtype?.lowercase()) {
+        get() = when (subtype?.lowercase()) {
             "mp4" -> "mp4"
             "mpeg" -> "mpeg"
             "x-msvideo" -> "avi"
@@ -71,6 +71,6 @@ data class HanimeLink(
             "ogg" -> "ogv"
             "mp2t" -> "ts"
             "webm" -> "webm"
-            else -> DEF_VIDEO_TYPE
+            else -> HFileManager.DEF_VIDEO_TYPE
         }
 }

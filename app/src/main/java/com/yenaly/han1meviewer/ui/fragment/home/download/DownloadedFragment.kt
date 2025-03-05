@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
-import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
+import com.yenaly.han1meviewer.logic.entity.download.HanimeDownloadEntity
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeDownloadedRvAdapter
@@ -78,7 +78,7 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding>(),
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menu.clear()
                 menuInflater.inflate(R.menu.menu_downloaded_toolbar, menu)
-                menu.findItem(fv.currentSortOptionId).isChecked = true
+                menu.findItem(fv.currentSortOptionId)?.isChecked = true
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

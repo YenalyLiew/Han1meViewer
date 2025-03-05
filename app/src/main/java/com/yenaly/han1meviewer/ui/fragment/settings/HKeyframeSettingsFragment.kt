@@ -2,15 +2,16 @@ package com.yenaly.han1meviewer.ui.fragment.settings
 
 import android.os.Bundle
 import androidx.annotation.IntRange
-import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
+import com.yenaly.han1meviewer.ui.activity.SettingsRouter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.video.HJzvdStd
+import com.yenaly.han1meviewer.util.setSummaryConverter
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
 
 /**
@@ -81,7 +82,8 @@ class HKeyframeSettingsFragment : YenalySettingsFragment(R.xml.settings_h_keyfra
         }
         hKeyframeManage.apply {
             setOnPreferenceClickListener {
-                findNavController().navigate(R.id.action_hKeyframeSettingsFragment_to_hKeyframesFragment)
+                SettingsRouter.with(this@HKeyframeSettingsFragment)
+                    .navigateWithinSettings(R.id.hKeyframesFragment)
                 return@setOnPreferenceClickListener true
             }
         }
@@ -97,23 +99,22 @@ class HKeyframeSettingsFragment : YenalySettingsFragment(R.xml.settings_h_keyfra
         }
         sharedHKeyframesManage.apply {
             setOnPreferenceClickListener {
-                findNavController().navigate(R.id.action_hKeyframeSettingsFragment_to_sharedHKeyframesFragment)
+                SettingsRouter.with(this@HKeyframeSettingsFragment)
+                    .navigateWithinSettings(R.id.sharedHKeyframesFragment)
                 return@setOnPreferenceClickListener true
             }
         }
         whenCountdownRemind.apply {
-            setDefaultValue(HJzvdStd.DEF_COUNTDOWN_SEC)
-            summary = value.toPrettyCountdownRemindString()
-            setOnPreferenceChangeListener { _, newValue ->
-                summary = (newValue as Int).toPrettyCountdownRemindString()
-                return@setOnPreferenceChangeListener true
-            }
+            setSummaryConverter(
+                defValue = HJzvdStd.DEF_COUNTDOWN_SEC,
+                converter = ::toPrettyCountdownRemindString
+            )
         }
     }
 
-    private fun @receiver:IntRange(from = 5, to = 30) Int.toPrettyCountdownRemindString(): String {
+    private fun toPrettyCountdownRemindString(@IntRange(from = 5, to = 30) value: Int): String {
         return buildString {
-            val countdown = this@toPrettyCountdownRemindString
+            val countdown = value
             append(getString(R.string.will_remind_before_d_seconds, countdown))
             if (countdown == HJzvdStd.DEF_COUNTDOWN_SEC) append(" (${getString(R.string.default_)})")
         }

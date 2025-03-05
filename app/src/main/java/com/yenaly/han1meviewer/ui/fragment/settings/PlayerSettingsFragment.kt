@@ -10,7 +10,9 @@ import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.pref.MaterialDialogPreference
 import com.yenaly.han1meviewer.ui.view.video.HJzvdStd
 import com.yenaly.han1meviewer.ui.view.video.HMediaKernel
+import com.yenaly.han1meviewer.util.setSummaryConverter
 import com.yenaly.yenaly_libs.base.settings.YenalySettingsFragment
+import com.yenaly.yenaly_libs.utils.toStringArray
 
 /**
  * @project Han1meViewer
@@ -53,19 +55,15 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
         }
         playerSpeed.apply {
             entries = HJzvdStd.speedStringArray
-            entryValues = Array(HJzvdStd.speedArray.size) {
-                HJzvdStd.speedArray[it].toString()
-            }
+            entryValues = HJzvdStd.speedArray.toStringArray()
             // 不能直接用 defaultValue 设置，没效果
             if (value == null) setValueIndex(HJzvdStd.DEF_SPEED_INDEX)
         }
         slideSensitivity.apply {
-            setDefaultValue(HJzvdStd.DEF_PROGRESS_SLIDE_SENSITIVITY)
-            summary = value.toPrettySensitivityString()
-            setOnPreferenceChangeListener { pref, newVal ->
-                pref.summary = (newVal as Int).toPrettySensitivityString()
-                return@setOnPreferenceChangeListener true
-            }
+            setSummaryConverter(
+                defValue = HJzvdStd.DEF_PROGRESS_SLIDE_SENSITIVITY,
+                converter = ::toPrettySensitivityString
+            )
         }
         longPressSpeedTimesPref.apply {
             entries = arrayOf(
@@ -91,8 +89,8 @@ class PlayerSettingsFragment : YenalySettingsFragment(R.xml.settings_player),
     /**
      * 將數字靈敏度轉換為漂亮的字串
      */
-    private fun @receiver:IntRange(from = 1, to = 9) Int.toPrettySensitivityString(): String {
-        val pretty = when (this) {
+    private fun toPrettySensitivityString(@IntRange(from = 1, to = 9) value: Int): String {
+        val pretty = when (value) {
             1, 2 -> getString(R.string.high)
             3, 4 -> getString(R.string.moderately_high)
             5 -> getString(R.string.moderate)

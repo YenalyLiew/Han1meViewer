@@ -3,6 +3,8 @@ package com.yenaly.han1meviewer
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.yenaly.han1meviewer.logic.network.HProxySelector
+import com.yenaly.han1meviewer.logic.network.interceptor.SpeedLimitInterceptor
+import com.yenaly.han1meviewer.ui.fragment.settings.DownloadSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.HKeyframeSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.HomeSettingsFragment
 import com.yenaly.han1meviewer.ui.fragment.settings.NetworkSettingsFragment
@@ -10,6 +12,7 @@ import com.yenaly.han1meviewer.ui.fragment.settings.PlayerSettingsFragment
 import com.yenaly.han1meviewer.ui.view.video.HJzvdStd
 import com.yenaly.han1meviewer.ui.view.video.HMediaKernel
 import com.yenaly.han1meviewer.util.CookieString
+import com.yenaly.han1meviewer.worker.HanimeDownloadManagerV2
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.getSpValue
 import com.yenaly.yenaly_libs.utils.putSpValue
@@ -173,4 +176,21 @@ object Preferences {
     val isAnalyticsEnabled: Boolean
         get() = preferenceSp.getBoolean(HomeSettingsFragment.USE_ANALYTICS, true)
 
+    // 下载 相關
+
+    val downloadCountLimit: Int
+        get() = preferenceSp.getInt(
+            DownloadSettingsFragment.DOWNLOAD_COUNT_LIMIT,
+            // HanimeDownloadManager.MAX_CONCURRENT_DOWNLOAD_DEF
+            HanimeDownloadManagerV2.MAX_CONCURRENT_DOWNLOAD_DEF
+        )
+
+    /**
+     * 对应关系详见 [SpeedLimitInterceptor.SPEED_BYTES]
+     */
+    val downloadSpeedLimit: Int
+        get() = preferenceSp.getInt(
+            DownloadSettingsFragment.DOWNLOAD_SPEED_LIMIT,
+            SpeedLimitInterceptor.NO_LIMIT_INDEX
+        )
 }

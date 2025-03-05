@@ -131,6 +131,7 @@
             tools:text="思春期的性學習 2  劇情續上一話，女主春日為了拓展自己的知識經常泡圖書館" />
 
         <com.yenaly.han1meviewer.ui.view.HorizontalNestedScrollView
+            android:id="@+id/nsv_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp">

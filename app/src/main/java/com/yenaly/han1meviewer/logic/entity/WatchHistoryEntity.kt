@@ -9,15 +9,16 @@ import androidx.room.PrimaryKey
  * @time 2022/07/02 002 13:13
  */
 @Entity
+@Suppress("ArrayInDataClass")
 data class WatchHistoryEntity(
-    var coverUrl: String,
-    var title: String,
-    var releaseDate: Long,
-    var watchDate: Long,
+    val coverUrl: String,
+    val title: String,
+    val releaseDate: Long,
+    val watchDate: Long,
 
-    var videoCode: String,
+    val videoCode: String,
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
+    val id: Int = 0,
 ) {
 
     val releaseDateDays: Int

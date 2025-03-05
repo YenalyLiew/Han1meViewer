@@ -11,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.FragmentListOnlyBinding
 import com.yenaly.han1meviewer.ui.StateLayoutMixin
@@ -19,11 +18,16 @@ import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.adapter.HanimeDownloadingRvAdapter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
+import com.yenaly.han1meviewer.util.HImageMeower
+import com.yenaly.han1meviewer.util.requestPostNotificationPermission
 import com.yenaly.han1meviewer.util.setStateViewLayout
+import com.yenaly.han1meviewer.worker.HanimeDownloadManagerV2
+import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyFragment
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /**
  * 正在下载的影片
@@ -69,6 +73,22 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding>(),
         }
     }
 
+    private suspend fun test() {
+        requireContext().requestPostNotificationPermission()
+        val uuid = UUID.randomUUID()
+        val videoCode = uuid.toString()
+        val args = HanimeDownloadWorker.Args(
+            quality = "720P",
+            downloadUrl = "https://ash-speed.hetzner.com/100MB.bin",
+            videoType = "mp4",
+            hanimeName = "Test-$uuid",
+            videoCode = videoCode,
+            coverUrl = HImageMeower.placeholder(100, 200),
+        )
+        // HanimeDownloadManager.addTask(args, redownload = false)
+        HanimeDownloadManagerV2.addTask(args, redownload = false)
+    }
+
     // #issue-44: 一键返回主页提议
     override fun MainActivity.setupToolbar() {
         this@DownloadingFragment.addMenu(
@@ -77,11 +97,18 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding>(),
             Lifecycle.State.RESUMED
         ) {
             when (it.itemId) {
+                R.id.tb_test -> {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        test()
+                    }
+                    return@addMenu true
+                }
+
                 R.id.tb_start_all -> {
                     adapter.items.forEachIndexed { index, entity ->
                         if (!entity.isDownloading) {
-                            entity.isDownloading = true
-                            adapter.continueWork(entity)
+                            HanimeDownloadManagerV2.resumeTask(entity)
+//                            adapter.continueWork(entity.copy(isDownloading = true))
                             adapter.notifyItemChanged(index)
                         }
                     }
@@ -91,13 +118,10 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding>(),
                 R.id.tb_pause_all -> {
                     adapter.items.forEachIndexed { index, entity ->
                         if (entity.isDownloading) {
-                            entity.isDownloading = false
-                            with(adapter) {
-                                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                                    WorkManager.getInstance(applicationContext)
-                                        .cancelUniqueWorkAndPause(entity)
-                                }
-                            }
+                            HanimeDownloadManagerV2.stopTask(entity)
+//                            with(adapter) {
+//                                cancelUniqueWorkAndPause(entity.copy(isDownloading = false))
+//                            }
                             adapter.notifyItemChanged(index)
                         }
                     }

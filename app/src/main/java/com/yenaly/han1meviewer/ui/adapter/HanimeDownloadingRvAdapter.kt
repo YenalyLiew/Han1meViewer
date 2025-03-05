@@ -4,35 +4,25 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
-import coil.load
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.google.android.material.button.MaterialButton
 import com.itxca.spannablex.spannable
+import com.yenaly.han1meviewer.HFileManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadingBinding
-import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
+import com.yenaly.han1meviewer.logic.entity.download.HanimeDownloadEntity
 import com.yenaly.han1meviewer.ui.fragment.home.download.DownloadingFragment
-import com.yenaly.han1meviewer.util.await
+import com.yenaly.han1meviewer.util.HImageMeower.loadUnhappily
 import com.yenaly.han1meviewer.util.showAlertDialog
-import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
-import com.yenaly.yenaly_libs.utils.formatFileSize
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
+import com.yenaly.han1meviewer.worker.HanimeDownloadManagerV2
+import com.yenaly.yenaly_libs.utils.formatFileSizeV2
 
 /**
  * @project Han1meViewer
@@ -49,6 +39,8 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
     }
 
     companion object {
+        const val TAG = "HanimeDownloadingRvAdapter"
+
         private const val DOWNLOADING = 1
         private const val PAUSE = 1 shl 1
 
@@ -76,6 +68,9 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                     bitset = bitset or DOWNLOADING
                 if (oldItem.isDownloading != newItem.isDownloading)
                     bitset = bitset or PAUSE
+                if (oldItem.state != newItem.state) {
+                    Log.d(TAG, "${oldItem.videoCode}: ${oldItem.state} -> ${newItem.state}")
+                }
                 return bitset
             }
         }
@@ -89,13 +84,11 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
     ) {
         item ?: return
         holder.binding.tvTitle.text = item.title
-        holder.binding.ivCover.load(item.coverUrl) {
-            crossfade(true)
-        }
+        holder.binding.ivCover.loadUnhappily(item.coverUrl, item.coverUri)
         holder.binding.tvSize.text = spannable {
-            item.downloadedLength.formatFileSize().text()
+            item.downloadedLength.formatFileSizeV2().text()
             " | ".span { color(Color.RED) }
-            item.length.formatFileSize().span { style(Typeface.BOLD) }
+            item.length.formatFileSizeV2().span { style(Typeface.BOLD) }
         }
         holder.binding.tvQuality.text = item.quality
         holder.binding.tvProgress.text = "${item.progress}%"
@@ -116,9 +109,9 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         val bitset = payloads.first() as Int
         if (bitset and DOWNLOADING != 0) {
             holder.binding.tvSize.text = spannable {
-                item.downloadedLength.formatFileSize().text()
+                item.downloadedLength.formatFileSizeV2().text()
                 " | ".span { color(Color.RED) }
-                item.length.formatFileSize().span { style(Typeface.BOLD) }
+                item.length.formatFileSizeV2().span { style(Typeface.BOLD) }
             }
             holder.binding.tvProgress.text = "${item.progress}%"
             holder.binding.pbProgress.setProgress(item.progress, true)
@@ -141,17 +134,17 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
             viewHolder.binding.btnStart.setOnClickListener {
                 val pos = viewHolder.bindingAdapterPosition
                 val item = getItem(pos) ?: return@setOnClickListener
+//                val isDownloading: Boolean
                 if (item.isDownloading) {
-                    item.isDownloading = false
-                    fragment.viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                        WorkManager.getInstance(context.applicationContext)
-                            .cancelUniqueWorkAndPause(item)
-                    }
+//                    isDownloading = false
+//                    cancelUniqueWorkAndPause(item.copy(isDownloading = false))
+                    HanimeDownloadManagerV2.stopTask(item)
                 } else {
-                    item.isDownloading = true
-                    continueWork(item)
+//                    isDownloading = true
+//                    continueWork(item.copy(isDownloading = true))
+                    HanimeDownloadManagerV2.resumeTask(item)
                 }
-                viewHolder.binding.btnStart.handleStartButton(item.isDownloading)
+                viewHolder.binding.btnStart.handleStartButton(!item.isDownloading)
             }
             viewHolder.binding.btnCancel.setOnClickListener {
                 val pos = viewHolder.bindingAdapterPosition
@@ -164,10 +157,8 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                         )
                     )
                     setPositiveButton(R.string.confirm) { _, _ ->
-                        fragment.viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                            WorkManager.getInstance(context.applicationContext)
-                                .cancelUniqueWorkAndDelete(item)
-                        }
+//                        cancelUniqueWorkAndDelete(item)
+                        HanimeDownloadManagerV2.deleteTask(item)
                     }
                     setNegativeButton(R.string.cancel, null)
                 }
@@ -187,65 +178,38 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
     }
 
     fun continueWork(entity: HanimeDownloadEntity) {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val data = workDataOf(
-            HanimeDownloadWorker.QUALITY to entity.quality,
-            HanimeDownloadWorker.DOWNLOAD_URL to entity.videoUrl,
-            HanimeDownloadWorker.HANIME_NAME to entity.title,
-            HanimeDownloadWorker.VIDEO_CODE to entity.videoCode,
-            HanimeDownloadWorker.COVER_URL to entity.coverUrl,
-        )
-        val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
-            .addTag(HanimeDownloadWorker.TAG)
-            .setConstraints(constraints)
-            .setBackoffCriteria(
-                BackoffPolicy.LINEAR,
-                HanimeDownloadWorker.BACKOFF_DELAY, TimeUnit.MILLISECONDS
-            )
-            .setInputData(data)
-            .build()
-        WorkManager.getInstance(context.applicationContext)
-            .beginUniqueWork(entity.videoCode, ExistingWorkPolicy.REPLACE, downloadRequest)
-            .enqueue()
+        // HanimeDownloadManager.resumeTask(entity)
+        HanimeDownloadManagerV2.resumeTask(entity)
     }
 
-    private suspend fun WorkManager.cancelUniqueWorkAndDelete(
-        entity: HanimeDownloadEntity,
-        workName: String = entity.videoCode,
+    private fun cancelUniqueWorkAndDelete(
+        entity: HanimeDownloadEntity
     ) {
-        cancelOrReplaceUniqueWork(entity, workName)
-        val file = entity.videoUri.toUri().toFile()
-        if (file.exists()) file.delete()
+        // cancelOrReplaceUniqueWork(entity)
+        HanimeDownloadManagerV2.stopTask(entity)
+        // val file = entity.videoUri.toUri().toFile()
+        // if (file.exists()) file.delete()
+        HFileManager.getDownloadVideoFolder(entity.videoCode).deleteRecursively()
         fragment.viewModel.deleteDownloadHanimeBy(entity.videoCode, entity.quality)
     }
 
-    suspend fun WorkManager.cancelUniqueWorkAndPause(
-        entity: HanimeDownloadEntity,
-        workName: String = entity.videoCode,
+    fun cancelUniqueWorkAndPause(
+        entity: HanimeDownloadEntity
     ) {
-        cancelOrReplaceUniqueWork(entity, workName)
+        // cancelOrReplaceUniqueWork(entity)
+        HanimeDownloadManagerV2.stopTask(entity)
         fragment.viewModel.updateDownloadHanime(entity)
     }
 
-    private suspend fun WorkManager.cancelOrReplaceUniqueWork(
-        entity: HanimeDownloadEntity,
-        workName: String = entity.videoCode,
-    ) {
-        val op = cancelUniqueWork(workName)
-        try {
-            op.result.await()
-        } catch (t: Throwable) {
-            t.printStackTrace()
-            // 必須另闢蹊徑，通過替換的方式來刪除，要不然無法真正地取消。
-            val downloadRequest = OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
-                .addTag(HanimeDownloadWorker.TAG)
-                .setInputData(workDataOf(HanimeDownloadWorker.DELETE to true))
-                .build()
-            WorkManager.getInstance(context.applicationContext)
-                .beginUniqueWork(workName, ExistingWorkPolicy.REPLACE, downloadRequest)
-                .enqueue()
-        }
-    }
+//    private suspend fun cancelOrReplaceUniqueWork(
+//        entity: HanimeDownloadEntity
+//    ) {
+//        val op = HanimeDownloadManager.stopTask(entity)
+//        runSuspendCatching {
+//            op.await()
+//        }.onFailure { t ->
+//            t.printStackTrace()
+//            HanimeDownloadManager.deleteTaskCrazily(entity)
+//        }
+//    }
 }

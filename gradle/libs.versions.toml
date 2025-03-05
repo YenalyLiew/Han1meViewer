@@ -1,6 +1,6 @@
 [versions]
 # Plugins
-androidGradle = "8.7.1"
+androidGradle = "8.7.3"
 kotlin = "2.0.20"
 serializationPlugin = "2.0.20"
 ksp = "2.0.20-1.0.24"
@@ -63,7 +63,7 @@ circularRevealSwitch = "0.4.6"
 desugarJdkLibs = "2.1.2"
 asynclayoutinflater = "1.0.0"
 flexbox = "3.0.0"
-firebaseBom = "33.4.0"
+firebaseBom = "33.5.1"
 
 [libraries]
 # Android
@@ -95,6 +95,14 @@ guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startupRuntime" }
 palette = { group = "androidx.palette", name = "palette", version.ref = "palette" }
 asynclayoutinflater = { group = "androidx.asynclayoutinflater", name = "asynclayoutinflater", version.ref = "asynclayoutinflater" } # coreLibraryDesugaring
+
+# Compose
+compose-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2024.10.00" }
+compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-ui-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-ui-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 
 # Parse
 serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
@@ -179,3 +187,4 @@ org-jetbrains-kotlin-plugin-parcelize = { id = "org.jetbrains.kotlin.plugin.parc
 com-google-gms-google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
 com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.2" }
 com-google-firebase-firebase-pref = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

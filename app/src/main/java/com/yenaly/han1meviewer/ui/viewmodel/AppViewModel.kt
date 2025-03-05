@@ -12,6 +12,7 @@ import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.model.github.Latest
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.worker.HUpdateWorker
+import com.yenaly.han1meviewer.worker.HanimeDownloadManagerV2
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import com.yenaly.yenaly_libs.utils.application
@@ -36,11 +37,18 @@ object AppViewModel : YenalyViewModel(application), IHCsrfToken {
     private val _versionFlow = MutableStateFlow<WebsiteState<Latest?>>(WebsiteState.Loading)
     val versionFlow = _versionFlow.asStateFlow()
 
+    val runningWorkInfoCountFlow = MutableStateFlow(0)
+
     init {
         // 取消，防止每次启动都有残留的更新任务
         WorkManager.getInstance(application).pruneWork()
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            // HanimeDownloadManager.init()
+            HanimeDownloadManagerV2.init()
+        }
+
+        viewModelScope.launch(Dispatchers.Main) {
             Preferences.loginStateFlow.collect { isLogin ->
                 Log.d("LoginState", "isLogin: $isLogin")
                 Firebase.crashlytics.setCustomKeys {
@@ -53,8 +61,14 @@ object AppViewModel : YenalyViewModel(application), IHCsrfToken {
             HUpdateWorker.collectOutput(application)
         }
 
-        viewModelScope.launch(Dispatchers.Main) {
-            HanimeDownloadWorker.collectOutput(application)
+        viewModelScope.launch(Dispatchers.IO) {
+            HanimeDownloadWorker.getRunningWorkInfoCount(application).collect { count ->
+                Log.d(HanimeDownloadWorker.TAG, "getRunningWorkInfoCount: $count")
+                runningWorkInfoCountFlow.value = count
+                Firebase.crashlytics.setCustomKeys {
+                    key(FirebaseConstants.RUNNING_DOWNLOAD_WORK_COUNT, count)
+                }
+            }
         }
     }
 

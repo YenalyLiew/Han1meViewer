@@ -42,7 +42,6 @@ object HanimeNetwork {
     fun rebuildNetwork() {
         ServiceCreator.rebuildOkHttpClient()
         hanimeService = _hanimeService
-        githubService = _githubService
         commentService = _commentService
         myListService = _myListService
     }

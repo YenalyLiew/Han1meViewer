@@ -310,6 +310,7 @@ Recommendations are as follows:\n
     <string name="this_data_exists">This file already exists!</string>
     <string name="download_failed_s_exists">Download failed: %1$s already exists</string>
     <string name="download_task_failed">Download task failed!</string>
+    <string name="download_task_failed_s">Download task failed: %1$s</string>
     <string name="download_task_failed_s_reason_s">Download task failed: %1$s\nReason: %2$s</string>
     <string name="custom">Custom</string>
     <string name="show_bottom_progress">Show Bottom Progress Bar</string>
@@ -346,5 +347,12 @@ Recommendations are as follows:\n
     <string name="website_blocked_msg_2">The website is blocked, changing to another domain name might work!</string>
     <string name="website_blocked_msg_3">You can notify the developer, but don\'t rush them, the website being blocked is not their fault~</string>
     <string name="action_not_support">This device does not support this action</string>
+    <string name="category">Category</string>
+    <string name="get_file_info_failed">Failed to get file information</string>
+    <string name="download_settings">Download Settings</string>
+    <string name="download_count_limit">Download Count Limit</string>
+    <string name="download_speed_limit">Download Speed Limit</string>
+    <string name="no_limit">No Limit</string>
+    <string name="check_video_exists_in_download">I noticed you seem to have downloaded the video with resolution %s</string>
 
 </resources>

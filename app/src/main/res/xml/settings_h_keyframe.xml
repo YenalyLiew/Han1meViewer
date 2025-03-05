@@ -66,7 +66,8 @@
             app:iconSpaceReserved="false"
             app:key="when_countdown_remind"
             app:min="5"
-            app:title="@string/when_countdown_remind" />
+            app:title="@string/when_countdown_remind"
+            app:updatesContinuously="true" />
 
     </PreferenceCategory>
 

@@ -24,12 +24,15 @@ abstract class WatchHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(history: WatchHistoryEntity)
 
-    @Query("SELECT * FROM WatchHistoryEntity WHERE (`title` = :title) LIMIT 1")
-    abstract fun find(title: String): WatchHistoryEntity?
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun update(history: WatchHistoryEntity)
+
+    @Query("SELECT * FROM WatchHistoryEntity WHERE (`videoCode` = :videoCode) LIMIT 1")
+    abstract suspend fun findBy(videoCode: String): WatchHistoryEntity?
 
     @Transaction
     open suspend fun insertOrUpdate(history: WatchHistoryEntity) {
-        val dbEntity = find(history.title)
+        val dbEntity = findBy(history.videoCode)
         if (dbEntity != null) {
             delete(dbEntity)
             insert(history)

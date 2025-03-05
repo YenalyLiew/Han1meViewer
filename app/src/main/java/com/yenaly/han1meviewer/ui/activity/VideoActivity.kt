@@ -27,6 +27,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
 import com.yenaly.han1meviewer.COMMENT_TYPE
+import com.yenaly.han1meviewer.FROM_DOWNLOAD
 import com.yenaly.han1meviewer.FirebaseConstants
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
@@ -68,6 +69,7 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding>(),
 
     private val kernel = HMediaKernel.Type.fromString(Preferences.switchPlayerKernel)
 
+    private val fromDownload by intentExtra(FROM_DOWNLOAD, false)
     private val videoCode by intentExtra<String>(VIDEO_CODE)
     private var videoTitle: String? = null
     private var videoCodeByWebsite: String? = null
@@ -103,6 +105,8 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding>(),
             finish()
         }
 
+        // 必须 fromDownload 在前，videoCode 在后
+        viewModel.fromDownload = fromDownload
         requireNotNull(videoCodeByWebsite ?: videoCode).let {
             viewModel.videoCode = it
             commentViewModel.code = it
@@ -157,14 +161,16 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding>(),
                                 crossfade(true)
                             }
                             // 將觀看記錄保存數據庫
-                            val entity = WatchHistoryEntity(
-                                state.info.coverUrl,
-                                state.info.title,
-                                state.info.uploadTimeMillis,
-                                Clock.System.now().toEpochMilliseconds(),
-                                viewModel.videoCode
-                            )
-                            viewModel.insertWatchHistory(entity)
+                            if (!fromDownload) {
+                                val entity = WatchHistoryEntity(
+                                    state.info.coverUrl,
+                                    state.info.title,
+                                    state.info.uploadTimeMillis,
+                                    Clock.System.now().toEpochMilliseconds(),
+                                    viewModel.videoCode
+                                )
+                                viewModel.insertWatchHistoryWithCover(entity)
+                            }
                         }
 
                         is VideoLoadingState.NoContent -> {
@@ -243,7 +249,9 @@ class VideoActivity : YenalyActivity<ActivityVideoBinding>(),
 
         binding.videoVp.setUpFragmentStateAdapter(this) {
             addFragment { VideoIntroductionFragment() }
-            addFragment { CommentFragment().makeBundle(COMMENT_TYPE to VIDEO_COMMENT_PREFIX) }
+            if (!fromDownload) {
+                addFragment { CommentFragment().makeBundle(COMMENT_TYPE to VIDEO_COMMENT_PREFIX) }
+            }
         }
 
         binding.videoTl.attach(binding.videoVp) { tab, position ->

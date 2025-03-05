@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import coil.load
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.yenaly.han1meviewer.LOCAL_DATE_TIME_FORMAT
@@ -12,6 +11,8 @@ import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ItemWatchHistoryBinding
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
 import com.yenaly.han1meviewer.ui.activity.VideoActivity
+import com.yenaly.han1meviewer.util.HImageMeower
+import com.yenaly.han1meviewer.util.HImageMeower.loadUnhappily
 import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.datetime.Instant
@@ -55,9 +56,7 @@ class WatchHistoryRvAdapter :
         item: WatchHistoryEntity?,
     ) {
         item ?: return
-        holder.binding.ivCover.load(item.coverUrl) {
-            crossfade(true)
-        }
+        holder.binding.ivCover.loadUnhappily(item.coverUrl, HImageMeower.placeholder(72, 128))
         holder.binding.tvAddedTime.text =
             Instant.fromEpochMilliseconds(item.watchDate).toLocalDateTime(
                 TimeZone.currentSystemDefault()

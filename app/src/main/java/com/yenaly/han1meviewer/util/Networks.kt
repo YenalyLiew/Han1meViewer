@@ -29,9 +29,8 @@ suspend fun <R> ListenableFuture<R>.await(): R {
                 } catch (throwable: Throwable) {
                     val cause = throwable.cause ?: throwable
                     when (throwable) {
-                        is java.util.concurrent.CancellationException -> cancellableContinuation.cancel(
-                            cause
-                        )
+                        is java.util.concurrent.CancellationException ->
+                            cancellableContinuation.cancel(cause)
 
                         else -> cancellableContinuation.resumeWithException(cause)
                     }

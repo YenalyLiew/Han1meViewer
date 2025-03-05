@@ -5,7 +5,8 @@ import androidx.annotation.IdRes
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.DatabaseRepo
-import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
+import com.yenaly.han1meviewer.logic.entity.download.HanimeDownloadEntity
+import com.yenaly.han1meviewer.logic.entity.download.VideoWithCategories
 import com.yenaly.yenaly_libs.base.YenalyViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,7 @@ class DownloadViewModel(application: Application) : YenalyViewModel(application)
     @IdRes
     var currentSortOptionId = R.id.sm_sort_by_date_descending
 
-    private val _downloaded = MutableStateFlow(mutableListOf<HanimeDownloadEntity>())
+    private val _downloaded = MutableStateFlow(mutableListOf<VideoWithCategories>())
     val downloaded = _downloaded.asStateFlow()
 
     fun loadAllDownloadingHanime() =
@@ -54,7 +55,7 @@ class DownloadViewModel(application: Application) : YenalyViewModel(application)
 
     fun deleteDownloadHanimeBy(videoCode: String, quality: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseRepo.HanimeDownload.deleteBy(videoCode, quality)
+            DatabaseRepo.HanimeDownload.delete(videoCode, quality)
         }
     }
 }

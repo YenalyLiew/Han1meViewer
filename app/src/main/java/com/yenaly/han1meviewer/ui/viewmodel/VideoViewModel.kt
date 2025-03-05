@@ -4,13 +4,14 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.yenaly.han1meviewer.EMPTY_STRING
+import com.yenaly.han1meviewer.HCacheManager
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.NetworkRepo
 import com.yenaly.han1meviewer.logic.entity.HKeyframeEntity
-import com.yenaly.han1meviewer.logic.entity.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.entity.WatchHistoryEntity
+import com.yenaly.han1meviewer.logic.entity.download.HanimeDownloadEntity
 import com.yenaly.han1meviewer.logic.model.HanimeVideo
 import com.yenaly.han1meviewer.logic.state.VideoLoadingState
 import com.yenaly.han1meviewer.logic.state.WebsiteState
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -47,6 +49,8 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
             getHanimeVideo(value)
         }
 
+    var fromDownload = false
+
     var hKeyframes: HKeyframeEntity? = null
 
     private val _hanimeVideoStateFlow =
@@ -58,7 +62,18 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
 
     fun getHanimeVideo(videoCode: String) {
         viewModelScope.launch {
-            NetworkRepo.getHanimeVideo(videoCode).collect { state ->
+            val flow = if (fromDownload) {
+                HCacheManager.loadHanimeVideoInfo(videoCode).map { hv ->
+                    if (hv == null) {
+                        VideoLoadingState.NoContent
+                    } else {
+                        VideoLoadingState.Success(hv)
+                    }
+                }
+            } else {
+                NetworkRepo.getHanimeVideo(videoCode)
+            }
+            flow.collect { state ->
                 _hanimeVideoStateFlow.value = state
                 if (state is VideoLoadingState.Success) {
                     _hanimeVideoFlow.update { state.info }
@@ -133,9 +148,15 @@ class VideoViewModel(application: Application) : YenalyViewModel(application) {
         }
     }
 
-    fun findDownloadedHanime(videoCode: String, quality: String) {
+    fun insertWatchHistoryWithCover(history: WatchHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            val info = DatabaseRepo.HanimeDownload.findBy(videoCode, quality)
+            DatabaseRepo.WatchHistory.insert(history)
+        }
+    }
+
+    fun findDownloadedHanime(videoCode: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val info = DatabaseRepo.HanimeDownload.find(videoCode)
             _loadDownloadedFlow.emit(info)
         }
     }
