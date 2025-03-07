@@ -51,6 +51,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:minLines="2"
+                android:paddingBottom="4dp"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:textStyle="bold"
                 app:layout_constrainedHeight="true"
@@ -58,16 +59,54 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_cover"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="1233333333333333" />
+                tools:text="123333333222222222222233333333333323333333" />
+
+            <TextView
+                android:id="@+id/tv_video_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/shape_title_mask"
+                android:paddingHorizontal="4dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/_barrier"
+                app:layout_constraintStart_toEndOf="@id/iv_cover"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:text="123456789" />
+
+            <View
+                android:id="@+id/_divider"
+                android:layout_width="2dp"
+                android:layout_height="10sp"
+                android:layout_marginStart="6dp"
+                android:background="@color/red"
+                app:layout_constraintBottom_toBottomOf="@id/_barrier"
+                app:layout_constraintEnd_toStartOf="@id/tv_size"
+                app:layout_constraintStart_toEndOf="@id/tv_video_code"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:ignore="SmallSp" />
+
+            <TextView
+                android:id="@+id/tv_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/_barrier"
+                app:layout_constraintStart_toEndOf="@id/_divider"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:text="476.7 MiB" />
 
             <TextView
                 android:id="@+id/tv_quality"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
                 android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@id/iv_cover"
+                app:layout_constraintBottom_toBottomOf="@id/_barrier"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
                 tools:text="720P" />
 

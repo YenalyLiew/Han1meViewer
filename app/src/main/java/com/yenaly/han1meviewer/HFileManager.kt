@@ -4,10 +4,11 @@ import android.os.Environment
 import com.yenaly.yenaly_libs.utils.makeFolderNoMedia
 import java.io.File
 
-@Suppress("NOTHING_TO_INLINE")
 object HFileManager {
 
     const val HANIME_DOWNLOAD_FOLDER = "hanime_download"
+
+    private val illegalCharsRegex = Regex("""["*/:<>?\\|\x00-\x1F\x7F]""")
 
     val appDownloadFolder: File
         get() = File(
@@ -18,13 +19,13 @@ object HFileManager {
     const val DEF_VIDEO_TYPE = "mp4"
     const val DEF_VIDEO_COVER_TYPE = "png"
 
-    inline fun createVideoName(
+    fun createVideoName(
         title: String, quality: String, suffix: String = DEF_VIDEO_TYPE
-    ) = "${title}_${quality}.${suffix}"
+    ) = "${title.replaceAllIllegalChars()}_${quality}.${suffix}"
 
-    inline fun createVideoCoverName(
+    fun createVideoCoverName(
         title: String, suffix: String = DEF_VIDEO_COVER_TYPE
-    ) = "${title}.${suffix}"
+    ) = "${title.replaceAllIllegalChars()}.${suffix}"
 
     fun getDownloadVideoFolder(videoCode: String): File {
         return File(appDownloadFolder, "$HANIME_DOWNLOAD_FOLDER/$videoCode")
@@ -42,5 +43,14 @@ object HFileManager {
         suffix: String = DEF_VIDEO_COVER_TYPE
     ): File {
         return File(getDownloadVideoFolder(videoCode), createVideoCoverName(title, suffix))
+    }
+
+    /**
+     * Replace all illegal characters in the string with "_"
+     *
+     * 若文件名中有非法字符，则替换为"_"，以避免文件名错误
+     */
+    private fun String.replaceAllIllegalChars(): String {
+        return illegalCharsRegex.replace(this, "_")
     }
 }

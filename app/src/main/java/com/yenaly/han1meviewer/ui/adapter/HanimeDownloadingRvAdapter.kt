@@ -3,25 +3,19 @@ package com.yenaly.han1meviewer.ui.adapter
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
-import android.graphics.Typeface
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.core.view.updateLayoutParams
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.DiffUtil
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.google.android.material.button.MaterialButton
-import com.itxca.spannablex.spannable
-import com.yenaly.han1meviewer.HFileManager
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.databinding.ItemHanimeDownloadingBinding
 import com.yenaly.han1meviewer.logic.entity.download.HanimeDownloadEntity
@@ -127,11 +121,8 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                 setRenderEffect(renderEffect)
             }
         }
-        holder.binding.tvSize.text = spannable {
-            item.downloadedLength.formatFileSizeV2().text()
-            " | ".span { color(Color.RED) }
-            item.length.formatFileSizeV2().span { style(Typeface.BOLD) }
-        }
+        holder.binding.tvDownloadedSize.text = item.downloadedLength.formatFileSizeV2()
+        holder.binding.tvSize.text = item.length.formatFileSizeV2()
         holder.binding.tvQuality.text = item.quality
 //        holder.binding.tvProgress.text = "${item.progress}%"
 //        holder.binding.pbProgress.setProgress(item.progress, true)
@@ -151,11 +142,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
         val bitset = payloads.first() as Int
         if (bitset and DOWNLOADING != 0) {
             holder.binding.btnStart.handleStartButton(item)
-            holder.binding.tvSize.text = spannable {
-                item.downloadedLength.formatFileSizeV2().text()
-                " | ".span { color(Color.RED) }
-                item.length.formatFileSizeV2().span { style(Typeface.BOLD) }
-            }
+            holder.binding.tvDownloadedSize.text = item.downloadedLength.formatFileSizeV2()
         }
         if (bitset and STATE != 0) {
             holder.binding.btnStart.handleStartButton(item)
@@ -213,9 +200,7 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
                 context.showAlertDialog {
                     setTitle(R.string.sure_to_delete)
                     setMessage(
-                        context.getString(
-                            R.string.prepare_to_delete_s, item.videoUri.toUri().toFile().path
-                        )
+                        context.getString(R.string.prepare_to_delete_s, item.title)
                     )
                     setPositiveButton(R.string.confirm) { _, _ ->
 //                        cancelUniqueWorkAndDelete(item)
@@ -273,40 +258,4 @@ class HanimeDownloadingRvAdapter(private val fragment: DownloadingFragment) :
             DownloadState.Finished, DownloadState.Unknown -> {} // do nothing
         }
     }
-
-    fun continueWork(entity: HanimeDownloadEntity) {
-        // HanimeDownloadManager.resumeTask(entity)
-        HanimeDownloadManagerV2.resumeTask(entity)
-    }
-
-    private fun cancelUniqueWorkAndDelete(
-        entity: HanimeDownloadEntity
-    ) {
-        // cancelOrReplaceUniqueWork(entity)
-        HanimeDownloadManagerV2.stopTask(entity)
-        // val file = entity.videoUri.toUri().toFile()
-        // if (file.exists()) file.delete()
-        HFileManager.getDownloadVideoFolder(entity.videoCode).deleteRecursively()
-        fragment.viewModel.deleteDownloadHanimeBy(entity.videoCode, entity.quality)
-    }
-
-    fun cancelUniqueWorkAndPause(
-        entity: HanimeDownloadEntity
-    ) {
-        // cancelOrReplaceUniqueWork(entity)
-        HanimeDownloadManagerV2.stopTask(entity)
-        fragment.viewModel.updateDownloadHanime(entity)
-    }
-
-//    private suspend fun cancelOrReplaceUniqueWork(
-//        entity: HanimeDownloadEntity
-//    ) {
-//        val op = HanimeDownloadManager.stopTask(entity)
-//        runSuspendCatching {
-//            op.await()
-//        }.onFailure { t ->
-//            t.printStackTrace()
-//            HanimeDownloadManager.deleteTaskCrazily(entity)
-//        }
-//    }
 }

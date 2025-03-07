@@ -1,7 +1,6 @@
 package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
@@ -13,7 +12,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
-import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HFileManager
 import com.yenaly.han1meviewer.LOCAL_DATE_TIME_FORMAT
 import com.yenaly.han1meviewer.R
@@ -73,6 +71,7 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
     ) {
         item ?: return
         holder.binding.tvTitle.text = item.video.title
+        holder.binding.tvVideoCode.text = item.video.videoCode
         holder.binding.ivCover.loadUnhappily(item.video.coverUri, item.video.coverUrl)
         holder.itemView.post {
             // fast path
@@ -99,13 +98,14 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
             Instant.fromEpochMilliseconds(item.video.addDate).toLocalDateTime(
                 TimeZone.currentSystemDefault()
             ).format(LOCAL_DATE_TIME_FORMAT)
-        holder.binding.tvQuality.text = spannable {
-            item.video.quality.text()
-            " | ".span {
-                color(Color.RED)
-            }
-            item.video.videoUri.toUri().toFile().length().formatFileSizeV2().text()
+
+        val realSize = item.video.videoUri.toUri().toFile().length()
+        holder.binding.tvSize.text = if (realSize == 0L) {
+            "???"
+        } else {
+            item.video.length.formatFileSizeV2()
         }
+        holder.binding.tvQuality.text = item.video.quality
     }
 
     override fun onCreateViewHolder(
@@ -128,10 +128,9 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
                 // #issue-158: 这里可能为空
                 val item = getItem(position)
                 item?.let {
-                    val file = it.video.videoUri.toUri().toFile()
                     context.showAlertDialog {
                         setTitle(R.string.sure_to_delete)
-                        setMessage(context.getString(R.string.prepare_to_delete_s, file.name))
+                        setMessage(context.getString(R.string.prepare_to_delete_s, it.video.title))
                         setPositiveButton(R.string.confirm) { _, _ ->
                             // if (file.exists()) file.delete()
                             HFileManager.getDownloadVideoFolder(

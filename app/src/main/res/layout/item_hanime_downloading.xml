@@ -52,6 +52,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:minLines="2"
+                android:paddingBottom="4dp"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 app:layout_constrainedHeight="true"
                 app:layout_constrainedWidth="true"
@@ -60,49 +61,42 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="1233333333333333" />
 
-            <LinearLayout
-                android:id="@+id/ll_progress"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_downloaded_size"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constrainedWidth="true"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@id/_barrier"
                 app:layout_constraintStart_toEndOf="@id/iv_cover"
-                app:layout_constraintTop_toBottomOf="@id/tv_title">
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:text="12 MiB" />
 
-                <ProgressBar
-                    android:id="@+id/pb_progress"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:max="100"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tv_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:visibility="gone"
-                    tools:text="88%" />
-
-            </LinearLayout>
+            <View
+                android:id="@+id/_divider"
+                android:layout_width="2dp"
+                android:layout_height="10sp"
+                android:layout_marginStart="6dp"
+                android:background="@color/red"
+                app:layout_constraintBottom_toTopOf="@id/_barrier"
+                app:layout_constraintEnd_toStartOf="@id/tv_size"
+                app:layout_constraintStart_toEndOf="@id/tv_downloaded_size"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/tv_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginStart="6dp"
                 android:gravity="center"
-                app:layout_constraintBottom_toBottomOf="@id/_barrier"
-                app:layout_constraintStart_toEndOf="@id/iv_cover"
-                app:layout_constraintTop_toBottomOf="@id/ll_progress"
-                tools:text="1 MB / 7 MB" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/_barrier"
+                app:layout_constraintStart_toEndOf="@id/_divider"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:text="7 MiB" />
 
             <TextView
                 android:id="@+id/tv_quality"
@@ -111,10 +105,11 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="1"
+                android:textSize="16sp"
                 app:layout_constrainedWidth="true"
-                app:layout_constraintBaseline_toBaselineOf="@id/tv_size"
-                app:layout_constraintBottom_toBottomOf="@id/_barrier"
+                app:layout_constraintBottom_toTopOf="@id/_barrier"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
                 tools:text="720P" />
 
             <androidx.constraintlayout.widget.Barrier
