@@ -7,7 +7,7 @@ import java.io.File
 @Suppress("NOTHING_TO_INLINE")
 object HFileManager {
 
-    const val DOWNLOAD_FOLDER = "download"
+    const val HANIME_DOWNLOAD_FOLDER = "hanime_download"
 
     val appDownloadFolder: File
         get() = File(
@@ -27,7 +27,7 @@ object HFileManager {
     ) = "${title}.${suffix}"
 
     fun getDownloadVideoFolder(videoCode: String): File {
-        return File(appDownloadFolder, "$DOWNLOAD_FOLDER/$videoCode")
+        return File(appDownloadFolder, "$HANIME_DOWNLOAD_FOLDER/$videoCode")
     }
 
     fun getDownloadVideoFile(

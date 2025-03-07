@@ -18,7 +18,7 @@ fun ValueAnimator.addUpdateListener(
     addUpdateListener(listener)
     lifecycle?.addObserver(object : DefaultLifecycleObserver {
         override fun onDestroy(owner: LifecycleOwner) {
-            this@addUpdateListener.removeAllUpdateListeners()
+            this@addUpdateListener.removeUpdateListener(listener)
         }
     })
 }

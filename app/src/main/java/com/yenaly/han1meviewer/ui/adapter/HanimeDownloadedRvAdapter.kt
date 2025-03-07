@@ -2,10 +2,14 @@ package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toFile
 import androidx.core.net.toUri
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.chad.library.adapter4.viewholder.DataBindingHolder
@@ -22,6 +26,7 @@ import com.yenaly.han1meviewer.util.HImageMeower.loadUnhappily
 import com.yenaly.han1meviewer.util.openDownloadedHanimeVideoInActivity
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.utils.activity
+import com.yenaly.yenaly_libs.utils.dpF
 import com.yenaly.yenaly_libs.utils.formatFileSizeV2
 import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.datetime.Instant
@@ -68,7 +73,28 @@ class HanimeDownloadedRvAdapter(private val fragment: DownloadedFragment) :
     ) {
         item ?: return
         holder.binding.tvTitle.text = item.video.title
-        holder.binding.ivCover.loadUnhappily(item.video.coverUrl, item.video.coverUri)
+        holder.binding.ivCover.loadUnhappily(item.video.coverUri, item.video.coverUrl)
+        holder.itemView.post {
+            // fast path
+            if (holder.itemView.height == holder.binding.vCoverBg.height) return@post
+            holder.binding.vCoverBg.updateLayoutParams {
+                height = holder.itemView.height
+            }
+            holder.binding.ivCoverBg.updateLayoutParams {
+                height = holder.itemView.height
+            }
+        }
+        holder.binding.ivCoverBg.apply {
+            loadUnhappily(item.video.coverUri, item.video.coverUrl)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                setRenderEffect(
+                    RenderEffect.createBlurEffect(
+                        8.dpF, 8.dpF,
+                        Shader.TileMode.CLAMP
+                    )
+                )
+            }
+        }
         holder.binding.tvAddedTime.text =
             Instant.fromEpochMilliseconds(item.video.addDate).toLocalDateTime(
                 TimeZone.currentSystemDefault()

@@ -13,16 +13,32 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp">
 
+        <ImageView
+            android:id="@+id/iv_cover_bg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:id="@+id/v_cover_bg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/per60_transparent_black" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:clipToPadding="false"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_cover"
                 android:layout_width="@dimen/video_cover_weight_small"
                 android:layout_height="@dimen/video_cover_height_small"
                 android:contentDescription="@null"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="@id/_barrier"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -63,13 +79,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:max="100" />
+                    android:max="100"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_progress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:visibility="gone"
                     tools:text="88%" />
 
             </LinearLayout>
@@ -106,26 +124,58 @@
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="iv_cover, tv_quality, tv_size" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_cancel"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_progress"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cancel_download"
-                app:icon="@drawable/ic_baseline_close_24"
-                app:iconGravity="end"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/_barrier" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_start"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/start_download"
-                app:iconGravity="start"
+                android:layout_marginStart="-9dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="-9dp"
+                android:background="@color/per60_transparent_black"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/_barrier" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/_barrier">
+
+                <View
+                    android:id="@+id/v_progress"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/per10_transparent_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_cancel"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel_download"
+                    app:icon="@drawable/ic_baseline_close_24"
+                    app:iconGravity="end"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btn_start"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_start"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_download"
+                    app:icon="@drawable/ic_baseline_play_arrow_24"
+                    app:iconGravity="start"
+                    app:iconPadding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toEndOf="@id/btn_cancel"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

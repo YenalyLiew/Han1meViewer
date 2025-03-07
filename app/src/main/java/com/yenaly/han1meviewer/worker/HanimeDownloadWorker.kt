@@ -110,15 +110,22 @@ class HanimeDownloadWorker(
          * 方便统一管理下载 Worker 的创建
          */
         inline fun build(
+            constraintsRequired: Boolean = true,
             action: OneTimeWorkRequest.Builder.() -> Unit = {}
         ): OneTimeWorkRequest {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresStorageNotLow(true)
                 .build()
             return OneTimeWorkRequestBuilder<HanimeDownloadWorker>()
                 .addTag(TAG)
-                .setConstraints(constraints)
-                .setBackoffCriteria(
+                .let { builder ->
+                    if (constraintsRequired) {
+                        builder.setConstraints(constraints)
+                    } else {
+                        builder
+                    }
+                }.setBackoffCriteria(
                     BackoffPolicy.LINEAR,
                     BACKOFF_DELAY, TimeUnit.MILLISECONDS
                 ).apply(action).build()
@@ -317,8 +324,8 @@ class HanimeDownloadWorker(
                         workDataOf(DownloadState.STATE to DownloadState.Paused.mask)
                     )
                 } else {
-                    showFailureNotification(e.message)
-                    Log.d(TAG, "download failed: ${e.message}")
+                    showFailureNotification(e.localizedMessage)
+                    e.printStackTrace()
                     mainScope.launch {
                         showShortToast(e.localizedMessage)
                     }

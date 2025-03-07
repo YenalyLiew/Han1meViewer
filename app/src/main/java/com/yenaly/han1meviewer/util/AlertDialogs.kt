@@ -11,14 +11,14 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yenaly.han1meviewer.R
 import com.yenaly.yenaly_libs.utils.activity
-import com.yenaly.yenaly_libs.utils.dp
+import com.yenaly.yenaly_libs.utils.dpF
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 fun Context.getDialogDefaultDrawable(): Drawable {
     return GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
-        cornerRadius = 32.dp.toFloat()
+        cornerRadius = 32.dpF
         setColor(getColor(R.color.per90_dark_red))
     }
 }
@@ -32,8 +32,7 @@ fun AlertDialog.createDecorBlurEffect(dismissListener: DialogInterface.OnDismiss
         context.activity?.let { activity ->
             activity.window.decorView.setRenderEffect(
                 RenderEffect.createBlurEffect(
-                    12.dp.toFloat(),
-                    12.dp.toFloat(),
+                    12.dpF, 12.dpF,
                     Shader.TileMode.CLAMP
                 )
             )

@@ -5,7 +5,7 @@
         android:id="@+id/tb_test"
         android:icon="@drawable/ic_baseline_download_24"
         android:title="test"
-        android:visible="false"
+        android:visible="true"
         app:showAsAction="always" />
     <item
         android:id="@+id/tb_start_all"

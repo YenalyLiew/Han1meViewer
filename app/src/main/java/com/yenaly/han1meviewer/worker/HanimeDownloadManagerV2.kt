@@ -46,7 +46,6 @@ object HanimeDownloadManagerV2 {
     private var semaphore = Semaphore(maxConcurrentDownloadCount)
 
     // Channel 内部状态：保存正在下载任务与等待队列
-    // TODO: 由于一个videoCode可能有多个分辨率，String是否合理？
     private val activeDownloads = linkedMapOf<String, HanimeDownloadWorker.Args>()
     private val waitingQueue = ArrayDeque<HanimeDownloadWorker.Args>()
 
@@ -110,13 +109,13 @@ object HanimeDownloadManagerV2 {
                                         // 之前为 Downloading 的优先级更高
                                         waitingQueue.addFirst(msg.args)
                                         // 同时启动 WorkManager 任务时可标识为等待状态
-                                        launchDownload(msg.args, msg.redownload, waiting = true)
+                                        enqueueWork(msg.args, msg.redownload)
                                     }
 
                                     DownloadState.Queued, DownloadState.Unknown -> {
                                         waitingQueue.addLast(msg.args)
                                         // 同时启动 WorkManager 任务时可标识为等待状态
-                                        launchDownload(msg.args, msg.redownload, waiting = true)
+                                        enqueueWork(msg.args, msg.redownload)
                                     }
 
                                     else -> Unit
@@ -271,7 +270,7 @@ object HanimeDownloadManagerV2 {
         waiting: Boolean = false,
         delete: Boolean = false
     ) {
-        HanimeDownloadWorker.build {
+        HanimeDownloadWorker.build(constraintsRequired = !delete) {
             setInputData(
                 workDataOf(
                     HanimeDownloadWorker.QUALITY to args.quality,

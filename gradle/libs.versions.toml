@@ -1,20 +1,20 @@
 [versions]
 # Plugins
-androidGradle = "8.7.3"
-kotlin = "2.0.20"
-serializationPlugin = "2.0.20"
-ksp = "2.0.20-1.0.24"
+androidGradle = "8.9.0"
+kotlin = "2.0.21"
+serializationPlugin = "2.0.21"
+ksp = "2.0.21-1.0.27"
 
 # Dependencies
 about = "2.5.2"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 appCompat = "1.7.0"
 material = "1.12.0"
 coroutinesAndroid = "1.9.0"
-activity = "1.9.3"
-fragment = "1.8.4"
-constraintLayout = "2.1.4"
-recyclerView = "1.3.2"
+activity = "1.10.1"
+fragment = "1.8.6"
+constraintLayout = "2.2.1"
+recyclerView = "1.4.0"
 expandableTextView = "v1.6.1-x"
 baseRecyclerViewAdapterHelper3 = "3.0.14"
 baseRecyclerViewAdapterHelper4 = "4.1.4"
@@ -22,17 +22,17 @@ refreshLayoutKernel = "2.0.5"
 refreshHeaderMaterial = "2.0.5"
 refreshFooterClassics = "2.0.5"
 multiType = "4.3.0"
-lifecycleViewModelKtx = "2.8.6"
-lifecycleRuntimeKtx = "2.8.6"
-lifecycleLiveDataKtx = "2.8.6"
+lifecycleViewModelKtx = "2.8.7"
+lifecycleRuntimeKtx = "2.8.7"
+lifecycleLiveDataKtx = "2.8.7"
 roomRuntime = "2.6.1"
 roomKtx = "2.6.1"
 roomCompiler = "2.6.1"
-navigationFragmentKtx = "2.8.3"
-navigationUiKtx = "2.8.3"
+navigationFragmentKtx = "2.8.8"
+navigationUiKtx = "2.8.8"
 preferenceKtx = "1.2.1"
-workRuntime = "2.9.1"
-workRuntimeKtx = "2.9.1"
+workRuntime = "2.10.0"
+workRuntimeKtx = "2.10.0"
 startupRuntime = "1.2.0"
 palette = "1.0.0"
 materialPreference = "2.0.0"
@@ -56,14 +56,15 @@ permissionX = "1.7.1"
 junit = "4.13.2"
 testJunit = "1.2.1"
 testEspressoCore = "3.6.1"
-guava = "33.2.1-android"
-exoplayer = "1.4.1"
+guava = "33.3.1-android"
+exoplayer = "1.5.1"
 leakCanary = "2.14"
 circularRevealSwitch = "0.4.6"
-desugarJdkLibs = "2.1.2"
+desugarJdkLibs = "2.1.5"
 asynclayoutinflater = "1.0.0"
 flexbox = "3.0.0"
-firebaseBom = "33.5.1"
+firebaseBom = "33.10.0"
+composeBom = "2025.02.00"
 
 [libraries]
 # Android
@@ -97,7 +98,7 @@ palette = { group = "androidx.palette", name = "palette", version.ref = "palette
 asynclayoutinflater = { group = "androidx.asynclayoutinflater", name = "asynclayoutinflater", version.ref = "asynclayoutinflater" } # coreLibraryDesugaring
 
 # Compose
-compose-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2024.10.00" }
+compose-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
@@ -149,6 +150,7 @@ permission-x = { group = "com.guolindev.permissionx", name = "permissionx", vers
 circular-reveal-switch = { group = "com.github.YenalyLiew", name = "CircularRevealSwitch", version.ref = "circularRevealSwitch" }
 leak-canary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" } # debugImplementation
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
 
 # firebase
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }

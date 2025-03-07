@@ -15,11 +15,21 @@
     <color name="search_bar_icon_color">#FF00A1FF</color>
     <color name="video_code_link_text_color">#FF1E90FF</color>
 
+    <color name="per10_transparent_black">#19000000</color>
+    <color name="per20_transparent_black">#33000000</color>
+    <color name="per30_transparent_black">#4D000000</color>
+    <color name="per40_transparent_black">#66000000</color>
+    <color name="per45_transparent_black">#73000000</color>
     <color name="per50_transparent_black">#80000000</color>
     <color name="per60_transparent_black">#99000000</color>
     <color name="per70_transparent_black">#B3000000</color>
     <color name="per80_transparent_black">#CC000000</color>
     <color name="per90_transparent_black">#E6000000</color>
+
+    <color name="per10_transparent_white">#19FFFFFF</color>
+    <color name="per20_transparent_white">#33FFFFFF</color>
+    <color name="per30_transparent_white">#4DFFFFFF</color>
+    <color name="per40_transparent_white">#66FFFFFF</color>
     <color name="per50_transparent_white">#80FFFFFF</color>
     <color name="per60_transparent_white">#99FFFFFF</color>
     <color name="per70_transparent_white">#B3FFFFFF</color>

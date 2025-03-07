@@ -38,7 +38,7 @@ object HImageMeower {
     fun ImageView.loadUnhappily(data: Any?, fallbackData: Any?) {
         Log.d(TAG, "primary: $data, fallback: $fallbackData")
         val primaryRequest = ImageRequest.Builder(context)
-            .data(data)
+            .data(data ?: fallbackData)
             .crossfade(true)
             .target(this)
             .listener(object : ImageRequest.Listener {

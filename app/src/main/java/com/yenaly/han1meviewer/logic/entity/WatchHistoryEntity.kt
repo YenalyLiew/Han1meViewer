@@ -9,7 +9,6 @@ import androidx.room.PrimaryKey
  * @time 2022/07/02 002 13:13
  */
 @Entity
-@Suppress("ArrayInDataClass")
 data class WatchHistoryEntity(
     val coverUrl: String,
     val title: String,

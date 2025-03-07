@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.preference.SeekBarPreference
 import com.yenaly.han1meviewer.HFileManager
 import com.yenaly.han1meviewer.R
-import com.yenaly.han1meviewer.logic.network.ServiceCreator
 import com.yenaly.han1meviewer.logic.network.interceptor.SpeedLimitInterceptor
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
@@ -73,9 +72,7 @@ class DownloadSettingsFragment : YenalySettingsFragment(R.xml.settings_download)
             max = SpeedLimitInterceptor.SPEED_BYTES.lastIndex
             setSummaryConverter(defValue = SpeedLimitInterceptor.NO_LIMIT_INDEX, converter = { i ->
                 SpeedLimitInterceptor.SPEED_BYTES[i].toDownloadSpeedPrettyString()
-            }) {
-                ServiceCreator.changeDownloadSpeedLimit(SpeedLimitInterceptor.SPEED_BYTES[it])
-            }
+            })
         }
     }
 
@@ -91,7 +88,7 @@ class DownloadSettingsFragment : YenalySettingsFragment(R.xml.settings_download)
         return if (value == 0) {
             getString(R.string.no_limit)
         } else {
-            this.toString()
+            value.toString()
         }
     }
 

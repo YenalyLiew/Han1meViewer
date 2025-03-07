@@ -188,9 +188,12 @@ object Preferences {
     /**
      * 对应关系详见 [SpeedLimitInterceptor.SPEED_BYTES]
      */
-    val downloadSpeedLimit: Int
-        get() = preferenceSp.getInt(
-            DownloadSettingsFragment.DOWNLOAD_SPEED_LIMIT,
-            SpeedLimitInterceptor.NO_LIMIT_INDEX
-        )
+    val downloadSpeedLimit: Long
+        get() {
+            val index = preferenceSp.getInt(
+                DownloadSettingsFragment.DOWNLOAD_SPEED_LIMIT,
+                SpeedLimitInterceptor.NO_LIMIT_INDEX
+            )
+            return SpeedLimitInterceptor.SPEED_BYTES[index]
+        }
 }

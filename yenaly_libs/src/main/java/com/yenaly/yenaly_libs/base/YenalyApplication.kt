@@ -6,7 +6,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import com.yenaly.yenaly_libs.ActivityManager
-import com.yenaly.yenaly_libs.utils.isDebugEnabled
+import com.yenaly.yenaly_libs.BuildConfig
 import java.lang.ref.WeakReference
 
 /**
@@ -23,7 +23,8 @@ open class YenalyApplication : Application(), Application.ActivityLifecycleCallb
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
         // do not forget to register the crash dialog activity!
-        if (isDefaultCrashHandlerEnabled && !isDebugEnabled) YenalyCrashHandler.instance.init(this)
+        if (isDefaultCrashHandlerEnabled && !BuildConfig.DEBUG)
+            YenalyCrashHandler.instance.init(this)
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

@@ -42,7 +42,7 @@ class BlurTransformation @JvmOverloads constructor(
         val scaledWidth = (input.width / sampling).toInt()
         val scaledHeight = (input.height / sampling).toInt()
         val output =
-            createBitmap(scaledWidth, scaledHeight, input.config)
+            createBitmap(scaledWidth, scaledHeight, input.config ?: Bitmap.Config.ARGB_8888)
         output.applyCanvas {
             scale(1 / sampling, 1 / sampling)
             drawBitmap(input, 0f, 0f, paint)

@@ -20,7 +20,7 @@ android {
     }
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -38,6 +38,9 @@ android {
             "-Xskip-prerelease-check",
             "-opt-in=kotlin.ExperimentalStdlibApi"
         )
+    }
+    buildFeatures {
+        buildConfig = true
     }
     resourcePrefix = "yenaly_"
     namespace = "com.yenaly.yenaly_libs"

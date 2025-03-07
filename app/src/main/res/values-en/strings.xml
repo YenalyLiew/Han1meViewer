@@ -101,6 +101,7 @@
     <string name="reply_warning">(Text will disappear when input bar disappears)</string>
     <string name="clear_cache">Clear Cache</string>
     <string name="cache_occupy">Cache Occupy</string>
+    <string name="cache_usage_summary"><![CDATA[Currently using <b>%1$s</b> of storage space]]></string>
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
     <string name="no_video_links_found">No video links found</string>
@@ -197,7 +198,8 @@
     <string name="msg_deny_download_notification">No notifications will be sent during or after the process</string>
     <string name="at_any_time">At Any Time</string>
     <string name="which_days">%d day(s)</string>
-    <string name="last_update_popup_check_time">Last Update Popup Check Time: %s</string>
+    <string name="last_update_popup_check_time">Last Update Popup Check Time: \n%s</string>
+    <string name="no_update_popup_yet">Haven\'t seen any update popups lately!</string>
     <string name="no_description">You seem to have not written a description…</string>
     <string name="share_to_others_tip">Copy the following content and share it with others. You can add it to your device by clicking the add button on the top right:\n%s</string>
     <string name="delete_playlist">Delete Playlist</string>
@@ -258,7 +260,7 @@
     <string name="fav_failed">Favorite Failed</string>
     <string name="cancel_fav">Cancel Favorite</string>
     <string name="downloading_now">Downloading now…</string>
-    <string name="already_in_queue">Already in queue…</string>
+    <string name="already_in_queue">In Queue</string>
     <string name="s_view_times">%1$s views</string>
     <string name="liked">Liked</string>
     <string name="cannot_download_here">Cannot download from here temporarily!</string>
@@ -354,5 +356,6 @@ Recommendations are as follows:\n
     <string name="download_speed_limit">Download Speed Limit</string>
     <string name="no_limit">No Limit</string>
     <string name="check_video_exists_in_download">I noticed you seem to have downloaded the video with resolution %s</string>
+    <string name="retry">Retry</string>
 
 </resources>

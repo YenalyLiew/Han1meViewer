@@ -2,13 +2,13 @@ package com.yenaly.han1meviewer.ui.fragment.settings
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
+import androidx.core.text.parseAsHtml
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,7 +17,6 @@ import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
-import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.BuildConfig
 import com.yenaly.han1meviewer.HA1_GITHUB_FORUM_URL
 import com.yenaly.han1meviewer.HA1_GITHUB_ISSUE_URL
@@ -186,13 +185,13 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                             CoroutineScope(Dispatchers.IO).launch {
                                 if (cacheDir?.deleteRecursively() == true) {
                                     folderSize = cacheDir.folderSize
-                                    withContext(Dispatchers.Main.immediate) {
+                                    withContext(Dispatchers.Main) {
                                         showShortToast(R.string.clear_success)
                                         summary = generateClearCacheSummary(folderSize)
                                     }
                                 } else {
                                     folderSize = cacheDir.folderSize
-                                    withContext(Dispatchers.Main.immediate) {
+                                    withContext(Dispatchers.Main) {
                                         showShortToast(R.string.clear_failed)
                                         summary = generateClearCacheSummary(folderSize)
                                     }
@@ -272,7 +271,9 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                             update.setOnPreferenceClickListener {
                                 if (checkUpdateTimes > 2) {
                                     showUpdateFailedDialog(it.context)
-                                } else AppViewModel.getLatestVersion()
+                                } else {
+                                    AppViewModel.getLatestVersion()
+                                }
                                 return@setOnPreferenceClickListener true
                             }
                         }
@@ -343,25 +344,32 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
     }
 
     private fun generateClearCacheSummary(size: Long): CharSequence {
-        return spannable {
-            size.formatFileSizeV2().span {
-                style(Typeface.BOLD)
-            }
-            " ".text()
-            getString(R.string.cache_occupy).text()
-        }
+        return getString(R.string.cache_usage_summary, size.formatFileSizeV2()).parseAsHtml()
+//        return spannable {
+//            size.formatFileSizeV2().span {
+//                style(Typeface.BOLD)
+//            }
+//            " ".text()
+//            getString(R.string.cache_occupy).text()
+//        }
     }
 
     private fun toIntervalDaysPrettyString(value: Int): String {
+        val lastUpdatePopupTime = Preferences.lastUpdatePopupTime
+        val msg = if (lastUpdatePopupTime == 0L) {
+            getString(R.string.no_update_popup_yet)
+        } else {
+            getString(
+                R.string.last_update_popup_check_time,
+                Instant.fromEpochSeconds(Preferences.lastUpdatePopupTime)
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .format(LocalDateTime.Formats.ISO)
+            )
+        }
         return when (value) {
             0 -> getString(R.string.at_any_time)
             else -> getString(R.string.which_days, value)
-        } + "\n" + getString(
-            R.string.last_update_popup_check_time,
-            Instant.fromEpochSeconds(Preferences.lastUpdatePopupTime)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-                .format(LocalDateTime.Formats.ISO)
-        )
+        } + "\n" + msg
     }
 
     override fun SettingsActivity.setupToolbar() {

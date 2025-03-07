@@ -17,7 +17,7 @@ val appName: String
  *
  * @return 版本号，例如 1.0.0
  */
-val appLocalVersionName: String
+val appLocalVersionName: String?
     get() {
         return applicationContext.packageManager.getPackageInfo(
             applicationContext.packageName, 0
@@ -52,5 +52,6 @@ val appScreenHeight: Int get() = applicationContext.resources.displayMetrics.hei
  *
  * @return true if debuggable
  */
+@Deprecated("Use BuildConfig.DEBUG instead", ReplaceWith("BuildConfig.DEBUG"))
 val isDebugEnabled: Boolean
     get() = 0 != applicationContext.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE

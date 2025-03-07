@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.yenaly.han1meviewer.BuildConfig
 import com.yenaly.han1meviewer.HA1_GITHUB_API_URL
 import com.yenaly.han1meviewer.HJson
+import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.logic.network.interceptor.SpeedLimitInterceptor
 import com.yenaly.han1meviewer.logic.network.interceptor.UserAgentInterceptor
 import com.yenaly.yenaly_libs.utils.applicationContext
@@ -28,7 +29,7 @@ object ServiceCreator {
     )
 
     private val downloadSpeedLimitInterceptor by unsafeLazy {
-        SpeedLimitInterceptor(maxSpeed = SpeedLimitInterceptor.NO_LIMIT)
+        SpeedLimitInterceptor(maxSpeed = Preferences.downloadSpeedLimit)
     }
 
     inline fun <reified T> create(baseUrl: String): T = Retrofit.Builder()
@@ -61,10 +62,6 @@ object ServiceCreator {
      */
     fun rebuildOkHttpClient() {
         hClient = buildHClient()
-    }
-
-    fun changeDownloadSpeedLimit(maxSpeed: Long) {
-        downloadSpeedLimitInterceptor.maxSpeed = maxSpeed
     }
 
     private fun buildDownloadClient(): OkHttpClient {

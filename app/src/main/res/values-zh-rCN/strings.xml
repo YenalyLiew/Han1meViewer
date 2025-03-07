@@ -102,6 +102,7 @@
     <string name="reply_warning">（输入栏消失后输入文字也会消失）</string>
     <string name="clear_cache">清除缓存</string>
     <string name="cache_occupy">缓存占用</string>
+    <string name="cache_usage_summary"><![CDATA[当前占用了 <b>%1$s</b> 的存储空间]]></string>
     <string name="allow">允许</string>
     <string name="deny">拒绝</string>
     <string name="no_video_links_found">未发现影片链接</string>
@@ -198,7 +199,8 @@
     <string name="msg_deny_download_notification">进行或完成时不会通知哦</string>
     <string name="at_any_time">随时</string>
     <string name="which_days">%d天</string>
-    <string name="last_update_popup_check_time">最近更新弹窗时刻：%s</string>
+    <string name="last_update_popup_check_time">最近更新弹窗跳出时刻：\n%s</string>
+    <string name="no_update_popup_yet">最近还没跳出过更新窗口哦</string>
     <string name="no_description">您似乎还没写介绍…</string>
     <string name="share_to_others_tip">复制以下内容，分享给其他人，可以通过顶部右侧添加按钮来将其存入设备：\n%s</string>
     <string name="delete_playlist">删除播放清单</string>
@@ -259,7 +261,7 @@
     <string name="fav_failed">喜欢失败</string>
     <string name="cancel_fav">取消喜欢</string>
     <string name="downloading_now">正在下载中…</string>
-    <string name="already_in_queue">已经在队列中…</string>
+    <string name="already_in_queue">在队列中</string>
     <string name="s_view_times">%1$s次</string>
     <string name="liked">已喜欢</string>
     <string name="cannot_download_here">暂时无法从这里下载！</string>
@@ -360,5 +362,6 @@
     <string name="download_speed_limit">下载速度限制</string>
     <string name="no_limit">无限制</string>
     <string name="check_video_exists_in_download">我注意到你好像下载过分辨率为 %s 的该影片</string>
+    <string name="retry">重试</string>
 
 </resources>
