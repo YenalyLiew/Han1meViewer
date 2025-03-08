@@ -3,7 +3,6 @@ package com.yenaly.han1meviewer.ui.activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -43,6 +42,9 @@ class PreviewCommentActivity : YenalyActivity<ActivityPreviewCommentBinding>() {
 
     override fun initData(savedInstanceState: Bundle?) {
         setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeActionContentDescription(R.string.back)
@@ -63,15 +65,5 @@ class PreviewCommentActivity : YenalyActivity<ActivityPreviewCommentBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         PreviewCommentPrefetcher.bye(PreviewCommentPrefetcher.Scope.PREVIEW_COMMENT_ACTIVITY)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

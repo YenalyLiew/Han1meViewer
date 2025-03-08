@@ -1,7 +1,6 @@
 package com.yenaly.yenaly_libs.base.settings
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import com.yenaly.yenaly_libs.R
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
@@ -23,6 +22,9 @@ abstract class YenalySettingsActivity : FrameActivity() {
         binding.lifecycleOwner = this
         supportActionBar?.hide()
         setSupportActionBar(binding.settingsToolbar)
+        binding.settingsToolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
             supportFragmentManager
@@ -37,13 +39,6 @@ abstract class YenalySettingsActivity : FrameActivity() {
         if (::binding.isInitialized) {
             binding.unbind()
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> finish()
-        }
-        return true
     }
 
     /**

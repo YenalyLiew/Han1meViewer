@@ -61,8 +61,6 @@ dependencies {
     implementation(libs.startup.runtime)
     implementation(libs.gson)
 
-    implementation(libs.spannable.x)
-
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.test.junit)

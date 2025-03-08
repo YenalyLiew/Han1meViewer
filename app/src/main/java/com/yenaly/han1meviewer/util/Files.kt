@@ -16,8 +16,8 @@ import com.yenaly.han1meviewer.ui.activity.VideoActivity
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.showShortToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
@@ -118,7 +118,7 @@ suspend fun InputStream.copyTo(
             var bytes = read(buffer)
             var percent = 0
             while (bytes >= 0) {
-                yield()
+                ensureActive()
                 out.write(buffer, 0, bytes)
                 bytesCopied += bytes
                 val newPercent = (bytesCopied * 100 / contentLength).toInt()

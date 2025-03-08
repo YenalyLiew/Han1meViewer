@@ -121,5 +121,9 @@
             android:theme="@style/Theme.Hanime1.About">
 
         </activity>
+        <activity
+            android:name=".ui.activity.DownloadActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true"></activity>
     </application>
 </manifest>

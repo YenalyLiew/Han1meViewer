@@ -2,11 +2,9 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.view.MenuItem
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
@@ -16,10 +14,10 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.text.parseAsHtml
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
-import com.itxca.spannablex.spannable
 import com.yenaly.han1meviewer.HANIME_ALTER_BASE_URL
 import com.yenaly.han1meviewer.HANIME_LOGIN_URL
 import com.yenaly.han1meviewer.HANIME_MAIN_BASE_URL
@@ -38,6 +36,13 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : FrameActivity() {
 
+    companion object {
+        const val TAG = "LoginActivity"
+
+        private const val HL = """<span style="color: #FF0000;"><b>H</b></span><b>a1</b>ogin"""
+        // val hlSpannedTitle = HL.parseAsHtml()
+    }
+
     private lateinit var binding: ActivityLoginBinding
 
     private val dialog = unsafeLazy { LoginDialog(R.layout.dialog_login) }
@@ -53,22 +58,11 @@ class LoginActivity : FrameActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         supportActionBar?.let {
-            it.title = spannable {
-                "H".span {
-                    style(Typeface.BOLD)
-                    color(Color.RED)
-                }
-                "anime1".span {
-                    style(Typeface.BOLD)
-                }
-                ".".span {
-                    style(Typeface.BOLD)
-                    color(Color.RED)
-                }
-                "me ".text()
-                getString(R.string.login).text()
-            }
+            it.title = HL.parseAsHtml()
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeActionContentDescription(R.string.back)
         }
@@ -87,16 +81,6 @@ class LoginActivity : FrameActivity() {
         binding.wvLogin.removeAllViews()
         binding.wvLogin.destroy()
         binding.unbind()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

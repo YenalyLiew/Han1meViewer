@@ -1,9 +1,7 @@
 package com.yenaly.han1meviewer
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.webkit.CookieManager
-import com.itxca.spannablex.spannable
+import androidx.core.text.parseAsHtml
 import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.Preferences.loginCookie
 import com.yenaly.han1meviewer.logic.network.HCookieJar
@@ -24,17 +22,10 @@ val Throwable.pienization: CharSequence get() = "🥺\n$localizedMessage"
 
 // base
 
-val hanimeSpannable
-    get() = null.spannable {
-        "H".span {
-            style(Typeface.BOLD)
-            color(Color.RED)
-        }
-        "an1me".span {
-            style(Typeface.BOLD)
-        }
-        "Viewer".text()
-    }
+private const val HANIME_TITLE_HTML =
+    """<span style="color: #FF0000;"><b>H</b></span><b>an1me</b>Viewer"""
+
+val hanimeSpannedTitle = HANIME_TITLE_HTML.parseAsHtml()
 
 /**
  * 獲取 Hanime 影片地址

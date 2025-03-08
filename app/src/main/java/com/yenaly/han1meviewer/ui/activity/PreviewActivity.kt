@@ -135,6 +135,9 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding>() {
 
     override fun initData(savedInstanceState: Bundle?) {
         setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
         supportActionBar?.let {
             it.title = null
             it.setDisplayHomeAsUpEnabled(true)
@@ -311,11 +314,6 @@ class PreviewActivity : YenalyActivity<ActivityPreviewBinding>() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
-
             R.id.tb_comment -> {
                 startActivity<PreviewCommentActivity>(
                     "date" to dateUtils.current.format(DateUtils.NORMAL_FORMAT),

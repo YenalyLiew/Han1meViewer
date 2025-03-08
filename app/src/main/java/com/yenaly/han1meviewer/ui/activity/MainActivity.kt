@@ -35,7 +35,7 @@ import com.yenaly.han1meviewer.Preferences.isAlreadyLogin
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.VIDEO_CODE
 import com.yenaly.han1meviewer.databinding.ActivityMainBinding
-import com.yenaly.han1meviewer.hanimeSpannable
+import com.yenaly.han1meviewer.hanimeSpannedTitle
 import com.yenaly.han1meviewer.logic.exception.CloudFlareBlockedException
 import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
@@ -262,7 +262,8 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
                 return@setOnMenuItemClickListener false
             }
             findItem(R.id.nv_h_keyframe_settings).setOnMenuItemClickListener {
-                SettingsRouter.with(navController).toSettingsActivity(R.id.hKeyframeSettingsFragment)
+                SettingsRouter.with(navController)
+                    .toSettingsActivity(R.id.hKeyframeSettingsFragment)
                 return@setOnMenuItemClickListener false
             }
         }
@@ -303,7 +304,7 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
      * 必须最后调用！先设置好toolbar！
      */
     fun Toolbar.setupWithMainNavController() {
-        supportActionBar!!.title = hanimeSpannable
+        supportActionBar!!.title = hanimeSpannedTitle
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.nv_home_page), binding.dlMain)
         this.setupWithNavController(navController, appBarConfiguration)
     }

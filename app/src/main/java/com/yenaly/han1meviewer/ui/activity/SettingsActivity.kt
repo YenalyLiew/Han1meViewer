@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -50,7 +49,19 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding>() {
 
     override fun initData(savedInstanceState: Bundle?) {
         setSupportActionBar(binding.toolbar)
-
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setHomeActionContentDescription(R.string.back)
+        }
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fcv_settings) as NavHostFragment
+        navController = navHostFragment.navController
+        SettingsRouter.with(navController).navigateFromActivity(inclusive = true)
+        binding.toolbar.setNavigationOnClickListener {
+            if (!navController.popBackStack()) {
+                onBackPressedDispatcher.onBackPressed()
+            }
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(
@@ -65,30 +76,11 @@ class SettingsActivity : YenalyActivity<ActivitySettingsBinding>() {
             )
         }
 
-        supportActionBar?.let {
-            it.setDisplayHomeAsUpEnabled(true)
-            it.setHomeActionContentDescription(R.string.back)
-        }
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fcv_settings) as NavHostFragment
-        navController = navHostFragment.navController
-        SettingsRouter.with(navController).navigateFromActivity(inclusive = true)
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.fcvSettings) { v, insets ->
             val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             v.updatePadding(bottom = navBar.bottom)
             WindowInsetsCompat.CONSUMED
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> if (!navController.popBackStack()) {
-                finish()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     @Suppress("DEPRECATION")

@@ -1,9 +1,8 @@
 package com.yenaly.yenaly_libs.base.dialog
 
-import android.graphics.Color
 import android.os.Bundle
+import androidx.core.text.parseAsHtml
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.itxca.spannablex.spannable
 import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.R
 import com.yenaly.yenaly_libs.base.frame.FrameActivity
@@ -28,14 +27,8 @@ class YenalyCrashDialogActivity : FrameActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.yenaly_activity_crash_dialog)
-        val info = spannable {
-            "These errors occurred:".span {
-                color(Color.RED)
-                absoluteSize(18.sp, dp = false)
-            }
-            newline(2)
-            yenalyThrowable.text()
-        }
+        val info =
+            """<span style="color: #FF0000; font-size: ${18.sp}px;">These errors occurred:</span><br><br>$yenalyThrowable""".parseAsHtml()
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.yenaly_error_title)
             .setMessage(info)

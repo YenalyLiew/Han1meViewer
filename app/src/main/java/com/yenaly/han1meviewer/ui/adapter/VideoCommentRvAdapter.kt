@@ -1,10 +1,10 @@
 package com.yenaly.han1meviewer.ui.adapter
 
 import android.content.Context
-import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.text.parseAsHtml
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -16,7 +16,6 @@ import com.chad.library.adapter4.viewholder.DataBindingHolder
 import com.drake.spannable.replaceSpanFirst
 import com.drake.spannable.span.HighlightSpan
 import com.google.android.material.button.MaterialButton
-import com.itxca.spannablex.spannable
 import com.lxj.xpopup.XPopup
 import com.yenaly.han1meviewer.COMMENT_ID
 import com.yenaly.han1meviewer.Preferences
@@ -222,12 +221,8 @@ class VideoCommentRvAdapter(private val fragment: Fragment? = null) :
                                 )
                             }
                         }
-                        commentPopup.hint = spannable {
-                            context.getString(R.string.reply).text()
-                            "@${item.username}".span {
-                                style(Typeface.BOLD)
-                            }
-                        }
+                        commentPopup.hint =
+                            """${context.getString(R.string.reply)}<b>@${item.username}</b>""".parseAsHtml()
                     }
                     XPopup.Builder(context).autoOpenSoftInput(true).asCustom(commentPopup).show()
                 }
