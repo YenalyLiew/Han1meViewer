@@ -38,6 +38,12 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+        <com.yenaly.han1meviewer.ui.view.funcbar.Hanidock
+            android:id="@+id/hanidock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

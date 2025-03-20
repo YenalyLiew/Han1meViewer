@@ -2,6 +2,7 @@ package com.yenaly.han1meviewer.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -67,13 +68,18 @@ class SettingsRouter private constructor(
     }
 
     fun toSettingsActivity(@IdRes id: Int = 0, bundle: Bundle? = null) {
-        val intent = Intent(context, SettingsActivity::class.java).apply {
+        val activity = context.activity ?: return
+        val intent = Intent(activity, SettingsActivity::class.java).apply {
             putExtra(DESTINATION, id)
             bundle?.let {
                 putExtra(BUNDLE, it)
             }
         }
-        context.startActivity(intent)
+        activity.startActivity(intent)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            @Suppress("DEPRECATION")
+            activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
     }
 
     /**

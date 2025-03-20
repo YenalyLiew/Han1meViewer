@@ -266,6 +266,14 @@ class MainActivity : YenalyActivity<ActivityMainBinding>(), DrawerListener {
                     .toSettingsActivity(R.id.hKeyframeSettingsFragment)
                 return@setOnMenuItemClickListener false
             }
+            findItem(R.id.nv_download).setOnMenuItemClickListener {
+                startActivity<DownloadActivity>()
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    @Suppress("DEPRECATION")
+                    overridePendingTransition(R.anim.slide_in_from_bottom, R.anim.fade_out)
+                }
+                return@setOnMenuItemClickListener false
+            }
         }
     }
 

@@ -79,7 +79,7 @@ class ExoMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd), Player.Listener, HMed
         release()
         mMediaHandlerThread = HandlerThread("JZVD")
         mMediaHandlerThread.start()
-        mMediaHandler = Handler(Looper.getMainLooper())
+        mMediaHandler = Handler(mMediaHandlerThread.looper)
         handler = Handler(Looper.getMainLooper())
         mMediaHandler?.post {
             val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()

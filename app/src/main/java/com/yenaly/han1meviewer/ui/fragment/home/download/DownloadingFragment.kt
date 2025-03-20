@@ -3,6 +3,7 @@ package com.yenaly.han1meviewer.ui.fragment.home.download
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -24,6 +25,7 @@ import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.han1meviewer.worker.HanimeDownloadManagerV2
 import com.yenaly.han1meviewer.worker.HanimeDownloadWorker
 import com.yenaly.yenaly_libs.base.YenalyFragment
+import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,8 +53,6 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding>(),
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        (activity as MainActivity).setupToolbar()
-
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         ViewCompat.setOnApplyWindowInsetsListener(binding.rvList) { v, insets ->
@@ -131,5 +131,10 @@ class DownloadingFragment : YenalyFragment<FragmentListOnlyBinding>(),
             }
             return@addMenu false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity<AppCompatActivity>().supportActionBar?.setSubtitle(R.string.downloading)
     }
 }

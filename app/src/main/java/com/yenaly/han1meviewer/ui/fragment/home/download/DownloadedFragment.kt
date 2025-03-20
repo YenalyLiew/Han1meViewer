@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,6 +26,7 @@ import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.viewmodel.DownloadViewModel
 import com.yenaly.han1meviewer.util.setStateViewLayout
 import com.yenaly.yenaly_libs.base.YenalyFragment
+import com.yenaly.yenaly_libs.utils.activity
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import kotlinx.coroutines.launch
 
@@ -50,8 +52,6 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding>(),
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        (activity as MainActivity).setupToolbar()
-
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = adapter
         ViewCompat.setOnApplyWindowInsetsListener(binding.rvList) { v, insets ->
@@ -87,6 +87,11 @@ class DownloadedFragment : YenalyFragment<FragmentListOnlyBinding>(),
                 return loadAllSortedDownloadedHanime()
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity<AppCompatActivity>().supportActionBar?.setSubtitle(R.string.downloaded)
     }
 
     // #issue-18: 添加下载区排序

@@ -11,6 +11,7 @@ import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.color.MaterialColors
@@ -63,6 +64,12 @@ inline fun <reified T : Activity> Context.findActivityOrNull(): T? {
     }
     return null
 }
+
+/**
+ * Extension function to get the Activity from a Fragment.
+ */
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+inline fun <T : Activity> Fragment.activity(): T = requireActivity() as T
 
 /**
  * Extension function to require an Activity from a Context.
