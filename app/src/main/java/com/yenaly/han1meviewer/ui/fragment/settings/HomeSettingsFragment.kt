@@ -24,7 +24,6 @@ import com.yenaly.han1meviewer.HA1_GITHUB_RELEASES_URL
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsRouter
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
@@ -41,7 +40,6 @@ import com.yenaly.yenaly_libs.utils.browse
 import com.yenaly.yenaly_libs.utils.folderSize
 import com.yenaly.yenaly_libs.utils.formatFileSizeV2
 import com.yenaly.yenaly_libs.utils.showShortToast
-import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -167,10 +165,6 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 append(getString(R.string.hanime_app_name))
             }
             summary = getString(R.string.current_version, "v${BuildConfig.VERSION_NAME}")
-            setOnPreferenceClickListener {
-                startActivity<AboutActivity>()
-                return@setOnPreferenceClickListener true
-            }
         }
         clearCache.apply {
             val cacheDir = context.cacheDir
