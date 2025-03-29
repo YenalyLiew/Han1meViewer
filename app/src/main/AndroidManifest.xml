@@ -114,12 +114,5 @@
             android:exported="true">
 
         </activity>
-        <activity
-            android:name=".ui.activity.AboutActivity"
-            android:configChanges="orientation|screenSize"
-            android:exported="true"
-            android:theme="@style/Theme.Hanime1.About">
-
-        </activity>
     </application>
 </manifest>

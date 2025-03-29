@@ -26,7 +26,6 @@ import com.yenaly.han1meviewer.HA1_GITHUB_RELEASES_URL
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.state.WebsiteState
-import com.yenaly.han1meviewer.ui.activity.AboutActivity
 import com.yenaly.han1meviewer.ui.activity.SettingsActivity
 import com.yenaly.han1meviewer.ui.fragment.IToolbarFragment
 import com.yenaly.han1meviewer.ui.view.pref.HPrivacyPreference
@@ -44,7 +43,6 @@ import com.yenaly.yenaly_libs.utils.copyToClipboard
 import com.yenaly.yenaly_libs.utils.folderSize
 import com.yenaly.yenaly_libs.utils.formatFileSize
 import com.yenaly.yenaly_libs.utils.showShortToast
-import com.yenaly.yenaly_libs.utils.startActivity
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
@@ -164,10 +162,6 @@ class HomeSettingsFragment : YenalySettingsFragment(R.xml.settings_home),
                 append(getString(R.string.hanime_app_name))
             }
             summary = getString(R.string.current_version, "v${BuildConfig.VERSION_NAME}")
-            setOnPreferenceClickListener {
-                startActivity<AboutActivity>()
-                return@setOnPreferenceClickListener true
-            }
         }
         downloadPath.apply {
             val path = hanimeVideoLocalFolder?.path
